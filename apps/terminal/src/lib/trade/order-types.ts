@@ -1,0 +1,73 @@
+import { t } from "@lingui/core/macro";
+import type { AdvancedOrderType, OrderType } from "@/config/trade";
+
+export function getAdvancedOrderTypeLabel(orderType: AdvancedOrderType): string {
+	switch (orderType) {
+		case "stopMarket":
+			return t`Stop Market`;
+		case "stopLimit":
+			return t`Stop Limit`;
+		case "takeProfitMarket":
+			return t`Take Profit Market`;
+		case "takeProfitLimit":
+			return t`Take Profit Limit`;
+		case "twap":
+			return t`TWAP`;
+		case "scale":
+			return t`Scale`;
+	}
+}
+
+export function getAdvancedOrderLabel(orderType: OrderType, fallback: string): string {
+	return isAdvancedOrderType(orderType) ? getAdvancedOrderTypeLabel(orderType) : fallback;
+}
+
+export function isAdvancedOrderType(orderType: OrderType): orderType is AdvancedOrderType {
+	return orderType !== "market" && orderType !== "limit";
+}
+
+export function isStopOrderType(orderType: OrderType): boolean {
+	return orderType === "stopMarket" || orderType === "stopLimit";
+}
+
+export function isTakeProfitOrderType(orderType: OrderType): boolean {
+	return orderType === "takeProfitMarket" || orderType === "takeProfitLimit";
+}
+
+export function isTriggerOrderType(orderType: OrderType): boolean {
+	return isStopOrderType(orderType) || isTakeProfitOrderType(orderType);
+}
+
+export function isScaleOrderType(orderType: OrderType): boolean {
+	return orderType === "scale";
+}
+
+export function isTwapOrderType(orderType: OrderType): boolean {
+	return orderType === "twap";
+}
+
+export function usesLimitPrice(orderType: OrderType): boolean {
+	return orderType === "limit" || orderType === "stopLimit" || orderType === "takeProfitLimit";
+}
+
+export function usesTriggerPrice(orderType: OrderType): boolean {
+	return isTriggerOrderType(orderType);
+}
+
+export function canUseTpSl(orderType: OrderType): boolean {
+	return orderType === "market" || orderType === "limit";
+}
+
+export function isTakerOrderType(orderType: OrderType): boolean {
+	return (
+		orderType === "market" || orderType === "stopMarket" || orderType === "takeProfitMarket" || orderType === "twap"
+	);
+}
+
+export function isMarketExecutionOrderType(orderType: OrderType): boolean {
+	return orderType === "market" || orderType === "stopMarket" || orderType === "takeProfitMarket";
+}
+
+export function getTabsOrderType(orderType: OrderType): "market" | "limit" | "advanced" {
+	return orderType === "market" || orderType === "limit" ? orderType : "advanced";
+}

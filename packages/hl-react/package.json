@@ -1,0 +1,47 @@
+{
+	"name": "@hypeterminal/hl-react",
+	"version": "0.0.1",
+	"private": true,
+	"type": "module",
+	"main": "./src/index.ts",
+	"types": "./src/index.ts",
+	"exports": {
+		".": "./src/index.ts",
+		"./store": "./src/store.ts",
+		"./provider": "./src/provider.tsx",
+		"./clients": "./src/clients.ts",
+		"./create-config": "./src/create-config.ts",
+		"./hooks/useApiStatus": "./src/hooks/useApiStatus.ts",
+		"./hooks/useClients": "./src/hooks/useClients.ts",
+		"./hooks/useExchange": "./src/hooks/useExchange.ts",
+		"./hooks/useInfo": "./src/hooks/useInfo.ts",
+		"./hooks/useSubscription": "./src/hooks/useSubscription.ts",
+		"./hooks/useTradingGuard": "./src/hooks/useTradingGuard.ts",
+		"./hooks/useTransport": "./src/hooks/useTransport.ts",
+		"./hooks/utils/useSub": "./src/hooks/utils/useSub.ts",
+		"./markets/types": "./src/markets/types.ts",
+		"./registries/*": "./src/registries/*.ts",
+		"./signing/agent-storage": "./src/signing/agent-storage.ts",
+		"./signing/l1-agent-wallet": "./src/signing/l1-agent-wallet.ts",
+		"./signing/mobile-agent": "./src/signing/mobile-agent.ts",
+		"./internal/websocket/*": "./src/internal/websocket/*.ts",
+		"./internal/circular-buffer/use-ring-buffer": "./src/internal/circular-buffer/use-ring-buffer.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc -p tsconfig.json --noEmit",
+		"test": "vitest run"
+	},
+	"devDependencies": {
+		"@types/react": "19.2.7",
+		"vitest": "4.1.8"
+	},
+	"peerDependencies": {
+		"@nktkas/hyperliquid": ">=0.32.2 <1",
+		"@tanstack/react-query": ">=5.101.0 <6",
+		"react": ">=19.0.0 <20",
+		"viem": ">=2.52.2 <3",
+		"wagmi": ">=3.6.16 <4",
+		"zod": ">=4.3.4 <5",
+		"zustand": ">=5.0.9 <6"
+	}
+}
