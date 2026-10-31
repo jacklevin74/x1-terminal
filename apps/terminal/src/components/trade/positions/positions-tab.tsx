@@ -22,7 +22,7 @@ import type { ClosePositionData, LimitClosePositionData, TpSlPositionData } from
 import { PositionLimitCloseModal } from "./position-limit-close-modal";
 import { PositionRow } from "./position-row";
 import { PositionTpSlModal } from "./position-tpsl-modal";
-import { positionsPanelTableShellClass, positionsPanelTabRootClass } from "./positions-panel-table-styles";
+import { positionViewHeadClass, positionViewHeaderClass, positionViewBodyClass, positionsPanelTableShellClass, positionsPanelTabRootClass } from "./positions-panel-table-styles";
 
 type CloseIntent = "close" | "reverse";
 
@@ -172,18 +172,18 @@ export function PositionsTab() {
 				) : (
 					<ScrollArea className="min-h-0 w-full flex-1">
 						<Table className="table-auto w-max min-w-0">
-       <TableHeader className="[&_tr]:border-0 bg-transparent">
+       <TableHeader className={positionViewHeaderClass}>
         <TableRow className="border-0">
          {[
           "Market", "Size", "Position Value", "Entry Price", "Mark Price", "PNL (ROE %)", "Liq. Price", "Margin", "Funding", "Close All",
-         ].map(label => <TableHead key={label} scope="col" size="dense" className="h-8 px-1.5 py-1 text-left text-[11px] font-medium normal-case tracking-normal text-[#8e9c9f]" aria-sort={label === "Position Value" ? sortDescending ? "descending" : "ascending" : undefined}>
+         ].map(label => <TableHead key={label} scope="col" size="dense" className={positionViewHeadClass} aria-sort={label === "Position Value" ? sortDescending ? "descending" : "ascending" : undefined}>
           {label === "Position Value" ? <button type="button" onClick={() => setSortDescending(value => !value)} className="inline-flex items-center gap-1 hover:text-fg">{label}<span aria-hidden="true">{sortDescending ? "⌄" : "⌃"}</span></button>
            : label === "Close All" ? <button type="button" className="text-[#50d8c5] hover:underline disabled:opacity-40" disabled={!canCloseAll || closingAll} onClick={() => setCloseAllOpen(true)}>{closingAll ? "Closing…" : label}</button>
            : label}
          </TableHead>)}
         </TableRow>
        </TableHeader>
-							<TableBody className="[&_tr]:border-0">
+							<TableBody className={positionViewBodyClass}>
 								{sortedPositions.map((p) => {
 									const assetId = markets.getAssetId(p.coin);
 									return (

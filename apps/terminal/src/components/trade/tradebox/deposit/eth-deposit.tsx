@@ -1,3 +1,4 @@
+import { formatDepositAddressError } from "@/lib/jurisdiction";
 import { NativeDepositIntro } from "./native-deposit-intro";
 import { Button, TextInput } from "@hypeterminal/ui";
 import { useQuery } from "@tanstack/react-query";
@@ -40,7 +41,7 @@ function EthDepositAccount({ recipient }: { recipient: `0x${string}` }) {
  return <div className="space-y-3 text-sm">
   <NativeDepositIntro asset="ETH" chain="Ethereum" fee={fees.data?.fee} eta={fees.data?.eta} />
   {depositAddress.isPending && <p role="status">Generating and verifying your deposit address…</p>}
-  {depositAddress.error && <div role="alert" className="text-error"><p>{depositAddress.error.message}</p><Button size="sm" onClick={() => void depositAddress.refetch()}>Retry address</Button></div>}
+  {depositAddress.error && <div role="alert" className="text-error"><p>{formatDepositAddressError(depositAddress.error)}</p><Button size="sm" onClick={() => void depositAddress.refetch()}>Retry address</Button></div>}
   {depositAddress.data && <>
    <label className="block text-xs">Ethereum ETH deposit address</label>
    <div className="font-mono text-xs break-all rounded border border-stroke-weak p-3">{depositAddress.data}</div>
@@ -53,7 +54,7 @@ function EthDepositAccount({ recipient }: { recipient: `0x${string}` }) {
    <TextInput id="eth-deposit-amount" aria-label="ETH deposit amount" inputMode="decimal" value={amount} onChange={e => setAmount(e.target.value)} placeholder={`Minimum ${MIN_ETH_DEPOSIT}`} disabled={sending || switching} />
    <Button variant="filled" intent="brand" className="h-11 w-full" onClick={() => void sendEth()} disabled={sending || switching || !amount}>{switching ? "Switching to Ethereum…" : sending ? "Confirm ETH transfer in Phantom…" : "Send ETH with Phantom"}</Button>
   </>}
-  {(error || sendError || receipt.error) && <p role="alert" className="text-xs text-error">{error ?? sendError?.message ?? receipt.error?.message}</p>}
+  {(error || sendError || receipt.error) && <p role="alert" className="text-xs text-error">{formatDepositAddressError(error ?? sendError ?? receipt.error)}</p>}
   {hash && <p role="status" className="text-xs">{receipt.data?.status === "reverted" ? "Ethereum transfer reverted. No deposit was made." : receipt.isSuccess ? "Ethereum transfer confirmed. Unit is processing your deposit; check your ETH spot balance for arrival." : "Ethereum transfer submitted. Waiting for confirmation…"} <a href={`https://etherscan.io/tx/${hash}`} target="_blank" rel="noopener noreferrer" className="underline">View transaction</a></p>}
   <p className="rounded-lg border border-stroke-error-strong/30 bg-error-soft/10 p-3 text-xs leading-relaxed text-error">Minimum deposit: {MIN_ETH_DEPOSIT} ETH. Send native ETH on Ethereum mainnet only. Other assets and deposits below the minimum cannot be credited.</p>
  </div>;

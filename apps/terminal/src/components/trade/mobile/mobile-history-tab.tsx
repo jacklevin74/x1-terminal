@@ -5,7 +5,7 @@ import { useConnection } from "wagmi";
 import { FALLBACK_VALUE_PLACEHOLDER } from "@/config/app";
 import { MAX_HISTORY_ROWS } from "@/config/trade";
 import { cn } from "@/lib/cn";
-import { getExplorerTxUrl } from "@/lib/explorer";
+import { getHyperliquidTxUrl as getExplorerTxUrl } from "@/lib/explorer";
 import { formatDateTimeShort, formatNumber, formatToken, formatUSD } from "@/lib/format";
 import { useMarkets, useSubscription } from "@/lib/hyperliquid";
 import { toNumber } from "@/lib/trade/numbers";

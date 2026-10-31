@@ -129,3 +129,5 @@ export {
 	type SpotToken,
 } from "./types/markets";
 export { type UseUserWalletResult, useUserWallet } from "./use-user-wallet";
+
+export { useOrderbookSubscription } from "./hooks/useOrderbookSubscription";

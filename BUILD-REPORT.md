@@ -117,3 +117,106 @@ Fixed the misleading block-height-expiry error after a transfer has already land
 ## Withdrawal destination clarification
 
 The existing `withdraw3` call sends USDC on Arbitrum to the connected Hyperliquid/Ethereum account address. For X1 this is the signature-derived 0x account, not the native Solana/X1 public key or builder address. After the user reported confusion about where a withdrawal went, added an explicit recipient-address panel and derived-account explanation before submission. The actual withdrawal destination and network were not changed. No payout-to-native-chain bridge or derived-account Arbitrum recovery transaction was executed.
+
+### Derived account export and native withdrawals
+
+The X1 account menu now offers private key export behind a risk acknowledgement. It validates the key against the connected Ethereum address before revealing/copying, hides it on tab/window exit or after 60 seconds, and removes it on modal close. No key is sent to a server or downloaded automatically.
+
+Withdraw now supports native SOL to Solana and ETH to Ethereum mainnet through Unit. The legacy USDC/Arbitrum withdrawal UI and withdraw3 action were removed from the modal. SOL uses the connected native wallet address; ETH requires an explicit Ethereum recipient. Both routes require two verified guardian signatures, sufficient spot USOL/UETH, live fee estimates, and review/confirmation. Unit submission is reported separately from native-chain delivery. The USOL/UETH Send Tokens view links to the same native withdrawal form; ordinary Send remains a Hyperliquid-only transfer.
+
+Verification includes export acknowledgement/hiding, key-account mismatch protection, reverse-route attestation checks, amount validation, fee selection, and SOL auto-fill/review/confirmation tests. Production build and typecheck are run after integration. Real-money withdrawal signing is left to the user.
+
+Native withdrawals now query Hyperliquid preTransferCheck for the verified Unit destination’s activation fee before review and again before signing. The modal distinguishes that quote-token fee from Unit’s native-asset processing fee, blocks signing without an available quote balance, and offers an explicit swap shortcut. A rejected quote-gas transfer gets an actionable explanation instead of an ambiguous submission warning. Regression tests cover locked balances, zero-fee destinations, insufficient quotes, and UI signing prevention.
+
+### Chart execution badges
+
+Both chart options now display compact teal B / red S badges for the connected account’s fills in the selected market. Kline badges use fill prices and candle timestamps, with same-candle markers stacked. TradingView uses its native marks API and refreshes/clears marks on account fill updates. Builder namespaces stay distinct; duplicate fills and invalid prices are filtered. The shared userFills stream currently retains up to 200 recent executions. Marker tests cover sides, deduplication, market isolation, stacking, and calendar alignment. No wallet transactions are involved.
+
+### Faster order book
+
+The order book defaults to Hyperliquid fast mode (five levels per side), with an explicit Fast · 5 / Depth · 20 toggle. The installed SDK omits the fast parameter from its request schema, so a small typed adapter sends it using the existing shared SDK transport and subscription lifecycle. No extra socket or HTTP polling is introduced. The panel renders current snapshots directly, with deferred rendering and its 16 ms subscription throttle removed. Out-of-order, duplicate-timestamp, and other-market snapshots are ignored. Focused tests verify outgoing fast/depth payloads, event filtering, and order book processing. Live latency comparison with Hyperliquid’s frontend was not available in this environment.
+
+### Restricted-jurisdiction screen
+
+Added the user's exact jurisdiction notice for US requests detected through Vercel's IP-country header, before trading providers mount. A same-origin, uncached Vercel function supports additional server-configured restricted countries. Generic fetch errors are not misclassified as geographic restrictions. Already-connected X1 derived key export remains available. Local Vite lacks Vercel country detection. Verified US/non-US/unknown-country responses, cache headers, unsupported methods, additional configured countries, restricted UI gating, and network-error separation (six tests). Production build and typecheck passed; live Vercel geolocation requires deployment.
+
+Per the follow-up request, Unit ETH/SOL deposit-address errors whose message is exactly “Failed to fetch” now display the user's full restricted-jurisdiction copy directly in the modal, including local Vite. Specific address-verification and other errors retain their original messages. This display rule is separate from IP detection: browser fetch failures can also have other causes.
+
+### Account tables and TradingView lines
+
+Trade History, Open Orders, TWAP, Funding History, Order History, and Balances now share compact content-width table spacing. Asset links outside Positions use the plain icon/name appearance from Balances rather than pills, and trade types use the table text size. Positive paid trading fees are neutral; rebates remain green.
+
+Trade and liquidation history links use the Hyperliquid explorer for the active network. Missing, malformed, and all-zero transaction hashes no longer produce an empty or invalid /explorer/tx link. The local production bundle was rebuilt; deployed sites require redeployment. Live explorer availability could not be verified from this environment.
+
+TradingView now renders live position entry and liquidation prices plus limit, TP, and SL open-order lines. Lines are locked and excluded from saved drawings, scoped to the connected account and market/dex, and removed on disconnect and chart replacement. Six focused tests verify price-line generation, account cleanup, and explorer URLs/hash validation. Typecheck and production build passed. Interactive visual validation with a live connected wallet was not available in this session.
+
+### Reference layouts for account tabs
+
+Order History now follows the supplied 13-column reference, with type/side/market filters, time sorting, remaining and filled sizes, remaining limit value, reduce-only, trigger/TP-SL details, status, and order ID. The historical-order accumulator retains separate status/timestamp events for the same order rather than replacing all transitions by order ID. No synthetic historical events are created.
+
+Open Orders follows the matching reference with original size, direction, order value sorting, type/side/market filters and per-row/selected/all cancellation. Existing cancellation submission logic and explicit user clicks are preserved. Account table styling remains gray and compact. The screenshot's amendment pencils were not added; this change does not introduce an order modification transaction flow.
+
+Funding History has Time/Market/Size/Side/Payment/Rate, side/market filters, time sorting, four-decimal payment/rate formatting, all-loaded record expansion, and CSV export. CSV preserves raw payment and rate values and protects against spreadsheet formulas. View All refers to the currently loaded feed buffer, not lifetime records.
+
+Balances has totals before available balances with token units, sortable USDC value, PNL percentage, asset filtering, hide-small controls and separate Send, Transfer, Contract and Swap columns. Existing Spot/Perps transfer and swap flows remain available; unsupported repayment and HyperEVM transfer controls were not added. Verified contract metadata links use viem's HyperEVM explorer configuration.
+
+Trade History now uses the full available table width and the reference's Type/Side/Role/Market and Aggregate controls, with the same Time-first layout and asset units. Aggregate is passed to Hyperliquid's aggregateByTime subscription option. Validation: typecheck and production build passed; 17 focused tests cover filters, order amount math, status-event keys, explicit cancel payloads, funding display/expansion, CSV escaping, balances units/sorting/filtering/contracts, and trade history filters/layout/links. No real-money actions were executed. Live browser visual verification remains outstanding.
+
+### Compact account header and restored withdrawal action
+
+Account filters/actions now render in a shared toolbar beside the tabs, scoped to the active tab; a single horizontally scrollable header replaces the separate filter row. Removed inherited tab-content top padding and reduced shared rows from 32px to 24px. Missing Direction, Trade Value and Closed PNL source messages were added to the locale catalogs to prevent hashed headings in production.
+
+Balances now shows Withdraw instead of Send and opens the existing native SOL/ETH withdrawal flow. The action remains visible for positive total balances even when available balance is zero; opening the modal does not bypass withdrawal amount or gas checks. ETH assets select ETH, other assets select SOL by default. This does not reinstate USDC-to-Arbitrum withdrawals. Tests verify portal filtering, interactions and the restored withdrawal button.
+
+### Wallet recipient detection and unified-account transfers
+
+Native withdrawal recipients now come from exposed native wallet accounts: Solana public keys and Ethereum eth_accounts, including injected and EIP-6963-discovered Ethereum wallets rather than only Phantom. A connected Ethereum account auto-selects ETH until the user explicitly changes the asset or starts signing. Account/lock/disconnect events and modal-scoped polling refresh recipients; locked/unavailable addresses clear with an unlock/reconnect message. A native Ethereum address can be detected while the Hyperliquid source connection is X1. The derived Hyperliquid Ethereum address is never silently substituted. Explicit reconnect requests wallet access only; no destination read signs a message or transaction. Final native account identity is rechecked before withdrawal submission.
+
+Unified and portfolio accounts do not offer a Perps-to-Spot transfer, since those balances are already shared. Balances labels the shared balance correctly, hides the invalid transfer action, and leaves Swap available for shared USDC. Opening the transfer modal in unified mode shows an explanation and submits no transfer. Native withdrawals from unified accounts use sendAsset with spot as the source and destination balance; standard accounts retain spotSend. No account mode is changed automatically.
+
+Latest validation: 14 focused tests passed, including injected Ethereum detection, ETH auto-selection/manual override, locked wallet handling and reconnect, unified transfer prevention, spot-source withdrawal payloads, and balance actions. Production build and typecheck run after integration. Real-wallet behavior remains unverified in this tool environment.
+
+### Swap USDC inside native withdrawals
+
+The withdrawal modal offers a USDC-to-USOL/UETH spot purchase when spendable spot USDC exists. Standard-mode perps USDC offers the existing transfer-to-spot modal first. The reusable spot swap opens locally over the withdrawal form, fixes the requested pair, reserves at least 1 USDC (or a higher quoted activation fee), accounts for the slippage limit in Max, and checks the resulting order notional before submission. Existing market-swap approval and error handling are retained. After a submitted swap, the user returns to the preserved withdrawal form and waits for live balances before choosing/reviewing the withdrawal amount. No withdrawal follows automatically. The activation-fee sell shortcut also uses a local swap so the parent withdrawal remains available.
+
+Validation: six focused tests passed for fixed pair selection, maximum-spend reserve at slippage bounds, explicit-only swap submission, return to the parent flow, and standard/unified withdrawal regressions. Production build and typecheck passed. No real swaps or withdrawals were executed.
+
+### Consolidated withdrawal modal
+
+Withdrawal, swap, transfer-to-spot, and reconnect now render as steps in one modal. Nested modal shells were removed from the withdrawal flow while the standalone global swap/transfer/wallet dialogs retain their existing wrappers. The withdrawal screen shows recipient, amount/available balance, minimum, concise fee/arrival/activation rows, and review/confirm. Swap uses a compact inline amount/estimated-receive/slippage/reserve view with a back action. Swap approval and withdrawal approval remain separate, and busy-state guards are preserved. Ten focused tests passed, including verification that the embedded swap creates no modal shell and replaces the withdrawal fields. Typecheck and production build passed.
+
+### Withdrawal tracking under Order History
+- Merged withdrawals into the desktop and mobile Order History table in chronological order. Withdrawal appears in Type and is available in the Type filter; asset, amount, destination network/recipient, status and explorer links share the existing order columns. No separate withdrawal table.
+- Fetches account-scoped Unit operations, filters outgoing SOL/ETH withdrawals, displays recipient/status/gross amount, and links to the actual recipient's Unit explorer and validated native transaction hash when available. Refreshes every 30 seconds and supports manual refresh.
+- Includes legacy USDC withdrawal ledger records with Hyperliquid transaction links. These show Submitted; a Hyperliquid ledger debit alone does not establish destination-chain delivery. Ordinary spot sends are not labeled withdrawals.
+- Unit API availability errors offer retry without suppressing ledger records. Historical coverage depends on records returned by Unit and the Hyperliquid ledger subscription; no lifetime pagination is claimed.
+- Verified parsing, account isolation, integer precision, transaction hash handling, rendered tracking links, order-history integration, TypeScript and production build. No financial transaction was submitted. Live Unit API access could not be verified from this sandbox.
+
+### Swap modal redesign
+- Reviewed Uniswap's documented swap screen and Jupiter's current swap page. Chose an amount-first layout with two rounded panels, right-aligned token pills, explicit Half/Max actions and a compact expandable rate/slippage summary.
+- Kept the terminal's gray/lavender palette, reduced the modal to 420px, removed nested input boxes and the large bordered quote-details block, and clarified that balances are on Hyperliquid spot.
+- Kept live spot-market order submission, token selection/reversal, withdrawal activation reserves and the existing consolidated withdrawal swap step. Estimated output is labeled; no fee/price-impact guarantees are fabricated.
+- Validated Half/Max, direction reversal, fixed-pair/reserve protection and withdrawal integration with targeted tests, TypeScript and production build. No live swap was submitted.
+- Design references: https://support.uniswap.org/hc/en-us/articles/39862756339341-Uniswap-Web-App-The-Swap-Screen and https://jup.ag/swap/SOL-USDC.
+
+### Shared desktop page scrolling
+- Removed the right sidebar's fixed-position pinning, viewport-height cap and independent vertical scroll container. Chart/account tables and the order-entry/account sidebar now move together with document scrolling.
+- Shared workspace height now accommodates the larger of analysis content and the sidebar's natural content height. ResizeObserver tracks order-form/account changes so lower controls remain reachable on shorter screens.
+- Preserved chart/table resizing and internal data-table/orderbook scrolling.
+- Opened the requested Hyperliquid HYPE reference URL; its JavaScript-rendered page exposes no readable layout through the available web reader, so live reference scroll behavior was not verified.
+- TypeScript and production build validation; no browser interaction test was available in this environment.
+
+### Vercel post-build install fix
+- Vercel completed the frontend build but its later function dependency install ran the root prepare lifecycle and failed on `lefthook install` without a Git checkout.
+- Replaced unconditional hook installation with `scripts/prepare-git-hooks.js`: skips Vercel, CI and directories without `.git`; preserves hook installation and error reporting in local Git checkouts.
+- Checked syntax, Vercel/CI/no-Git skip paths, and local success/failure propagation using a temporary hook stub. No dependency or frontend bundle changes; deployment must be rerun.
+
+### Hidden scrollbars
+- Hid native vertical/horizontal scrollbars throughout the terminal and the shared custom ScrollArea scrollbar controls.
+- Removed the document's reserved scrollbar gutter. Existing overflow, trackpad/wheel/touch scrolling, focus and keyboard behavior remain intact.
+- CSS-only change; validated with production build.
+
+### Compact Order History columns
+- Reduced horizontal cell/header padding from 6px left / 20px right to 4px per side in Order History, including withdrawal rows. Preserved labels, values and content-sized column widths.
+- CSS-class-only adjustment; production build validation.

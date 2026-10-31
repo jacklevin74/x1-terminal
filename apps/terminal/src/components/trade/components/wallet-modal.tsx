@@ -2,13 +2,12 @@ import { Modal, ModalContent, ModalPopup } from "@hypeterminal/ui";
 import { useState } from "react";
 import { useConnect, useConnectors } from "wagmi";
 
-export function WalletModal({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+export function WalletModal({ open, onOpenChange, embedded = false }: { open: boolean; onOpenChange: (open: boolean) => void; embedded?: boolean }) {
  const connectors = useConnectors();
  const { mutateAsync: connect, isPending } = useConnect();
  const [error, setError] = useState<string | null>(null);
  const [acknowledged, setAcknowledged] = useState(false);
- return <Modal open={open} onOpenChange={onOpenChange}>
-  <ModalPopup size="sm"><ModalContent>
+ const content = <ModalContent>
    <h2 className="text-lg font-semibold">Connect to X1 Terminal</h2>
    <p className="my-3 text-sm text-fg-muted">Choose your wallet. Your Hyperliquid account uses an Ethereum address.</p>
    <label className="flex gap-2 text-xs text-fg-muted my-4">
@@ -25,6 +24,7 @@ export function WalletModal({ open, onOpenChange }: { open: boolean; onOpenChang
     </button>)}
    </div>
    {error && <p role="alert" className="mt-3 text-sm text-error">{error}</p>}
-  </ModalContent></ModalPopup>
- </Modal>;
+  {embedded && <button type="button" onClick={() => onOpenChange(false)} className="mt-4 w-full text-xs text-fg-muted">Back to withdrawal</button>}
+  </ModalContent>;
+ return embedded ? content : <Modal open={open} onOpenChange={onOpenChange}><ModalPopup size="sm">{content}</ModalPopup></Modal>;
 }

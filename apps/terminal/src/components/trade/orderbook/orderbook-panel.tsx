@@ -1,24 +1,27 @@
+import { useOrderbookSubscription } from "@hypeterminal/hl-react";
 import { Dropdown, Tabs, TabsContent, TabsList, TabsTrigger } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { BookBookmarkIcon, ListDashesIcon } from "@phosphor-icons/react";
-import { useDeferredValue, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { getBaseQuoteFromPairName, getPercent } from "@/domain/market";
 import { formatNumber, szDecimalsToPriceDecimals } from "@/lib/format";
-import { useSelectedMarketInfo, useSubscription } from "@/lib/hyperliquid";
+import { useSelectedMarketInfo } from "@/lib/hyperliquid";
 import { useRenderCommitTrack } from "@/lib/performance/render-profile";
 import { toNumber } from "@/lib/trade/numbers";
 import { getMaxTotal, getPriceGroupingKey, getPriceGroupingOptions, processLevels } from "@/lib/trade/orderbook";
 import { useGlobalSettings, useGlobalSettingsActions } from "@/stores/use-global-settings-store";
 import { OrderbookRow } from "./orderbook-row";
 import { TradesPanel } from "./trades-panel";
-import { useOrderbookRows } from "./use-orderbook-rows";
+
 
 export function OrderbookPanel() {
 	useRenderCommitTrack("orderbook");
-	const [selectedOptionKey, setSelectedOptionKey] = useState<string | null>(null);
+	const [depth, setDepth] = useState<5 | 10 | 15 | 20>(15);
+ const fast = depth === 5;
+ const [selectedOptionKey, setSelectedOptionKey] = useState<string | null>(null);
 	const { showOrderbookInQuote } = useGlobalSettings();
 	const { setShowOrderbookInQuote } = useGlobalSettingsActions();
-	const [visibleRows, orderbookContainerRef] = useOrderbookRows();
+
 	const [tab, setTab] = useState("book");
 
 	const { data: selectedMarket } = useSelectedMarketInfo();
@@ -31,17 +34,14 @@ export function OrderbookPanel() {
 	const subscriptionParams = useMemo(
 		() => ({
 			coin: selectedMarket?.name ?? "",
+   fast,
 			nSigFigs: selectedOption?.nSigFigs ?? 5,
 			mantissa: selectedOption?.mantissa,
 		}),
-		[selectedMarket?.name, selectedOption?.mantissa, selectedOption?.nSigFigs],
+		[selectedMarket?.name, selectedOption?.mantissa, selectedOption?.nSigFigs, fast],
 	);
 
-	const { data: orderbook, status: orderbookStatus } = useSubscription("l2Book", subscriptionParams, {
-		enabled: !!selectedMarket?.name,
-	});
-
-	const deferredOrderbook = useDeferredValue(orderbook);
+ const { data: orderbook, status: orderbookStatus } = useOrderbookSubscription(subscriptionParams, !!selectedMarket?.name);
 
 	const { baseToken, quoteToken } = useMemo(() => {
 		if (!selectedMarket) return { baseToken: "", quoteToken: "" };
@@ -49,12 +49,12 @@ export function OrderbookPanel() {
 	}, [selectedMarket]);
 
 	const bids = useMemo(
-		() => processLevels(deferredOrderbook?.levels[0], visibleRows),
-		[deferredOrderbook?.levels, visibleRows],
+		() => processLevels(orderbook?.levels[0], depth),
+		[orderbook?.levels, depth],
 	);
 	const asks = useMemo(
-		() => processLevels(deferredOrderbook?.levels[1], visibleRows),
-		[deferredOrderbook?.levels, visibleRows],
+		() => processLevels(orderbook?.levels[1], depth),
+		[orderbook?.levels, depth],
 	);
 	const asksReversed = useMemo(() => {
 		const reversed = new Array(asks.length);
@@ -64,7 +64,7 @@ export function OrderbookPanel() {
 		return reversed;
 	}, [asks]);
 	const maxTotal = useMemo(() => getMaxTotal(bids, asks), [asks, bids]);
-	const spread = deferredOrderbook?.spread;
+	const spread = orderbook?.spread;
 	const spreadPct = getPercent(spread, selectedMarket?.markPx);
 
 	const szDecimals = selectedMarket?.szDecimals ?? 4;
@@ -90,6 +90,12 @@ export function OrderbookPanel() {
 			variant="underline"
 		>
 			<div className="flex items-center justify-between">
+    <label className="order-last shrink-0 px-2 text-2xs text-brand whitespace-nowrap" title="5 levels uses the fast feed; 10, 15, and 20 use the depth feed.">
+     <span className="sr-only">Order book depth per side</span>
+     <select aria-label="Order book depth per side" value={depth} onChange={event => setDepth(Number(event.target.value) as 5 | 10 | 15 | 20)} className="bg-surface cursor-pointer py-1 outline-none focus-visible:ring-1 focus-visible:ring-brand">
+      <option value={5}>Fast · 5</option><option value={10}>Depth · 10</option><option value={15}>Depth · 15</option><option value={20}>Depth · 20</option>
+     </select>
+    </label>
 				<TabsList className="w-full min-w-0">
 					<TabsTrigger value="book" aria-label={t`Order Book`} icon={<BookBookmarkIcon className="size-3.5" />}>
 						{t`Order Book`}
@@ -136,8 +142,9 @@ export function OrderbookPanel() {
 					</button>
 				</div>
 
-				<div ref={orderbookContainerRef} className="flex-1 min-h-0 flex flex-col overflow-hidden">
-					<div className="flex-1 min-h-0 flex flex-col justify-end">
+				<div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+					<div className="flex-1 min-h-0 flex flex-col-reverse overflow-y-auto" aria-label="Ask levels">
+      <div className="flex flex-col shrink-0">
 						{hasData && asks.length > 0 ? (
 							asksReversed.map((level) => (
 								<OrderbookRow
@@ -155,6 +162,7 @@ export function OrderbookPanel() {
 								{orderbookStatus === "error" ? t`Failed to load order book.` : t`Waiting for order book...`}
 							</div>
 						)}
+      </div>
 					</div>
 
 					<div
@@ -167,7 +175,7 @@ export function OrderbookPanel() {
 						</span>
 					</div>
 
-					<div className="flex-1 min-h-0 flex flex-col">
+					<div className="flex-1 min-h-0 flex flex-col overflow-y-auto" aria-label="Bid levels">
 						{hasData &&
 							bids.map((level) => (
 								<OrderbookRow

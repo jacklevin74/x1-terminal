@@ -1,3 +1,4 @@
+import { useKlineExecutions } from "./use-kline-executions";
 import type { Chart, KLineData } from "klinecharts";
 import { dispose, FormatDateType, init, LoadDataType } from "klinecharts";
 import { useEffect, useRef, useState } from "react";
@@ -251,7 +252,8 @@ export function KlineChart({
 		}
 	}, [candleData.data]);
 
-	useKlineOrderOverlays({ chartRef, symbol });
+	useKlineExecutions(chartRef, symbol, activeInterval.barMs);
+ useKlineOrderOverlays({ chartRef, symbol });
 	useKlinePositionOverlays({ chartRef, symbol, dex: positionDex });
 
 	return (

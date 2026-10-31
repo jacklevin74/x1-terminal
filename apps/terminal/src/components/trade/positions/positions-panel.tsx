@@ -1,5 +1,6 @@
+import { AccountToolbarContext } from "./account-table-toolbar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@hypeterminal/ui";
-import { Suspense, useMemo, useTransition } from "react";
+import { Suspense, useMemo, useState, useTransition } from "react";
 import { useConnection } from "wagmi";
 import { Spinner } from "@/components/ui/spinner";
 import { HL_ALL_DEXS } from "@/config/app";
@@ -12,7 +13,7 @@ import { useRenderCommitTrack } from "@/lib/performance/render-profile";
 import { toNumberOrZero } from "@/lib/trade/numbers";
 import { useGlobalSettingsActions, usePositionsActiveTab } from "@/stores/use-global-settings-store";
 
-const tabContentBaseClass = "flex-1 min-h-0 flex flex-col mt-0";
+const tabContentBaseClass = "flex-1 min-h-0 flex flex-col mt-0 !pt-0";
 
 const BalancesTab = createLazyComponent(() => import("./balances-tab"), "BalancesTab");
 const FundingTab = createLazyComponent(() => import("./funding-tab"), "FundingTab");
@@ -25,6 +26,7 @@ const TwapTab = createLazyComponent(() => import("./twap-tab"), "TwapTab");
 export function PositionsPanel() {
 	useRenderCommitTrack("positions-table");
 	const activeTab = usePositionsActiveTab();
+ const [toolbarTarget, setToolbarTarget] = useState<HTMLDivElement | null>(null);
 	const { setPositionsActiveTab } = useGlobalSettingsActions();
 	const [isPending, startTransition] = useTransition();
 	const { address, isConnected } = useConnection();
@@ -75,6 +77,7 @@ export function PositionsPanel() {
 	}
 
 	return (
+  <AccountToolbarContext.Provider value={{ target: toolbarTarget, activeTab }}>
 		<div className="h-full flex flex-col overflow-hidden bg-surface">
 			<Tabs
 				value={activeTab}
@@ -83,7 +86,8 @@ export function PositionsPanel() {
 				size="sm"
 				variant="underline"
 			>
-				<div className="overflow-x-auto scrollbar-none px-2 pt-1.5 pb-1">
+    <div className="flex shrink-0 items-center gap-3 border-b border-stroke-weak px-1.5">
+				<div className="min-w-0 flex-1 overflow-x-auto scrollbar-none">
 					<TabsList className="min-w-max gap-1">
 						{POSITIONS_TABS.map((tab) => {
 							const count = getTabCount(tab.value);
@@ -101,6 +105,8 @@ export function PositionsPanel() {
 						})}
 					</TabsList>
 				</div>
+     <div ref={setToolbarTarget} className="min-w-0 max-w-[55%] shrink-0 overflow-x-auto scrollbar-none" />
+    </div>
 				<TabsContent value="balances" className={tabContentClass}>
 					<Suspense fallback={<TabLoadingFallback />}>
 						<BalancesTab />
@@ -138,6 +144,7 @@ export function PositionsPanel() {
 				</TabsContent>
 			</Tabs>
 		</div>
+  </AccountToolbarContext.Provider>
 	);
 }
 

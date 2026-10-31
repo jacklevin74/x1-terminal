@@ -96,3 +96,9 @@ The desktop Positions table now uses Market, Size, Position Value, Entry Price, 
 The main Deposit dialog always displays the verified SOL destination address with a copy button. When SOL is selected, it also automatically loads the connected native wallet’s balance and displays Amount, Max, and Deposit directly in the same dialog. The destination remains visible while an amount is entered. The destination is Unit’s address for the connected Hyperliquid account, not the wallet’s source address.
 
 X1 accounts reconnect across page refreshes from the tab’s existing session key, without a new message signature. The application observes native account changes and discards mismatched or invalid cached sessions. Explicit Disconnect clears the session and stays disconnected after refresh. Wallet initialization events trigger another reconnect check when the extension injects late. Derived private keys remain in sessionStorage only; they are not persisted across closed sessions.
+
+### Restricted-jurisdiction notice
+
+Vercel deployments check `/api/jurisdiction` before mounting trading providers. The endpoint uses Vercel’s `x-vercel-ip-country` header and blocks US access with the configured restriction message. Additional ISO country codes can be supplied in the server-only `RESTRICTED_COUNTRIES` environment variable (comma-separated); US is always included. Responses are not cached. Existing connected X1 accounts can still export their derived key from the notice screen.
+
+Local Vite does not supply IP-country headers. A missing location endpoint, unknown country, or ordinary fetch failure is not treated as proof of a restricted location; upstream service eligibility restrictions still apply. Deploy the function and frontend together for the country-based notice.

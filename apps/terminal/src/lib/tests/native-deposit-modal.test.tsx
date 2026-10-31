@@ -44,3 +44,15 @@ it("shows an ETH address and supports entering a SOL amount directly without tra
  expect(state.send).toHaveBeenCalledWith("9SLPTL41SPsYkgdsMzdfJsxymEANKr5bYoBsQzJyKpKS", "1.89999", expect.any(Function), expect.any(Function), { kind: "x1", expectedAddress: "9SLPTL41SPsYkgdsMzdfJsxymEANKr5bYoBsQzJyKpKS" });
  await act(async () => root.unmount()); node.remove(); client.clear();
 });
+it("replaces a wrapped Failed to fetch in the deposit address panel with the restriction message", async () => {
+ const { RESTRICTED_JURISDICTION_MESSAGE } = await import("../jurisdiction");
+ state.sol.mockRejectedValueOnce(new Error("Request failed", { cause: new TypeError("Failed to fetch") }));
+ const node = document.createElement("div"); document.body.append(node); const root = createRoot(node);
+ const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+ await act(async () => root.render(createElement(QueryClientProvider, { client }, createElement(NativeDepositModal, { open: true, onClose: vi.fn() }))));
+ await act(async () => { const select = node.querySelector("select")!; select.value = "SOL"; select.dispatchEvent(new Event("change", { bubbles: true })); });
+ await act(async () => { await new Promise(resolve => setTimeout(resolve, 30)); });
+ expect(node.querySelector('[role="alert"]')?.textContent).toContain(RESTRICTED_JURISDICTION_MESSAGE);
+ expect(node.textContent).not.toContain("Failed to fetch");
+ await act(async () => root.unmount()); node.remove(); client.clear();
+});

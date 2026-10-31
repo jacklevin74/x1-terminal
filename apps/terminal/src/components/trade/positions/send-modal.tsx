@@ -1,3 +1,4 @@
+import { NativeWithdrawForm } from "./native-withdraw-form";
 import {
 	Button,
 	Modal,
@@ -12,6 +13,7 @@ import {
 import { t } from "@lingui/core/macro";
 import { PaperPlaneTiltIcon, SpinnerGapIcon, WarningCircleIcon } from "@phosphor-icons/react";
 import { type ChangeEvent, useCallback, useMemo, useState } from "react";
+import { useConnection } from "wagmi";
 import { isAddress } from "viem";
 import { NumberInput } from "@/components/ui/number-input";
 import { DEFAULT_QUOTE_TOKEN } from "@/config/app";
@@ -61,6 +63,8 @@ interface BodyProps {
 
 function SendModalBody({ onOpenChange, initialAsset, initialAccountType }: BodyProps) {
 	const [destination, setDestination] = useState("");
+ const [withdrawSol, setWithdrawSol] = useState(false);
+ const { address: connectedAddress, connector } = useConnection();
 	const [accountType, setAccountType] = useState<AccountType>(initialAccountType);
 	const [selectedToken, setSelectedToken] = useState(initialAsset);
 	const [amount, setAmount] = useState("");
@@ -180,6 +184,7 @@ function SendModalBody({ onOpenChange, initialAsset, initialAccountType }: BodyP
 		label: tokenName,
 	}));
 
+	if (withdrawSol) return <NativeWithdrawForm key={`${connectedAddress}:${connector?.id}`} asset={selectedToken === "UETH" ? "ETH" : "SOL"} onBack={() => setWithdrawSol(false)} />;
 	return (
 		<>
 			<ModalHeader>
@@ -189,6 +194,7 @@ function SendModalBody({ onOpenChange, initialAsset, initialAccountType }: BodyP
 
 			<ModalContent>
 				<div className="space-y-4">
+     {accountType === "spot" && (selectedToken === "USOL" || selectedToken === "UETH") && <Button variant="outline" className="w-full" onClick={() => setWithdrawSol(true)}>Withdraw {selectedToken === "USOL" ? "SOL to connected wallet" : "ETH to Ethereum"}</Button>}
 					<TextInput
 						placeholder={t`Destination address`}
 						value={destination}

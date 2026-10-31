@@ -44,6 +44,7 @@ export function ChartPanel() {
 				<ClientOnly>
 					<Suspense fallback={<ChartLoadingFallback />}>
 						<TradingViewChart
+       positionDex={getPositionDex(selectedMarket)}
 							symbol={selectedMarket.name}
 							theme={chartTheme}
 							onSwitchToDefault={() => setChartType("default")}

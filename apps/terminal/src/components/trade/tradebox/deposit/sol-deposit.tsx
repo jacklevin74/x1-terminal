@@ -1,3 +1,4 @@
+import { formatDepositAddressError } from "@/lib/jurisdiction";
 import { NativeDepositIntro } from "./native-deposit-intro";
 import { readSolDepositBalance } from "@/lib/solana/deposit-balance";
 import { formatSolLamports, getSolSourceWallet, type SolSourceKind } from "@/lib/solana/source-wallet";
@@ -84,12 +85,12 @@ function SolDepositAccount({ recipient, compact }: { recipient: `0x${string}`; c
  return <div className="space-y-3 text-sm">
   {!compact && <NativeDepositIntro asset="SOL" chain="Solana" fee={fees.data?.fee} eta={fees.data?.eta} />}
   {deposit.isPending && <p role="status">Generating and verifying your SOL deposit address…</p>}
-  {deposit.error && <div role="alert" className="text-error"><p>{deposit.error.message}</p><Button size="sm" onClick={() => void deposit.refetch()}>Retry address</Button></div>}
+  {deposit.error && <div role="alert" className="text-error"><p>{formatDepositAddressError(deposit.error)}</p><Button size="sm" onClick={() => void deposit.refetch()}>Retry address</Button></div>}
   {(connector?.id === "phantom" || connector?.id === "x1") && deposit.data && !signature && <>
    <div className="flex items-center justify-between gap-2 text-xs text-fg-muted">
     <span>{walletName}</span><span className="tabular-nums">{balance ? `Available: ${formatSolLamports(balance.lamports)} SOL` : balanceQuery.error ? "Balance unavailable" : "Loading balance…"}</span>
    </div>
-   {balanceQuery.error && <p role="alert" className="text-xs text-error">{balanceQuery.error.message} <button type="button" className="underline" onClick={() => void balanceQuery.refetch()}>Retry</button></p>}
+   {balanceQuery.error && <p role="alert" className="text-xs text-error">{formatDepositAddressError(balanceQuery.error)} <button type="button" className="underline" onClick={() => void balanceQuery.refetch()}>Retry</button></p>}
    <div className="flex h-12 items-center gap-3 rounded-lg border border-stroke-weak px-3">
     <label htmlFor="sol-deposit-amount" className="shrink-0 text-sm text-fg-muted">Amount</label>
     <input id="sol-deposit-amount" aria-label="SOL deposit amount" inputMode="decimal" value={amount} onChange={e => setAmount(e.target.value)} placeholder="0.00" disabled={sending || !balance} className="min-w-0 flex-1 bg-transparent text-right text-sm text-fg outline-none disabled:opacity-40" />
@@ -98,7 +99,7 @@ function SolDepositAccount({ recipient, compact }: { recipient: `0x${string}`; c
    {amountError && <p role="alert" className="text-xs text-error">{amountError}</p>}
    <Button variant="filled" intent="brand" className="h-12 w-full" onClick={() => void send()} disabled={sending || readingBalance || !balance || !amount || !!amountError}>{sending ? "Confirm in wallet…" : "Deposit"}</Button>
   </>}
-  {error && <p role="alert" className="text-xs text-error">{error}</p>}
+  {error && <p role="alert" className="text-xs text-error">{formatDepositAddressError(error)}</p>}
   {signature && <p role="status" className="text-xs">{confirmationNotice ?? (confirmed ? "Solana transfer confirmed. Unit is processing your deposit; check your SOL spot balance for arrival." : "Solana transfer submitted. Check transaction status before retrying.")} <a href={`https://solscan.io/tx/${signature}`} target="_blank" rel="noopener noreferrer" className="underline">View transaction</a></p>}
   {!compact && deposit.data && <details className="border-t border-stroke-weak pt-3 text-xs text-fg-muted">
    <summary className="cursor-pointer text-brand">Deposit from another wallet</summary>

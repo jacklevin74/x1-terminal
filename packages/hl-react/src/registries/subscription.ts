@@ -48,14 +48,14 @@ const ACCUMULATING_SUBS: Partial<Record<SubMethod, AccumulateConfig>> = {
 	}),
 	userHistoricalOrders: defineAccumulator<
 		{ orderHistory: unknown[]; isSnapshot?: boolean },
-		{ order: { oid: number }; statusTimestamp: number }
+		{ order: { oid: number }; statusTimestamp: number; status?: string }
 	>({
-		getItems: (event) => event.orderHistory as { order: { oid: number }; statusTimestamp: number }[],
+		getItems: (event) => event.orderHistory as { order: { oid: number }; statusTimestamp: number; status?: string }[],
 		withItems: (event, items) => ({ ...event, orderHistory: items }),
 		isSnapshot: (event) => event.isSnapshot === true,
 		buffer: {
 			maxSize: 500,
-			getKey: (o) => String(o.order.oid),
+			getKey: (o) => `${o.order.oid}:${o.statusTimestamp}:${o.status ?? ""}`,
 			compare: (a, b) => b.statusTimestamp - a.statusTimestamp,
 		},
 	}),

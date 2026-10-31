@@ -23,7 +23,9 @@ export function MainWorkspace() {
 	const { scope } = useExchangeScope();
 	const { setSelectedMarket } = useMarketActions();
 	const [marketBodyMinHeightPx, setMarketBodyMinHeightPx] = useState<number>(PANEL_LAYOUT.ANALYSIS.minHeightPx);
-	const marketBodyHeight = `max(calc(100dvh - 9.375rem), ${marketBodyMinHeightPx}px)`;
+	const [sidebarMinHeightPx, setSidebarMinHeightPx] = useState(0);
+ const sharedMinHeightPx = Math.max(marketBodyMinHeightPx, sidebarMinHeightPx);
+ const marketBodyHeight = `max(calc(100dvh - 9.375rem), ${sharedMinHeightPx}px)`;
 
 	const handleAnalysisHeightChange = useCallback((heightPx: number) => {
 		setMarketBodyMinHeightPx(Math.max(PANEL_LAYOUT.ANALYSIS.minHeightPx, Math.ceil(heightPx)));
@@ -49,7 +51,7 @@ export function MainWorkspace() {
 				className="min-h-0 shrink-0"
 				defaultLayout={defaultLayout}
 				onLayoutChanged={onLayoutChanged}
-				style={{ height: marketBodyHeight, minHeight: marketBodyMinHeightPx }}
+				style={{ height: marketBodyHeight, minHeight: sharedMinHeightPx }}
 			>
 				<ResizablePanel defaultSize={analysis.defaultSize} minSize={analysis.minSize}>
 					<div className="h-full flex flex-col bg-surface">
@@ -65,7 +67,7 @@ export function MainWorkspace() {
 				<ResizableHandle withHandle />
 				<ResizablePanel defaultSize={sidebar.defaultSize} minSize={sidebar.minSize}>
 					<Suspense fallback={<SidebarSkeleton />}>
-						<TradeSidebar />
+						<TradeSidebar onDesiredHeightChange={setSidebarMinHeightPx} />
 					</Suspense>
 				</ResizablePanel>
 			</ResizablePanelGroup>

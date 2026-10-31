@@ -1,7 +1,8 @@
+import { hasUnifiedSpotBalance } from "@/lib/trade/account-mode";
 import { Button, Modal, ModalContent, ModalDescription, ModalHeader, ModalPopup, ModalTitle } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { ArrowsLeftRightIcon, SpinnerGapIcon, WarningCircleIcon } from "@phosphor-icons/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useConnection } from "wagmi";
 import { NumberInput } from "@/components/ui/number-input";
 import { DEFAULT_QUOTE_TOKEN } from "@/config/app";
@@ -37,11 +38,13 @@ export function TransferModal({ open, onOpenChange, initialDirection = "toSpot" 
 }
 
 interface BodyProps {
+ embedded?: boolean;
+ onBusyChange?: (busy: boolean) => void;
 	onOpenChange: (open: boolean) => void;
 	initialDirection: TransferDirection;
 }
 
-function TransferModalBody({ onOpenChange, initialDirection }: BodyProps) {
+export function TransferModalBody({ onOpenChange, initialDirection, embedded = false, onBusyChange }: BodyProps) {
 	const [direction, setDirection] = useState<TransferDirection>(initialDirection);
 	const [amount, setAmount] = useState("");
 	const [error, setError] = useState<string | null>(null);
@@ -49,7 +52,10 @@ function TransferModalBody({ onOpenChange, initialDirection }: BodyProps) {
 	const { address } = useConnection();
 	const { getToken } = useSpotTokens();
 	const { mutateAsync: sendAsset, isPending } = useExchange("sendAsset");
+ useEffect(() => { onBusyChange?.(isPending); return () => onBusyChange?.(false); }, [isPending, onBusyChange]);
 	const { withdrawable, spotBalances, spotAvailableAfterMaintenance, accountAbstraction } = useDefaultDexBalances();
+
+	const unified = hasUnifiedSpotBalance(accountAbstraction);
 
 	const usdcTokenInfo = getToken(DEFAULT_QUOTE_TOKEN);
 	const usdcTokenId = usdcTokenInfo ? formatTokenId(usdcTokenInfo) : "";
@@ -62,7 +68,7 @@ function TransferModalBody({ onOpenChange, initialDirection }: BodyProps) {
 			? Number(getNormalizedWithdrawable(withdrawable, spotBalances, spotAvailableAfterMaintenance, accountAbstraction))
 			: getSpotAvailable(spotUsdcBal, spotAvailableAfterMaintenance);
 
-	const isValidAmount = isAmountWithinBalance(amount, availableBalanceValue) && !!address && !!usdcTokenId;
+	const isValidAmount = isAmountWithinBalance(amount, availableBalanceValue) && !!address && !!usdcTokenId && !unified;
 
 	const fromLabel = direction === "toSpot" ? t`Perp` : t`Spot`;
 	const toLabel = direction === "toSpot" ? t`Spot` : t`Perp`;
@@ -99,6 +105,19 @@ function TransferModalBody({ onOpenChange, initialDirection }: BodyProps) {
 	function handleMaxClick() {
 		setAmount(floorToString(availableBalanceValue, usdcDecimals));
 	}
+
+ if (unified) return <><ModalHeader><ModalTitle>Shared spot and perps balance</ModalTitle></ModalHeader><ModalContent>
+  <p className="text-sm text-fg-muted">Your account uses a unified balance. Your USDC is already available to both spot and perps trading; no transfer to spot is needed.</p>
+  <p className="mt-3 text-sm text-fg-muted">Existing orders and margin requirements still limit the amount available to spend or withdraw.</p>
+  <Button className="mt-4 w-full" onClick={() => onOpenChange(false)}>Close</Button>
+ </ModalContent></>;
+ if (embedded) return <><ModalHeader className="sr-only"><ModalTitle>Move USDC to spot</ModalTitle></ModalHeader><ModalContent className="space-y-4 !pt-3">
+  <div className="flex items-center justify-between text-sm"><span>Move USDC to spot</span><span className="text-xs text-fg-muted">{floorToString(availableBalanceValue, usdcDecimals)} USDC available</span></div>
+  <NumberInput aria-label="Transfer USDC amount" value={amount} onChange={e => handleAmountChange(e.target.value)} disabled={isPending} placeholder="0.00" label="Amount (USDC)" labelValue="Max" onLabelValueClick={handleMaxClick} />
+  {error && <p role="alert" className="text-xs text-error">{error}</p>}
+  <Button className="w-full" disabled={!isValidAmount || isPending} onClick={handleTransfer}>{isPending ? "Transferring…" : "Confirm transfer"}</Button>
+  <button type="button" disabled={isPending} onClick={() => onOpenChange(false)} className="w-full text-xs text-fg-muted disabled:opacity-40">Back to withdrawal</button>
+ </ModalContent></>;
 
 	return (
 		<>

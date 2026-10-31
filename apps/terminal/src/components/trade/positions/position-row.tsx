@@ -1,3 +1,4 @@
+import { positionViewCellClass } from "./positions-panel-table-styles";
 import { PositionPnlShare } from "./position-pnl-share";
 import { TableCell, TableRow, Tooltip } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
@@ -50,7 +51,7 @@ export function PositionRow({
  const symbol = market?.shortName ?? p.coin.split(":").pop() ?? p.coin;
  const dex = p.coin.includes(":") ? p.coin.split(":")[0] : null;
  const sideClass = isLong ? "text-[#a2f9e5]" : "text-[#ff8da4]";
- const cellClass = "h-8 px-1.5 py-1 text-left text-xs leading-5 tabular-nums whitespace-nowrap text-[#e4f0ef]";
+ const cellClass = positionViewCellClass;
 
 	const liqPx = toBig(p.liquidationPx)?.toNumber();
 	const liqIsNear =

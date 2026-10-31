@@ -439,7 +439,7 @@
 
   html {
     height: 100%;
-    scrollbar-gutter: stable;
+    scrollbar-gutter: auto;
   }
 
   body {
@@ -539,4 +539,20 @@
       background-color: oklch(from var(--text-error) l c h / 0.12);
     }
   }
+}
+
+/* Keep every pane scrollable without native or custom scrollbar chrome. */
+* {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+[data-slot="scroll-area-scrollbar"] {
+  display: none !important;
 }

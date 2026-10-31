@@ -1,3 +1,4 @@
+import { JurisdictionGate } from "@/components/trade/components/jurisdiction-gate";
 import { useEffect } from "react";
 import { reconnect } from "@wagmi/core";
 import { HyperliquidProvider, PERSISTED_QUERY_PREFIX } from "@hypeterminal/hl-react";
@@ -61,7 +62,7 @@ export function RootProvider({ children, queryClient }: { children: React.ReactN
 			<WagmiProvider config={config}>
 				<QueryClientProvider client={queryClient}>
 					<I18nProvider i18n={i18n}>
-						<HyperliquidBridge>{children}</HyperliquidBridge>
+						<JurisdictionGate><HyperliquidBridge>{children}</HyperliquidBridge></JurisdictionGate>
 					</I18nProvider>
 				</QueryClientProvider>
 			</WagmiProvider>
@@ -82,7 +83,7 @@ export function RootProvider({ children, queryClient }: { children: React.ReactN
 				}}
 			>
 				<I18nProvider i18n={i18n}>
-					<HyperliquidBridge>{children}</HyperliquidBridge>
+					<JurisdictionGate><HyperliquidBridge>{children}</HyperliquidBridge></JurisdictionGate>
 				</I18nProvider>
 			</PersistQueryClientProvider>
 		</WagmiProvider>

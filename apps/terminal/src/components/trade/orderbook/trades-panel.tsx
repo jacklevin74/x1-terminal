@@ -1,10 +1,11 @@
+import { getHyperliquidTxUrl as getExplorerTxUrl } from "@/lib/explorer";
 import { t } from "@lingui/core/macro";
 import { ArrowSquareOutIcon, ArrowsLeftRightIcon } from "@phosphor-icons/react";
 import { memo, useMemo } from "react";
 import { getBaseQuoteFromPairName } from "@/domain/market";
 import { cn } from "@/lib/cn";
 import { formatNumber } from "@/lib/format";
-import { getExplorerTxUrl, useSelectedMarketInfo, useSubscription } from "@/lib/hyperliquid";
+import { useSelectedMarketInfo, useSubscription } from "@/lib/hyperliquid";
 import { type ProcessedTrade, processTrades } from "@/lib/trade/trades";
 import { useGlobalSettings, useGlobalSettingsActions } from "@/stores/use-global-settings-store";
 

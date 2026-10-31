@@ -3445,3 +3445,12 @@ msgstr ""
 #: src/components/trade/components/mobile-agent-sync-modal.tsx:280
 msgid "Your wallet approves one trading key for this phone. It cannot withdraw funds."
 msgstr ""
+
+msgid "Direction"
+msgstr "Direction"
+
+msgid "Trade Value"
+msgstr "Trade Value"
+
+msgid "Closed PNL"
+msgstr "Closed PNL"

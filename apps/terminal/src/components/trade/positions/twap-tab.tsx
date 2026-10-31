@@ -1,3 +1,4 @@
+import { AccountTableToolbar } from "./account-table-toolbar";
 import { Button, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { useMemo } from "react";
@@ -15,13 +16,12 @@ import { useMarketActions } from "@/stores/use-market-store";
 import { AssetBadge } from "../components/asset-badge";
 import { Placeholder } from "./placeholder";
 import {
-	positionsPanelRowHoverClass,
-	positionsPanelRowStripeClass,
-	positionsPanelTableBodyClass,
-	positionsPanelTableCaptionRowClass,
-	positionsPanelTableCellClass,
-	positionsPanelTableHeadClass,
-	positionsPanelTableHeaderClass,
+	positionViewRowClass as positionsPanelRowHoverClass,
+	positionViewBodyClass as positionsPanelTableBodyClass,
+	positionViewCellClass as positionsPanelTableCellClass,
+	positionViewHeadClass as positionsPanelTableHeadClass,
+ positionsPanelTableLayoutClass,
+	positionViewHeaderClass as positionsPanelTableHeaderClass,
 	positionsPanelTableHeaderRowClass,
 	positionsPanelTableShellClass,
 	positionsPanelTabRootClass,
@@ -64,59 +64,59 @@ export function TwapTab() {
 
 	return (
 		<div className={positionsPanelTabRootClass}>
-			<div className={positionsPanelTableCaptionRowClass}>
+			<AccountTableToolbar tab="twap">
 				{headerCount ? <span className="tabular-nums text-3xs text-fg-muted">{headerCount}</span> : null}
-			</div>
+			</AccountTableToolbar>
 			<div className={positionsPanelTableShellClass}>
 				{placeholder ?? (
 					<ScrollArea className="h-full w-full">
-						<Table className="table-fixed min-w-[58rem] w-full">
+						<Table className={positionsPanelTableLayoutClass}>
 							<TableHeader className={positionsPanelTableHeaderClass}>
 								<TableRow className={positionsPanelTableHeaderRowClass}>
-									<TableHead scope="col" size="dense" className={cn(positionsPanelTableHeadClass, "w-[18%] text-left")}>
+									<TableHead scope="col" size="dense" className={cn(positionsPanelTableHeadClass, "text-left")}>
 										{t`Asset`}
 									</TableHead>
 									<TableHead
 										scope="col"
 										size="dense"
-										className={cn(positionsPanelTableHeadClass, "w-[10%] text-right")}
+										className={cn(positionsPanelTableHeadClass, "text-right")}
 									>
 										{t`Size`}
 									</TableHead>
 									<TableHead
 										scope="col"
 										size="dense"
-										className={cn(positionsPanelTableHeadClass, "w-[10%] text-right")}
+										className={cn(positionsPanelTableHeadClass, "text-right")}
 									>
 										{t`Executed`}
 									</TableHead>
 									<TableHead
 										scope="col"
 										size="dense"
-										className={cn(positionsPanelTableHeadClass, "w-[14%] text-right")}
+										className={cn(positionsPanelTableHeadClass, "text-right")}
 									>
 										{t`Avg Price`}
 									</TableHead>
-									<TableHead scope="col" size="dense" className={cn(positionsPanelTableHeadClass, "w-[14%] text-left")}>
+									<TableHead scope="col" size="dense" className={cn(positionsPanelTableHeadClass, "text-left")}>
 										{t`Time / Total`}
 									</TableHead>
-									<TableHead scope="col" size="dense" className={cn(positionsPanelTableHeadClass, "w-[10%] text-left")}>
+									<TableHead scope="col" size="dense" className={cn(positionsPanelTableHeadClass, "text-left")}>
 										{t`Reduce Only`}
 									</TableHead>
-									<TableHead scope="col" size="dense" className={cn(positionsPanelTableHeadClass, "w-[14%] text-left")}>
+									<TableHead scope="col" size="dense" className={cn(positionsPanelTableHeadClass, "text-left")}>
 										{t`Created`}
 									</TableHead>
 									<TableHead
 										scope="col"
 										size="dense"
-										className={cn(positionsPanelTableHeadClass, "w-[10%] text-right")}
+										className={cn(positionsPanelTableHeadClass, "text-right")}
 									>
 										{t`Actions`}
 									</TableHead>
 								</TableRow>
 							</TableHeader>
 							<TableBody className={positionsPanelTableBodyClass}>
-								{activeOrders.map(({ twapId, state }, i) => {
+								{activeOrders.map(({ twapId, state }) => {
 									const isBuy = state.side === "B";
 									const totalSize = toBig(state.sz)?.toNumber() ?? Number.NaN;
 									const executedSize = toBig(state.executedSz)?.toNumber() ?? 0;
@@ -128,10 +128,11 @@ export function TwapTab() {
 									return (
 										<TableRow
 											key={twapId}
-											className={cn(positionsPanelRowHoverClass, i % 2 === 1 && positionsPanelRowStripeClass)}
+											className={positionsPanelRowHoverClass}
 										>
 											<TableCell size="dense" className={cn(positionsPanelTableCellClass, "font-medium text-fg")}>
 												<AssetBadge
+              appearance="position"
 													coin={state.coin}
 													side={isBuy ? "buy" : "sell"}
 													onClick={() => setSelectedMarket(scope, state.coin)}

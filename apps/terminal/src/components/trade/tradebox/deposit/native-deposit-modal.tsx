@@ -1,3 +1,4 @@
+import { formatDepositAddressError } from "@/lib/jurisdiction";
 import { SolDeposit } from "./sol-deposit";
 import { Button, Modal, ModalContent, ModalHeader, ModalPopup, ModalTitle } from "@hypeterminal/ui";
 import { CopyIcon, CheckIcon } from "@phosphor-icons/react";
@@ -34,7 +35,7 @@ export function NativeDepositModal({ open, onClose }: { open: boolean; onClose: 
      : <>
       <label className="flex h-12 items-center justify-between rounded-lg border border-stroke-weak px-3 text-sm"><span className="text-fg-muted">Asset</span><select aria-label="Deposit asset" value={asset} onChange={e => setAsset(e.target.value as "ETH" | "SOL")} className="bg-transparent py-2 pl-4 text-right text-fg outline-none"><option value="ETH">ETH</option><option value="SOL">SOL</option></select></label>
       <div className="flex h-12 items-center justify-between rounded-lg border border-stroke-weak px-3 text-sm"><span className="text-fg-muted">Deposit Chain</span><span className="text-fg">{chain}</span></div>
-      {deposit.error ? <div role="alert" className="space-y-2 text-sm text-error"><p>{deposit.error.message}</p><Button variant="outline" size="sm" onClick={() => void deposit.refetch()}>Retry address</Button></div>
+      {deposit.error ? <div role="alert" className="space-y-2 text-sm text-error"><p>{formatDepositAddressError(deposit.error)}</p><Button variant="outline" size="sm" onClick={() => void deposit.refetch()}>Retry address</Button></div>
        : <button type="button" disabled={!deposit.data} aria-label={`Copy ${asset} deposit address`} title={deposit.data} className="flex min-h-12 w-full items-center justify-center gap-3 rounded-lg bg-fill-weak px-3 py-3 text-sm font-medium text-fg disabled:opacity-50" onClick={async () => {
         if (!deposit.data) return;
         try { await navigator.clipboard.writeText(deposit.data); setCopied(true); setCopyError(false); } catch { setCopyError(true); }

@@ -28,7 +28,7 @@
     "fix": "biome check --write",
     "i18n:extract": "pnpm --filter @hypeterminal/terminal i18n:extract",
     "i18n:compile": "pnpm --filter @hypeterminal/terminal i18n:compile",
-    "prepare": "lefthook install",
+    "prepare": "node scripts/prepare-git-hooks.js",
     "deploy:vercel": "sh scripts/deploy-vercel.sh"
   },
   "devDependencies": {

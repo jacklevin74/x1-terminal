@@ -50,3 +50,20 @@ it("restores when X1 injects late, without a signature prompt", async () => {
  expect(await reloaded.getX1Provider()!.request({ method: "eth_accounts" })).toEqual(addresses);
  expect(provider.connect).not.toHaveBeenCalled(); expect(provider.signMessage).not.toHaveBeenCalled();
 });
+it("exports only the connected derived account key", async () => {
+ wallet(); const module = await import("../x1/provider");
+ const addresses = await module.getX1Provider()!.request({ method: "eth_requestAccounts" }) as string[];
+ expect(module.exportX1PrivateKey(addresses[0])).toBe(sessionStorage.getItem(module.DERIVED_KEY_STORAGE));
+ expect(() => module.exportX1PrivateKey(`0x${"12".repeat(20)}`)).toThrow("No matching derived key");
+ module.clearX1Session();
+ expect(() => module.exportX1PrivateKey(addresses[0])).toThrow("No matching derived key");
+});
+it("refuses export after the native wallet changes or cached key is replaced", async () => {
+ const { provider } = wallet(); const module = await import("../x1/provider");
+ const addresses = await module.getX1Provider()!.request({ method: "eth_requestAccounts" }) as string[];
+ sessionStorage.setItem(module.DERIVED_KEY_STORAGE, `0x${"ab".repeat(32)}`);
+ expect(() => module.exportX1PrivateKey(addresses[0])).toThrow("No matching derived key");
+ provider.publicKey = { toBase58: () => "another-owner" };
+ expect(() => module.exportX1PrivateKey(addresses[0])).toThrow("No matching derived key");
+ expect(sessionStorage.getItem(module.DERIVED_KEY_STORAGE)).toBeNull();
+});

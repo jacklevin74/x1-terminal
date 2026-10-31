@@ -26,7 +26,7 @@ function OrderbookRowComponent({ level, side, maxTotal, priceDecimals, showInQuo
 	const totalText = formatNumber(totalValue, { decimals: displayDecimals, compact: true });
 
 	return (
-		<div className="relative hover:bg-fill-hover cursor-pointer group">
+		<div className="relative shrink-0 hover:bg-fill-hover cursor-pointer group">
 			<div
 				className={cn("absolute inset-y-0 pointer-events-none", isAsk ? "depth-bar-ask" : "depth-bar-bid")}
 				style={{ width: `${depthPct}%`, [isAsk ? "right" : "left"]: 0, [isAsk ? "left" : "right"]: "auto" }}

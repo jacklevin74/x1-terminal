@@ -1,4 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useTradingViewLines } from "./use-tradingview-lines";
+import { useExecutionFills } from "./use-execution-fills";
+import { useEffect, useRef, useState } from "react";
 import { CHART_MIN_HEIGHT_PX } from "@/config/chart";
 import { loadTradingViewScript } from "@/lib/chart/load-tradingview";
 import {
@@ -25,6 +27,7 @@ import {
 import { createDatafeed } from "./datafeed";
 
 interface Props {
+ positionDex?: string;
 	symbol?: string;
 	interval?: string;
 	theme?: "light" | "dark";
@@ -32,12 +35,20 @@ interface Props {
 }
 
 export function TradingViewChart({
+ positionDex,
 	symbol = DEFAULT_CHART_SYMBOL,
 	interval = DEFAULT_CHART_INTERVAL,
 	theme = DEFAULT_CHART_THEME,
 	onSwitchToDefault,
 }: Props) {
-	const containerRef = useRef<HTMLDivElement>(null);
+	const chartKey = `${symbol}:${interval}:${theme}`;
+ const [readyWidget, setReadyWidget] = useState<{ widget: IChartingLibraryWidget; key: string } | null>(null);
+ useTradingViewLines(readyWidget?.key === chartKey ? readyWidget.widget : null, symbol, positionDex);
+ const fills = useExecutionFills();
+ const fillsRef = useRef(fills);
+ fillsRef.current = fills;
+ useEffect(() => { if (chartReadyRef.current && widgetRef.current) { const chart = widgetRef.current.activeChart(); chart.clearMarks(); chart.refreshMarks(); } }, [fills]);
+ const containerRef = useRef<HTMLDivElement>(null);
 	const widgetRef = useRef<IChartingLibraryWidget | null>(null);
 	const cssUrlRef = useRef<string | null>(null);
 	const chartReadyRef = useRef(false);
@@ -78,7 +89,7 @@ export function TradingViewChart({
 				const widget = new window.TradingView.widget({
 					container: containerRef.current,
 					library_path: CHART_LIBRARY_PATH,
-					datafeed: createDatafeed(),
+					datafeed: createDatafeed(() => fillsRef.current),
 					symbol: symbol,
 					interval: interval as ResolutionString,
 					locale: CHART_LOCALE,
@@ -105,6 +116,7 @@ export function TradingViewChart({
 				widget.onChartReady(() => {
 					if (disposed || widgetRef.current !== widget) return;
 					chartReadyRef.current = true;
+     setReadyWidget({ widget, key: `${symbol}:${interval}:${theme}` });
 				});
 
 				if (onSwitchToDefaultRef.current) {
@@ -152,6 +164,7 @@ export function TradingViewChart({
 
 		return () => {
 			disposed = true;
+   setReadyWidget(null);
 			if (widgetRef.current) {
 				widgetRef.current.remove();
 				widgetRef.current = null;

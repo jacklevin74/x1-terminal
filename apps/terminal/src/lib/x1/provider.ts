@@ -139,3 +139,17 @@ export function getX1Provider(): EIP1193Provider | undefined {
  restoreSession(wallet);
  return provider as EIP1193Provider;
 }
+
+/** Read only on explicit export; never return a key for a different account. */
+export function exportX1PrivateKey(expectedAddress: string): Hex {
+ const wallet = getX1Wallet();
+ if (!wallet) throw new Error("X1 wallet is unavailable. Keep this session open and reconnect your original wallet.");
+ restoreSession(wallet);
+ const key = sessionStorage.getItem(DERIVED_KEY_STORAGE);
+ if (!account || !key || !/^0x[0-9a-fA-F]{64}$/.test(key)
+  || account.address.toLowerCase() !== expectedAddress.toLowerCase()
+  || privateKeyToAccount(key as Hex).address.toLowerCase() !== expectedAddress.toLowerCase()) {
+  throw new Error("No matching derived key is available for this account. Reconnect your original X1 wallet.");
+ }
+ return key as Hex;
+}
