@@ -39,7 +39,7 @@ All colors come from tokens in `apps/terminal/src/styles.css` (app layer) and `p
 
 ### Market and accents
 - `text-market-up` / `bg-market-up`, `text-market-down` / `bg-market-down` (unchanged).
-- Brand stays `--bg-brand`. It is used only for Connect / Enable and focus rings.
+- Brand is neutral: near-white #ECECF1 in dark, #16171D in light. It is used for Connect / Enable, checked controls, slider ranges and focus rings. No blue.
 
 ## 2. Type
 
