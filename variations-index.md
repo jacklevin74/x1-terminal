@@ -4,4 +4,5 @@
 - 2026-11-02 logo-lockup-4 — ink-measured lockups: gap = 1-stem width (0.229H), baselines/tops within 1 device px at 20/32/72px; caps baseline, caps centered, lowercase, slash, full-height caps, top tag — route /dev/variants/logo-lockup-4 — winner: none (size mismatch mark vs word)
 - 2026-11-02 logo-lockup-5 — word cap/ascender height = mark height, shared baseline, gap 0.42H, ink-tuned; Geist Mono bold/medium, Martian wide, Azeret, lowercase, Space Mono — route /dev/variants/logo-lockup-5 — winner: none (read as one word)
 - 2026-11-02 logo-lockup-6 — mark dominant, descriptor subordinate: centered on mark, 50-66% height, lighter weight, muted, separated by space or hairline rule; ink-tuned — route /dev/variants/logo-lockup-6 — winner: none (fonts disliked; wants X1 app tile)
-- 2026-11-02 logo-lockup-7 — X1 app tile (26px, r7, #16171b, as delegation/identity AppNav) + Geist Sans 600 / Geist Mono; family fonts only — route /dev/variants/logo-lockup-7 — winner: TBD
+- 2026-11-02 logo-lockup-7 — X1 app tile (26px, r7, #16171b, as delegation/identity AppNav) + Geist Sans 600 / Geist Mono; family fonts only — route /dev/variants/logo-lockup-7 — winner: none (must be all mono, no picker)
+- 2026-11-02 logo-lockup-8 — X1 app tile + Geist Mono only, no switcher caret; case/weight/size/tracking/colour steps — route /dev/variants/logo-lockup-8 — winner: TBD
