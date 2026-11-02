@@ -1,1 +1,2 @@
-- 2026-11-02 logo-lockup — real X1 mark + "terminal" in 8 monospace treatments (lowercase, tracked caps, divider, caret, path, chip, stacked, brackets) — route /dev/variants/logo-lockup — winner: TBD
+- 2026-11-02 logo-lockup — real X1 mark + "terminal" in 8 monospace treatments (lowercase, tracked caps, divider, caret, path, chip, stacked, brackets) — route /dev/variants/logo-lockup — winner: none (1 and 8 refined in logo-lockup-2)
+- 2026-11-02 logo-lockup-2 — refines #1 (baseline, matched height) and #8 (brackets) with metric-locked sizing (font-size-adjust + text-box-trim), wider mark gap, 8 fonts — route /dev/variants/logo-lockup-2 — winner: TBD
