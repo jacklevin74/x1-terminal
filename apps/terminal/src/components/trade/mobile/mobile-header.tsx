@@ -4,7 +4,6 @@ import { APP_HEADER_HEIGHT_CLASS } from "@/config/layout";
 import { UI_TEXT } from "@/config/ui-text";
 import { cn } from "@/lib/cn";
 import { useSettingsDialogActions } from "@/stores/use-global-modal-store";
-import { ThemeToggle } from "../header/theme-toggle";
 import { UserMenu } from "../header/user-menu";
 import { X1Tile } from "../header/x1-terminal-logo";
 import { MobileNavDrawer } from "./mobile-nav-drawer";
@@ -36,7 +35,6 @@ export function MobileHeader({ className }: Props) {
 					<ButtonIcon variant="ghost" intent="neutral" size="sm" aria-label={TOP_NAV_TEXT.NOTIFICATIONS_ARIA}>
 						<BellIcon className="size-4" />
 					</ButtonIcon>
-					<ThemeToggle />
 					<ButtonIcon
 						variant="ghost"
 						intent="neutral"

@@ -24,21 +24,22 @@ function X1Mark({ className, style }: { className?: string; style?: CSSPropertie
 	);
 }
 
-export function X1Tile({ style }: { style?: CSSProperties }) {
+export function X1Tile({ style, size = 26 }: { style?: CSSProperties; size?: number }) {
+	const scale = size / 26;
 	return (
 		<span
 			data-part="mark"
 			className="inline-flex shrink-0 items-center justify-center text-white"
 			style={{
-				width: 26,
-				height: 26,
-				borderRadius: 7,
+				width: size,
+				height: size,
+				borderRadius: 7 * scale,
 				background: "#16171b",
 				border: "1px solid rgba(255,255,255,0.08)",
 				...style,
 			}}
 		>
-			<X1Mark className="block" style={{ width: 14.56, height: 9.88 }} />
+			<X1Mark className="block" style={{ width: 14.56 * scale, height: 9.88 * scale }} />
 		</span>
 	);
 }

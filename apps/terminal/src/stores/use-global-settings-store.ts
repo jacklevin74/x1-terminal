@@ -134,7 +134,7 @@ const useGlobalSettingsStore = create<GlobalSettingsStore>()(
 					showOrderbookInQuote,
 					marketOrderSlippagePercent: slippagePercent,
 					marginMode: p?.marginMode === "isolated" ? "isolated" : "cross",
-					theme: p?.theme === "light" ? "light" : "dark",
+					theme: "dark",
 					network: p?.network === "mainnet" || p?.network === "testnet" ? p.network : DEFAULT_GLOBAL_SETTINGS.network,
 				};
 			},

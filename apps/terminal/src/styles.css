@@ -581,3 +581,9 @@
 [data-slot="scroll-area-scrollbar"] {
   display: none !important;
 }
+
+/* Focus rings show only after keyboard navigation, never after a click followed by Shift or another modifier. */
+html[data-input="pointer"] :focus-visible:not(input, textarea, [contenteditable="true"]) {
+  outline: none !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+}

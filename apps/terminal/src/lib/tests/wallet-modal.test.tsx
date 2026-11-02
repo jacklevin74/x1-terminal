@@ -18,7 +18,7 @@ afterEach(() => {
 	document.body.innerHTML = "";
 	state.connect.mockClear();
 });
-it("offers only Phantom and X1, with an explicit derived-account acknowledgment", async () => {
+it("offers only Phantom and X1, with an explicit derived-account acknowledgment step", async () => {
 	const el = document.createElement("div");
 	document.body.append(el);
 	const root = createRoot(el);
@@ -29,14 +29,15 @@ it("offers only Phantom and X1, with an explicit derived-account acknowledgment"
 	expect(buttons).toHaveLength(2);
 	expect(buttons[0].textContent).toContain("Phantom");
 	expect(buttons[1].textContent).toContain("X1 Wallet");
-	expect(buttons[1].disabled).toBe(true);
 	expect(state.connect).not.toHaveBeenCalled();
 	await act(async () => {
-		(el.querySelector("input") as HTMLInputElement).click();
-	});
-	expect(buttons[1].disabled).toBe(false);
-	await act(async () => {
 		buttons[1].click();
+	});
+	expect(state.connect).not.toHaveBeenCalled();
+	const agree = [...el.querySelectorAll("button")].find((b) => b.textContent?.includes("I understand, connect"));
+	expect(agree).toBeDefined();
+	await act(async () => {
+		agree?.click();
 	});
 	expect(state.connect).toHaveBeenCalledWith({ connector: expect.objectContaining({ id: "x1" }) });
 	await act(async () => root.unmount());

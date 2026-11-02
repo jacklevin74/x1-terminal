@@ -8,6 +8,7 @@ import { removeAgentFromStorage } from "@/lib/hyperliquid";
 import { clearX1Session } from "@/lib/x1/provider";
 import { ExportKeyModal } from "../components/export-key-modal";
 import { WalletModal } from "../components/wallet-modal";
+import { X1Tile } from "./x1-terminal-logo";
 
 export function UserMenu() {
 	const { address, isConnected, connector } = useConnection();
@@ -74,9 +75,11 @@ export function UserMenu() {
 				triggerAriaLabel="Account and wallet"
 				triggerClassName="tabular-nums"
 				trigger={
-					<span>
-						<span className="text-fg-muted">{derived ? "X1 · " : "Phantom · "}</span>
-						{address.slice(0, 6)}…{address.slice(-4)}
+					<span className="inline-flex items-center gap-2">
+						{derived ? <X1Tile size={18} /> : <span className="text-fg-muted">Phantom</span>}
+						<span>
+							{address.slice(0, 6)}…{address.slice(-4)}
+						</span>
 					</span>
 				}
 				popupClassName="max-h-none"

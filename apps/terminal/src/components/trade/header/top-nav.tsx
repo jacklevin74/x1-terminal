@@ -12,7 +12,6 @@ import { createLazyComponent } from "@/lib/lazy";
 import { useExchangeScope } from "@/providers/exchange-scope";
 import { useDepositModalActions, useSettingsDialogActions } from "@/stores/use-global-modal-store";
 import { useIsTestnet } from "@/stores/use-global-settings-store";
-import { ThemeToggle } from "./theme-toggle";
 import X1TerminalLogo from "./x1-terminal-logo";
 
 const UserMenu = createLazyComponent(() => import("./user-menu"), "UserMenu");
@@ -99,7 +98,6 @@ export function TopNav() {
 				<Suspense fallback={<UserMenuSkeleton />}>
 					<UserMenu />
 				</Suspense>
-				<ThemeToggle />
 				<ButtonIcon variant="ghost" intent="neutral" size="sm" onClick={openSettingsDialog} aria-label={t`Settings`}>
 					<GearIcon className="size-4" />
 				</ButtonIcon>
