@@ -3,7 +3,7 @@ import { type Address, zeroAddress } from "viem";
 import { useConnection } from "wagmi";
 import { useInfo } from "../hooks/useInfo";
 import { useHyperliquid } from "../provider";
-import { useAgentWalletStorage } from "./agent-storage";
+import { readAgentFromStorage, useAgentWalletStorage } from "./agent-storage";
 import { isAgentApproved, isBuilderFeeApproved } from "./agent-utils";
 import type { BuilderConfig } from "./types";
 
@@ -54,10 +54,10 @@ export function useAgentStatus(): UseAgentStatusResult {
 	const builderFeeQuery = useInfo(
 		"maxBuilderFee",
 		{ user: userAddress, builder: builderConfig?.b ?? zeroAddress },
-		{ enabled: !!address && hasBuilderConfig },
+		{ enabled: !!address && hasBuilderConfig, refetchOnWindowFocus: true },
 	);
 
-	const extraAgentsQuery = useInfo("extraAgents", { user: userAddress }, { enabled: !!address });
+	const extraAgentsQuery = useInfo("extraAgents", { user: userAddress }, { enabled: !!address, refetchOnWindowFocus: true, refetchInterval: 60_000 });
 
 	const isLoading = builderFeeQuery.isLoading || extraAgentsQuery.isLoading;
 	const requirements = deriveRequirements(
@@ -77,7 +77,8 @@ export function useAgentStatus(): UseAgentStatusResult {
 			throw new Error("Could not load agent status");
 		}
 
-		return deriveRequirements(feeResult.data, agentsResult.data, localAgent?.publicKey, builderConfig);
+		const savedAgent = address ? readAgentFromStorage(env, address) : null;
+        return deriveRequirements(feeResult.data, agentsResult.data, savedAgent?.publicKey, builderConfig);
 	}
 
 	return {

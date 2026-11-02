@@ -26,6 +26,9 @@ const config = defineConfig({
   envDir: "../..",
   server: {
     strictPort: false,
+    proxy: {
+      "/api/builder-users": "http://127.0.0.1:8788",
+    },
   },
   resolve: {
     dedupe: ['react', 'react-dom', '@tanstack/react-query', 'wagmi'],

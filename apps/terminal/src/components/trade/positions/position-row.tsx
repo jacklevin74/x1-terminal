@@ -2,7 +2,7 @@ import { positionViewCellClass } from "./positions-panel-table-styles";
 import { PositionPnlShare } from "./position-pnl-share";
 import { TableCell, TableRow, Tooltip } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
-import { PencilIcon, PlusIcon } from "@phosphor-icons/react";
+import { PencilIcon } from "@phosphor-icons/react";
 import { LIQ_WARNING_PROXIMITY } from "@/config/trade";
 import { cn } from "@/lib/cn";
 import { formatPercent, formatPrice, formatToken, formatUSD } from "@/lib/format";
@@ -136,9 +136,7 @@ export function PositionRow({
       <span className="font-bold">{symbol}</span><span className="font-normal">{p.leverage.value}x</span>
       {dex && <span className="rounded-md bg-[#17383c] px-1 py-0.5 text-[11px] font-medium text-[#55d8c5]">{dex}</span>}
      </button>
-     <Tooltip content={hasTpSl ? t`Edit TP/SL` : t`Add TP/SL`}>
-      <button type="button" aria-label={hasTpSl ? t`Edit TP/SL` : t`Add TP/SL`} onClick={handleOpenTpSl} disabled={typeof assetId !== "number"} className="ml-1 inline-flex opacity-0 group-hover:opacity-100 focus-visible:opacity-100 text-brand disabled:opacity-30">{hasTpSl ? <PencilIcon className="size-3" /> : <PlusIcon className="size-3" />}</button>
-     </Tooltip>
+
     </div>
    </TableCell>
    <TableCell size="dense" className={cn(cellClass, isLong ? "text-[#20b899]" : "text-[#ee6d88]")}>{formatToken(absSize, { decimals: szDecimals, minimumFractionDigits: 0, symbol })}</TableCell>
@@ -156,6 +154,12 @@ export function PositionRow({
    </TableCell>
    <TableCell size="dense" className={cellClass}>{formatUSD(p.marginUsed, { compact: false })} ({p.leverage.type === "isolated" ? t`Isolated` : t`Cross`})</TableCell>
    <TableCell size="dense" className={cn(cellClass, fundingClass)}>{formatUSD(Number.isFinite(cumFunding) ? -cumFunding : null, { signDisplay: "exceptZero", compact: false })}</TableCell>
+   <TableCell size="dense" className={cellClass}>
+    <div className="inline-flex items-center gap-1.5">
+     <span>{tpSlInfo?.tpPrice ? formatPrice(tpSlInfo.tpPrice, { szDecimals, style: "decimal", compact: false }) : "--"} / {tpSlInfo?.slPrice ? formatPrice(tpSlInfo.slPrice, { szDecimals, style: "decimal", compact: false }) : "--"}</span>
+     <button type="button" title={hasTpSl ? "Edit TP/SL" : "Add TP/SL"} aria-label={`${hasTpSl ? "Edit" : "Add"} TP/SL for ${symbol}`} onClick={handleOpenTpSl} disabled={typeof assetId !== "number"} className="inline-flex rounded p-0.5 text-brand hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-stroke-focus disabled:opacity-30"><PencilIcon className="size-3.5" /></button>
+    </div>
+   </TableCell>
    <TableCell size="dense" className={cellClass}>
     <div className="flex items-center gap-2 text-[#50d8c5]">
      <button type="button" onClick={handleLimitClose} disabled={!canClose || isRowClosing} className="hover:underline disabled:opacity-40">{t`Limit`}</button>

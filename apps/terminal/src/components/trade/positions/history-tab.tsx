@@ -1,3 +1,4 @@
+import { TradePnlShare } from "./trade-pnl-share";
 import { AccountTableToolbar } from "./account-table-toolbar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
@@ -72,7 +73,7 @@ export function HistoryTab() {
        <TableCell size="dense" className={cn(positionViewCellClass, "pr-6")}>{formatToken(tradeValue, { decimals: 2, symbol: quote, compact: false })}</TableCell>
        <TableCell size="dense" className={cn(positionViewCellClass, "pr-6")}>{formatToken(fill.fee, { decimals: fill.feeToken === quote ? 2 : 8, symbol: fill.feeToken, compact: false })}</TableCell>
        <TableCell size="dense" className={cn(positionViewCellClass, pnl > 0 ? "text-success" : pnl < 0 ? "text-error" : "", "pr-6")}>
-        <span className="inline-flex items-center gap-1">{formatToken(fill.closedPnl, { decimals: 2, symbol: quote, compact: false })}{href && pnl !== 0 && <a href={href} target="_blank" rel="noopener noreferrer" aria-label="View closed PNL transaction" className="text-brand hover:opacity-80"><ArrowSquareOutIcon className="size-3" /></a>}</span>
+        <span className="inline-flex items-center gap-1">{formatToken(fill.closedPnl, { decimals: 2, symbol: quote, compact: false })}<TradePnlShare fill={fill} symbol={base} quote={quote} szDecimals={decimals} />{href && <a href={href} target="_blank" rel="noopener noreferrer" aria-label="View closed PNL transaction" title="View transaction on Hyperliquid" className="inline-flex rounded p-0.5 text-brand hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-stroke-focus"><ArrowSquareOutIcon className="size-3.5" /></a>}</span>
        </TableCell>
       </TableRow>;
      })}

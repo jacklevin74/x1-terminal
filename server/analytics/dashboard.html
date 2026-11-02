@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>X1 · Leaderboard</title><link rel="stylesheet" href="/analytics.css"><script type="module" src="/analytics.js"></script></head>
+<body><main>
+ <header><div><div class="eyebrow">X1 TERMINAL</div><h1>Leaderboard</h1><p class="subtitle">Traders ranked by realized PNL</p></div><div class="actions"><a href="/api/builder-users" target="_blank" rel="noopener">View JSON ↗</a><button id="refresh" type="button">Refresh</button></div></header>
+ <div class="source-line"><span>Local trading records</span><span id="updated" aria-live="polite"></span></div>
+ <p id="error" class="notice error" role="alert" hidden></p><p id="notice" class="notice" hidden></p>
+ <section id="leaderboard-summary" class="summary" aria-label="Summary"><article><span>Traders</span><strong id="user-count">—</strong></article><article><span>Fills</span><strong id="fill-count">—</strong></article><article><span>Recorded fees</span><strong id="fee-total">—</strong></article><article><span>Collection</span><strong id="collection-status" class="status-value">—</strong><small id="period"></small></article></section>
+ <section id="leaderboard-panel" class="panel" aria-label="Leaderboard"><div class="toolbar"><div><h2>Leaderboard</h2><span id="result-count" class="muted">Loading local records…</span></div><div class="filters"><label class="sr-only" for="search">Search trader address</label><input id="search" type="search" placeholder="Search address…"></div></div>
+ <p class="table-note">Ranked by realized PNL, before fees. * Some fee amounts are unavailable.</p>
+ <div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable leaderboard"><table><caption class="sr-only">Users ranked by realized PNL from highest to lowest</caption><thead><tr><th>Rank</th><th>Trader address</th><th class="number">Fills</th><th class="number">Volume</th><th class="number">Realized PNL ↓</th><th class="number">Fees</th></tr></thead><tbody id="traders"><tr><td colspan="6" class="empty">Loading local records…</td></tr></tbody></table></div></section>
+ <section id="portfolio" hidden><div class="source-line"><a href="/analytics">← Leaderboard</a><span>Recorded trading stats · current holdings below</span></div><div id="portfolio-stats" class="summary"></div><div id="portfolio-holdings" aria-live="polite"></div></section>
+ <details class="panel coverage"><summary>Collection details <span id="coverage-summary" class="muted"></span></summary><div class="coverage-body"><p id="coverage-note" class="muted"></p><div class="table-wrap"><table><thead><tr><th>Local file</th><th class="number">Fills</th><th class="number">Included</th><th>Status</th></tr></thead><tbody id="files"></tbody></table></div></div></details>
+ <footer>Auto-refreshes every 30 seconds while this page is visible.</footer>
+</main></body></html>

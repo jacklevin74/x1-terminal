@@ -6,7 +6,7 @@ import { OrdersTab } from "@/components/trade/positions/orders-tab";
 import { OrdersHistoryTab } from "@/components/trade/positions/orders-history-tab";
 import { FundingTab } from "@/components/trade/positions/funding-tab";
 const state = vi.hoisted(() => ({ cancel: vi.fn(), order: { coin: "BTC", side: "A", limitPx: "100", sz: "2", oid: 123, timestamp: 1_800_000_000_000, origSz: "3", triggerCondition: "", isTrigger: false, triggerPx: "0", children: [], isPositionTpsl: false, reduceOnly: true, orderType: "Limit", tif: "Gtc", cloid: null } }));
-vi.mock("@/components/trade/positions/withdrawal-history", () => ({ useWithdrawalHistory: () => ({ rows: [{id:"withdraw-1",time:1800000001000,asset:"SOL",amount:"0.13",destination:"solana-recipient",chain:"Solana",status:"Completed",trackingUrl:"https://explorer.hyperunit.xyz/addresses/solana-recipient"}], loading:false,error:false,refresh:vi.fn() }), WithdrawalLinks: () => createElement("a", {href:"https://explorer.hyperunit.xyz/addresses/solana-recipient"}, "Unit ↗") }));
+vi.mock("@/components/trade/positions/withdrawal-history", () => ({ useTransferHistory: () => ({ rows: [{kind:"Withdrawal",id:"withdraw-1",time:1800000001000,asset:"SOL",amount:"0.13",destination:"solana-recipient",chain:"Solana",status:"Completed",trackingUrl:"https://explorer.hyperunit.xyz/addresses/solana-recipient"}, {kind:"Deposit",id:"deposit-1",time:1800000000500,asset:"ETH",amount:"0.1",destination:"0xrecipient",chain:"Ethereum",status:"Completed"}], loading:false,error:false,refresh:vi.fn() }), TransferLinks: () => createElement("a", {href:"https://explorer.hyperunit.xyz/addresses/solana-recipient"}, "Unit ↗") }));
 vi.mock("@lingui/core/macro", () => ({ t: (strings: TemplateStringsArray, ...values: unknown[]) => strings.reduce((s, part, i) => s + part + (values[i] ?? ""), "") }));
 vi.mock("wagmi", () => ({ useConnection: () => ({ address: `0x${"cd".repeat(20)}`, isConnected: true }) }));
 vi.mock("@/lib/hyperliquid", () => ({ useExchange: () => ({ mutate: state.cancel, reset: vi.fn() }), useMarkets: () => ({ getMarket: () => ({ kind: "perp", shortName: "BTC" }), getSzDecimals: () => 3, getAssetId: () => 0 }), useSubscription: (method: string) => ({ status: "active", data: method === "openOrders" ? { orders: [state.order] } : method === "userHistoricalOrders" ? { orderHistory: [{ order: state.order, status: "open", statusTimestamp: state.order.timestamp }] } : { fundings: Array.from({ length: 16 }, (_, i) => ({ coin: "BTC", time: 1_800_000_000_000 + i * 1000, szi: i % 2 ? "-1" : "1", usdc: "-0.0001", fundingRate: "0.000013" })) } }) }));
@@ -42,6 +42,10 @@ it("shows order IDs and filled size and filters order history", async () => {
  expect(node.querySelectorAll("tbody tr")).toHaveLength(1);
  expect(node.textContent).toContain("Completed");
  expect(node.querySelector('a[href*="explorer.hyperunit.xyz"]')).not.toBeNull();
+ await act(async () => { const type = node.querySelector<HTMLSelectElement>('select[aria-label="Order history type filter"]')!; type.value = "Deposit"; type.dispatchEvent(new Event("change", { bubbles: true })); });
+ expect(node.querySelectorAll("tbody tr")).toHaveLength(1);
+ expect(node.querySelector("tbody tr")?.textContent).toContain("Deposit");
+ expect(node.querySelector("tbody tr")?.textContent).toContain("From Ethereum");
  await act(async () => root.unmount());
 });
 it("shows funding units, payment/rate precision, all-loaded view and side filtering", async () => {

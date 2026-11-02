@@ -31,7 +31,7 @@ Only Phantom and X1 Wallet are offered. Phantom uses `window.phantom.ethereum`, 
 
 X1 is detected at `window.x1_wallet`, falling back to `window.x1Wallet`. Before connecting, the user acknowledges the derived-account model. The wallet signs the UTF-8 message `x1-terminal-hyperliquid-key-v1`. The returned signature may be raw bytes or base64, either directly or inside `{ signature }`. It is normalized to exactly 64 bytes, hashed with keccak256, and used as an Ethereum private key. The account address is displayed in the wallet menu and setup screen. Withdrawals are signed by that derived key. Identical signatures must be returned across reconnects; verify that behavior with the actual X1 extension before funding an account.
 
-The derived key and trading-only agent keys use sessionStorage, never localStorage or a backend. Reloading the page restores the cached X1-derived account without another signature. A native-wallet account mismatch, corrupted cache, or explicit disconnect discards that session. When the tab’s session storage is gone, reconnecting requires signing again. The inherited mobile key-transfer route is disabled.
+The X1-derived wallet key uses sessionStorage only. Trading-only agent keys are saved in localStorage on this device (with sessionStorage fallback) and reused only while their on-chain approvals remain valid. Neither key is sent to a backend. Reloading the page restores the cached X1-derived account without another signature. A native-wallet account mismatch, corrupted cache, or explicit disconnect discards that session. When the tab’s session storage is gone, reconnecting requires signing again. The inherited mobile key-transfer route is disabled.
 
 Choose “Trading setup” in the account menu or “Enable Trading” in order entry. One screen explains both approvals, then performs `approveBuilderFee` (0.05%) and `approveAgent` sequentially, skipping existing approvals after checking `maxBuilderFee` and agent status. Every order through the shared exchange hook includes `{ b: VITE_BUILDER_ADDRESS, f: 50 }`, overriding caller-supplied builder parameters. The address is normalized to lowercase.
 
@@ -102,3 +102,72 @@ X1 accounts reconnect across page refreshes from the tab’s existing session ke
 Vercel deployments check `/api/jurisdiction` before mounting trading providers. The endpoint uses Vercel’s `x-vercel-ip-country` header and blocks US access with the configured restriction message. Additional ISO country codes can be supplied in the server-only `RESTRICTED_COUNTRIES` environment variable (comma-separated); US is always included. Responses are not cached. Existing connected X1 accounts can still export their derived key from the notice screen.
 
 Local Vite does not supply IP-country headers. A missing location endpoint, unknown country, or ordinary fetch failure is not treated as proof of a restricted location; upstream service eligibility restrictions still apply. Deploy the function and frontend together for the country-based notice.
+
+### Local builder analytics JSON API
+
+The JSON endpoint reads local files only. It makes no RPC calls or remote archive requests. Local files are the storage, not a way to discover traders: populate them with a CSV/JSON export from a builder-fill source or indexer. No real trader records are bundled or fabricated.
+
+```bash
+npm run analytics:import -- /absolute/path/to/fills.csv
+npm run analytics:dev
+```
+
+Open **http://localhost:8788/analytics** for the table, or `http://localhost:8788/api/builder-users` for raw JSON. The leaderboard shows one row per address, ranked by realized PNL descending: Rank, Address, Fills, Volume, Realized PNL and Fees. Totals are sums of recorded values without currency conversion. Search by address, copy addresses, and refresh manually or automatically every 30 seconds. Recorded fees remain visible when another fill lacks a fee, marked with an asterisk; all-missing fees display as unavailable. Asset/quote breakdowns and additional fee columns are not shown. Restart an already-running analytics server once after this update. Imported files are reread on every request; further imports do not require restart. The Vite dev server proxies this API to port 8788 after restart.
+
+Data lives under ignored `data/analytics/fills/`, configurable with `BUILDER_ANALYTICS_DATA_DIR`. CSV, JSON, and `.csv.lz4` files are supported. The importer validates all inputs and writes normalized JSON atomically. Reimporting identical data does not duplicate it. Overlapping fills with the same trader and trade ID are deduplicated. Fills without a trade ID are retained because identical-looking executions may be distinct trades.
+
+CSV columns are `time,user,coin,px,sz,closed_pnl,builder_fee` plus optional `tid`. See the header-only [template](examples/analytics/fills.csv). JSON accepts an array or `{ "fills": [...] }`, with fields `time`, `user`, `coin`, `px`, `sz`, `closedPnl`, `builderFee` and optional `tid`. Use decimal strings for amounts and ISO UTC or millisecond timestamps. Include `builder` on records when available; records explicitly assigned to a different builder are excluded. Attribution without that field is supplied by the imported file, not independently verified.
+
+For consolidated totals by currency, optionally create `data/analytics/quotes.json` mapping markets to quote/collateral tokens, for example `{ "BTC": "USDC", "HYPE": "USDC" }`. Unknown currencies remain in `users[].byMarket` and are excluded from `byQuoteToken` totals. No currencies are mixed or converted to USD. PNL means imported closed PNL, excluding funding and open positions; missing exchange fees remain null.
+
+Optional query parameters: inclusive UTC `from`/`to`, `address`, `limit` (1–500, default 100), `offset`. Without dates, all local records are included. `coverage.files` lists loaded/invalid files. `missing_local_data` means nothing has been imported, not zero users. All counts cover only local records.
+
+For automatic collection, put `QUICKNODE_SQL_API_KEY` in the ignored `.env` and run:
+
+```bash
+npm run analytics:collect
+# Or keep updating every five minutes in a separate terminal:
+npm run analytics:collect -- --watch
+```
+
+The collector reads QuickNode SQL Explorer's `hyperliquid_builder_fills` and checks attributed `hyperliquid_fills` when that table is empty. It follows 1000-row pages, and atomically replaces one local JSON snapshot per builder/UTC day. Reruns refresh snapshots rather than appending duplicates. A failed or incomplete day preserves its previous snapshot. The local API never calls SQL or RPC. `collection` in the JSON response records source, dataset, collection time, current run state and any failed date; SQL indexing can lag and today's data is provisional.
+
+By default the collector backfills from `BUILDER_ANALYTICS_START_DATE` (2026-10-29) through today, up to 31 days per run. For older history, run successive explicit windows, for example `npm run analytics:collect -- --from 2026-10-29 --to 2026-10-30`. Watch mode refreshes yesterday and today after the initial successful backfill. The official archive returned 403 for the tested files; this collector uses the separate SQL API instead. EVM RPC URL tokens do not authorize SQL Explorer. Sources: [builder archives](https://hyperliquid.gitbook.io/hyperliquid-docs/trading/builder-codes), [QuickNode SQL API](https://www.quicknode.com/docs/sql-explorer/using-rest-api).
+
+Local data remains ignored by Git. `npm run deploy:vercel` prepares a credential-free data snapshot under `server/analytics/published`, uploads it through the explicit Vercel ignore rules, and bundles it into the read-only API. The build copies the standalone page into the terminal output and serves it at `/analytics`. Deployed data reflects the collection time of that snapshot; collect again and redeploy to update it. No SQL credential is required in Vercel for snapshot serving. Git-triggered deployments do not contain ignored local snapshots unless a separate build job supplies them. `npm run test:analytics` verifies local imports, no-network reads, exact totals, filtering and deduplication.
+
+### Update the deployed leaderboard without redeploying
+
+Remote updates use a **private Vercel Blob store**. The collector stays on your Mac; only a sanitized data snapshot is published. The browser never receives SQL, publish, or storage credentials.
+
+One-time setup:
+
+1. In the Vercel project's **Storage** tab, create/connect a **private Blob store** to Production using the default `BLOB_READ_WRITE_TOKEN` variable.
+2. Run `npm run analytics:remote-setup -- https://YOUR-PRODUCTION-DOMAIN`. This saves the remote URL locally and syncs a generated publish token to Vercel through CLI stdin. The token is never printed or passed as a command argument.
+3. Run `npm run deploy:vercel` once to install the update endpoint and new environment variables.
+4. Run `npm run analytics:sync` to collect and publish the first remote snapshot.
+
+After that, use `npm run analytics:publish` to publish existing local records, or `npm run analytics:sync` to collect first. For continuous updates, run `npm run analytics:collect -- --watch --publish` in a separate terminal. The page refreshes within its normal 30-second polling interval after a successful publish.
+
+`POST /api/analytics-update` requires the configured bearer publish token and accepts a validated snapshot up to 3MB. It rejects another builder's records, incomplete collections, stale timestamps, and concurrent write conflicts. Uploads use private Blob storage with conditional writes; reading the deployed leaderboard fetches the latest private snapshot without relying on Vercel's temporary filesystem. Until the first publish, the deployed bundled snapshot remains the fallback. If remote storage is unavailable, the API reports an error and the page retains the last loaded data rather than silently serving an older bundle.
+
+Local analytics continues reading local files unless `ANALYTICS_USE_REMOTE=true` is explicitly set. `ANALYTICS_REMOTE_URL` and `ANALYTICS_PUBLISH_TOKEN` belong in the ignored local `.env`; Vercel requires `ANALYTICS_PUBLISH_TOKEN` and the connected Blob store's `BLOB_READ_WRITE_TOKEN`. No SQL key is needed in Vercel. See [Vercel Blob private storage](https://vercel.com/docs/vercel-blob/security).
+
+### Use Neon for remote analytics
+
+In Vercel, connect a Neon database to this project's **Production** environment with
+`DATABASE_URL`. Alternatively set `ANALYTICS_DATABASE_URL` to a dedicated Neon
+connection string. Keep this variable server-only, without a `VITE_` prefix.
+Neon takes precedence over Blob when configured; Blob storage is not required.
+The first publish automatically creates `x1_analytics_snapshots` (the database role
+must have CREATE TABLE permission). Uploads atomically replace the snapshot only
+when its collection timestamp is at least as new as the existing one.
+
+Run `npm run analytics:remote-setup -- https://x1-terminal-20261029.vercel.app`
+if the publish token has not been configured, then `npm run deploy:vercel` and
+`npm run analytics:publish`. Subsequent updates use `npm run analytics:sync`.
+The collector remains local; no QuickNode credentials are needed in Vercel.
+
+To refresh the deployed bundled analytics without remote storage, run `npm run analytics:deploy`. This collects new fills first, then packages and deploys the snapshot. A Git push updates code but does not collect trades or upload ignored local analytics files. The page Refresh button reloads the deployed snapshot; it does not run the collector.
+
+Trading approval now persists per account and network on this device. Expired or revoked agents require approval again; explicit Disconnect removes saved trading keys. Missing trading signers open the approval modal rather than leaving an unexplained wallet-required error. Mobile users can reconnect/unlock their wallet from that modal.

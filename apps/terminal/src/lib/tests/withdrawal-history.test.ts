@@ -23,3 +23,12 @@ it("parses ETH integer units without precision loss and removes trace suffix", (
  expect(rows[0].amount).toBe("0.100000000000000001");
  expect(rows[0].transactionUrl).toBe(`https://etherscan.io/tx/${hash}`);
 });
+
+it("includes incoming SOL deposits and tracks their source-chain transaction", async () => {
+ const { parseTransferOperations } = await import("../unit/operations");
+ const deposit = {...operation,operationId:"deposit-1",sourceChain:"solana",destinationChain:"hyperliquid",sourceAddress:recipient,destinationAddress:user.toLowerCase(),sourceTxHash:`${signature}:bridge`,destinationTxHash:"not-a-native-transaction"};
+ const rows = parseTransferOperations({operations:[operation,deposit,{...deposit,operationId:"other-user",destinationAddress:"0xother"}]},user);
+ expect(rows).toHaveLength(2);
+ expect(rows.find(row=>row.kind === "Deposit")).toMatchObject({asset:"SOL",amount:"0.13",status:"Completed",transactionUrl:`https://solscan.io/tx/${signature}`,trackingUrl:`https://explorer.hyperunit.xyz/addresses/${user.toLowerCase()}`});
+ expect(parseWithdrawalOperations({operations:[deposit]},user)).toHaveLength(0);
+});

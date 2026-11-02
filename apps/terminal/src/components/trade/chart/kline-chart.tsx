@@ -1,3 +1,4 @@
+import { ChartMarksMenu } from "./chart-marks-menu";
 import { useKlineExecutions } from "./use-kline-executions";
 import type { Chart, KLineData } from "klinecharts";
 import { dispose, FormatDateType, init, LoadDataType } from "klinecharts";
@@ -266,7 +267,7 @@ export function KlineChart({
 				onChartSourceChange={onChartSourceChange}
 				tradingViewIntentHandlers={tradingViewIntentHandlers}
 			/>
-			<div ref={containerRef} className="flex-1 min-h-0" />
+			<ChartMarksMenu><div ref={containerRef} className="h-full min-h-0" /></ChartMarksMenu>
 		</div>
 	);
 }

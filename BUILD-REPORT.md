@@ -220,3 +220,85 @@ Withdrawal, swap, transfer-to-spot, and reconnect now render as steps in one mod
 ### Compact Order History columns
 - Reduced horizontal cell/header padding from 6px left / 20px right to 4px per side in Order History, including withdrawal rows. Preserved labels, values and content-sized column widths.
 - CSS-class-only adjustment; production build validation.
+
+### Deposits in Order History
+- Extended the account-scoped transfer feed to include incoming Unit SOL/ETH deposits alongside withdrawals, with Deposit in Type and the Type filter and From Solana/Ethereum in Direction.
+- Native deposits link to the source-chain transaction and the receiving Hyperliquid account's Unit explorer page. Unit completion state controls the displayed status; source amounts use exact integer-unit conversion.
+- Included confirmed USDC deposit ledger records with Hyperliquid explorer links. Ordinary sends/internal transfers are not relabeled as deposits.
+- Verified account isolation, native deposit parsing, withdrawal compatibility, USDC ledger inclusion and Deposit filtering with nine targeted tests; TypeScript and production build validation.
+
+### Visible account mode control
+- Added a persistent Mode: Unified / Manual button beside the connected wallet on desktop and mobile. Portfolio and legacy DEX modes retain distinct labels.
+- The account-mode dialog explains shared versus separate balances and offers an explicit Switch to Manual / Switch to Unified action through the SDK user-signed userSetAbstraction method. Manual maps to disabled; standard default is also displayed as Manual.
+- Reads the current mode through the account-scoped userAbstraction query; refreshes after submission and every 15 seconds. No optimistic success state or automatic mode change. Account/network changes remount the dialog state.
+- Tested explicit confirmation, exact account/mode payload, backend-reflected success and signature rejection. TypeScript and production build validation. No live account mode was changed during testing.
+- Reference: https://hyperliquid.gitbook.io/hyperliquid-docs/trading/account-abstraction-modes.
+
+### Builder-user JSON analytics and QuickNode RPC configuration
+- Added GET /api/builder-users, consolidating official daily builder-fill archives by address with exact decimal PNL/volume/builder-fee arithmetic, market/currency grouping, bounded date windows, pagination, caching and explicit archive coverage.
+- Exchange/total fees remain null when absent from source archives. Funding, unrealized PNL, non-builder trades and connected wallets without attributed fills are outside this first report's scope. Unknown token denominations are not mixed into USD totals.
+- Added bounded LZ4-frame/CSV decoding and validation, partial-source reporting, and provider error responses. LZ4 checksums are skipped as permitted by the frame specification; length/offset/content-size limits are validated.
+- Added GET /api/hyperliquid-rpc to check chain ID and block height for both supplied HyperEVM paths. Credentials are in ignored local .env only; metadata uses the corresponding HyperCore info path. No private endpoint URL is returned in JSON or committed source.
+- Added standalone local analytics server and Vite proxy routes. Vercel packages the server modules with the two API handlers; the archive report has a 60-second duration budget.
+- Ten backend tests pass, covering LZ4, CSV, precision, address consolidation, currency isolation, coverage, pagination, RPC URL redaction and HTTP handlers. Live provider access failed in this sandbox and binding localhost:8788 was denied, so live API operation must be verified outside this sandbox. No fabricated live results.
+
+### Empty analytics report diagnostics
+- Corrected the QuickNode metadata path to /info after verifying the provider's HyperCore reference. This fixes metadata routing; metadata failure alone does not explain missing archive users.
+- Added top-level dataStatus/message and per-day failure reasons (network, timeout, upstream HTTP status, malformed archive). No loaded archives now means unknown/null counts, not confirmed zero users.
+- Incomplete reports are no longer cached, and local analytics runs in watch mode after restart.
+- Twelve backend tests pass, including unpublished archives and invalid/upstream-failed sources. This sandbox reproduces network_error on both archive dates; the user's actual coverage response is still needed to identify their failure.
+
+### Local-file analytics replaces remote collection
+- Replaced network-backed report generation with local CSV/JSON/LZ4 file reads from data/analytics/fills. Removed RPC status API, QuickNode provider code and the RPC dev proxy. Analytics request handling now makes zero network calls.
+- Added analytics:import for validated, atomic, content-addressed JSON imports; repeated imports are idempotent, and overlapping fills with explicit trade IDs are deduplicated.
+- Added optional local quotes.json for currency consolidation. Unmapped markets remain separate; no quote tokens are assumed. Data scope is explicitly imported local records, not independently discovered or verified builder users.
+- Added header-only CSV template, missing/invalid file states, local date/address filtering, and immediate file refresh without server restart. Data directory is ignored by Git; no fabricated user data is included.
+- Eight updated backend tests pass, including an assertion that reading reports never calls fetch. Historical/automatic collection still requires actual source exports: archive HTTP 403 remains unresolved, and SQL Explorer requires a separate credential if chosen later.
+
+### QuickNode SQL-to-file collector
+- Saved the user-supplied SQL API credential only in ignored local .env. Added analytics:collect and optional --watch polling every five minutes; serving the JSON report still performs no network calls.
+- Collector requests builder-specific indexed fills with exact decimal strings, validates builder/address/time/trade IDs, pages through 1000-row results and replaces daily local snapshots atomically. Failures preserve existing snapshots, repeat runs do not append duplicates, and current-day data is marked provisional.
+- Collection provenance is included in the local JSON report. Explicit --from/--to windows support backfill, capped at 31 days per run.
+- Eleven backend tests pass, including pagination across 1000 fills, snapshot refresh and failure preservation. Live collection was attempted but this environment could not reach api.quicknode.com; no real records were downloaded and the supplied key's validity remains unverified.
+
+### Investigating the empty live collector result
+- Observed one real local file for 2026-10-29 containing an empty array; no other date or completed manifest was present. This does not establish zero users across the requested period.
+- Fixed collection manifest persistence: run state is saved before queries, after each day, and on failure, preventing an interrupted multi-day collection from appearing complete. Improved SQL error details with credential redaction.
+- Added configured/checksummed builder-address matching, rejection of SQL error envelopes, and fallback from an empty hyperliquid_builder_fills result to builder-attributed hyperliquid_fills records.
+- Preserve source null builder fees as unknown instead of rejecting otherwise valid fills or inventing zero fees.
+- Fourteen fixture tests pass. The sandbox still cannot reach QuickNode; a live 2026-10-30–31 collection has been requested in the user's Mac terminal. No real users or fees have been fabricated or claimed verified.
+
+### Real builder records verified
+- Read the real local QuickNode snapshots written by the user's live collector: 48 fills dated 2026-10-30 and four dated 2026-10-31, consolidated into seven trader addresses. These are actual collected records, not fixture data.
+- The next broad refresh failed on the raw-fill fallback for 2026-10-29. Its saved QuickNode error identified ClickHouse alias substitution: the SELECT string alias `time` was being compared with a DateTime in WHERE.
+- Qualified all SQL source columns with table alias f, including f.time/f.timestamp in filters and ordering, avoiding the output time alias. Existing real snapshots remain intact. Sixteen backend tests pass, including the exact query composition regression.
+- The corrected live refresh must run on the user's Mac, since this sandbox still cannot reach QuickNode. Collection coverage remains incomplete until that refresh succeeds. Quote-token mappings are still absent, so the API correctly keeps monetary amounts grouped by market.
+
+### Local analytics table page
+- Added /analytics (also the analytics server root) with the terminal's gray/lavender colors, summary counts, address/market search, trader sorting, address copy, raw JSON access, refresh and visible collection coverage.
+- Main table groups per-market statistics under each trader: quote token, fills, volume, realized PNL, builder fees, exchange fees and total fees. Missing fees are shown as unavailable; unknown currencies are not combined into monetary totals. Exact decimal strings are formatted without floating-point conversion.
+- The page reads all paginated users from the local JSON API and refreshes every 30 seconds while visible. No browser/API RPC calls or external assets are required. Static serving is restricted to the dashboard asset whitelist.
+- Verified against the actual local records: seven traders, 52 fills and 18 rendered trader-market rows, with successful collection status. Seventeen backend/static-route tests and four dashboard DOM tests pass. No browser screenshot test was available.
+
+### Simplified PNL leaderboard
+- Replaced per-market rows with one row per trader, ranked by summed realized PNL descending. Visible columns are Rank, Trader address, Fills, Volume, Realized PNL and Fees; removed asset/quote columns, secondary fee columns and builder wording from the page.
+- Added exact per-user totals to the local API. These are nominal sums of recorded values with no currency conversion or USD claim. Ranking compares exact decimals rather than floating-point values; address search preserves global ranks.
+- Recorded fees remain summed when a fill has an unknown fee, with an asterisk indicating incompleteness. Fully unknown fees remain unavailable.
+- Verified the actual 52 fills render as seven ranked trader rows. Seventeen backend tests and six leaderboard DOM tests pass.
+
+### Vercel leaderboard deployment packaging
+- Added build-time static asset preparation and explicit /analytics asset rewrites so the standalone leaderboard is included alongside the terminal SPA.
+- Added a deployment snapshot preparation step: validates current local collection, copies only allowed fill fields and collection metadata into a generated, Git-ignored published directory, and bundles it with the read-only API via includeFiles. .vercelignore excludes credentials and raw local data while allowing the deliberate published snapshot upload.
+- Vercel reads the bundled snapshot; local development continues reading data/analytics. SQL credentials are not required in Vercel. Refreshing production data requires collection and redeployment.
+- Production build passed. Verified the Vercel-mode handler returns seven traders/52 fills, the built /analytics page exists, and the packaged data contains no provider credentials. Deployment upload is being attempted separately.
+- Actual deployment attempts did not complete. Direct verification returned ENOTFOUND for api.vercel.com from this sandbox; no successful production deployment is claimed. The prepared deploy:vercel command can be run from the user's Mac.
+
+### Protected remote analytics publishing
+- Added POST /api/analytics-update with constant-time bearer-token authentication, builder ownership checks, sanitized/validated fill records, completed-collection validation and a 3MB payload limit. Generated a publish token in ignored local .env without printing it.
+- Added persistent private Vercel Blob snapshot reads/writes using the token-based HTTP protocol mirrored by @vercel/blob 2.8 API v12. Private reads bypass cache; conditional ETag writes prevent concurrent replacement, and older collections cannot overwrite newer ones. No new package dependency was introduced.
+- Deployed GET /api/builder-users reads the published private snapshot when Blob is configured, retaining the bundled fallback until first publication. Local mode still reads local files. A remote outage is reported instead of silently reverting to an old snapshot.
+- Added analytics:remote-setup, analytics:publish, analytics:sync and collector --watch --publish. The setup command synchronizes the publish secret through Vercel CLI stdin; no credential is exposed in browser code or command arguments.
+- Twenty-five backend tests pass, including authentication, validation/redaction, persistent reads across fresh API handlers, stale-update rejection, failed-write preservation, filtering/pagination and HTTPS publisher transport. Six leaderboard DOM tests and production build validation also pass.
+- Remote activation is not yet live-verified: a private Blob store and production URL must be configured, followed by one deployment and initial publish. This sandbox cannot reach Vercel or provision the store.
+
+Analytics user portfolios: leaderboard address links now open `/analytics?address=<user>` with the same gray/lavender cards and compact tables. Recorded fills, volume, realized PNL and fees retain their local/published analytics scope. Current positions across the discovered perpetual venues and spot balances load read-only from Hyperliquid's public Info API in the visitor's browser; failures are explicitly unavailable, not zero. No wallet connection, signing, credentials or transaction actions are required. This view requires access to Hyperliquid's public API and refreshes every 30 seconds when visible. UI tests cover venue discovery, holdings, failures and address navigation.

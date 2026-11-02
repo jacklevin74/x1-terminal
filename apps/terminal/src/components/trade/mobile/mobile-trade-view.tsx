@@ -16,7 +16,7 @@ import { useOrderEntryData } from "@/hooks/trade/use-order-entry-data";
 import { useOrderSubmit } from "@/hooks/trade/use-order-submit";
 import { cn } from "@/lib/cn";
 import { formatPrice, formatToken, formatUSD } from "@/lib/format";
-import { useAgentRegistration, useAgentStatus, useSelectedMarketInfo } from "@/lib/hyperliquid";
+import { useAgentRegistration, useAgentWallet, useSelectedMarketInfo } from "@/lib/hyperliquid";
 import type { MarginMode } from "@/lib/trade/margin-mode";
 import { toNumberOrZero } from "@/lib/trade/numbers";
 import {
@@ -61,7 +61,7 @@ export function MobileTradeView({ className }: Props) {
 		setSelectedMarket(scope, marketName);
 	}
 
-	const { isReady: isAgentApproved } = useAgentStatus();
+	const { isReady: isAgentApproved } = useAgentWallet();
 	const { status: registerStatus } = useAgentRegistration();
 
 	const canApprove = !!walletClient && !!address;
@@ -213,7 +213,8 @@ export function MobileTradeView({ className }: Props) {
 	}
 
 	async function handleSubmit() {
-		if (!validation.canSubmit || isSubmitting) return;
+		if (!isAgentApproved) { await handleApprove(); return; }
+        if (!validation.canSubmit || isSubmitting) return;
 		if (!market || !baseToken || typeof market.assetId !== "number") return;
 
 		const succeeded = await submitOrder({
@@ -564,7 +565,7 @@ function getMobileOrderButtonContent(input: MobileButtonContentInput): ButtonCon
 		return {
 			text: getApprovalButtonText(input.isRegistering, input.canApprove),
 			action: input.onApprove,
-			disabled: input.isRegistering || !input.canApprove,
+			disabled: input.isRegistering,
 			variant: "cyan",
 		};
 	}
@@ -578,6 +579,6 @@ function getMobileOrderButtonContent(input: MobileButtonContentInput): ButtonCon
 
 function getApprovalButtonText(isRegistering: boolean, canApprove: boolean): string {
 	if (isRegistering) return ORDER_TEXT.BUTTON_SIGNING;
-	if (!canApprove) return ORDER_TEXT.BUTTON_LOADING;
+	if (!canApprove) return "Approve trading";
 	return ORDER_TEXT.BUTTON_ENABLE_TRADING;
 }

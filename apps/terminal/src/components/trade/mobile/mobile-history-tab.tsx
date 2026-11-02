@@ -1,3 +1,4 @@
+import { TradePnlShare } from "../positions/trade-pnl-share";
 import { t } from "@lingui/core/macro";
 import { ArrowSquareOutIcon, ClockCounterClockwiseIcon } from "@phosphor-icons/react";
 import { Skeleton } from "boneyard-js/react";
@@ -70,7 +71,9 @@ export function MobileHistoryTab({ className }: Props) {
 				</div>
 				<div className="flex-1 min-h-0 overflow-y-auto px-3 pb-3 space-y-2">
 					{fills.map((fill) => {
-						const fee = toNumber(fill.fee);
+						const market = markets.getMarket(fill.coin);
+                        const quote = market?.kind === "spot" ? market.tokensInfo[1]?.displayName ?? "USDC" : market?.kind === "builderPerp" ? market.quoteToken?.displayName ?? "USDC" : "USDC";
+                        const fee = toNumber(fill.fee);
 						const closedPnl = toNumber(fill.closedPnl);
 						const showPnl = closedPnl !== null && closedPnl !== 0;
 						const isLiquidation = !!fill.liquidation;
@@ -101,7 +104,7 @@ export function MobileHistoryTab({ className }: Props) {
 									</div>
 									{showPnl && (
 										<div className={cn("text-xs font-medium tabular-nums", getValueColorClass(closedPnl))}>
-											{formatUSD(closedPnl, { signDisplay: "exceptZero" })}
+											{formatUSD(closedPnl, { signDisplay: "exceptZero" })}<TradePnlShare fill={fill} symbol={market?.kind === "spot" ? market.tokensInfo[0]?.displayName ?? market.shortName : market?.shortName ?? fill.coin} quote={quote} szDecimals={markets.getSzDecimals(fill.coin)} />{explorerUrl && <a href={explorerUrl} target="_blank" rel="noopener noreferrer" aria-label="View closed PNL transaction" title="View transaction on Hyperliquid" className="inline-flex rounded p-0.5 text-brand hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-stroke-focus"><ArrowSquareOutIcon className="size-3.5" /></a>}
 										</div>
 									)}
 								</div>

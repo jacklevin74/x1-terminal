@@ -18,3 +18,11 @@ dist/
 **/src/locales/**/messages.js
 coverage/
 *.log
+
+# Local analytics records (imported CSV/JSON data).
+/data/analytics/
+
+# Generated leaderboard deployment artifacts.
+/server/analytics/published/
+/server/analytics/published-stage/
+/apps/terminal/public/analytics/

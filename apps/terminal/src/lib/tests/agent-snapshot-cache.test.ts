@@ -20,6 +20,8 @@ function installDom() {
 	};
 	vi.stubGlobal("window", win);
 	vi.stubGlobal("sessionStorage", storage);
+ const persistent = new Map<string,string>();
+ vi.stubGlobal("localStorage", {getItem:(key:string)=>persistent.get(key)??null,setItem:(key:string,value:string)=>persistent.set(key,value),removeItem:(key:string)=>persistent.delete(key),clear:()=>persistent.clear()});
 	vi.stubGlobal(
 		"StorageEvent",
 		class StorageEventShim extends Event {
@@ -121,4 +123,23 @@ describe("agent snapshot cache", () => {
 
 		unsubscribe();
 	});
+});
+
+it("keeps approved keys across tab sessions and removes both copies explicitly", async()=>{
+ installDom();
+ const {writeAgentToStorage,readAgentFromStorage,removeAgentFromStorage}=await import("@hypeterminal/hl-react/signing/agent-storage");
+ const key=`0x${"ab".repeat(32)}`,publicKey=`0x${"cd".repeat(20)}`;
+ writeAgentToStorage("Mainnet","0x1234",key,publicKey);
+ sessionStorage.clear();
+ expect(readAgentFromStorage("Mainnet","0x1234")?.publicKey).toBe(publicKey);
+ expect(readAgentFromStorage("Testnet","0x1234")).toBeNull();
+ expect(readAgentFromStorage("Mainnet","0x5678")).toBeNull();
+ removeAgentFromStorage("Mainnet","0x1234");expect(readAgentFromStorage("Mainnet","0x1234")).toBeNull();
+ vi.unstubAllGlobals();
+});
+it("migrates an existing tab key to persistent device storage",async()=>{
+ const store=installDom();const storageKey="hyperliquid_agent_Mainnet_0x1234";
+ store.set(storageKey,JSON.stringify({privateKey:`0x${"ab".repeat(32)}`,publicKey:`0x${"cd".repeat(20)}`}));
+ const {readAgentFromStorage}=await import("@hypeterminal/hl-react/signing/agent-storage");
+ expect(readAgentFromStorage("Mainnet","0x1234")).not.toBeNull();expect(localStorage.getItem(storageKey)).not.toBeNull();expect(sessionStorage.getItem(storageKey)).toBeNull();vi.unstubAllGlobals();
 });

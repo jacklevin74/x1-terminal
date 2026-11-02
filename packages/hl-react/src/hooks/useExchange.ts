@@ -20,7 +20,11 @@ export function useExchange<M extends ExchangeMethod>(
 	const mutationKey = config.useClientKey ? ["hl", method, clientKey] : ["hl", method];
 
 	const mutationFn = (params: ExchangeParams<M>): Promise<ExchangeResponse<M>> => {
-		assertExchange(exchange);
+		if (!exchange && config.client === "trading") {
+            if (typeof window !== "undefined") window.dispatchEvent(new Event("x1:setup"));
+            throw new Error("Trading approval required. Complete the approval, then submit your trade again.");
+        }
+        assertExchange(exchange);
 		const fn = (exchange as ExchangeClient)[method] as (...args: unknown[]) => Promise<ExchangeResponse<M>>;
 		if ((config.injectBuilder || method === "approveBuilderFee" || method === "approveAgent") &&
  (!builderConfig?.b || /^0x0{40}$/i.test(builderConfig.b))) {

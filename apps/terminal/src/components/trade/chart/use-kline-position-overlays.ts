@@ -1,3 +1,4 @@
+import { useChartMarksStore } from "@/stores/use-chart-marks-store";
 import Big from "big.js";
 import type { Chart } from "klinecharts";
 import { type RefObject, useEffect } from "react";
@@ -13,6 +14,7 @@ interface Params {
 }
 
 export function useKlinePositionOverlays({ chartRef, symbol, dex }: Params) {
+	const hidden = useChartMarksStore(state => state.hidden);
 	const { getPosition } = useUserPositions();
 	const position = getPosition(symbol, dex) ?? getPosition(getShortBuilderSymbol(symbol), dex);
 	const szi = position?.szi;
@@ -26,7 +28,7 @@ export function useKlinePositionOverlays({ chartRef, symbol, dex }: Params) {
 		chart.removeOverlay({ name: POSITION_LINE_NAME });
 		chart.removeOverlay({ name: LIQUIDATION_LINE_NAME });
 
-		if (szi == null || entryPx == null) return;
+		if (hidden || szi == null || entryPx == null) return;
 
 		const sziBig = Big(szi);
 		if (sziBig.eq(0)) return;
@@ -50,7 +52,7 @@ export function useKlinePositionOverlays({ chartRef, symbol, dex }: Params) {
 				});
 			}
 		}
-	}, [chartRef, symbol, szi, entryPx, liquidationPx]);
+	}, [chartRef, symbol, szi, entryPx, liquidationPx, hidden]);
 }
 
 function getShortBuilderSymbol(symbol: string): string {

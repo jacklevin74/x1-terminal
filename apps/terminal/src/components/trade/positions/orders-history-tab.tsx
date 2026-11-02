@@ -1,4 +1,4 @@
-import { useWithdrawalHistory, WithdrawalLinks } from "./withdrawal-history";
+import { useTransferHistory, TransferLinks } from "./withdrawal-history";
 import { AccountTableToolbar } from "./account-table-toolbar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
@@ -23,17 +23,17 @@ export function OrdersHistoryTab() {
  const markets = useMarkets();
  const [type, setType] = useState(""); const [side, setSide] = useState(""); const [coin, setCoin] = useState(""); const [descending, setDescending] = useState(true);
  const { data, status, error } = useSubscription("userHistoricalOrders", { user: address ?? "0x0" }, { enabled: isConnected && !!address });
- const withdrawalHistory = useWithdrawalHistory(isConnected ? address : undefined);
+ const transferHistory = useTransferHistory(isConnected ? address : undefined);
  const all = data?.orderHistory ?? [];
  const orders = all.filter(e => (!type || e.order.orderType === type) && (!side || e.order.side === side) && (!coin || e.order.coin === coin)).slice().sort((a, b) => descending ? b.statusTimestamp - a.statusTimestamp : a.statusTimestamp - b.statusTimestamp).slice(0, MAX_HISTORY_ROWS);
- const withdrawals = withdrawalHistory.rows.filter(row => (!type || type === "Withdrawal") && !side && (!coin || coin === row.asset));
+ const withdrawals = transferHistory.rows.filter(row => (!type || type === row.kind) && !side && (!coin || coin === row.asset));
  const timeline = [...orders.map(entry => ({ kind: "order" as const, time: entry.statusTimestamp, entry })), ...withdrawals.map(row => ({ kind: "withdrawal" as const, time: row.time, row }))].sort((a,b) => descending ? b.time-a.time : a.time-b.time).slice(0,MAX_HISTORY_ROWS);
- const filters = [{ label: "Type", value: type, set: setType, values: [...new Set([...all.map(e => e.order.orderType), "Withdrawal"])] }, { label: "Side", value: side, set: setSide, values: ["B", "A"] }, { label: "Market", value: coin, set: setCoin, values: [...new Set([...all.map(e => e.order.coin), ...withdrawalHistory.rows.map(row => row.asset)])] }];
+ const filters = [{ label: "Type", value: type, set: setType, values: [...new Set([...all.map(e => e.order.orderType), "Withdrawal", "Deposit"])] }, { label: "Side", value: side, set: setSide, values: ["B", "A"] }, { label: "Market", value: coin, set: setCoin, values: [...new Set([...all.map(e => e.order.coin), ...transferHistory.rows.map(row => row.asset)])] }];
  let placeholder = null;
  if (!isConnected) placeholder = <Placeholder>{t`Connect your wallet to view order history.`}</Placeholder>;
- else if (!timeline.length && (status === "subscribing" || status === "idle" || withdrawalHistory.loading)) placeholder = <Placeholder>{t`Loading order history...`}</Placeholder>;
+ else if (!timeline.length && (status === "subscribing" || status === "idle" || transferHistory.loading)) placeholder = <Placeholder>{t`Loading order history...`}</Placeholder>;
  else if (!timeline.length && status === "error") placeholder = <Placeholder variant="error">{t`Failed to load order history.`}{error instanceof Error && <span>{error.message}</span>}</Placeholder>;
- else if (!timeline.length) placeholder = <Placeholder>{all.length || withdrawalHistory.rows.length ? "No orders match these filters." : "No order or withdrawal history found."}</Placeholder>;
+ else if (!timeline.length) placeholder = <Placeholder>{all.length || transferHistory.rows.length ? "No orders match these filters." : "No order, deposit or withdrawal history found."}</Placeholder>;
  const headings = ["Time", "Type", "Market", "Direction", "Size", "Filled Size", "Order Value", "Price", "Reduce Only", "Trigger Conditions", "TP/SL", "Status", "Order ID / Track"];
  return <div className={positionsPanelTabRootClass}>
   {isConnected && <AccountTableToolbar tab="orders-history">{filters.map(f => <label key={f.label} className="text-fg-muted"><span className="sr-only">{f.label}</span><select aria-label={`Order history ${f.label.toLowerCase()} filter`} value={f.value} onChange={e => f.set(e.target.value)} className="bg-surface py-1 text-fg outline-none"><option value="">{f.label}</option>{f.values.map(v => <option key={v} value={v}>{f.label === "Side" ? v === "B" ? "Buy" : "Sell" : f.label === "Market" ? markets.getMarket(v)?.pairName ?? v : v}</option>)}</select></label>)}</AccountTableToolbar>}
@@ -44,10 +44,10 @@ export function OrdersHistoryTab() {
      const row = item.row; const cell = cn(positionViewCellClass, "px-1");
      return <TableRow key={`withdrawal:${row.id}`} className={positionViewRowClass}>
       <TableCell size="dense" className={cell}>{formatDateTime(row.time, { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false })}</TableCell>
-      <TableCell size="dense" className={cell}>Withdrawal</TableCell><TableCell size="dense" className={cn(cell,"font-semibold")}>{row.asset}</TableCell>
-      <TableCell size="dense" className={cell}><span title={row.destination || undefined}>To {row.chain}{row.destination ? ` · ${row.destination.slice(0,6)}…${row.destination.slice(-4)}` : ""}</span></TableCell>
+      <TableCell size="dense" className={cell}>{row.kind}</TableCell><TableCell size="dense" className={cn(cell,"font-semibold")}>{row.asset}</TableCell>
+      <TableCell size="dense" className={cell}><span title={row.destination || undefined}>{row.kind === "Deposit" ? "From" : "To"} {row.chain}{row.kind !== "Deposit" && row.destination ? ` · ${row.destination.slice(0,6)}…${row.destination.slice(-4)}` : ""}</span></TableCell>
       <TableCell size="dense" className={cell}>{row.amount}</TableCell><TableCell size="dense" className={cell}>--</TableCell><TableCell size="dense" className={cell}>--</TableCell><TableCell size="dense" className={cell}>--</TableCell><TableCell size="dense" className={cell}>--</TableCell><TableCell size="dense" className={cell}>N/A</TableCell><TableCell size="dense" className={cell}>--</TableCell>
-      <TableCell size="dense" className={cell}>{row.status}</TableCell><TableCell size="dense" className={cell}><WithdrawalLinks row={row} /></TableCell>
+      <TableCell size="dense" className={cell}>{row.status}</TableCell><TableCell size="dense" className={cell}><TransferLinks row={row} /></TableCell>
      </TableRow>;
     }
     const entry = item.entry;
@@ -70,6 +70,6 @@ export function OrdersHistoryTab() {
     </TableRow>;
    })}</TableBody>
   </Table><ScrollBar orientation="horizontal" /></ScrollArea>}</div>
-  {isConnected && withdrawalHistory.error && <button type="button" className="px-1.5 py-1 text-left text-xs text-fg-muted" onClick={() => void withdrawalHistory.refresh()}>Withdrawal history unavailable · Retry</button>}
+  {isConnected && transferHistory.error && <button type="button" className="px-1.5 py-1 text-left text-xs text-fg-muted" onClick={() => void transferHistory.refresh()}>Deposit and withdrawal history unavailable · Retry</button>}
  </div>;
 }

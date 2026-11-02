@@ -1,3 +1,4 @@
+import { useChartMarksStore, toggleChartMarks, chartMarksLabel } from "@/stores/use-chart-marks-store";
 import { useTradingViewLines } from "./use-tradingview-lines";
 import { useExecutionFills } from "./use-execution-fills";
 import { useEffect, useRef, useState } from "react";
@@ -9,7 +10,7 @@ import {
 	getLoadingScreenColors,
 	getToolbarBgColor,
 } from "@/lib/chart/theme-colors";
-import type { IChartingLibraryWidget, ResolutionString } from "@/types/charting_library";
+import type { ActionId, IChartingLibraryWidget, ResolutionString } from "@/types/charting_library";
 import {
 	CHART_CUSTOM_FONT_FAMILY,
 	CHART_DISABLED_FEATURES,
@@ -44,10 +45,11 @@ export function TradingViewChart({
 	const chartKey = `${symbol}:${interval}:${theme}`;
  const [readyWidget, setReadyWidget] = useState<{ widget: IChartingLibraryWidget; key: string } | null>(null);
  useTradingViewLines(readyWidget?.key === chartKey ? readyWidget.widget : null, symbol, positionDex);
+ const hidden = useChartMarksStore(state => state.hidden);
  const fills = useExecutionFills();
  const fillsRef = useRef(fills);
- fillsRef.current = fills;
- useEffect(() => { if (chartReadyRef.current && widgetRef.current) { const chart = widgetRef.current.activeChart(); chart.clearMarks(); chart.refreshMarks(); } }, [fills]);
+ fillsRef.current = hidden ? [] : fills;
+ useEffect(() => { if (chartReadyRef.current && widgetRef.current) { const chart = widgetRef.current.activeChart(); chart.clearMarks(); chart.refreshMarks(); } }, [fills, hidden]);
  const containerRef = useRef<HTMLDivElement>(null);
 	const widgetRef = useRef<IChartingLibraryWidget | null>(null);
 	const cssUrlRef = useRef<string | null>(null);
@@ -107,6 +109,10 @@ export function TradingViewChart({
 					toolbar_bg: toolbarBg,
 					custom_css_url: customCssUrl,
 					studies_overrides: {},
+     context_menu: { items_processor: async (items, factory) => [
+      factory.createAction({ actionId: "Chart.CustomActionId" as ActionId, label: chartMarksLabel(), onExecute: toggleChartMarks }),
+      ...items.filter(item => !("getState" in item) || (item.getState().actionId !== "Chart.Marks.ToggleVisibility" && !/^(hide|show) marks on bars$/i.test(item.getState().label))),
+     ] },
 					favorites: {
 						intervals: CHART_FAVORITE_INTERVALS,
 					},

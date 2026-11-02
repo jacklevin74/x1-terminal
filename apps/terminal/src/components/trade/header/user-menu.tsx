@@ -1,3 +1,4 @@
+import { AccountModeControl } from "../components/account-mode-control";
 import { Button, Dropdown } from "@hypeterminal/ui";
 import { useState } from "react";
 import { useConnection, useDisconnect } from "wagmi";
@@ -16,7 +17,7 @@ export function UserMenu() {
   <WalletModal open={open} onOpenChange={setOpen} />
  </>;
  const derived = connector?.id === "x1";
- return <><Dropdown align="end" size="sm" triggerAriaLabel="Account and wallet"
+ return <><AccountModeControl /><Dropdown align="end" size="sm" triggerAriaLabel="Account and wallet"
   trigger={<span>{derived ? "X1 · " : "Phantom · "}{address.slice(0, 6)}…{address.slice(-4)}</span>}
   items={[
    { label: derived ? "Derived from your X1 signature" : "Phantom Ethereum account", onSelect: () => {} },

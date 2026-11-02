@@ -61,7 +61,7 @@ export function getSideLabel(side: OrderSide, kind?: MarketKind): string {
 export function buildTpSlOrdersByCoin(orders: readonly OpenOrder[]): Map<string, TpSlOrderInfo> {
 	const map = new Map<string, TpSlOrderInfo>();
 	for (const order of orders) {
-		if (!order.isTrigger) continue;
+		if (!order.isTrigger || !order.reduceOnly || !order.isPositionTpsl) continue;
 
 		const triggerPx = toBig(order.triggerPx)?.toNumber();
 		if (!triggerPx || triggerPx <= 0) continue;

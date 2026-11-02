@@ -25,8 +25,45 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!api/).*)",
+      "source": "/analytics",
+      "destination": "/analytics/index.html"
+    },
+    {
+      "source": "/analytics/",
+      "destination": "/analytics/index.html"
+    },
+    {
+      "source": "/dashboard-view.js",
+      "destination": "/analytics/dashboard-view.js"
+    },
+    {
+      "source": "/analytics-portfolio.js",
+      "destination": "/analytics/analytics-portfolio.js"
+    },
+    {
+      "source": "/analytics.css",
+      "destination": "/analytics/analytics.css"
+    },
+    {
+      "source": "/analytics.js",
+      "destination": "/analytics/analytics.js"
+    },
+    {
+      "source": "/analytics-view.js",
+      "destination": "/analytics/analytics-view.js"
+    },
+    {
+      "source": "/((?!api/|dashboard-view\\.js$|analytics-portfolio\\.js$|analytics/|analytics\\.css$|analytics\\.js$|analytics-view\\.js$).*)",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/builder-users.js": {
+      "maxDuration": 60,
+      "includeFiles": "server/analytics/published/**"
+    },
+    "api/analytics-update.js": {
+      "maxDuration": 60
+    }
+  }
 }

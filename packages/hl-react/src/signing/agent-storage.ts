@@ -36,11 +36,15 @@ export function readAgentFromStorage(env: HyperliquidEnv, userAddress: string): 
 
 	try {
 		const key = getStorageKey(env, userAddress);
-		const raw = sessionStorage.getItem(key);
+		let raw: string | null = null;
+        try { raw = localStorage.getItem(key); } catch {}
+        raw ??= sessionStorage.getItem(key);
 		if (!raw) return null;
 
 		const parsed = JSON.parse(raw);
-		return agentWalletSchema.parse(parsed);
+		const agent = agentWalletSchema.parse(parsed);
+        try { localStorage.setItem(key, JSON.stringify(agent)); sessionStorage.removeItem(key); } catch {}
+        return agent;
 	} catch {
 		return null;
 	}
@@ -62,7 +66,9 @@ export function writeAgentToStorage(
 			publicKey: publicKeySchema.parse(publicKey),
 			...metadata,
 		};
-		sessionStorage.setItem(key, JSON.stringify(agentWalletSchema.parse(data)));
+		const serialized = JSON.stringify(agentWalletSchema.parse(data));
+        try { localStorage.setItem(key, serialized); sessionStorage.removeItem(key); }
+        catch { sessionStorage.setItem(key, serialized); }
 		window.dispatchEvent(new StorageEvent("storage", { key }));
 	} catch {
 		// Silent fail for storage errors
@@ -73,7 +79,8 @@ export function removeAgentFromStorage(env: HyperliquidEnv, userAddress: string)
 	if (typeof window === "undefined") return;
 
 	const key = getStorageKey(env, userAddress);
-	sessionStorage.removeItem(key);
+	try { localStorage.removeItem(key); } catch {}
+    try { sessionStorage.removeItem(key); } catch {}
 	window.dispatchEvent(new StorageEvent("storage", { key }));
 }
 
@@ -83,8 +90,7 @@ export function removeAgentFromStorage(env: HyperliquidEnv, userAddress: string)
 // older entries.
 //
 // Security note: entries contain the agent's private key material in memory.
-// That's acceptable for session-length use (the keys also live in sessionStorage
-// for persistence) but callers in high-security contexts should consider a
+// The keys persist in this device's localStorage (with a sessionStorage fallback) but callers in high-security contexts should consider a
 // shorter-lived store and a forced eviction on address change.
 /** @internal — exported only for tests; do not consume from outside this package. */
 export const snapshotCache = new LRU<string, { value: AgentWallet | null; version: number }>(4);

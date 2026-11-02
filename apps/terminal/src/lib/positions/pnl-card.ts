@@ -8,6 +8,7 @@ export interface PnlCardData {
  entryPrice: string;
  markPrice: string;
  timestamp: string;
+ trade?: { direction: string; quote: string; size: string; fee: string };
 }
 function xml(text: string): string {
  return text.replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" })[char]!);
@@ -18,6 +19,7 @@ export function buildPnlCardSvg(data: PnlCardData): string {
  const background = gain ? "#061b19" : "#210f19";
  const roe = Number.isFinite(data.roe) ? `${data.roe >= 0 ? "+" : ""}${(data.roe * 100).toFixed(1)}%` : "—";
  const pnl = Number.isFinite(data.pnl) ? new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: "exceptZero" }).format(data.pnl) : "—";
+ const headline = data.trade ? `${data.pnl > 0 ? "+" : ""}${new Intl.NumberFormat("en-US", { maximumFractionDigits: 6 }).format(data.pnl)}` : roe;
  const leverage = Number.isFinite(data.leverage) && data.leverage > 0 ? `${data.leverage}X` : "—";
  const rings = Array.from({ length: 17 }, (_, index) => `<circle cx="1010" cy="345" r="${105 + index * 32}" opacity="${(0.25 - index * 0.011).toFixed(3)}"/>`).join("");
  return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
@@ -28,18 +30,18 @@ export function buildPnlCardSvg(data: PnlCardData): string {
  <g font-family="Arial, Helvetica, sans-serif">
  <text x="64" y="85" font-size="43" font-weight="700" letter-spacing="-2" fill="${accent}">X1</text>
  <text x="135" y="83" font-size="25" letter-spacing="6" fill="#e7f7f3">TERMINAL</text>
- <text x="1136" y="79" text-anchor="end" fill="#9bb6b1" font-size="15" letter-spacing="3">POSITION SNAPSHOT</text>
+ <text x="1136" y="79" text-anchor="end" fill="#9bb6b1" font-size="15" letter-spacing="3">${data.trade ? "TRADE SNAPSHOT" : "POSITION SNAPSHOT"}</text>
  <text x="1002" y="397" text-anchor="middle" font-size="155" font-weight="700" fill="${accent}" opacity=".12">X1</text>
  <text x="64" y="221" fill="#effffc" font-size="36" font-weight="700">${xml(data.symbol.slice(0, 22))}</text>
- <text x="64" y="267" fill="${accent}" font-size="23" letter-spacing="2">${data.side} ${leverage}${data.dex ? `  ·  ${xml(data.dex.slice(0, 20))}` : ""}</text>
- <text x="56" y="438" fill="${accent}" font-size="${roe.length > 9 ? 112 : 148}" letter-spacing="-6">${roe}</text>
- <text x="66" y="491" fill="#a7bfba" font-size="21">UNREALIZED PNL <tspan dx="17" fill="${accent}" font-size="30" font-weight="600">${xml(pnl)}</tspan></text>
- <text x="64" y="589" fill="#9bb6b1" font-size="19">Entry price</text>
- <text x="350" y="589" fill="#9bb6b1" font-size="19">Mark price</text>
+ <text x="64" y="267" fill="${accent}" font-size="23" letter-spacing="2">${data.trade ? xml(data.trade.direction) : `${data.side} ${leverage}`}${data.dex ? `  ·  ${xml(data.dex.slice(0, 20))}` : ""}</text>
+ <text x="56" y="438" fill="${accent}" font-size="${headline.length > 9 ? 90 : 148}" letter-spacing="-6">${xml(headline)}</text>
+ <text x="66" y="491" fill="#a7bfba" font-size="21">${data.trade ? "REALIZED PNL" : "UNREALIZED PNL"} <tspan dx="17" fill="${accent}" font-size="30" font-weight="600">${xml(data.trade ? data.trade.quote : pnl)}</tspan></text>
+ <text x="64" y="589" fill="#9bb6b1" font-size="19">${data.trade ? "Fill price" : "Entry price"}</text>
+ <text x="350" y="589" fill="#9bb6b1" font-size="19">${data.trade ? "Size" : "Mark price"}</text>
  <text x="64" y="633" fill="#f0fffb" font-size="31">${xml(data.entryPrice)}</text>
- <text x="350" y="633" fill="#f0fffb" font-size="31">${xml(data.markPrice)}</text>
+ <text x="350" y="633" fill="#f0fffb" font-size="31">${xml(data.trade ? data.trade.size : data.markPrice)}</text>
  <path d="M64 680H1136" stroke="#8ca8a3" opacity=".2"/>
- <text x="64" y="716" fill="#9bb6b1" font-size="15">Hyperliquid · ${xml(data.timestamp)} · Unrealized returns may change</text>
+ <text x="64" y="716" fill="#9bb6b1" font-size="15">Hyperliquid · ${xml(data.timestamp)} · ${data.trade ? `Fees: ${xml(data.trade.fee)} · PNL before fees` : "Unrealized returns may change"}</text>
  <text x="1136" y="716" text-anchor="end" fill="${accent}" font-size="16" letter-spacing="2">X1 TERMINAL</text>
  </g></svg>`;
 }

@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "pnpm --filter @hypeterminal/terminal dev",
-    "build": "pnpm --filter @hypeterminal/terminal build",
+    "build": "node scripts/prepare-analytics-assets.js && pnpm --filter @hypeterminal/terminal build",
     "build:terminal": "pnpm --filter @hypeterminal/terminal build",
     "build:website": "pnpm --filter @hypeterminal/website build",
     "build:all": "pnpm build:terminal && pnpm build:website",
@@ -29,7 +29,16 @@
     "i18n:extract": "pnpm --filter @hypeterminal/terminal i18n:extract",
     "i18n:compile": "pnpm --filter @hypeterminal/terminal i18n:compile",
     "prepare": "node scripts/prepare-git-hooks.js",
-    "deploy:vercel": "sh scripts/deploy-vercel.sh"
+    "deploy:vercel": "sh scripts/deploy-vercel.sh",
+    "analytics:dev": "node --watch --env-file-if-exists=.env scripts/serve-analytics.js",
+    "analytics:snapshot": "node --env-file-if-exists=.env scripts/prepare-analytics-snapshot.js",
+    "analytics:remote-setup": "node --env-file-if-exists=.env scripts/configure-analytics-remote.js",
+    "analytics:publish": "node --env-file-if-exists=.env scripts/publish-analytics.js",
+    "analytics:sync": "npm run analytics:collect && npm run analytics:publish",
+    "analytics:collect": "node --env-file-if-exists=.env scripts/collect-analytics.js",
+    "analytics:import": "node --env-file-if-exists=.env scripts/import-analytics.js",
+    "test:analytics": "node --test scripts/builder-analytics.test.js scripts/analytics-remote.test.js",
+    "analytics:deploy": "npm run analytics:collect && npm run deploy:vercel"
   },
   "devDependencies": {
     "@ai-hero/sandcastle": "0.5.6",

@@ -1,3 +1,4 @@
+import { useChartMarksStore } from "@/stores/use-chart-marks-store";
 import Big from "big.js";
 import type { Chart } from "klinecharts";
 import { type RefObject, useEffect } from "react";
@@ -14,6 +15,7 @@ interface Params {
 }
 
 export function useKlineOrderOverlays({ chartRef, symbol }: Params) {
+	const hidden = useChartMarksStore(state => state.hidden);
 	const { address, isConnected } = useConnection();
 
 	const { data: openOrdersEvent } = useSubscription(
@@ -31,6 +33,7 @@ export function useKlineOrderOverlays({ chartRef, symbol }: Params) {
 
 		chart.removeOverlay({ name: ORDER_LINE_NAME });
 
+        if (hidden) return;
 		for (const order of symbolOrders) {
 			const rawPrice = order.isTrigger ? order.triggerPx : order.limitPx;
 			const price = Big(rawPrice).toNumber();
@@ -47,5 +50,5 @@ export function useKlineOrderOverlays({ chartRef, symbol }: Params) {
 				},
 			});
 		}
-	}, [chartRef, symbol, symbolOrders]);
+	}, [chartRef, symbol, symbolOrders, hidden]);
 }

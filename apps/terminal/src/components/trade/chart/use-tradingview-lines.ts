@@ -1,3 +1,4 @@
+import { useChartMarksStore } from "@/stores/use-chart-marks-store";
 import { useEffect, useMemo } from "react";
 import { useConnection } from "wagmi";
 import { HL_ALL_DEXS } from "@/config/app";
@@ -7,13 +8,14 @@ import { getOrderLineLabel } from "@/lib/trade/open-orders";
 import type { EntityId, IChartingLibraryWidget } from "@/types/charting_library";
 
 export function useTradingViewLines(widget: IChartingLibraryWidget | null, symbol: string, dex?: string) {
+ const hidden = useChartMarksStore(state => state.hidden);
  const { address, isConnected } = useConnection();
  const { getPosition } = useUserPositions();
  const position = isConnected ? getPosition(symbol, dex) ?? getPosition(symbol.split(":").at(-1)!, dex) : undefined;
  const { data } = useSubscription("openOrders", { user: address ?? "0x0", dex: HL_ALL_DEXS }, { enabled: isConnected && !!address });
  const lines = useMemo(() => !isConnected ? [] : buildTradingLines(symbol, position ?? undefined, (data && data.user?.toLowerCase() === address?.toLowerCase() ? data.orders : []).map(order => ({ ...order, label: getOrderLineLabel(order) }))), [isConnected, address, symbol, position, data]);
  useEffect(() => {
-  if (!widget) return;
+  if (!widget || hidden) return;
   let active = true;
   const ids: EntityId[] = [];
   const chart = widget.activeChart();
@@ -29,5 +31,5 @@ export function useTradingViewLines(widget: IChartingLibraryWidget | null, symbo
   };
   if (chart.dataReady()) draw(); else chart.dataReady(draw);
   return () => { active = false; for (const id of ids) { try { chart.removeEntity(id, { disableUndo: true }); } catch { /* Widget may already be disposed. */ } } };
- }, [widget, lines]);
+ }, [widget, lines, hidden]);
 }

@@ -22,3 +22,8 @@ describe("position PNL image", () => {
   expect(svg).toContain("&lt;image"); expect(svg).toContain("&quot;&lt;&amp;");
  });
 });
+
+it("renders realized trade PNL without inventing historical leverage or ROE", () => {
+ const svg=buildPnlCardSvg({...data,leverage:NaN,roe:NaN,pnl:-12.5,trade:{direction:"Close Short",quote:"USDT",size:"2 SOL",fee:"0.05 USDT"}});
+ expect(svg).toContain("TRADE SNAPSHOT");expect(svg).toContain("REALIZED PNL");expect(svg).toContain("-12.5");expect(svg).toContain("Close Short");expect(svg).toContain("USDT");expect(svg).toContain("2 SOL");expect(svg).toContain("0.05 USDT");expect(svg).not.toContain("UNREALIZED");expect(svg).not.toContain("20X");expect(svg).not.toContain("NaN");expect(svg).not.toContain("549.0%");
+});

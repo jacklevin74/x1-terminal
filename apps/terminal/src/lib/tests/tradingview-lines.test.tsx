@@ -21,3 +21,14 @@ it("draws locked price lines and removes only its own drawings on disconnect", a
  expect(chart.createShape).toHaveBeenCalledTimes(2);
  await act(async () => root.unmount()); state.connected = true;
 });
+
+it("hides all trading lines and restores them without deleting unrelated drawings",async()=>{
+ const {useChartMarksStore}=await import("@/stores/use-chart-marks-store");useChartMarksStore.setState({hidden:false});
+ const chart={dataReady:()=>true,createShape:vi.fn(()=>`trade-${Math.random()}`),removeEntity:vi.fn()};const widget={activeChart:()=>chart} as unknown as IChartingLibraryWidget;
+ function Harness(){useTradingViewLines(widget,"BTC");return null;}
+ const node=document.createElement("div"),root=createRoot(node);await act(async()=>root.render(createElement(Harness)));expect(chart.createShape).toHaveBeenCalledTimes(2);
+ await act(async()=>useChartMarksStore.setState({hidden:true}));expect(chart.removeEntity).toHaveBeenCalledTimes(2);
+ await act(async()=>root.render(createElement(Harness)));expect(chart.createShape).toHaveBeenCalledTimes(2);
+ await act(async()=>useChartMarksStore.setState({hidden:false}));expect(chart.createShape).toHaveBeenCalledTimes(4);
+ await act(async()=>root.unmount());
+});

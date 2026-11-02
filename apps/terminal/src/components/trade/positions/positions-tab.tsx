@@ -175,7 +175,7 @@ export function PositionsTab() {
        <TableHeader className={positionViewHeaderClass}>
         <TableRow className="border-0">
          {[
-          "Market", "Size", "Position Value", "Entry Price", "Mark Price", "PNL (ROE %)", "Liq. Price", "Margin", "Funding", "Close All",
+          "Market", "Size", "Position Value", "Entry Price", "Mark Price", "PNL (ROE %)", "Liq. Price", "Margin", "Funding", "TP/SL", "Close All",
          ].map(label => <TableHead key={label} scope="col" size="dense" className={positionViewHeadClass} aria-sort={label === "Position Value" ? sortDescending ? "descending" : "ascending" : undefined}>
           {label === "Position Value" ? <button type="button" onClick={() => setSortDescending(value => !value)} className="inline-flex items-center gap-1 hover:text-fg">{label}<span aria-hidden="true">{sortDescending ? "⌄" : "⌃"}</span></button>
            : label === "Close All" ? <button type="button" className="text-[#50d8c5] hover:underline disabled:opacity-40" disabled={!canCloseAll || closingAll} onClick={() => setCloseAllOpen(true)}>{closingAll ? "Closing…" : label}</button>
