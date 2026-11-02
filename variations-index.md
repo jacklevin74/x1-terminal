@@ -5,4 +5,5 @@
 - 2026-11-02 logo-lockup-5 — word cap/ascender height = mark height, shared baseline, gap 0.42H, ink-tuned; Geist Mono bold/medium, Martian wide, Azeret, lowercase, Space Mono — route /dev/variants/logo-lockup-5 — winner: none (read as one word)
 - 2026-11-02 logo-lockup-6 — mark dominant, descriptor subordinate: centered on mark, 50-66% height, lighter weight, muted, separated by space or hairline rule; ink-tuned — route /dev/variants/logo-lockup-6 — winner: none (fonts disliked; wants X1 app tile)
 - 2026-11-02 logo-lockup-7 — X1 app tile (26px, r7, #16171b, as delegation/identity AppNav) + Geist Sans 600 / Geist Mono; family fonts only — route /dev/variants/logo-lockup-7 — winner: none (must be all mono, no picker)
-- 2026-11-02 logo-lockup-8 — X1 app tile + Geist Mono only, no switcher caret; case/weight/size/tracking/colour steps — route /dev/variants/logo-lockup-8 — winner: TBD
+- 2026-11-02 logo-lockup-8 — X1 app tile + Geist Mono only, no switcher caret; case/weight/size/tracking/colour steps — route /dev/variants/logo-lockup-8 — winner: none (wants all caps, new treatments)
+- 2026-11-02 logo-lockup-9 — all-caps mono with X1 tile: semibold/medium/bold steps, welded pair, one card, gradient cursor, IBM Plex / JetBrains alternates — route /dev/variants/logo-lockup-9 — winner: TBD

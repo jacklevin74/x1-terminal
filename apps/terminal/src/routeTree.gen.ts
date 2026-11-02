@@ -17,6 +17,7 @@ import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BuildersPerpIndexRouteImport } from './routes/builders-perp.index'
 import { Route as BuildersPerpDexRouteImport } from './routes/builders-perp.$dex'
+import { Route as DevVariantsLogoLockup9RouteImport } from './routes/dev.variants.logo-lockup-9'
 import { Route as DevVariantsLogoLockup8RouteImport } from './routes/dev.variants.logo-lockup-8'
 import { Route as DevVariantsLogoLockup7RouteImport } from './routes/dev.variants.logo-lockup-7'
 import { Route as DevVariantsLogoLockup6RouteImport } from './routes/dev.variants.logo-lockup-6'
@@ -65,6 +66,11 @@ const BuildersPerpDexRoute = BuildersPerpDexRouteImport.update({
   id: '/$dex',
   path: '/$dex',
   getParentRoute: () => BuildersPerpRoute,
+} as any)
+const DevVariantsLogoLockup9Route = DevVariantsLogoLockup9RouteImport.update({
+  id: '/dev/variants/logo-lockup-9',
+  path: '/dev/variants/logo-lockup-9',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DevVariantsLogoLockup8Route = DevVariantsLogoLockup8RouteImport.update({
   id: '/dev/variants/logo-lockup-8',
@@ -124,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/dev/variants/logo-lockup-6': typeof DevVariantsLogoLockup6Route
   '/dev/variants/logo-lockup-7': typeof DevVariantsLogoLockup7Route
   '/dev/variants/logo-lockup-8': typeof DevVariantsLogoLockup8Route
+  '/dev/variants/logo-lockup-9': typeof DevVariantsLogoLockup9Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/dev/variants/logo-lockup-6': typeof DevVariantsLogoLockup6Route
   '/dev/variants/logo-lockup-7': typeof DevVariantsLogoLockup7Route
   '/dev/variants/logo-lockup-8': typeof DevVariantsLogoLockup8Route
+  '/dev/variants/logo-lockup-9': typeof DevVariantsLogoLockup9Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/dev/variants/logo-lockup-6': typeof DevVariantsLogoLockup6Route
   '/dev/variants/logo-lockup-7': typeof DevVariantsLogoLockup7Route
   '/dev/variants/logo-lockup-8': typeof DevVariantsLogoLockup8Route
+  '/dev/variants/logo-lockup-9': typeof DevVariantsLogoLockup9Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -180,6 +189,7 @@ export interface FileRouteTypes {
     | '/dev/variants/logo-lockup-6'
     | '/dev/variants/logo-lockup-7'
     | '/dev/variants/logo-lockup-8'
+    | '/dev/variants/logo-lockup-9'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -197,6 +207,7 @@ export interface FileRouteTypes {
     | '/dev/variants/logo-lockup-6'
     | '/dev/variants/logo-lockup-7'
     | '/dev/variants/logo-lockup-8'
+    | '/dev/variants/logo-lockup-9'
   id:
     | '__root__'
     | '/'
@@ -215,6 +226,7 @@ export interface FileRouteTypes {
     | '/dev/variants/logo-lockup-6'
     | '/dev/variants/logo-lockup-7'
     | '/dev/variants/logo-lockup-8'
+    | '/dev/variants/logo-lockup-9'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -232,6 +244,7 @@ export interface RootRouteChildren {
   DevVariantsLogoLockup6Route: typeof DevVariantsLogoLockup6Route
   DevVariantsLogoLockup7Route: typeof DevVariantsLogoLockup7Route
   DevVariantsLogoLockup8Route: typeof DevVariantsLogoLockup8Route
+  DevVariantsLogoLockup9Route: typeof DevVariantsLogoLockup9Route
 }
 
 declare module '@tanstack/react-router' {
@@ -291,6 +304,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/builders-perp/$dex'
       preLoaderRoute: typeof BuildersPerpDexRouteImport
       parentRoute: typeof BuildersPerpRoute
+    }
+    '/dev/variants/logo-lockup-9': {
+      id: '/dev/variants/logo-lockup-9'
+      path: '/dev/variants/logo-lockup-9'
+      fullPath: '/dev/variants/logo-lockup-9'
+      preLoaderRoute: typeof DevVariantsLogoLockup9RouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/dev/variants/logo-lockup-8': {
       id: '/dev/variants/logo-lockup-8'
@@ -380,6 +400,7 @@ const rootRouteChildren: RootRouteChildren = {
   DevVariantsLogoLockup6Route: DevVariantsLogoLockup6Route,
   DevVariantsLogoLockup7Route: DevVariantsLogoLockup7Route,
   DevVariantsLogoLockup8Route: DevVariantsLogoLockup8Route,
+  DevVariantsLogoLockup9Route: DevVariantsLogoLockup9Route,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

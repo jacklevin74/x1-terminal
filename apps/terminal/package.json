@@ -19,6 +19,7 @@
 	"dependencies": {
 		"@base-ui/react": "1.3.0",
 		"@fontsource-variable/inter": "5.2.8",
+		"@fontsource/geist-mono": "5.2.7",
 		"@hypeterminal/hl-react": "workspace:*",
 		"@hypeterminal/ui": "workspace:*",
 		"@lifi/sdk": "3.16.3",
@@ -26,6 +27,7 @@
 		"@lingui/react": "6.3.0",
 		"@nktkas/hyperliquid": "0.32.2",
 		"@phosphor-icons/react": "2.1.10",
+		"@solana/web3.js": "1.98.4",
 		"@tanstack/query-sync-storage-persister": "5.101.0",
 		"@tanstack/react-query": "5.101.0",
 		"@tanstack/react-query-persist-client": "5.101.0",
@@ -54,8 +56,7 @@
 		"viem": "2.52.2",
 		"wagmi": "3.6.16",
 		"zod": "4.3.4",
-		"zustand": "5.0.9",
-		"@solana/web3.js": "1.98.4"
+		"zustand": "5.0.9"
 	},
 	"devDependencies": {
 		"@lingui/babel-plugin-lingui-macro": "6.3.0",
