@@ -1,7 +1,7 @@
 import { Button, ButtonIcon, Divider, Dropdown } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { DownloadSimpleIcon, GearIcon, TerminalIcon } from "@phosphor-icons/react";
+import { DownloadSimpleIcon, GearIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { useConnection } from "wagmi";
@@ -13,6 +13,7 @@ import { useExchangeScope } from "@/providers/exchange-scope";
 import { useDepositModalActions, useSettingsDialogActions } from "@/stores/use-global-modal-store";
 import { useIsTestnet } from "@/stores/use-global-settings-store";
 import { ThemeToggle } from "./theme-toggle";
+import X1TerminalLogo from "./x1-terminal-logo";
 
 const UserMenu = createLazyComponent(() => import("./user-menu"), "UserMenu");
 
@@ -48,15 +49,7 @@ export function TopNav() {
 			)}
 		>
 			<div className="flex items-center gap-3 min-w-0">
-				<div className="flex items-center gap-1.5">
-					<div className="size-5 rounded-8 bg-brand/10 border border-stroke-brand-strong/30 flex items-center justify-center">
-						<TerminalIcon className="size-3 text-brand" />
-					</div>
-					<span className="text-xs font-bold tracking-tight">
-						<span className="text-brand">X1 </span>
-						<span className="text-fg">TERMINAL</span>
-					</span>
-				</div>
+				<X1TerminalLogo />
 				<Divider orientation="vertical" className="my-2 hidden lg:block" />
 				<nav className="hidden lg:flex items-center text-xs tracking-wide">
 					{SCOPE_NAV_ITEMS.map((item) => (
@@ -88,23 +81,30 @@ export function TopNav() {
 
 			<div className="flex items-center gap-2 min-h-8">
 				{isConnected && (
-     <div className="flex items-center gap-0.5">
-					<Button
-						variant="filled"
-						intent="brand"
-						size="sm"
-						onClick={() => openDepositModal("deposit")}
-						iconLeft={<DownloadSimpleIcon className="size-3.5" />}
-						className={cn(APP_BAR_BUTTON_HEIGHT_CLASS, "shrink-0 px-3")}
-					>
-						<Trans>Deposit</Trans>
-					</Button>
-      <Dropdown align="end" size="sm" triggerAriaLabel="More deposit options" trigger={<span className="sr-only">More deposit options</span>} triggerClassName="h-8 !px-2" items={[
-       { label: "Deposit from wallet", onSelect: () => openDepositModal("wallet") },
-       { label: "Deposit USDC from Arbitrum", onSelect: () => openDepositModal("usdc") },
-       { label: "Bridge from other chains", onSelect: () => openDepositModal("bridge") },
-      ]} />
-     </div>
+					<div className="flex items-center gap-0.5">
+						<Button
+							variant="filled"
+							intent="brand"
+							size="sm"
+							onClick={() => openDepositModal("deposit")}
+							iconLeft={<DownloadSimpleIcon className="size-3.5" />}
+							className={cn(APP_BAR_BUTTON_HEIGHT_CLASS, "shrink-0 px-3")}
+						>
+							<Trans>Deposit</Trans>
+						</Button>
+						<Dropdown
+							align="end"
+							size="sm"
+							triggerAriaLabel="More deposit options"
+							trigger={<span className="sr-only">More deposit options</span>}
+							triggerClassName="h-8 !px-2"
+							items={[
+								{ label: "Deposit from wallet", onSelect: () => openDepositModal("wallet") },
+								{ label: "Deposit USDC from Arbitrum", onSelect: () => openDepositModal("usdc") },
+								{ label: "Bridge from other chains", onSelect: () => openDepositModal("bridge") },
+							]}
+						/>
+					</div>
 				)}
 				<Suspense fallback={<UserMenuSkeleton />}>
 					<UserMenu />
