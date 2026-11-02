@@ -46,9 +46,6 @@ export function TopNav() {
 								aria-current={isActive ? "page" : undefined}
 								className={cn(NAV_LINK_CLASS, isActive ? item.activeClass : "text-fg-muted hover:text-fg")}
 							>
-								{isActive && (
-									<span aria-hidden className={cn("absolute top-1 right-1 size-1.5 rounded-full", item.accentClass)} />
-								)}
 								{item.label}
 							</Link>
 						);

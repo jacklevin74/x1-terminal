@@ -80,9 +80,6 @@ export function MobileNavDrawer() {
 									>
 										<ScopeIcon scope={item.scope} />
 										<span className="flex-1 truncate">{item.label}</span>
-										{isActive && (
-											<span aria-hidden className={cn("size-1.5 shrink-0 rounded-full", item.accentClass)} />
-										)}
 									</Link>
 								);
 							})}
