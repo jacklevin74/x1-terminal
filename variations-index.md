@@ -1,2 +1,3 @@
 - 2026-11-02 logo-lockup — real X1 mark + "terminal" in 8 monospace treatments (lowercase, tracked caps, divider, caret, path, chip, stacked, brackets) — route /dev/variants/logo-lockup — winner: none (1 and 8 refined in logo-lockup-2)
-- 2026-11-02 logo-lockup-2 — refines #1 (baseline, matched height) and #8 (brackets) with metric-locked sizing (font-size-adjust + text-box-trim), wider mark gap, 8 fonts — route /dev/variants/logo-lockup-2 — winner: TBD
+- 2026-11-02 logo-lockup-2 — refines #1 (baseline, matched height) and #8 (brackets) with metric-locked sizing (font-size-adjust + text-box-trim), wider mark gap, 8 fonts — route /dev/variants/logo-lockup-2 — winner: none ("amateurish")
+- 2026-11-02 logo-lockup-3 — reference-led: Vercel slash, Axiom light suffix, GitHub eyebrow caps + cursor, two-line, Doto dot matrix, Silkscreen pixel, superscript tag, Martian condensed; min 7px caps at 20px nav — route /dev/variants/logo-lockup-3 — winner: TBD

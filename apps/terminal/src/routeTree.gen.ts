@@ -17,6 +17,7 @@ import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BuildersPerpIndexRouteImport } from './routes/builders-perp.index'
 import { Route as BuildersPerpDexRouteImport } from './routes/builders-perp.$dex'
+import { Route as DevVariantsLogoLockup3RouteImport } from './routes/dev.variants.logo-lockup-3'
 import { Route as DevVariantsLogoLockup2RouteImport } from './routes/dev.variants.logo-lockup-2'
 import { Route as DevVariantsLogoLockupRouteImport } from './routes/dev.variants.logo-lockup'
 
@@ -60,6 +61,11 @@ const BuildersPerpDexRoute = BuildersPerpDexRouteImport.update({
   path: '/$dex',
   getParentRoute: () => BuildersPerpRoute,
 } as any)
+const DevVariantsLogoLockup3Route = DevVariantsLogoLockup3RouteImport.update({
+  id: '/dev/variants/logo-lockup-3',
+  path: '/dev/variants/logo-lockup-3',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DevVariantsLogoLockup2Route = DevVariantsLogoLockup2RouteImport.update({
   id: '/dev/variants/logo-lockup-2',
   path: '/dev/variants/logo-lockup-2',
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/builders-perp/': typeof BuildersPerpIndexRoute
   '/dev/variants/logo-lockup': typeof DevVariantsLogoLockupRoute
   '/dev/variants/logo-lockup-2': typeof DevVariantsLogoLockup2Route
+  '/dev/variants/logo-lockup-3': typeof DevVariantsLogoLockup3Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -93,6 +100,7 @@ export interface FileRoutesByTo {
   '/builders-perp': typeof BuildersPerpIndexRoute
   '/dev/variants/logo-lockup': typeof DevVariantsLogoLockupRoute
   '/dev/variants/logo-lockup-2': typeof DevVariantsLogoLockup2Route
+  '/dev/variants/logo-lockup-3': typeof DevVariantsLogoLockup3Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -106,6 +114,7 @@ export interface FileRoutesById {
   '/builders-perp/': typeof BuildersPerpIndexRoute
   '/dev/variants/logo-lockup': typeof DevVariantsLogoLockupRoute
   '/dev/variants/logo-lockup-2': typeof DevVariantsLogoLockup2Route
+  '/dev/variants/logo-lockup-3': typeof DevVariantsLogoLockup3Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -120,6 +129,7 @@ export interface FileRouteTypes {
     | '/builders-perp/'
     | '/dev/variants/logo-lockup'
     | '/dev/variants/logo-lockup-2'
+    | '/dev/variants/logo-lockup-3'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -131,6 +141,7 @@ export interface FileRouteTypes {
     | '/builders-perp'
     | '/dev/variants/logo-lockup'
     | '/dev/variants/logo-lockup-2'
+    | '/dev/variants/logo-lockup-3'
   id:
     | '__root__'
     | '/'
@@ -143,6 +154,7 @@ export interface FileRouteTypes {
     | '/builders-perp/'
     | '/dev/variants/logo-lockup'
     | '/dev/variants/logo-lockup-2'
+    | '/dev/variants/logo-lockup-3'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -154,6 +166,7 @@ export interface RootRouteChildren {
   SpotRoute: typeof SpotRoute
   DevVariantsLogoLockupRoute: typeof DevVariantsLogoLockupRoute
   DevVariantsLogoLockup2Route: typeof DevVariantsLogoLockup2Route
+  DevVariantsLogoLockup3Route: typeof DevVariantsLogoLockup3Route
 }
 
 declare module '@tanstack/react-router' {
@@ -214,6 +227,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuildersPerpDexRouteImport
       parentRoute: typeof BuildersPerpRoute
     }
+    '/dev/variants/logo-lockup-3': {
+      id: '/dev/variants/logo-lockup-3'
+      path: '/dev/variants/logo-lockup-3'
+      fullPath: '/dev/variants/logo-lockup-3'
+      preLoaderRoute: typeof DevVariantsLogoLockup3RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dev/variants/logo-lockup-2': {
       id: '/dev/variants/logo-lockup-2'
       path: '/dev/variants/logo-lockup-2'
@@ -254,6 +274,7 @@ const rootRouteChildren: RootRouteChildren = {
   SpotRoute: SpotRoute,
   DevVariantsLogoLockupRoute: DevVariantsLogoLockupRoute,
   DevVariantsLogoLockup2Route: DevVariantsLogoLockup2Route,
+  DevVariantsLogoLockup3Route: DevVariantsLogoLockup3Route,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
