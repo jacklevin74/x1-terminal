@@ -56,11 +56,11 @@ function PopoverContent({
 				<PopoverPrimitive.Popup
 					data-slot="popover-content"
 					className={cn(
-						"font-sans bg-surface text-fg z-50 rounded-12 border border-stroke-weak p-4 shadow-overlay outline-hidden",
+						"font-sans bg-overlay text-fg z-50 rounded-12 p-4 shadow-menu outline-hidden",
 						POPOVER_DEFAULT_WIDTH_CLASS,
-						"transition-[opacity,transform] duration-150 ease-out origin-(--transform-origin)",
-						"data-starting-style:opacity-0 data-starting-style:scale-95",
-						"data-ending-style:opacity-0 data-ending-style:scale-95",
+						"transition-[opacity,scale] duration-150 ease-out origin-(--transform-origin) motion-reduce:transition-none",
+						"data-starting-style:opacity-0 data-starting-style:scale-[0.97]",
+						"data-ending-style:opacity-0 data-ending-style:scale-[0.97]",
 						className,
 					)}
 					{...props}

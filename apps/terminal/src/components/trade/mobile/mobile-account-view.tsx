@@ -11,6 +11,7 @@ import {
 import { Skeleton } from "boneyard-js/react";
 import { useState } from "react";
 import { useConnection, useDisconnect } from "wagmi";
+import { InfoRow, InfoRowGroup } from "@/components/ui/info-row";
 import { UI_TEXT } from "@/config/ui-text";
 import { useDefaultDexBalances } from "@/hooks/trade/use-account-balances";
 import { useCopyToClipboard } from "@/hooks/ui/use-copy-to-clipboard";
@@ -60,18 +61,18 @@ export function MobileAccountView({ className }: MobileAccountViewProps) {
 
 	if (!isConnected) {
 		return (
-			<div className={cn("flex flex-col h-full min-h-0 bg-background", className)}>
-				<div className="flex-1 flex flex-col items-center justify-center gap-6 p-6">
-					<div className="size-20 rounded-full bg-surface flex items-center justify-center">
-						<WalletIcon className="size-10 text-fg-muted" />
+			<div className={cn("flex flex-col h-full min-h-0 bg-surface", className)}>
+				<div className="flex-1 flex flex-col items-center justify-center gap-4 px-3 py-6 text-center">
+					<div className="size-12 rounded-full bg-control flex items-center justify-center">
+						<WalletIcon className="size-6 text-fg-muted" />
 					</div>
-					<div className="text-center space-y-2">
-						<h2 className="text-lg font-semibold">{t`Connect Wallet`}</h2>
-						<p className="text-sm text-fg-muted max-w-xs">
+					<div className="flex flex-col gap-2">
+						<h2 className="text-lg font-medium text-fg">{t`Connect Wallet`}</h2>
+						<p className="text-xs text-fg-muted max-w-xs text-pretty">
 							{t`Connect your wallet to view your account, positions, and start trading.`}
 						</p>
 					</div>
-					<Button variant="outline" intent="brand" size="md" onClick={() => setWalletModalOpen(true)}>
+					<Button variant="filled" intent="brand" size="md" onClick={() => setWalletModalOpen(true)}>
 						{t`Connect Wallet`}
 					</Button>
 				</div>
@@ -82,118 +83,115 @@ export function MobileAccountView({ className }: MobileAccountViewProps) {
 	}
 
 	return (
-		<div className={cn("flex flex-col h-full min-h-0 bg-background", className)}>
-			<div className="shrink-0 px-4 py-4 border-b border-stroke-weak/60 bg-surface">
-				<div className="flex items-center justify-between">
-					<div className="flex items-center gap-3">
-						<div className="size-10 rounded-full bg-brand-soft flex items-center justify-center">
-							<span className="text-brand font-bold">{address?.slice(2, 4).toUpperCase()}</span>
-						</div>
-						<div>
-							<div className="flex items-center gap-2">
-								<span className="font-mono text-sm">
-									{address?.slice(0, 6)}...{address?.slice(-4)}
-								</span>
-								<ButtonIcon
-									variant="ghost"
-									intent="neutral"
-									size="sm"
-									className="touch-target"
-									onClick={handleCopyAddress}
-									aria-label={t`Copy address`}
-								>
-									<CopyIcon className={cn("size-3.5", copied && "text-success")} />
-								</ButtonIcon>
-							</div>
-							<Badge tone="neutral" size="sm" className="mt-0.5">
-								{t`Cross Margin`}
-							</Badge>
-						</div>
+		<div className={cn("flex flex-col h-full min-h-0 bg-surface", className)}>
+			<div className="shrink-0 h-14 px-3 flex items-center justify-between gap-3 border-b border-stroke-weak">
+				<div className="flex min-w-0 items-center gap-3">
+					<div className="size-8 shrink-0 rounded-full bg-control flex items-center justify-center">
+						<span className="text-xs font-medium text-fg">{address?.slice(2, 4).toUpperCase()}</span>
 					</div>
-					<ButtonIcon
-						variant="ghost"
-						intent="error"
-						size="md"
-						className="touch-target"
-						onClick={() => disconnect.mutate()}
-						aria-label={t`Disconnect wallet`}
-					>
-						<SignOutIcon className="size-5" />
-					</ButtonIcon>
+					<div className="flex min-w-0 flex-col gap-0.5">
+						<div className="flex items-center gap-1">
+							<span className="text-xs font-medium tabular-nums text-fg">
+								{address?.slice(0, 6)}...{address?.slice(-4)}
+							</span>
+							<ButtonIcon
+								variant="ghost"
+								intent="neutral"
+								size="xs"
+								onClick={handleCopyAddress}
+								aria-label={t`Copy address`}
+							>
+								<CopyIcon className={cn("size-3.5", copied && "text-market-up")} />
+							</ButtonIcon>
+						</div>
+						<Badge tone="neutral" size="xs" className="self-start">
+							{t`Cross Margin`}
+						</Badge>
+					</div>
 				</div>
+				<ButtonIcon
+					variant="ghost"
+					intent="neutral"
+					size="sm"
+					onClick={() => disconnect.mutate()}
+					aria-label={t`Disconnect wallet`}
+				>
+					<SignOutIcon className="size-4" />
+				</ButtonIcon>
 			</div>
 
 			<div className="flex-1 min-h-0 overflow-y-auto">
-				<div className="p-2 space-y-4">
-					<div className="p-4 rounded-xs border border-stroke-weak/60 bg-surface">
-						<Skeleton name="account-equity" loading={isLoading}>
-							<div className="text-2xs uppercase font-medium text-fg-muted mb-1.5">{ACCOUNT_TEXT.EQUITY_LABEL}</div>
-							<div className="text-3xl font-bold tabular-nums text-fg">{formatUSD(accountValue)}</div>
-							<div
-								className={cn(
-									"text-sm tabular-nums mt-1.5 font-medium",
-									unrealizedPnl >= 0 ? "text-success" : "text-error",
-								)}
-							>
+				<div className="flex flex-col gap-4 px-3 py-4">
+					<Skeleton name="account-equity" loading={isLoading}>
+						<div className="flex flex-col gap-1">
+							<div className="text-2xs uppercase tracking-micro text-fg-muted">{ACCOUNT_TEXT.EQUITY_LABEL}</div>
+							<div className="text-base font-medium tabular-nums text-fg">{formatUSD(accountValue)}</div>
+							<div className={cn("text-xs tabular-nums", unrealizedPnl >= 0 ? "text-market-up" : "text-market-down")}>
 								{unrealizedPnl >= 0 ? "+" : ""}
-								{formatUSD(unrealizedPnl)} {ACCOUNT_TEXT.UNREALIZED_LABEL}
+								{formatUSD(unrealizedPnl)} <span className="text-fg-muted">{ACCOUNT_TEXT.UNREALIZED_LABEL}</span>
 							</div>
-						</Skeleton>
-					</div>
+						</div>
+					</Skeleton>
 
-					<div className="grid grid-cols-2 gap-3">
-						<StatCard label={ACCOUNT_TEXT.BALANCE_LABEL} value={formatUSD(totalRawUsd)} isLoading={isLoading} />
-						<StatCard label={ACCOUNT_TEXT.AVAILABLE_LABEL} value={formatUSD(availableBalance)} isLoading={isLoading} />
-						<StatCard label={ACCOUNT_TEXT.MARGIN_USED_LABEL} value={formatUSD(totalMarginUsed)} isLoading={isLoading} />
-						<StatCard
-							label={ACCOUNT_TEXT.MARGIN_RATIO_LABEL}
-							value={formatPercent(marginRatio)}
-							valueClass={marginRatio > 0.8 ? "text-error" : marginRatio > 0.5 ? "text-warning" : ""}
-							isLoading={isLoading}
-						/>
-						<StatCard label={t`Maintenance Margin`} value={formatUSD(maintenanceMargin)} isLoading={isLoading} />
-						<StatCard
-							label={ACCOUNT_TEXT.CROSS_LEVERAGE_LABEL}
-							value={`${crossLeverage.toFixed(2)}x`}
-							isLoading={isLoading}
-						/>
-					</div>
-
-					<div className="grid grid-cols-3 gap-2 pt-2">
+					<div className="grid grid-cols-3 gap-2">
 						<Button
-							variant="outline"
+							variant="secondary"
 							intent="neutral"
-							size="md"
+							size="sm"
 							onClick={() => openDepositModal("withdraw")}
 							iconLeft={<UploadSimpleIcon className="size-4" />}
 						>
 							{ACCOUNT_TEXT.WITHDRAW_LABEL}
 						</Button>
 						<Button
-							variant="outline"
+							variant="secondary"
 							intent="neutral"
-							size="md"
+							size="sm"
 							onClick={() => openDepositModal("deposit")}
 							iconLeft={<DownloadSimpleIcon className="size-4" />}
 						>
 							{ACCOUNT_TEXT.DEPOSIT_LABEL}
 						</Button>
 						<Button
-							variant="outline"
+							variant="secondary"
 							intent="neutral"
-							size="md"
+							size="sm"
 							onClick={() => openDepositModal("bridge")}
 							iconLeft={<ArrowsLeftRightIcon className="size-4" />}
 						>
 							{t`Bridge`}
 						</Button>
 					</div>
+
+					<InfoRowGroup className="border-t border-stroke-weak pt-2">
+						<StatRow label={ACCOUNT_TEXT.BALANCE_LABEL} value={formatUSD(totalRawUsd)} isLoading={isLoading} />
+						<StatRow label={ACCOUNT_TEXT.AVAILABLE_LABEL} value={formatUSD(availableBalance)} isLoading={isLoading} />
+						<StatRow label={ACCOUNT_TEXT.MARGIN_USED_LABEL} value={formatUSD(totalMarginUsed)} isLoading={isLoading} />
+						<StatRow
+							label={ACCOUNT_TEXT.MARGIN_RATIO_LABEL}
+							value={formatPercent(marginRatio)}
+							valueClass={getMarginRatioClass(marginRatio)}
+							isLoading={isLoading}
+						/>
+						<StatRow label={t`Maintenance Margin`} value={formatUSD(maintenanceMargin)} isLoading={isLoading} />
+						<StatRow
+							label={ACCOUNT_TEXT.CROSS_LEVERAGE_LABEL}
+							value={`${crossLeverage.toFixed(2)}x`}
+							isLoading={isLoading}
+						/>
+					</InfoRowGroup>
 				</div>
 			</div>
 
 			<MobileBottomNavSpacer />
 		</div>
 	);
+}
+
+function getMarginRatioClass(marginRatio: number): string | undefined {
+	if (marginRatio > 0.8) return "text-market-down";
+	if (marginRatio > 0.5) return "text-warning";
+	return undefined;
 }
 
 interface StatCardProps {
@@ -203,13 +201,16 @@ interface StatCardProps {
 	isLoading?: boolean;
 }
 
-function StatCard({ label, value, valueClass, isLoading }: StatCardProps) {
+function StatRow({ label, value, valueClass, isLoading }: StatCardProps) {
 	return (
-		<div className="p-3 rounded-xs border border-stroke-weak/40 bg-surface">
-			<div className="text-2xs text-fg-muted mb-1">{label}</div>
-			<Skeleton name="stat-card-value" loading={isLoading ?? false}>
-				<div className={cn("text-base font-semibold tabular-nums", valueClass)}>{value}</div>
-			</Skeleton>
-		</div>
+		<InfoRow
+			label={label}
+			value={
+				<Skeleton name="stat-card-value" loading={isLoading ?? false}>
+					<span>{value}</span>
+				</Skeleton>
+			}
+			valueClassName={valueClass}
+		/>
 	);
 }

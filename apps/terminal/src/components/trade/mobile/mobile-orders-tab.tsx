@@ -1,6 +1,6 @@
 import { Badge, Button } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
-import { ListIcon, ListNumbersIcon, XIcon } from "@phosphor-icons/react";
+import { XIcon } from "@phosphor-icons/react";
 import { Skeleton } from "boneyard-js/react";
 import { useState } from "react";
 import { useConnection } from "wagmi";
@@ -121,7 +121,7 @@ export function MobileOrdersTab({ className }: Props) {
 
 	if (!isConnected) {
 		return (
-			<div className="flex-1 flex items-center justify-center p-6 text-sm text-fg-muted">
+			<div className="flex-1 flex items-center justify-center px-3 py-6 text-center text-xs text-fg-muted">
 				{t`Connect your wallet to view open orders.`}
 			</div>
 		);
@@ -129,7 +129,7 @@ export function MobileOrdersTab({ className }: Props) {
 
 	if (status === "error") {
 		return (
-			<div className="flex-1 flex items-center justify-center p-6 text-sm text-error">
+			<div className="flex-1 flex flex-col items-center justify-center px-3 py-6 text-center text-xs text-market-down">
 				<span>{t`Failed to load open orders.`}</span>
 				{error instanceof Error && <span className="mt-1 text-xs text-fg-muted">{error.message}</span>}
 			</div>
@@ -138,11 +138,8 @@ export function MobileOrdersTab({ className }: Props) {
 
 	if (status === "active" && openOrders.length === 0) {
 		return (
-			<div className="flex-1 flex flex-col items-center justify-center gap-3 p-6 text-center">
-				<div className="size-12 rounded-full flex items-center justify-center bg-surface">
-					<ListIcon className="size-6 text-fg-muted" />
-				</div>
-				<p className="text-sm text-fg-muted">{t`No open orders.`}</p>
+			<div className="flex-1 flex items-center justify-center px-3 py-6 text-center text-xs text-fg-muted">
+				{t`No open orders.`}
 			</div>
 		);
 	}
@@ -150,23 +147,22 @@ export function MobileOrdersTab({ className }: Props) {
 	return (
 		<Skeleton name="orders-tab" loading={status === "subscribing" || status === "idle"}>
 			<div className={cn("flex-1 min-h-0 flex flex-col", className)}>
-				<div className="px-3 py-2 flex items-center gap-2 text-xs uppercase text-fg-muted">
-					<ListNumbersIcon className="size-3" />
-					{t`Open Orders`}
-					<span className="font-semibold text-brand tabular-nums">{headerCount}</span>
+				<div className="shrink-0 h-10 px-3 flex items-center gap-2">
+					<span className="text-2xs uppercase tracking-micro text-fg-muted">{t`Open Orders`}</span>
+					<span className="text-xs tabular-nums text-fg">{headerCount}</span>
 					<Button
-						variant="ghost"
-						intent="error"
+						variant="secondary"
+						intent="down"
 						size="sm"
-						className="ml-auto touch-target"
+						className="ml-auto"
 						onClick={handleCancelAll}
 						disabled={pendingScopes.has("all") || openOrders.length === 0}
 					>
 						{pendingScopes.has("all") ? t`Canceling...` : t`Cancel All`}
 					</Button>
 				</div>
-				{actionError && <div className="px-3 pb-1 text-xs text-error">{actionError}</div>}
-				<div className="flex-1 min-h-0 overflow-y-auto px-3 pb-3 space-y-2">
+				{actionError && <p className="px-3 pb-2 text-xs text-market-down">{actionError}</p>}
+				<div className="flex-1 min-h-0 overflow-y-auto divide-y divide-stroke-faint border-t border-stroke-faint">
 					{openOrders.map((order) => (
 						<MobileOrderCard
 							key={order.oid}
@@ -200,18 +196,18 @@ function MobileOrderCard({ order, szDecimals, kind, isCancelling, onCancel, onSe
 	const side: Side = isLong ? "buy" : "sell";
 
 	return (
-		<div className="rounded-xs border border-stroke-weak bg-surface overflow-hidden">
-			<div className="flex items-center justify-between px-3 py-1.5 border-b border-stroke-weak">
-				<div className="flex items-center gap-2">
+		<div className="flex flex-col gap-3 px-3 py-3">
+			<div className="flex items-center justify-between gap-2">
+				<div className="flex min-w-0 items-center gap-2">
 					<AssetBadge
+						appearance="plain"
 						coin={order.coin}
 						side={side}
 						onClick={() => onSelectMarket(order.coin, side)}
-						nameClassName="text-sm"
+						className="min-h-8"
+						nameClassName="text-base font-medium text-fg"
 					/>
-					<Badge tone={isLong ? "success" : "error"} size="xs">
-						{sideLabel}
-					</Badge>
+					<span className={cn("text-xs font-medium", isLong ? "text-market-up" : "text-market-down")}>{sideLabel}</span>
 				</div>
 				<div className="flex items-center gap-2">
 					<span className="inline-flex items-baseline gap-1 text-xs whitespace-nowrap" title={typeConfig.fullLabel}>
@@ -220,11 +216,15 @@ function MobileOrderCard({ order, szDecimals, kind, isCancelling, onCancel, onSe
 						) : null}
 						<span className="text-fg">{typeConfig.executionLabel}</span>
 					</span>
-					{order.reduceOnly && <span className="text-2xs uppercase text-fg-muted">{t`RO`}</span>}
+					{order.reduceOnly && (
+						<Badge tone="neutral" size="xs">
+							{t`RO`}
+						</Badge>
+					)}
 				</div>
 			</div>
 
-			<div className="grid grid-cols-3 divide-x divide-stroke-weak">
+			<div className="grid grid-cols-3 gap-3">
 				<MetricCell
 					label={t`Price`}
 					value={isMarketTriggerOrder(order) ? t`Market` : formatPrice(order.limitPx, { szDecimals })}
@@ -237,18 +237,17 @@ function MobileOrderCard({ order, szDecimals, kind, isCancelling, onCancel, onSe
 							: formatToken(order.origSz, { decimals: szDecimals, symbol: order.coin })
 					}
 				/>
-				<MetricCell label={t`Trigger`} value={order.triggerCondition || FALLBACK_VALUE_PLACEHOLDER} />
+				<MetricCell label={t`Trigger`} value={order.triggerCondition || FALLBACK_VALUE_PLACEHOLDER} align="end" />
 			</div>
 
-			<div className="flex items-center justify-between px-3 py-1.5">
+			<div className="flex items-center justify-between gap-2">
 				<span className="text-xs text-fg-muted tabular-nums">
 					{formatDateTime(order.timestamp, { dateStyle: "short", timeStyle: "short" })}
 				</span>
 				<Button
-					variant="ghost"
-					intent="error"
+					variant="secondary"
+					intent="neutral"
 					size="sm"
-					className="touch-target"
 					onClick={() => onCancel([order])}
 					disabled={isCancelling}
 					iconLeft={isCancelling ? <Spinner className="size-3" /> : <XIcon className="size-3.5" />}

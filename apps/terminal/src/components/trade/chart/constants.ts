@@ -1,5 +1,4 @@
 import {
-	CHART_CUSTOM_FONT_FAMILY,
 	CHART_DATAFEED_CONFIG,
 	CHART_DEFAULT_INTERVAL,
 	CHART_DEFAULT_PRICESCALE,
@@ -20,6 +19,9 @@ import {
 } from "@/config/chart";
 import { CHART_ALL_MIDS_TTL_MS } from "@/config/time";
 
+// Matches --font-sans in styles.css. Inter is injected into the TradingView iframe by generateChartCssUrl.
+export const CHART_CUSTOM_FONT_FAMILY = '"Inter Variable", ui-sans-serif, system-ui, -apple-system, sans-serif';
+
 export {
 	CHART_LIBRARY_PATH,
 	CHART_TIME_FRAMES,
@@ -27,7 +29,6 @@ export {
 	CHART_DEFAULT_INTERVAL as DEFAULT_CHART_INTERVAL,
 	CHART_DEFAULT_THEME as DEFAULT_CHART_THEME,
 	CHART_LOCALE,
-	CHART_CUSTOM_FONT_FAMILY,
 	CHART_ENABLED_FEATURES,
 	CHART_DISABLED_FEATURES,
 	CHART_FAVORITE_INTERVALS,

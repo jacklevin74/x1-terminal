@@ -1,4 +1,3 @@
-import { AccountTableToolbar } from "./account-table-toolbar";
 import { Button, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { useMemo } from "react";
@@ -14,17 +13,19 @@ import { toBig } from "@/lib/trade/numbers";
 import { useExchangeScope } from "@/providers/exchange-scope";
 import { useMarketActions } from "@/stores/use-market-store";
 import { AssetBadge } from "../components/asset-badge";
+import { AccountTableToolbar } from "./account-table-toolbar";
+import { ConnectPlaceholder } from "./connect-placeholder";
+import { LoadingRows } from "./loading-rows";
 import { Placeholder } from "./placeholder";
 import {
-	positionViewRowClass as positionsPanelRowHoverClass,
-	positionViewBodyClass as positionsPanelTableBodyClass,
-	positionViewCellClass as positionsPanelTableCellClass,
-	positionViewHeadClass as positionsPanelTableHeadClass,
- positionsPanelTableLayoutClass,
-	positionViewHeaderClass as positionsPanelTableHeaderClass,
-	positionsPanelTableHeaderRowClass,
-	positionsPanelTableShellClass,
-	positionsPanelTabRootClass,
+	accountCellClass,
+	accountHeadClass,
+	accountNumCellClass,
+	accountNumHeadClass,
+	accountRowClass,
+	accountTableClass,
+	accountTableShellClass,
+	accountTabRootClass,
 } from "./positions-panel-table-styles";
 
 export function TwapTab() {
@@ -54,68 +55,48 @@ export function TwapTab() {
 	const twapStatesStatus = twapStatesEvent ? "active" : "loading";
 
 	function renderPlaceholder() {
-		if (!isConnected) return <Placeholder>{t`Connect your wallet to view TWAP orders.`}</Placeholder>;
-		if (twapStatesStatus === "loading") return <Placeholder>{t`Loading TWAP orders...`}</Placeholder>;
+		if (!isConnected) return <ConnectPlaceholder message={t`Connect your wallet to view TWAP orders.`} />;
+		if (twapStatesStatus === "loading") return <LoadingRows label={t`Loading TWAP orders...`} />;
 		if (activeOrders.length === 0) return <Placeholder>{t`No active TWAP orders.`}</Placeholder>;
 		return null;
 	}
 
 	const placeholder = renderPlaceholder();
 
+	const headings = [
+		{ label: t`Asset`, numeric: false },
+		{ label: t`Size`, numeric: true },
+		{ label: t`Executed`, numeric: true },
+		{ label: t`Avg Price`, numeric: true },
+		{ label: t`Time / Total`, numeric: false },
+		{ label: t`Reduce Only`, numeric: false },
+		{ label: t`Created`, numeric: false },
+		{ label: t`Actions`, numeric: true },
+	];
+
 	return (
-		<div className={positionsPanelTabRootClass}>
+		<div className={accountTabRootClass}>
 			<AccountTableToolbar tab="twap">
-				{headerCount ? <span className="tabular-nums text-3xs text-fg-muted">{headerCount}</span> : null}
+				{headerCount ? <span className="tabular-nums text-xs text-fg-muted">{headerCount}</span> : null}
 			</AccountTableToolbar>
-			<div className={positionsPanelTableShellClass}>
+			<div className={accountTableShellClass}>
 				{placeholder ?? (
-					<ScrollArea className="h-full w-full">
-						<Table className={positionsPanelTableLayoutClass}>
-							<TableHeader className={positionsPanelTableHeaderClass}>
-								<TableRow className={positionsPanelTableHeaderRowClass}>
-									<TableHead scope="col" size="dense" className={cn(positionsPanelTableHeadClass, "text-left")}>
-										{t`Asset`}
-									</TableHead>
-									<TableHead
-										scope="col"
-										size="dense"
-										className={cn(positionsPanelTableHeadClass, "text-right")}
-									>
-										{t`Size`}
-									</TableHead>
-									<TableHead
-										scope="col"
-										size="dense"
-										className={cn(positionsPanelTableHeadClass, "text-right")}
-									>
-										{t`Executed`}
-									</TableHead>
-									<TableHead
-										scope="col"
-										size="dense"
-										className={cn(positionsPanelTableHeadClass, "text-right")}
-									>
-										{t`Avg Price`}
-									</TableHead>
-									<TableHead scope="col" size="dense" className={cn(positionsPanelTableHeadClass, "text-left")}>
-										{t`Time / Total`}
-									</TableHead>
-									<TableHead scope="col" size="dense" className={cn(positionsPanelTableHeadClass, "text-left")}>
-										{t`Reduce Only`}
-									</TableHead>
-									<TableHead scope="col" size="dense" className={cn(positionsPanelTableHeadClass, "text-left")}>
-										{t`Created`}
-									</TableHead>
-									<TableHead
-										scope="col"
-										size="dense"
-										className={cn(positionsPanelTableHeadClass, "text-right")}
-									>
-										{t`Actions`}
-									</TableHead>
+					<ScrollArea className="min-h-0 w-full flex-1">
+						<Table className={accountTableClass}>
+							<TableHeader>
+								<TableRow>
+									{headings.map((heading) => (
+										<TableHead
+											key={heading.label}
+											scope="col"
+											className={cn(accountHeadClass, heading.numeric && accountNumHeadClass)}
+										>
+											{heading.label}
+										</TableHead>
+									))}
 								</TableRow>
 							</TableHeader>
-							<TableBody className={positionsPanelTableBodyClass}>
+							<TableBody>
 								{activeOrders.map(({ twapId, state }) => {
 									const isBuy = state.side === "B";
 									const totalSize = toBig(state.sz)?.toNumber() ?? Number.NaN;
@@ -126,13 +107,10 @@ export function TwapTab() {
 									const totalMinutes = state.minutes;
 
 									return (
-										<TableRow
-											key={twapId}
-											className={positionsPanelRowHoverClass}
-										>
-											<TableCell size="dense" className={cn(positionsPanelTableCellClass, "font-medium text-fg")}>
+										<TableRow key={twapId} className={accountRowClass}>
+											<TableCell className={accountCellClass}>
 												<AssetBadge
-              appearance="position"
+													appearance="position"
 													coin={state.coin}
 													side={isBuy ? "buy" : "sell"}
 													onClick={() => setSelectedMarket(scope, state.coin)}
@@ -143,31 +121,17 @@ export function TwapTab() {
 													}
 												/>
 											</TableCell>
-											<TableCell
-												size="dense"
-												className={cn(positionsPanelTableCellClass, "text-right tabular-nums text-fg")}
-											>
-												{formatNumber(totalSize, szDecimals)}
+											<TableCell className={numCellClass}>{formatNumber(totalSize, szDecimals)}</TableCell>
+											<TableCell className={cn(numCellClass, isBuy ? "text-market-up" : "text-market-down")}>
+												{formatNumber(executedSize, szDecimals)}
 											</TableCell>
-											<TableCell size="dense" className={cn(positionsPanelTableCellClass, "text-right tabular-nums")}>
-												<span className={cn(isBuy ? "text-success" : "text-error")}>
-													{formatNumber(executedSize, szDecimals)}
-												</span>
-											</TableCell>
-											<TableCell
-												size="dense"
-												className={cn(positionsPanelTableCellClass, "text-right tabular-nums text-fg")}
-											>
-												{formatPrice(avgPrice, { szDecimals })}
-											</TableCell>
-											<TableCell size="dense" className={cn(positionsPanelTableCellClass, "tabular-nums text-fg")}>
+											<TableCell className={numCellClass}>{formatPrice(avgPrice, { szDecimals })}</TableCell>
+											<TableCell className={accountCellClass}>
 												<TimeTicker startTime={creationTime} durationMs={totalMinutes * 60 * 1000} isActive={true} /> /{" "}
 												{formatDuration(totalMinutes)}
 											</TableCell>
-											<TableCell size="dense" className={cn(positionsPanelTableCellClass, "text-fg")}>
-												{state.reduceOnly ? t`Yes` : t`No`}
-											</TableCell>
-											<TableCell size="dense" className={cn(positionsPanelTableCellClass, "tabular-nums text-fg")}>
+											<TableCell className={accountCellClass}>{state.reduceOnly ? t`Yes` : t`No`}</TableCell>
+											<TableCell className={accountCellClass}>
 												{formatDateTime(creationTime, {
 													day: "2-digit",
 													month: "2-digit",
@@ -178,11 +142,11 @@ export function TwapTab() {
 													hour12: false,
 												})}
 											</TableCell>
-											<TableCell size="dense" className={cn(positionsPanelTableCellClass, "text-right")}>
+											<TableCell className={numCellClass}>
 												<Button
-													variant="outline"
-													intent="error"
-													size="sm"
+													variant="secondary"
+													intent="neutral"
+													size="xs"
 													aria-label={t`Cancel TWAP order`}
 													disabled={isCancelling}
 													onClick={() => {
@@ -206,3 +170,5 @@ export function TwapTab() {
 		</div>
 	);
 }
+
+const numCellClass = cn(accountCellClass, accountNumCellClass);

@@ -1,6 +1,5 @@
-import { Button } from "@hypeterminal/ui";
+import { Badge, Button } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
-import { TimerIcon } from "@phosphor-icons/react";
 import { Skeleton } from "boneyard-js/react";
 import { useMemo } from "react";
 import { useConnection } from "wagmi";
@@ -44,7 +43,7 @@ export function MobileTwapTab({ className }: Props) {
 
 	if (!isConnected) {
 		return (
-			<div className="flex-1 flex items-center justify-center p-6 text-sm text-fg-muted">
+			<div className="flex-1 flex items-center justify-center px-3 py-6 text-center text-xs text-fg-muted">
 				{t`Connect your wallet to view TWAP orders.`}
 			</div>
 		);
@@ -52,7 +51,7 @@ export function MobileTwapTab({ className }: Props) {
 
 	if (twapStatesStatus !== "loading" && activeOrders.length === 0) {
 		return (
-			<div className="flex-1 flex items-center justify-center p-6 text-sm text-fg-muted">
+			<div className="flex-1 flex items-center justify-center px-3 py-6 text-center text-xs text-fg-muted">
 				{t`No active TWAP orders.`}
 			</div>
 		);
@@ -61,12 +60,11 @@ export function MobileTwapTab({ className }: Props) {
 	return (
 		<Skeleton name="twap-tab" loading={twapStatesStatus === "loading"}>
 			<div className={cn("flex-1 min-h-0 flex flex-col", className)}>
-				<div className="px-3 py-2 flex items-center gap-2 text-xs uppercase tracking-wider text-fg-muted">
-					<TimerIcon className="size-3" />
-					{t`TWAP Orders`}
-					<span className="font-semibold text-brand ml-auto tabular-nums">{headerCount}</span>
+				<div className="shrink-0 h-10 px-3 flex items-center justify-between gap-2">
+					<span className="text-2xs uppercase tracking-micro text-fg-muted">{t`TWAP Orders`}</span>
+					<span className="text-xs tabular-nums text-fg">{headerCount}</span>
 				</div>
-				<div className="flex-1 min-h-0 overflow-y-auto px-3 pb-3 space-y-2">
+				<div className="flex-1 min-h-0 overflow-y-auto divide-y divide-stroke-faint border-t border-stroke-faint">
 					{activeOrders.map(({ twapId, state }) => {
 						const isBuy = state.side === "B";
 						const totalSize = toBig(state.sz)?.toNumber() ?? Number.NaN;
@@ -77,28 +75,30 @@ export function MobileTwapTab({ className }: Props) {
 						const totalMinutes = state.minutes;
 
 						return (
-							<div key={twapId} className="rounded-xs border border-stroke-weak bg-surface overflow-hidden">
-								<div className="flex items-center justify-between px-3 py-1.5 border-b border-stroke-weak">
+							<div key={twapId} className="flex flex-col gap-3 px-3 py-3">
+								<div className="flex items-center justify-between gap-2">
 									<div className="flex items-center gap-2">
 										<AssetBadge
 											coin={state.coin}
 											side={isBuy ? "buy" : "sell"}
 											onClick={() => setSelectedMarket(scope, state.coin)}
-											nameClassName="text-sm"
+											appearance="plain"
+											className="min-h-8"
+											nameClassName="text-base font-medium text-fg"
 										/>
-										<span className={cn("text-2xs font-medium uppercase", isBuy ? "text-success" : "text-error")}>
+										<span className={cn("text-xs font-medium", isBuy ? "text-market-up" : "text-market-down")}>
 											{isBuy ? t`Buy` : t`Sell`}
 										</span>
 									</div>
 									<div className="flex items-center gap-2">
 										{state.reduceOnly && (
-											<span className="text-xs px-1.5 py-0.5 rounded-xs bg-brand-soft text-brand uppercase">
+											<Badge tone="neutral" size="xs">
 												{t`RO`}
-											</span>
+											</Badge>
 										)}
 										<Button
-											variant="outline"
-											intent="error"
+											variant="secondary"
+											intent="neutral"
 											size="sm"
 											disabled={isCancelling}
 											onClick={() => {
@@ -112,17 +112,17 @@ export function MobileTwapTab({ className }: Props) {
 									</div>
 								</div>
 
-								<div className="grid grid-cols-3 divide-x divide-stroke-weak">
+								<div className="grid grid-cols-3 gap-3">
 									<MetricCell label={t`Size`} value={formatNumber(totalSize, szDecimals)} />
 									<MetricCell
 										label={t`Executed`}
 										value={formatNumber(executedSize, szDecimals)}
-										valueClass={isBuy ? "text-success" : "text-error"}
+										valueClass={isBuy ? "text-market-up" : "text-market-down"}
 									/>
-									<MetricCell label={t`Avg Price`} value={formatPrice(avgPrice, { szDecimals })} />
+									<MetricCell label={t`Avg Price`} value={formatPrice(avgPrice, { szDecimals })} align="end" />
 								</div>
 
-								<div className="flex items-center justify-between px-3 py-1.5">
+								<div className="flex items-center justify-between gap-2">
 									<div className="text-xs tabular-nums text-fg-muted">
 										<TimeTicker startTime={creationTime} durationMs={totalMinutes * 60 * 1000} isActive={true} />
 										{" / "}

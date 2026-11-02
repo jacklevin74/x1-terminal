@@ -1,4 +1,3 @@
-import { Tooltip } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { ArrowSquareOutIcon, FireIcon } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
@@ -33,16 +32,16 @@ function FundingTooltipContent({ fundingNum }: { fundingNum: number }) {
 	];
 
 	return (
-		<div className="min-w-[9rem] space-y-2">
+		<div className="min-w-36 space-y-2">
 			<div className="flex items-center justify-between gap-4">
-				<span className="text-2xs uppercase tracking-wide text-fg-muted">{t`Resets in`}</span>
-				<span className="font-mono text-xs tabular-nums text-fg">{formatClockDuration(remaining)}</span>
+				<span className="text-2xs uppercase tracking-micro text-fg-muted">{t`Resets in`}</span>
+				<span className="text-xs tabular-nums text-fg">{formatClockDuration(remaining)}</span>
 			</div>
-			<div className="border-t border-stroke-weak pt-2 space-y-1.5">
+			<div className="space-y-1 border-t border-stroke-weak pt-2">
 				{rows.map(({ label, rate }) => (
 					<div key={label} className="flex items-center justify-between gap-4">
-						<span className="text-2xs text-fg-muted">{label}</span>
-						<span className={cn("text-xs font-medium tabular-nums", getValueColorClass(rate))}>
+						<span className="text-xs text-fg-muted">{label}</span>
+						<span className={cn("text-xs tabular-nums", getValueColorClass(rate))}>
 							{formatPercent(rate, { signDisplay: "exceptZero" })}
 						</span>
 					</div>
@@ -52,8 +51,10 @@ function FundingTooltipContent({ fundingNum }: { fundingNum: number }) {
 	);
 }
 
-function StatDivider() {
-	return <div className="h-3 w-px shrink-0 self-center bg-stroke-weak/30" aria-hidden />;
+function getTickColorClass(direction: number): string {
+	if (direction > 0) return "text-market-up";
+	if (direction < 0) return "text-market-down";
+	return "text-fg";
 }
 
 function getSpotTokenAddress(market: UnifiedMarketInfo | undefined): string | null {
@@ -105,97 +106,60 @@ export function MarketOverview() {
 	const oiUsd = getOiUsd(perpCtx?.openInterest, perpCtx?.markPx);
 	const spotTokenAddress = getSpotTokenAddress(selectedMarketInfo);
 
+	const [tick, setTick] = useState({ coin: perpCoin, price: markPxForDisplay, direction: 0 });
+	if (perpCoin !== tick.coin) {
+		setTick({ coin: perpCoin, price: markPxForDisplay, direction: 0 });
+	} else if (markPxForDisplay !== tick.price) {
+		const prev = toBig(tick.price);
+		const next = toBig(markPxForDisplay);
+		const step = prev && next ? next.cmp(prev) : 0;
+		setTick({ coin: perpCoin, price: markPxForDisplay, direction: step === 0 ? tick.direction : step });
+	}
+
 	const heroPrice = markPxForDisplay != null ? formatUSD(markPxForDisplay, { compact: false }) : "—";
 	const changePct = change24h !== null ? formatPercent(change24h / 100, { signDisplay: "exceptZero" }) : "—";
+	const compactUsd = { notation: "compact", compactDisplay: "short" } as const;
 
 	return (
-		<div className="flex min-h-0 w-max min-w-0 flex-nowrap items-center gap-0 text-xs">
-			<div className="flex shrink-0 items-center gap-2 border-r border-stroke-weak/35 pr-2.5">
-				<span className="font-sans text-sm font-semibold tabular-nums tracking-tight text-fg">{heroPrice}</span>
-				<div className="flex min-w-0 items-baseline gap-1">
-					<span className="shrink-0 text-2xs font-medium uppercase tracking-wide text-fg-muted">{t`24h`}</span>
-					<span
-						className={cn(
-							"min-w-0 font-sans text-xs font-medium tabular-nums leading-none",
-							change24h === null ? "text-fg-muted" : getValueColorClass(change24h),
-						)}
-					>
-						{changePct}
-					</span>
-				</div>
-			</div>
-
+		<div className="flex min-w-0 flex-nowrap items-center gap-6">
+			<span className={cn("shrink-0 text-base font-medium tabular-nums", getTickColorClass(tick.direction))}>
+				{heroPrice}
+			</span>
+			<StatBlock
+				label={t`24h`}
+				value={changePct}
+				valueClass={change24h === null ? "text-fg-muted" : getValueColorClass(change24h)}
+			/>
 			{!isSpot && (
 				<>
-					<StatDivider />
-					<StatBlock layout="inline" label={t`ORACLE`} value={formatUSD(oraclePx)} />
-					<StatDivider />
+					<StatBlock label={t`ORACLE`} value={formatUSD(oraclePx)} />
+					<StatBlock label={t`24H VOL`} value={formatUSD(dayNtlVlm, compactUsd)} />
+					<StatBlock label={t`OPEN INT`} value={formatUSD(oiUsd, compactUsd)} />
 					<StatBlock
-						layout="inline"
-						label={t`24H VOL`}
-						value={formatUSD(dayNtlVlm, {
-							notation: "compact",
-							compactDisplay: "short",
-						})}
-					/>
-					<StatDivider />
-					<StatBlock
-						layout="inline"
-						label={t`OPEN INT`}
-						value={formatUSD(oiUsd, {
-							notation: "compact",
-							compactDisplay: "short",
-						})}
-					/>
-					<StatDivider />
-					<Tooltip content={<FundingTooltipContent fundingNum={fundingNum} />} side="bottom">
-						<span>
-							<StatBlock
-								layout="inline"
-								label={t`FUNDING`}
-								value={formatPercent(fundingNum, {
-									minimumFractionDigits: 4,
-									signDisplay: "exceptZero",
-								})}
-								valueClass={cn(
-									"underline decoration-dashed underline-offset-2 cursor-pointer",
-									getValueColorClass(fundingNum),
-								)}
-								icon={<FireIcon className={cn("size-2.5 shrink-0", getValueColorClass(fundingNum))} />}
-							/>
-						</span>
-					</Tooltip>
-				</>
-			)}
-			{isSpot && (
-				<>
-					<StatDivider />
-					<StatBlock
-						layout="inline"
-						label={t`24H VOL`}
-						value={formatUSD(dayNtlVlm, {
-							notation: "compact",
-							compactDisplay: "short",
-						})}
+						label={t`FUNDING`}
+						tooltip={<FundingTooltipContent fundingNum={fundingNum} />}
+						value={formatPercent(fundingNum, { minimumFractionDigits: 4, signDisplay: "exceptZero" })}
+						valueClass={getValueColorClass(fundingNum)}
+						icon={<FireIcon className="size-3 shrink-0" />}
 					/>
 				</>
 			)}
+			{isSpot && <StatBlock label={t`24H VOL`} value={formatUSD(dayNtlVlm, compactUsd)} />}
 			{spotTokenAddress && (
-				<>
-					<StatDivider />
-					<div className="flex items-center gap-1.5 whitespace-nowrap px-1.5 py-px">
-						<span className="text-2xs text-fg-muted/80 uppercase tracking-wide">{t`TOKEN`}</span>
+				<StatBlock
+					label={t`TOKEN`}
+					value={
 						<a
 							href={getExplorerTokenUrl(spotTokenAddress)}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="inline-flex items-center gap-0.5 font-sans text-xs font-medium tabular-nums text-fg hover:text-brand transition-colors"
+							className="inline-flex items-center gap-1 text-fg transition-colors hover:text-brand"
 						>
 							{shortenAddress(spotTokenAddress, 4, 4)}
-							<ArrowSquareOutIcon className="size-2.5 shrink-0 text-icon" aria-hidden="true" />
+							<ArrowSquareOutIcon className="size-3 shrink-0 text-fg-muted" aria-hidden="true" />
 						</a>
-					</div>
-				</>
+					}
+				/>
 			)}
 		</div>
 	);

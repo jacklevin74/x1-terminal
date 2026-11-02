@@ -6,25 +6,23 @@ import { cn } from "./utils";
 
 const toggleVariants = cva(
 	[
-		"relative inline-flex shrink-0 cursor-pointer items-center rounded-full",
+		"relative inline-flex shrink-0 cursor-pointer items-center rounded-full p-0.5",
+		"max-md:before:absolute max-md:before:-inset-y-1.5 max-md:before:inset-x-0 max-md:before:content-['']",
 		"transition-colors duration-150 motion-reduce:transition-none",
 		"focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus",
-		"data-unchecked:bg-fill-weak",
-		"data-unchecked:ring-1 data-unchecked:ring-inset data-unchecked:ring-stroke-strong",
-		"data-unchecked:inset-shadow-sunken",
-		"data-checked:bg-fill-selected",
-		"data-checked:hover:opacity-90 data-checked:active:opacity-80",
-		"data-disabled:cursor-not-allowed data-disabled:opacity-40",
+		"data-unchecked:bg-control data-unchecked:hover:bg-control-hover",
+		"data-checked:bg-brand",
+		"data-disabled:cursor-not-allowed data-disabled:bg-control data-disabled:hover:bg-control",
 		"before:content-[''] before:absolute before:top-1/2 before:left-1/2 before:-translate-1/2 before:min-w-11 before:min-h-11",
 	],
 	{
 		variants: {
 			size: {
-				xxs: "h-4 w-8",
-				xs: "h-5 w-10",
-				sm: "h-6 w-12",
-				md: "h-8 w-16",
-				lg: "h-10 w-20",
+				xxs: "h-4 w-7",
+				xs: "h-5 w-9",
+				sm: "h-6 w-11",
+				md: "h-8 w-14",
+				lg: "h-10 w-18",
 			},
 		},
 		defaultVariants: {
@@ -43,18 +41,18 @@ const labelTextSizeClasses: Record<"xxs" | "xs" | "sm" | "md" | "lg", string> = 
 
 const thumbVariants = cva(
 	[
-		"pointer-events-none block rounded-full bg-surface shadow-raised",
-		"border-2 data-unchecked:border-stroke-strong data-checked:border-stroke-selected",
-		"transition-transform duration-150 motion-reduce:transition-none",
+		"pointer-events-none block rounded-full",
+		"data-unchecked:bg-fg-muted data-checked:bg-background data-disabled:bg-fg-disabled",
+		"transition-[translate,background-color] duration-150 motion-reduce:transition-none",
 	],
 	{
 		variants: {
 			size: {
-				xxs: "size-4 data-checked:translate-x-4",
-				xs: "size-5 data-checked:translate-x-5",
-				sm: "size-6 data-checked:translate-x-6",
-				md: "size-8 data-checked:translate-x-8",
-				lg: "size-10 data-checked:translate-x-10",
+				xxs: "size-3 data-checked:translate-x-3",
+				xs: "size-4 data-checked:translate-x-4",
+				sm: "size-5 data-checked:translate-x-5",
+				md: "size-7 data-checked:translate-x-6",
+				lg: "size-9 data-checked:translate-x-8",
 			},
 		},
 		defaultVariants: {

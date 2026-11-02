@@ -7,13 +7,16 @@ import {
 	useState,
 } from "react";
 import { useConnection } from "wagmi";
-import { PANEL_LAYOUT } from "@/config/layout";
+import { APP_PANEL_CLASS, PANEL_LAYOUT } from "@/config/layout";
+import { cn } from "@/lib/cn";
 import { PositionsPanel } from "../positions/positions-panel";
 import { MarketInfo } from "./market-info";
 
 const { id, chart, positions } = PANEL_LAYOUT.ANALYSIS;
 const chartHeightStorageKey = `${id}:chart-height-px`;
-const fallbackFooterHeightPx = 32;
+const fallbackFooterHeightPx = 24;
+const outerInsetPx = 4;
+const resizeHandlePx = 4;
 
 type AnalysisSectionProps = {
 	onDesiredHeightChange?: (heightPx: number) => void;
@@ -27,7 +30,7 @@ export function AnalysisSection({ onDesiredHeightChange }: AnalysisSectionProps)
 	const positionsMinHeightPx = isConnected ? positions.minHeightPx : positions.disconnectedMinHeightPx;
 	const [chartHeightPx, setChartHeightPx] = useState<number>(chart.minHeightPx);
 	const [visibleChartMaxHeightPx, setVisibleChartMaxHeightPx] = useState<number>(
-		PANEL_LAYOUT.ANALYSIS.minHeightPx - positionsMinHeightPx,
+		PANEL_LAYOUT.ANALYSIS.minHeightPx - positionsMinHeightPx - resizeHandlePx,
 	);
 	const maxChartHeightPx = Math.max(chart.minHeightPx, visibleChartMaxHeightPx, chartHeightPx);
 
@@ -37,11 +40,14 @@ export function AnalysisSection({ onDesiredHeightChange }: AnalysisSectionProps)
 
 		const storedChartHeight = readStoredChartHeight();
 		const availableHeight = rootRef.current?.getBoundingClientRect().height ?? PANEL_LAYOUT.ANALYSIS.minHeightPx;
-		const initialChartHeight = Math.max(chart.minHeightPx, storedChartHeight ?? availableHeight - positionsMinHeightPx);
+		const initialChartHeight = Math.max(
+			chart.minHeightPx,
+			storedChartHeight ?? availableHeight - positionsMinHeightPx - resizeHandlePx,
+		);
 
 		setVisibleChartMaxHeightPx(getVisibleChartMaxHeight(rootRef.current));
 		setChartHeightPx(initialChartHeight);
-		onDesiredHeightChange?.(initialChartHeight + positionsMinHeightPx);
+		onDesiredHeightChange?.(initialChartHeight + positionsMinHeightPx + resizeHandlePx);
 	}, [onDesiredHeightChange, positionsMinHeightPx]);
 
 	useEffect(() => {
@@ -67,7 +73,7 @@ export function AnalysisSection({ onDesiredHeightChange }: AnalysisSectionProps)
 	}, []);
 
 	useLayoutEffect(() => {
-		onDesiredHeightChange?.(chartHeightPx + positionsMinHeightPx);
+		onDesiredHeightChange?.(chartHeightPx + positionsMinHeightPx + resizeHandlePx);
 	}, [chartHeightPx, onDesiredHeightChange, positionsMinHeightPx]);
 
 	useEffect(() => {
@@ -153,11 +159,11 @@ export function AnalysisSection({ onDesiredHeightChange }: AnalysisSectionProps)
 				tabIndex={0}
 				onPointerDown={handlePointerDown}
 				onKeyDown={handleKeyDown}
-				className="group bg-stroke-weak relative z-10 flex h-px w-full shrink-0 cursor-row-resize items-center justify-center after:absolute after:left-0 after:top-1/2 after:h-2 after:w-full after:-translate-y-1/2 focus-visible:outline-hidden focus-visible:bg-brand/50 hover:bg-brand/30 active:bg-brand/50"
+				className="group relative z-10 flex h-1 w-full shrink-0 cursor-row-resize items-center justify-center rounded-full bg-transparent outline-none transition-colors duration-150 after:absolute after:left-0 after:top-1/2 after:h-2 after:w-full after:-translate-y-1/2 hover:bg-control-hover active:bg-control-hover focus-visible:bg-brand"
 			>
-				<div className="z-10 h-1 w-6 shrink-0 rounded-12 bg-stroke-weak group-hover:bg-brand/40 group-active:bg-brand/55" />
+				<div className="z-10 hidden h-0.5 w-6 shrink-0 rounded-full bg-fg-muted group-hover:block group-active:block" />
 			</div>
-			<div className="min-h-0 flex-1" style={{ minHeight: positionsMinHeightPx }}>
+			<div className={cn(APP_PANEL_CLASS, "flex-1")} style={{ minHeight: positionsMinHeightPx }}>
 				<PositionsPanel />
 			</div>
 		</div>
@@ -184,5 +190,5 @@ function getVisibleChartMaxHeight(root: HTMLElement | null) {
 
 	const footerHeight = document.querySelector("footer")?.getBoundingClientRect().height ?? fallbackFooterHeightPx;
 	const top = root.getBoundingClientRect().top;
-	return Math.max(chart.minHeightPx, Math.floor(window.innerHeight - top - footerHeight));
+	return Math.max(chart.minHeightPx, Math.floor(window.innerHeight - top - footerHeight - outerInsetPx));
 }

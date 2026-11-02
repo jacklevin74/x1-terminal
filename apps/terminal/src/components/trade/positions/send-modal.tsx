@@ -1,4 +1,3 @@
-import { NativeWithdrawForm } from "./native-withdraw-form";
 import {
 	Button,
 	Modal,
@@ -13,18 +12,19 @@ import {
 import { t } from "@lingui/core/macro";
 import { PaperPlaneTiltIcon, SpinnerGapIcon, WarningCircleIcon } from "@phosphor-icons/react";
 import { type ChangeEvent, useCallback, useMemo, useState } from "react";
-import { useConnection } from "wagmi";
 import { isAddress } from "viem";
+import { useConnection } from "wagmi";
 import { NumberInput } from "@/components/ui/number-input";
 import { DEFAULT_QUOTE_TOKEN } from "@/config/app";
 import { exceedsBalance, getTokenTransferDecimals, isAmountWithinBalance } from "@/domain/market";
 import { type BalanceRow, getPerpAvailable, getSpotAvailable, getSpotAvailableValue } from "@/domain/trade/balances";
 import { useDefaultDexBalances } from "@/hooks/trade/use-account-balances";
-import { cn } from "@/lib/cn";
 import { useExchange } from "@/lib/hyperliquid";
 import { useSpotTokens } from "@/lib/hyperliquid/markets/use-spot-tokens";
 import { floorToString, limitDecimalInput } from "@/lib/trade/numbers";
 import { formatTokenId } from "@/lib/trade/token-id";
+import { inlineLinkButtonClass } from "../tradebox/deposit/shared-ui";
+import { NativeWithdrawForm } from "./native-withdraw-form";
 
 type AccountType = "perp" | "spot";
 
@@ -63,8 +63,8 @@ interface BodyProps {
 
 function SendModalBody({ onOpenChange, initialAsset, initialAccountType }: BodyProps) {
 	const [destination, setDestination] = useState("");
- const [withdrawSol, setWithdrawSol] = useState(false);
- const { address: connectedAddress, connector } = useConnection();
+	const [withdrawSol, setWithdrawSol] = useState(false);
+	const { address: connectedAddress, connector } = useConnection();
 	const [accountType, setAccountType] = useState<AccountType>(initialAccountType);
 	const [selectedToken, setSelectedToken] = useState(initialAsset);
 	const [amount, setAmount] = useState("");
@@ -184,7 +184,14 @@ function SendModalBody({ onOpenChange, initialAsset, initialAccountType }: BodyP
 		label: tokenName,
 	}));
 
-	if (withdrawSol) return <NativeWithdrawForm key={`${connectedAddress}:${connector?.id}`} asset={selectedToken === "UETH" ? "ETH" : "SOL"} onBack={() => setWithdrawSol(false)} />;
+	if (withdrawSol)
+		return (
+			<NativeWithdrawForm
+				key={`${connectedAddress}:${connector?.id}`}
+				asset={selectedToken === "UETH" ? "ETH" : "SOL"}
+				onBack={() => setWithdrawSol(false)}
+			/>
+		);
 	return (
 		<>
 			<ModalHeader>
@@ -193,19 +200,25 @@ function SendModalBody({ onOpenChange, initialAsset, initialAccountType }: BodyP
 			</ModalHeader>
 
 			<ModalContent>
-				<div className="space-y-4">
-     {accountType === "spot" && (selectedToken === "USOL" || selectedToken === "UETH") && <Button variant="outline" className="w-full" onClick={() => setWithdrawSol(true)}>Withdraw {selectedToken === "USOL" ? "SOL to connected wallet" : "ETH to Ethereum"}</Button>}
+				<div className="space-y-3">
+					{accountType === "spot" && (selectedToken === "USOL" || selectedToken === "UETH") && (
+						<Button
+							variant="secondary"
+							intent="neutral"
+							size="sm"
+							className="w-full"
+							onClick={() => setWithdrawSol(true)}
+						>
+							Withdraw {selectedToken === "USOL" ? "SOL to connected wallet" : "ETH to Ethereum"}
+						</Button>
+					)}
 					<TextInput
 						placeholder={t`Destination address`}
 						value={destination}
 						onChange={(e: ChangeEvent<HTMLInputElement>) => setDestination(e.target.value)}
 						autoComplete="off"
 						spellCheck={false}
-						className={cn(
-							destination &&
-								!isValidDestination &&
-								"border-stroke-error-strong focus-visible:border-stroke-error-strong",
-						)}
+						invalid={!!destination && !isValidDestination}
 					/>
 
 					<div className="flex gap-2">
@@ -224,36 +237,47 @@ function SendModalBody({ onOpenChange, initialAsset, initialAccountType }: BodyP
 						/>
 					</div>
 
-					<NumberInput
-						label={t`Amount`}
-						labelValue={
-							<>
-								Available:{" "}
-								<span className="underline decoration-dashed underline-offset-2 decoration-fg-muted/50">
-									{floorToString(availableBalance, decimals)} {selectedToken}
-								</span>
-							</>
-						}
-						onLabelValueClick={handleMaxClick}
-						placeholder="0.00"
-						value={amount}
-						onChange={(e: ChangeEvent<HTMLInputElement>) => handleAmountChange(e.target.value)}
-						className={cn(
-							"w-full tabular-nums",
-							exceedsBalance(amount, availableBalance) && "border-stroke-error-strong focus:border-stroke-error-strong",
-						)}
-					/>
+					<div className="flex flex-col gap-1">
+						<div className="flex min-h-6 items-center justify-between text-xs">
+							<span className="text-fg-muted">{t`Available`}</span>
+							<Button
+								variant="link"
+								intent="neutral"
+								size="xs"
+								className={inlineLinkButtonClass}
+								onClick={handleMaxClick}
+							>
+								{floorToString(availableBalance, decimals)} {selectedToken}
+							</Button>
+						</div>
+						<NumberInput
+							inlineLabel={t`Amount`}
+							suffix={selectedToken}
+							maxLabel={t`Max`}
+							onMaxClick={handleMaxClick}
+							placeholder="0.00"
+							value={amount}
+							onChange={(e: ChangeEvent<HTMLInputElement>) => handleAmountChange(e.target.value)}
+							invalid={exceedsBalance(amount, availableBalance)}
+						/>
+					</div>
 
 					{error && (
-						<div className="flex items-center gap-2 p-2.5 rounded-8 bg-error-soft border border-stroke-error-strong/20 text-xs text-error">
-							<WarningCircleIcon className="size-3.5 shrink-0" />
+						<div className="flex items-center gap-2 rounded-8 bg-control p-3 text-xs text-market-down">
+							<WarningCircleIcon className="size-4 shrink-0" />
 							<span className="flex-1">{error}</span>
 						</div>
 					)}
 
-					<Button variant="filled" intent="neutral" onClick={handleSend} disabled={!canSend} className="w-full">
-						{isPending && <SpinnerGapIcon className="size-3.5 animate-spin mr-2" />}
-						<PaperPlaneTiltIcon className="size-3.5 mr-2" />
+					<Button
+						variant="filled"
+						intent="neutral"
+						size="md"
+						onClick={handleSend}
+						disabled={!canSend}
+						className="w-full"
+					>
+						{isPending ? <SpinnerGapIcon className="size-4 animate-spin" /> : <PaperPlaneTiltIcon className="size-4" />}
 						{isPending ? t`Sending...` : t`Send`}
 					</Button>
 				</div>

@@ -7,22 +7,22 @@ import { cn } from "./utils";
 const tagVariants = cva(
 	[
 		"inline-flex items-center font-normal select-none",
-		"border rounded-16",
+		"rounded-4 whitespace-nowrap",
 		"transition-colors duration-150 motion-reduce:transition-none",
-		"data-disabled:text-fg-disabled data-disabled:border-stroke-disabled data-disabled:cursor-not-allowed",
+		"data-disabled:text-fg-disabled data-disabled:cursor-not-allowed",
 	],
 	{
 		variants: {
 			variant: {
-				filled: "bg-fill-weak border-stroke-weak text-fg",
-				outline: "bg-transparent border-stroke-weak text-fg",
+				filled: "bg-control text-fg",
+				outline: "bg-control text-fg",
 			},
 			size: {
-				xxs: "py-0 px-1.5 gap-1 text-2xs",
-				xs: "py-px px-2 gap-1 text-xs",
-				sm: "py-0.5 px-3 gap-1.5 text-xs",
-				md: "py-1 px-4 gap-2 text-sm",
-				lg: "py-1.5 px-6 gap-2 text-base",
+				xxs: "h-4 px-1 gap-1 text-xs",
+				xs: "h-5 px-1.5 gap-1 text-xs",
+				sm: "h-5 px-2 gap-1 text-xs",
+				md: "h-6 px-2 gap-1.5 text-xs",
+				lg: "h-7 px-3 gap-1.5 text-sm",
 			},
 		},
 		defaultVariants: {
@@ -53,11 +53,7 @@ const Tag = React.forwardRef<HTMLSpanElement, TagProps>(
 
 		return (
 			<span
-				className={cn(
-					tagVariants({ variant, size }),
-					selected && "bg-fill-selected border-transparent text-fg-inverse",
-					className,
-				)}
+				className={cn(tagVariants({ variant, size }), selected && "bg-control-hover text-fg", className)}
 				ref={ref}
 				data-disabled={disabled ? "" : undefined}
 				{...props}
@@ -73,7 +69,7 @@ const Tag = React.forwardRef<HTMLSpanElement, TagProps>(
 						}}
 						className={cn(
 							"relative inline-flex items-center justify-center shrink-0",
-							"text-current opacity-70 hover:opacity-100 transition-opacity motion-reduce:transition-none",
+							"text-fg-muted hover:text-fg transition-colors motion-reduce:transition-none",
 							"after:content-[''] after:absolute after:top-1/2 after:left-1/2 after:-translate-1/2 after:size-11",
 							disabled && "pointer-events-none",
 						)}

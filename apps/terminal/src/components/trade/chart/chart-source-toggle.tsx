@@ -1,6 +1,11 @@
-import { Divider } from "@hypeterminal/ui";
+import { Button } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { cn } from "@/lib/cn";
+import {
+	chartToolbarChipClass,
+	chartToolbarDividerClass,
+	getChartToolbarChipStateClass,
+} from "./chart-toolbar-classes";
 
 export type ChartSource = "default" | "tradingview";
 
@@ -11,19 +16,14 @@ export type ChartSourceToggleIntentHandlers = {
 	onTouchStart?: () => void;
 };
 
-interface ChartSourceToggleProps {
+interface Props {
 	value: ChartSource;
 	onValueChange: (value: ChartSource) => void;
 	tradingViewIntentHandlers: ChartSourceToggleIntentHandlers;
 	className?: string;
 }
 
-export function ChartSourceToggle({
-	value,
-	onValueChange,
-	tradingViewIntentHandlers,
-	className,
-}: ChartSourceToggleProps) {
+export function ChartSourceToggle({ value, onValueChange, tradingViewIntentHandlers, className }: Props) {
 	function handleDefaultClick() {
 		onValueChange("default");
 	}
@@ -32,33 +32,32 @@ export function ChartSourceToggle({
 		onValueChange("tradingview");
 	}
 
-	const textButtonClass =
-		"px-1.5 py-0.5 text-xs rounded-6 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus";
-
 	return (
-		<div className={cn("inline-flex items-center gap-2 shrink-0", className)}>
-			<button
+		<div className={cn("inline-flex shrink-0 items-center gap-1", className)}>
+			<Button
 				type="button"
+				aria-pressed={value === "default"}
 				onClick={handleDefaultClick}
-				className={cn(
-					textButtonClass,
-					value === "default" ? "font-semibold text-fg" : "font-normal text-fg-muted hover:text-fg",
-				)}
+				variant="ghost"
+				intent="neutral"
+				size="xxs"
+				className={cn(chartToolbarChipClass, getChartToolbarChipStateClass(value === "default"))}
 			>
 				{t`Default`}
-			</button>
-			<Divider orientation="vertical" className="my-1.5 opacity-50" />
-			<button
+			</Button>
+			<span className={chartToolbarDividerClass} aria-hidden />
+			<Button
 				type="button"
+				aria-pressed={value === "tradingview"}
 				onClick={handleTradingViewClick}
 				{...tradingViewIntentHandlers}
-				className={cn(
-					textButtonClass,
-					value === "tradingview" ? "font-semibold text-fg" : "font-normal text-fg-muted hover:text-fg",
-				)}
+				variant="ghost"
+				intent="neutral"
+				size="xxs"
+				className={cn(chartToolbarChipClass, getChartToolbarChipStateClass(value === "tradingview"))}
 			>
 				{t`TradingView`}
-			</button>
+			</Button>
 		</div>
 	);
 }

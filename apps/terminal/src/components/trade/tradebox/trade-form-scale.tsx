@@ -17,39 +17,36 @@ export function TradeFormScale({ markPx, szDecimals, disabled }: Props) {
 	const { setScaleStart, setScaleEnd, setScaleLevels } = useOrderEntryActions();
 
 	return (
-		<>
+		<div className="flex min-w-0 flex-col gap-3">
 			<PriceInput
-				label={t`Start Price`}
+				inlineLabel={t`Start Price`}
 				placeholder="0.00"
 				value={scaleStartPriceInput}
 				onChange={(e) => setScaleStart(e.target.value)}
 				onMidClick={setScaleStart}
 				midPrice={markPx}
 				szDecimals={szDecimals}
-				className="w-full text-xs tabular-nums"
 				disabled={disabled}
 			/>
 			<PriceInput
-				label={t`End Price`}
+				inlineLabel={t`End Price`}
 				placeholder="0.00"
 				value={scaleEndPriceInput}
 				onChange={(e) => setScaleEnd(e.target.value)}
 				onMidClick={setScaleEnd}
 				midPrice={markPx}
 				szDecimals={szDecimals}
-				className="w-full text-xs tabular-nums"
 				disabled={disabled}
 			/>
 			<NumberInput
-				label={t`Number of Orders`}
-				labelValue={`${SCALE_LEVELS_MIN}–${SCALE_LEVELS_MAX}`}
+				inlineLabel={t`Number of Orders`}
+				suffix={<span className="font-normal text-fg-muted">{`${SCALE_LEVELS_MIN}–${SCALE_LEVELS_MAX}`}</span>}
 				placeholder="4"
 				value={String(scaleLevelsNum)}
 				onChange={(e) => setScaleLevels(Number(e.target.value) || 4)}
 				allowDecimals={false}
-				className="w-full text-xs tabular-nums"
 				disabled={disabled}
 			/>
-		</>
+		</div>
 	);
 }

@@ -1,9 +1,15 @@
-import { Divider } from "@hypeterminal/ui";
 import { ClientOnly } from "@tanstack/react-router";
 import { Suspense, useCallback, useState } from "react";
 import { useDefaultLayout } from "react-resizable-panels";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { PANEL_LAYOUT } from "@/config/layout";
+import {
+	APP_PANEL_CLASS,
+	APP_PANEL_GAP_CLASS,
+	APP_PANEL_INSET_CLASS,
+	APP_PANEL_PADDING_X_CLASS,
+	PANEL_LAYOUT,
+} from "@/config/layout";
+import { cn } from "@/lib/cn";
 import { useSelectedMarketInfo } from "@/lib/hyperliquid";
 import { createLazyComponent } from "@/lib/lazy";
 import { useExchangeScope } from "@/providers/exchange-scope";
@@ -24,8 +30,7 @@ export function MainWorkspace() {
 	const { setSelectedMarket } = useMarketActions();
 	const [marketBodyMinHeightPx, setMarketBodyMinHeightPx] = useState<number>(PANEL_LAYOUT.ANALYSIS.minHeightPx);
 	const [sidebarMinHeightPx, setSidebarMinHeightPx] = useState(0);
- const sharedMinHeightPx = Math.max(marketBodyMinHeightPx, sidebarMinHeightPx);
- const marketBodyHeight = `max(calc(100dvh - 9.375rem), ${sharedMinHeightPx}px)`;
+	const sharedMinHeightPx = Math.max(marketBodyMinHeightPx, sidebarMinHeightPx);
 
 	const handleAnalysisHeightChange = useCallback((heightPx: number) => {
 		setMarketBodyMinHeightPx(Math.max(PANEL_LAYOUT.ANALYSIS.minHeightPx, Math.ceil(heightPx)));
@@ -36,32 +41,31 @@ export function MainWorkspace() {
 	}
 
 	return (
-		<div className="flex-1 min-h-0 flex flex-col bg-background">
-			<div className="shrink-0 border-b border-stroke-weak">
-				<div className="flex items-center min-w-0 px-2 py-1.5">
-					<TokenSelector selectedMarket={selectedMarket} onValueChange={handleMarketChange} />
-					<Divider orientation="vertical" className="mx-2.5 my-1" />
+		<div className={cn("flex-1 flex flex-col bg-background", APP_PANEL_GAP_CLASS, APP_PANEL_INSET_CLASS)}>
+			<div className={cn(APP_PANEL_CLASS, APP_PANEL_PADDING_X_CLASS, "shrink-0")}>
+				<div className="flex h-8 min-w-0 items-center border-b border-stroke-weak">
 					<FavoritesStrip />
 				</div>
-				<div className="border-t border-stroke-weak/35 px-2 py-1.5 min-w-0 overflow-x-auto scrollbar-none">
-					<MarketOverview />
+				<div className="flex h-12 min-w-0 items-center gap-6">
+					<TokenSelector selectedMarket={selectedMarket} onValueChange={handleMarketChange} />
+					<div className="min-w-0 flex-1 overflow-x-auto scrollbar-none">
+						<MarketOverview />
+					</div>
 				</div>
 			</div>
 			<ResizablePanelGroup
-				className="min-h-0 shrink-0"
+				className="h-auto flex-1 basis-0"
 				defaultLayout={defaultLayout}
 				onLayoutChanged={onLayoutChanged}
-				style={{ height: marketBodyHeight, minHeight: sharedMinHeightPx }}
+				style={{ minHeight: sharedMinHeightPx }}
 			>
 				<ResizablePanel defaultSize={analysis.defaultSize} minSize={analysis.minSize}>
-					<div className="h-full flex flex-col bg-surface">
-						<div className="flex-1 min-h-0">
-							<Suspense fallback={<PanelSkeleton />}>
-								<ClientOnly fallback={<PanelSkeleton />}>
-									<AnalysisSection onDesiredHeightChange={handleAnalysisHeightChange} />
-								</ClientOnly>
-							</Suspense>
-						</div>
+					<div className="h-full min-h-0">
+						<Suspense fallback={<PanelSkeleton />}>
+							<ClientOnly fallback={<PanelSkeleton />}>
+								<AnalysisSection onDesiredHeightChange={handleAnalysisHeightChange} />
+							</ClientOnly>
+						</Suspense>
 					</div>
 				</ResizablePanel>
 				<ResizableHandle withHandle />
@@ -76,20 +80,16 @@ export function MainWorkspace() {
 }
 
 function PanelSkeleton() {
-	return (
-		<div className="h-full min-h-0 bg-surface p-2">
-			<div className="h-full rounded-xs bg-fill-weak animate-pulse" />
-		</div>
-	);
+	return <div className={cn(APP_PANEL_CLASS, "h-full animate-pulse")} />;
 }
 
 function SidebarSkeleton() {
 	return (
-		<div className="h-full min-h-0 bg-surface p-3 space-y-3">
-			<div className="h-8 rounded-xs bg-fill-weak animate-pulse" />
-			<div className="h-24 rounded-xs bg-fill-weaker animate-pulse" />
-			<div className="h-48 rounded-xs bg-fill-weaker animate-pulse" />
-			<div className="h-20 rounded-xs bg-fill-weaker animate-pulse" />
+		<div className={cn(APP_PANEL_CLASS, "h-full space-y-3 p-3")}>
+			<div className="h-8 rounded-8 bg-control animate-pulse" />
+			<div className="h-24 rounded-8 bg-control animate-pulse" />
+			<div className="h-48 rounded-8 bg-control animate-pulse" />
+			<div className="h-20 rounded-8 bg-control animate-pulse" />
 		</div>
 	);
 }

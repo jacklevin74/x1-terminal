@@ -1,16 +1,14 @@
 import { Button, Checkbox, Slider, Tooltip } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
-import { CaretDownIcon } from "@phosphor-icons/react";
 import { useId, useState } from "react";
 import { useConnection } from "wagmi";
-import { labelTypographyClass } from "@/components/ui/field-label";
+import { InfoRow, InfoRowGroup } from "@/components/ui/info-row";
 import { NumberInput } from "@/components/ui/number-input";
 import { PriceInput } from "@/components/ui/price-input";
 import { FALLBACK_VALUE_PLACEHOLDER } from "@/config/app";
 import { ORDER_MIN_NOTIONAL_USD, SIZE_PERCENT_OPTIONS } from "@/config/trade";
 import { getSliderValue } from "@/domain/trade/order/size";
 import { useOrderEntryData } from "@/hooks/trade/use-order-entry-data";
-import { cn } from "@/lib/cn";
 import { formatToken } from "@/lib/format";
 import { useSelectedMarketInfo } from "@/lib/hyperliquid";
 import { formatDecimalFloor, isPositive, toNumber, toNumberOrZero } from "@/lib/trade/numbers";
@@ -61,6 +59,7 @@ export function TradeFormFields({
 	const sizeFieldId = useId();
 	const [isDraggingSlider, setIsDraggingSlider] = useState(false);
 	const [dragSliderValue, setDragSliderValue] = useState(0);
+	const [percentInput, setPercentInput] = useState<string | null>(null);
 
 	const { isConnected } = useConnection();
 	const { data: market } = useSelectedMarketInfo();
@@ -118,24 +117,30 @@ export function TradeFormFields({
 		return formatToken(availableBalance, { decimals, symbol: availableBalanceToken ?? undefined });
 	}
 
+	const sliderDisabled = isFormDisabled || maxSize <= 0;
+	const percentDisplay = percentInput ?? formatPercentValue(sliderValue);
+
+	function handlePercentInputChange(value: string) {
+		setPercentInput(value);
+		const pct = Number(value);
+		if (value === "" || Number.isNaN(pct)) return;
+		handleSizePercentApply(Math.min(100, Math.max(0, pct)));
+	}
+
 	return (
-		<div className="flex min-w-0 flex-col gap-5">
-			<div className="flex min-w-0 flex-col gap-3">
-				<div className="flex min-w-0 flex-col gap-2">
-					<div className="flex min-w-0 items-baseline justify-between gap-2">
-						<div className="inline-flex justify-between w-full min-w-0 items-baseline gap-x-1.5 text-3xs leading-snug">
-							<Tooltip content={t`Balance available to trade`} side="top">
-								<span className="font-medium uppercase tracking-wider text-fg-muted cursor-default">{t`Available`}</span>
-							</Tooltip>
-							<span>
-								{isConnected ? (
-									<span className={cn("tabular-nums", getValueColorClass(availableBalance))}>
-										{formatAvailableBalance()}
-									</span>
-								) : null}
-							</span>
-						</div>
-						<div className="flex shrink-0 items-center">
+		<div className="flex min-w-0 flex-col gap-3">
+			<InfoRowGroup>
+				<InfoRow
+					label={
+						<Tooltip content={t`Balance available to trade`} side="top" underline>
+							<span>{t`Available`}</span>
+						</Tooltip>
+					}
+					value={
+						<span className="inline-flex items-center gap-2">
+							{isConnected ? (
+								<span className={getValueColorClass(availableBalance)}>{formatAvailableBalance()}</span>
+							) : null}
 							{isConnected && swapTargetToken ? (
 								<Button variant="link" intent="brand" size="xxs" onClick={onSwapClick}>
 									{t`Swap`}
@@ -146,134 +151,109 @@ export function TradeFormFields({
 									{t`Deposit`}
 								</Button>
 							) : null}
-						</div>
-					</div>
-					{!isSpotMarket && positionSize !== 0 ? (
-						<div className="flex min-w-0 items-baseline justify-between gap-2 text-3xs leading-snug">
-							<Tooltip content={t`Your current open position on this market`} side="top">
-								<span className="font-medium uppercase tracking-wider text-fg-muted cursor-default">{t`Position`}</span>
+						</span>
+					}
+				/>
+				{!isSpotMarket && positionSize !== 0 ? (
+					<InfoRow
+						label={
+							<Tooltip content={t`Your current open position on this market`} side="top" underline>
+								<span>{t`Position`}</span>
 							</Tooltip>
-							<span className={cn("tabular-nums", getValueColorClass(positionSize))}>
-								{positionSize > 0 ? "+" : ""}
-								{formatDecimalFloor(positionSize, szDecimals)} {baseToken}
-							</span>
-						</div>
-					) : null}
-				</div>
-
-				{usesTriggerPrice && (
-					<div className="border-t border-stroke-weak pt-3">
-						<PriceInput
-							label={t`Trigger Price`}
-							placeholder="0.00"
-							value={triggerPriceInput}
-							onChange={(e) => setTriggerPrice(e.target.value)}
-							onMidClick={setTriggerPrice}
-							midPrice={markPx}
-							szDecimals={szDecimals}
-							className={cn(
-								"w-full text-xs tabular-nums",
-								usesTriggerPrice &&
-									!isPositive(triggerPriceNum) &&
-									sizeValue > 0 &&
-									"border-stroke-error-strong focus:border-stroke-error-strong",
-							)}
-							disabled={isFormDisabled}
-						/>
-					</div>
-				)}
-
-				{usesLimitPrice && (
-					<div className="border-t border-stroke-weak pt-3">
-						<PriceInput
-							label={t`Limit Price`}
-							placeholder="0.00"
-							value={limitPriceInput}
-							onChange={(e) => setLimitPrice(e.target.value)}
-							onMidClick={setLimitPrice}
-							midPrice={markPx}
-							szDecimals={szDecimals}
-							className={cn(
-								"w-full text-xs tabular-nums",
-								usesLimitPrice &&
-									!price &&
-									sizeValue > 0 &&
-									"border-stroke-error-strong focus:border-stroke-error-strong",
-							)}
-							disabled={isFormDisabled}
-						/>
-					</div>
-				)}
-
-				<div className="flex flex-col gap-0.5 border-t border-stroke-weak pt-3">
-					<div className="mb-1 flex items-center justify-between gap-2">
-						<label htmlFor={sizeFieldId} className={labelTypographyClass}>
-							{t`Size`}
-						</label>
-						{sizeValue > 0 ? (
-							<span className="text-3xs text-fg-muted tabular-nums leading-none">
-								≈{" "}
-								{sizeMode === "base"
-									? `${formatToken(orderValue, 2)} USD`
-									: `${formatDecimalFloor(sizeValue, szDecimals)} ${baseToken}`}
-							</span>
-						) : null}
-					</div>
-					<div className="mb-2.5 flex items-center gap-1">
-						<NumberInput
-							id={sizeFieldId}
-							placeholder="0.00"
-							value={sizeInput}
-							onChange={(e) => setSize(e.target.value)}
-							maxAllowedDecimals={szDecimals}
-							className={cn(
-								"flex-1 text-xs tabular-nums",
-								sizeHasError && "border-stroke-error-strong focus:border-stroke-error-strong",
-							)}
-							disabled={isFormDisabled}
-						/>
-						<Button
-							variant="outline"
-							intent="neutral"
-							size="sm"
-							onClick={onSizeModeToggle}
-							aria-label={t`Toggle size mode`}
-							disabled={isFormDisabled}
-							iconRight={<CaretDownIcon className="size-2.5" />}
-						>
-							{sizeModeLabel}
-						</Button>
-					</div>
-					<Slider
-						value={[sliderValue]}
-						onValueChange={(v) => {
-							const val = Array.isArray(v) ? v[0] : v;
-							setIsDraggingSlider(true);
-							setDragSliderValue(val);
-						}}
-						onValueCommitted={(v) => {
-							const val = Array.isArray(v) ? v[0] : v;
-							setIsDraggingSlider(false);
-							handleSizePercentApply(val);
-						}}
-						max={100}
-						step={0.1}
-						disabled={isFormDisabled || maxSize <= 0}
+						}
+						value={`${positionSize > 0 ? "+" : ""}${formatDecimalFloor(positionSize, szDecimals)} ${baseToken}`}
+						valueClassName={getValueColorClass(positionSize)}
 					/>
-					<div className="flex items-center justify-between pt-1 text-3xs text-fg-muted tabular-nums leading-none">
-						{SIZE_PERCENT_OPTIONS.map((pct) => (
-							<button
-								key={pct}
-								type="button"
-								onClick={() => handleSizePercentApply(pct)}
-								disabled={isFormDisabled || maxSize <= 0}
-								className="hover:text-fg transition-colors disabled:cursor-not-allowed"
-							>
-								{pct}%
-							</button>
-						))}
-					</div>
-				</div>
+				) : null}
+			</InfoRowGroup>
+
+			{usesTriggerPrice && (
+				<PriceInput
+					inlineLabel={t`Trigger Price`}
+					placeholder="0.00"
+					value={triggerPriceInput}
+					onChange={(e) => setTriggerPrice(e.target.value)}
+					onMidClick={setTriggerPrice}
+					midPrice={markPx}
+					szDecimals={szDecimals}
+					invalid={!isPositive(triggerPriceNum) && sizeValue > 0}
+					disabled={isFormDisabled}
+				/>
+			)}
+
+			{usesLimitPrice && (
+				<PriceInput
+					inlineLabel={t`Limit Price`}
+					placeholder="0.00"
+					value={limitPriceInput}
+					onChange={(e) => setLimitPrice(e.target.value)}
+					onMidClick={setLimitPrice}
+					midPrice={markPx}
+					szDecimals={szDecimals}
+					invalid={!price && sizeValue > 0}
+					disabled={isFormDisabled}
+				/>
+			)}
+
+			<div className="flex min-w-0 flex-col gap-1">
+				<NumberInput
+					id={sizeFieldId}
+					inlineLabel={t`Size`}
+					placeholder="0.00"
+					value={sizeInput}
+					onChange={(e) => setSize(e.target.value)}
+					maxAllowedDecimals={szDecimals}
+					suffix={sizeModeLabel}
+					onSuffixClick={isFormDisabled ? undefined : onSizeModeToggle}
+					suffixAriaLabel={t`Toggle size mode`}
+					invalid={sizeHasError}
+					disabled={isFormDisabled}
+				/>
+				{sizeValue > 0 ? (
+					<span className="self-end text-xs text-fg-muted tabular-nums">
+						≈{" "}
+						{sizeMode === "base"
+							? `${formatToken(orderValue, 2)} USD`
+							: `${formatDecimalFloor(sizeValue, szDecimals)} ${baseToken}`}
+					</span>
+				) : null}
+			</div>
+
+			<div className="flex min-w-0 items-center gap-3">
+				<Slider
+					className="min-w-0 flex-1"
+					value={[sliderValue]}
+					onValueChange={(v) => {
+						const val = Array.isArray(v) ? v[0] : v;
+						setIsDraggingSlider(true);
+						setDragSliderValue(val);
+					}}
+					onValueCommitted={(v) => {
+						const val = Array.isArray(v) ? v[0] : v;
+						setIsDraggingSlider(false);
+						handleSizePercentApply(val);
+					}}
+					max={100}
+					step={0.1}
+					tone={side === "buy" ? "up" : "down"}
+					marks={SIZE_PERCENT_OPTIONS}
+					onMarkSelect={handleSizePercentApply}
+					disabled={sliderDisabled}
+					aria-label={t`Size percentage`}
+				/>
+				<NumberInput
+					className="w-16 shrink-0"
+					placeholder="0"
+					value={percentDisplay}
+					onChange={(e) => handlePercentInputChange(e.target.value)}
+					onBlur={() => setPercentInput(null)}
+					maxAllowedDecimals={1}
+					min={0}
+					max={100}
+					suffix="%"
+					aria-label={t`Size percentage`}
+					disabled={sliderDisabled}
+				/>
 			</div>
 
 			{scaleOrder && <TradeFormScale markPx={markPx} szDecimals={szDecimals} disabled={isFormDisabled} />}
@@ -281,8 +261,8 @@ export function TradeFormFields({
 			{twapOrder && <TradeFormTwap disabled={isFormDisabled} />}
 
 			{(capabilities.hasReduceOnly || (capabilities.hasTpSl && canUseTpSl) || showTif) && (
-				<div className="space-y-3.5 py-0.5">
-					<div className="flex flex-wrap items-center gap-x-4 gap-y-2.5 text-xs">
+				<div className="flex min-w-0 flex-col gap-3">
+					<div className="flex min-h-6 flex-wrap items-center gap-x-4 gap-y-2">
 						{capabilities.hasReduceOnly && (
 							<Checkbox
 								aria-label={t`Reduce Only`}
@@ -311,4 +291,9 @@ export function TradeFormFields({
 			)}
 		</div>
 	);
+}
+
+function formatPercentValue(value: number): string {
+	if (value <= 0) return "";
+	return String(Math.round(value));
 }

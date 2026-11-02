@@ -16,12 +16,14 @@ export function DefinitionTooltip({ topic, only, side = "top", align, children }
 		<Tooltip
 			side={side}
 			align={align}
+			underline
 			content={
 				<div className="flex max-w-xs flex-col gap-2">
-					<div className="font-semibold">{content.title}</div>
+					<div className="font-medium">{content.title}</div>
 					{content.items.map((item) => (
 						<div key={item.key}>
-							<span className="font-medium">{item.term}:</span> {item.definition}
+							<span className="font-medium">{item.term}:</span>{" "}
+							<span className="text-fg-secondary">{item.definition}</span>
 						</div>
 					))}
 				</div>

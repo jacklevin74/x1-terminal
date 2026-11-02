@@ -13,16 +13,26 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#. placeholder {0}: position.coin
+#: src/components/trade/positions/position-limit-close-modal.tsx:117
+msgid "{0} long position"
+msgstr ""
+
 #. placeholder {0}: otherConnectors.length
 #: src/components/trade/components/wallet-modal.tsx:807
-msgid "{0} more wallets"
+#~ msgid "{0} more wallets"
+#~ msgstr ""
+
+#. placeholder {0}: position.coin
+#: src/components/trade/positions/position-limit-close-modal.tsx:117
+msgid "{0} short position"
 msgstr ""
 
 #: src/components/trade/tradebox/bridge-tab.tsx:
 #~ msgid "{formatted} USDC deposited to Hyperliquid"
 #~ msgstr ""
 
-#: src/components/trade/tradebox/bridge/amount-entry-screen.tsx:86
+#: src/components/trade/tradebox/bridge/amount-entry-screen.tsx:50
 msgid "{p}%"
 msgstr ""
 
@@ -30,7 +40,7 @@ msgstr ""
 msgid "{totalSeconds} seconds"
 msgstr ""
 
-#: src/components/trade/tradebox/twap-order-summary.tsx:42
+#: src/components/trade/tradebox/twap-order-summary.tsx:38
 msgid "{TWAP_SUBORDER_INTERVAL_SECONDS} seconds"
 msgstr ""
 
@@ -38,11 +48,11 @@ msgstr ""
 #~ msgid "% filled"
 #~ msgstr "% 已成交"
 
-#: src/components/trade/market-overview.tsx:32
+#: src/components/trade/market-overview.tsx:31
 msgid "1 year"
 msgstr ""
 
-#: src/components/trade/market-overview.tsx:116
+#: src/components/trade/market-overview.tsx:129
 msgid "24h"
 msgstr ""
 
@@ -50,8 +60,8 @@ msgstr ""
 #~ msgid "24H"
 #~ msgstr ""
 
-#: src/components/trade/chart/token-selector-columns.ts:63
-#: src/components/trade/chart/token-selector-content.tsx:17
+#: src/components/trade/chart/token-selector-columns.ts:64
+#: src/components/trade/chart/token-selector-content.tsx:19
 msgid "24h Change"
 msgstr ""
 
@@ -63,16 +73,20 @@ msgstr ""
 #~ msgid "24h vol"
 #~ msgstr ""
 
-#: src/components/trade/market-overview.tsx:135
-#: src/components/trade/market-overview.tsx:175
+#: src/components/trade/market-overview.tsx:136
+#: src/components/trade/market-overview.tsx:147
 msgid "24H VOL"
 msgstr ""
 
-#: src/components/trade/market-overview.tsx:31
+#: src/components/trade/market-overview.tsx:30
 msgid "30 days"
 msgstr ""
 
-#: src/components/trade/market-overview.tsx:30
+#: src/components/trade/orderbook/orderbook-panel.tsx:118
+msgid "5 levels uses the fast feed. 10, 15 and 20 use the depth feed."
+msgstr ""
+
+#: src/components/trade/market-overview.tsx:29
 msgid "7 days"
 msgstr ""
 
@@ -84,19 +98,19 @@ msgstr ""
 #~ msgid "About Builder Codes"
 #~ msgstr ""
 
-#: src/components/trade/tradebox/account-panel.tsx:116
+#: src/components/trade/tradebox/account-panel.tsx:110
 msgid "Account"
 msgstr "账户"
 
 #: src/components/trade/header/user-menu.tsx:124
-msgid "Account and wallet"
-msgstr ""
+#~ msgid "Account and wallet"
+#~ msgstr ""
 
-#: src/components/trade/mobile/mobile-balances-tab.tsx:203
+#: src/components/trade/mobile/mobile-balances-tab.tsx:200
 msgid "Account Balances"
 msgstr "账户余额"
 
-#: src/components/trade/tradebox/account-panel.tsx:123
+#: src/components/trade/tradebox/account-panel.tsx:117
 msgid "Account Equity"
 msgstr ""
 
@@ -104,14 +118,11 @@ msgstr ""
 #~ msgid "Accounts"
 #~ msgstr ""
 
-#: src/components/trade/positions/balances-tab.tsx:269
-#: src/components/trade/positions/orders-tab.tsx:278
-#: src/components/trade/positions/positions-tab.tsx:218
-#: src/components/trade/positions/twap-tab.tsx:114
+#: src/components/trade/positions/twap-tab.tsx:74
 msgid "Actions"
 msgstr "操作"
 
-#: src/components/trade/positions/twap-tab.tsx:52
+#: src/components/trade/positions/twap-tab.tsx:53
 msgid "active"
 msgstr "活跃"
 
@@ -119,28 +130,28 @@ msgstr "活跃"
 #~ msgid "Active"
 #~ msgstr "活跃"
 
-#: src/components/trade/mobile/mobile-positions-tab.tsx:161
+#: src/components/trade/mobile/mobile-positions-tab.tsx:157
 msgid "Active Positions"
 msgstr "活跃仓位"
 
 #: src/components/trade/positions/position-row.tsx:105
-msgid "Add"
-msgstr ""
+#~ msgid "Add"
+#~ msgstr ""
 
 #. placeholder {0}: market.pairName
-#: src/components/trade/chart/token-selector-row.tsx:108
+#: src/components/trade/chart/token-selector-row.tsx:86
 msgid "Add {0} to favorites"
 msgstr ""
 
 #: src/components/trade/header/user-menu.tsx:97
-msgid "Add funds"
-msgstr "添加资金"
+#~ msgid "Add funds"
+#~ msgstr "添加资金"
 
 #: src/components/trade/chart/token-selector.tsx:
 #~ msgid "Add to favorites"
 #~ msgstr "添加到收藏"
 
-#: src/components/trade/positions/position-row.tsx:246
+#: src/components/trade/positions/position-row.tsx:76
 msgid "Add TP/SL"
 msgstr ""
 
@@ -160,12 +171,12 @@ msgstr ""
 #~ msgid "Agent verification failed"
 #~ msgstr ""
 
-#: src/components/trade/chart/token-selector-content.tsx:94
-#: src/config/nav.tsx:34
+#: src/components/trade/chart/token-selector-content.tsx:96
+#: src/config/nav.tsx:35
 msgid "All"
 msgstr ""
 
-#: src/components/trade/tradebox/margin-mode-modal.tsx:69
+#: src/components/trade/tradebox/margin-mode-modal.tsx:80
 msgid "All cross positions share the same cross margin as collateral. In the event of liquidation, your cross margin balance and any remaining open positions may be forfeited."
 msgstr ""
 
@@ -177,10 +188,10 @@ msgstr ""
 msgid "ALO (Add Liquidity Only)"
 msgstr ""
 
-#: src/components/trade/positions/send-modal.tsx:222
-#: src/components/trade/positions/transfer-modal.tsx:144
-#: src/components/trade/tradebox/deposit/deposit-form.tsx:31
-#: src/components/trade/tradebox/deposit/withdraw-form.tsx:44
+#: src/components/trade/positions/send-modal.tsx:254
+#: src/components/trade/positions/transfer-modal.tsx:242
+#: src/components/trade/tradebox/bridge/amount-entry-screen.tsx:57
+#: src/components/trade/tradebox/deposit/deposit-form.tsx:44
 msgid "Amount"
 msgstr ""
 
@@ -208,13 +219,11 @@ msgstr ""
 msgid "Approve in wallet..."
 msgstr ""
 
-#: src/components/trade/positions/balances-tab.tsx:234
-#: src/components/trade/positions/funding-tab.tsx:77
-#: src/components/trade/positions/history-tab.tsx:79
-#: src/components/trade/positions/orders-history-tab.tsx:77
-#: src/components/trade/positions/orders-tab.tsx:251
-#: src/components/trade/positions/positions-tab.tsx:171
-#: src/components/trade/positions/twap-tab.tsx:77
+#: src/components/trade/orderbook/orderbook-panel.tsx:144
+msgid "Ask levels"
+msgstr ""
+
+#: src/components/trade/positions/twap-tab.tsx:67
 msgid "Asset"
 msgstr "资产"
 
@@ -222,11 +231,12 @@ msgstr "资产"
 #~ msgid "Assets"
 #~ msgstr ""
 
-#: src/components/trade/mobile/mobile-balances-tab.tsx:150
-#: src/components/trade/positions/balances-tab.tsx:241
-#: src/components/trade/positions/position-limit-close-modal.tsx:163
-#: src/components/trade/positions/transfer-modal.tsx:147
-#: src/components/trade/tradebox/trade-form-fields.tsx:128
+#: src/components/trade/mobile/mobile-balances-tab.tsx:148
+#: src/components/trade/positions/position-limit-close-modal.tsx:165
+#: src/components/trade/positions/send-modal.tsx:242
+#: src/components/trade/positions/transfer-modal.tsx:230
+#: src/components/trade/tradebox/deposit/deposit-form.tsx:31
+#: src/components/trade/tradebox/trade-form-fields.tsx:136
 msgid "Available"
 msgstr "可用"
 
@@ -238,18 +248,16 @@ msgstr "可用"
 #~ msgstr ""
 
 #: src/components/trade/mobile/mobile-twap-tab.tsx:122
-#: src/components/trade/positions/twap-tab.tsx:98
+#: src/components/trade/positions/twap-tab.tsx:70
 msgid "Avg Price"
 msgstr "均价"
 
-#: src/components/trade/components/wallet-modal.tsx:470
-#: src/components/trade/tradebox/bridge/amount-entry-screen.tsx:59
-#: src/components/trade/tradebox/bridge/bridge-error-screen.tsx:29
-#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:61
+#: src/components/trade/tradebox/bridge/bridge-error-screen.tsx:30
+#: src/components/trade/tradebox/bridge/shared-ui.tsx:199
 msgid "Back"
 msgstr ""
 
-#: src/components/trade/mobile/offline-banner.tsx:59
+#: src/components/trade/mobile/offline-banner.tsx:58
 msgid "Back online"
 msgstr ""
 
@@ -257,17 +265,21 @@ msgstr ""
 #~ msgid "Back to asset selection"
 #~ msgstr ""
 
-#: src/components/trade/tradebox/account-panel.tsx:86
+#: src/components/trade/tradebox/account-panel.tsx:85
 msgid "Balance"
 msgstr "余额"
 
-#: src/components/trade/tradebox/trade-form-fields.tsx:127
+#: src/components/trade/tradebox/trade-form-fields.tsx:135
 msgid "Balance available to trade"
 msgstr ""
 
 #: src/components/trade/tradebox/deposit-modal.tsx:
 #~ msgid "Balance:"
 #~ msgstr ""
+
+#: src/components/trade/orderbook/orderbook-panel.tsx:176
+msgid "Bid levels"
+msgstr ""
 
 #: src/components/trade/footer/footer-bar.tsx:
 #~ msgid "Block:"
@@ -281,10 +293,9 @@ msgstr ""
 #~ msgid "Breadcrumb"
 #~ msgstr "面包屑导航"
 
-#: src/components/trade/mobile/mobile-account-view.tsx:188
-#: src/components/trade/tradebox/account-panel.tsx:172
-#: src/components/trade/tradebox/account-panel.tsx:175
-#: src/components/trade/tradebox/deposit-modal.tsx:236
+#: src/components/trade/mobile/mobile-account-view.tsx:162
+#: src/components/trade/tradebox/account-panel.tsx:168
+#: src/components/trade/tradebox/account-panel.tsx:171
 msgid "Bridge"
 msgstr ""
 
@@ -292,7 +303,7 @@ msgstr ""
 #~ msgid "Bridge complete"
 #~ msgstr ""
 
-#: src/components/trade/tradebox/bridge/bridge-error-screen.tsx:22
+#: src/components/trade/tradebox/bridge/bridge-error-screen.tsx:23
 msgid "Bridge failed"
 msgstr ""
 
@@ -321,8 +332,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/components/trade/tradebox/order-summary.tsx:89
-#: src/components/trade/tradebox/scale-order-summary.tsx:76
-#: src/components/trade/tradebox/twap-order-summary.tsx:67
+#: src/components/trade/tradebox/scale-order-summary.tsx:72
+#: src/components/trade/tradebox/twap-order-summary.tsx:63
 msgid "Builder Fee"
 msgstr ""
 
@@ -334,7 +345,7 @@ msgstr ""
 #~ msgid "Builder must have at least 100 USDC in perps account value"
 #~ msgstr ""
 
-#: src/config/nav.tsx:52
+#: src/config/nav.tsx:56
 msgid "Builders"
 msgstr ""
 
@@ -351,64 +362,59 @@ msgstr "买入"
 #~ msgstr "买入做多"
 
 #: src/components/trade/components/wallet-modal.tsx:330
-msgid "Camera access is not available in this browser."
-msgstr ""
+#~ msgid "Camera access is not available in this browser."
+#~ msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:437
-msgid "Camera is on. Looking for a WalletConnect QR code."
-msgstr ""
+#~ msgid "Camera is on. Looking for a WalletConnect QR code."
+#~ msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:364
-msgid "Camera permission was denied."
-msgstr ""
+#~ msgid "Camera permission was denied."
+#~ msgstr ""
 
-#: src/components/trade/mobile/mobile-orders-tab.tsx:256
-#: src/components/trade/mobile/mobile-position-card.tsx:185
+#: src/components/trade/mobile/mobile-orders-tab.tsx:255
+#: src/components/trade/mobile/mobile-position-card.tsx:193
 #: src/components/trade/mobile/mobile-twap-tab.tsx:110
-#: src/components/trade/positions/orders-tab.tsx:399
-#: src/components/trade/positions/position-limit-close-modal.tsx:200
-#: src/components/trade/positions/position-tpsl-modal.tsx:170
-#: src/components/trade/positions/twap-tab.tsx:193
-#: src/components/trade/tradebox/deposit-modal.tsx:149
-#: src/components/trade/tradebox/deposit-modal.tsx:204
-#: src/components/trade/tradebox/leverage-control.tsx:187
-#: src/components/trade/tradebox/margin-mode-modal.tsx:244
-#: src/routes/mobile-agent-sync.tsx:413
+#: src/components/trade/positions/position-limit-close-modal.tsx:191
+#: src/components/trade/positions/position-tpsl-modal.tsx:166
+#: src/components/trade/positions/positions-tab.tsx:316
+#: src/components/trade/positions/twap-tab.tsx:158
+#: src/components/trade/tradebox/deposit-modal.tsx:107
+#: src/components/trade/tradebox/leverage-control.tsx:181
+#: src/components/trade/tradebox/margin-mode-modal.tsx:224
 msgid "Cancel"
 msgstr "取消"
 
 #: src/components/trade/positions/orders-tab.tsx:224
-msgid "Cancel all"
-msgstr "全部取消"
+#~ msgid "Cancel all"
+#~ msgstr "全部取消"
 
-#: src/components/trade/mobile/mobile-orders-tab.tsx:165
+#: src/components/trade/mobile/mobile-orders-tab.tsx:161
 msgid "Cancel All"
 msgstr ""
 
 #: src/components/trade/positions/orders-tab.tsx:220
-msgid "Cancel all orders"
-msgstr "取消所有订单"
+#~ msgid "Cancel all orders"
+#~ msgstr "取消所有订单"
 
 #: src/components/trade/positions/orders-tab.tsx:395
-msgid "Cancel order"
-msgstr "取消订单"
+#~ msgid "Cancel order"
+#~ msgstr "取消订单"
 
 #: src/components/trade/positions/orders-tab.tsx:215
-msgid "Cancel selected"
-msgstr "取消选中"
+#~ msgid "Cancel selected"
+#~ msgstr "取消选中"
 
 #: src/components/trade/positions/orders-tab.tsx:211
-msgid "Cancel selected orders"
-msgstr "取消选中的订单"
+#~ msgid "Cancel selected orders"
+#~ msgstr "取消选中的订单"
 
-#: src/components/trade/positions/twap-tab.tsx:185
+#: src/components/trade/positions/twap-tab.tsx:150
 msgid "Cancel TWAP order"
 msgstr "取消 TWAP 订单"
 
-#: src/components/trade/mobile/mobile-orders-tab.tsx:165
-#: src/components/trade/positions/orders-tab.tsx:215
-#: src/components/trade/positions/orders-tab.tsx:224
-#: src/components/trade/positions/orders-tab.tsx:399
+#: src/components/trade/mobile/mobile-orders-tab.tsx:161
 msgid "Canceling..."
 msgstr "取消中..."
 
@@ -416,11 +422,11 @@ msgstr "取消中..."
 #~ msgid "cancelled"
 #~ msgstr "已取消"
 
-#: src/components/trade/tradebox/margin-mode-modal.tsx:228
+#: src/components/trade/tradebox/margin-mode-modal.tsx:208
 msgid "Cannot switch to Isolated mode with an open position. Close your position first."
 msgstr ""
 
-#: src/components/trade/tradebox/leverage-control.tsx:36
+#: src/components/trade/tradebox/leverage-control.tsx:37
 msgid "Change leverage"
 msgstr ""
 
@@ -428,41 +434,61 @@ msgstr ""
 #~ msgid "Chart"
 #~ msgstr "图表"
 
-#: src/components/trade/chart/kline-toolbar.tsx:80
+#: src/components/trade/chart/kline-toolbar.tsx:83
 msgid "Chart type"
 msgstr ""
 
-#: src/routes/mobile-agent-sync.tsx:285
-msgid "Clipboard does not contain a pairing code."
+#: src/components/trade/tradebox/deposit/wrong-network-screen.tsx:28
+msgid "Choose a deposit route"
 msgstr ""
+
+#: src/routes/mobile-agent-sync.tsx:285
+#~ msgid "Clipboard does not contain a pairing code."
+#~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:277
-msgid "Clipboard paste is not available. Paste from the keyboard menu or type the code manually."
-msgstr ""
+#~ msgid "Clipboard paste is not available. Paste from the keyboard menu or type the code manually."
+#~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:291
-msgid "Clipboard paste was blocked. Paste from the keyboard menu or type the code manually."
-msgstr ""
+#~ msgid "Clipboard paste was blocked. Paste from the keyboard menu or type the code manually."
+#~ msgstr ""
 
-#: src/components/trade/components/wallet-modal.tsx:749
-#: src/components/trade/mobile/mobile-position-card.tsx:244
+#: src/components/trade/mobile/mobile-position-card.tsx:252
 #: src/components/trade/positions/position-actions-dropdown.tsx:20
 #: src/components/trade/tradebox/bridge/executing-screen.tsx:55
 #: src/components/trade/tradebox/bridge/executing-screen.tsx:117
-#: src/components/trade/tradebox/bridge/success-screen.tsx:136
+#: src/components/trade/tradebox/bridge/success-screen.tsx:135
 msgid "Close"
 msgstr "关闭"
+
+#: src/components/trade/positions/positions-tab.tsx:264
+msgid "Close All"
+msgstr ""
+
+#: src/components/trade/positions/positions-tab.tsx:326
+msgid "Close all at market"
+msgstr ""
+
+#: src/components/trade/positions/positions-tab.tsx:298
+msgid "Close all positions?"
+msgstr ""
 
 #: src/components/trade/positions/positions-tab.tsx:
 #~ msgid "Close position"
 #~ msgstr "平仓"
 
 #: src/components/trade/mobile/mobile-orders-tab.tsx:236
-#: src/components/trade/positions/orders-tab.tsx:376
 msgid "Close Position"
 msgstr ""
 
+#: src/components/trade/positions/history-tab.tsx:95
+msgid "Closed PNL"
+msgstr "Closed PNL"
+
 #: src/components/trade/positions/position-actions-dropdown.tsx:20
+#: src/components/trade/positions/position-row.tsx:219
+#: src/components/trade/positions/positions-tab.tsx:264
 msgid "Closing..."
 msgstr "平仓中..."
 
@@ -478,11 +504,11 @@ msgstr "平仓中..."
 #~ msgid "completed"
 #~ msgstr "已完成"
 
-#: src/components/trade/positions/position-tpsl-modal.tsx:179
-#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:162
-#: src/components/trade/tradebox/leverage-control.tsx:213
-#: src/components/trade/tradebox/leverage-control.tsx:227
-#: src/components/trade/tradebox/margin-mode-modal.tsx:265
+#: src/components/trade/positions/position-tpsl-modal.tsx:175
+#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:146
+#: src/components/trade/tradebox/leverage-control.tsx:207
+#: src/components/trade/tradebox/leverage-control.tsx:221
+#: src/components/trade/tradebox/margin-mode-modal.tsx:239
 msgid "Confirm"
 msgstr ""
 
@@ -490,11 +516,11 @@ msgstr ""
 #~ msgid "Confirm Bridge"
 #~ msgstr ""
 
-#: src/components/trade/mobile/mobile-position-card.tsx:196
+#: src/components/trade/mobile/mobile-position-card.tsx:204
 msgid "Confirm Close"
 msgstr ""
 
-#: src/components/trade/tradebox/deposit-modal.tsx:164
+#: src/components/trade/tradebox/deposit-modal.tsx:122
 msgid "Confirm in wallet"
 msgstr ""
 
@@ -508,8 +534,8 @@ msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:457
 #: src/components/trade/components/wallet-modal.tsx:924
-msgid "Connect"
-msgstr ""
+#~ msgid "Connect"
+#~ msgstr ""
 
 #: src/components/trade/positions/orders-tab.tsx:
 #~ msgid "Connect a wallet to manage orders."
@@ -520,37 +546,41 @@ msgstr ""
 #~ msgstr "连接钱包以管理仓位。"
 
 #: src/routes/mobile-agent-sync.tsx:582
-msgid "Connect the same owner wallet used on desktop before importing phone access."
-msgstr ""
+#~ msgid "Connect the same owner wallet used on desktop before importing phone access."
+#~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:224
-msgid "Connect the same wallet used on desktop before importing phone access."
-msgstr ""
+#~ msgid "Connect the same wallet used on desktop before importing phone access."
+#~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:674
-msgid "Connect the same wallet used on desktop."
-msgstr ""
+#~ msgid "Connect the same wallet used on desktop."
+#~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:532
-msgid "Connect to verify"
-msgstr ""
+#~ msgid "Connect to verify"
+#~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:594
-msgid "Connect wallet"
-msgstr ""
+#~ msgid "Connect wallet"
+#~ msgstr ""
 
-#: src/components/trade/components/wallet-modal.tsx:743
-#: src/components/trade/header/user-menu.tsx:73
-#: src/components/trade/mobile/mobile-account-view.tsx:69
-#: src/components/trade/mobile/mobile-account-view.tsx:75
-#: src/components/trade/mobile/mobile-nav-drawer.tsx:146
+#: src/components/trade/mobile/mobile-account-view.tsx:70
+#: src/components/trade/mobile/mobile-account-view.tsx:76
+#: src/components/trade/mobile/mobile-nav-drawer.tsx:136
+#: src/components/trade/mobile/mobile-positions-view.tsx:141
+#: src/components/trade/positions/connect-placeholder.tsx:18
 #: src/lib/trade/use-button-content.ts:48
 msgid "Connect Wallet"
 msgstr "连接钱包"
 
-#: src/components/trade/tradebox/account-panel.tsx:120
+#: src/components/trade/tradebox/account-panel.tsx:113
 msgid "Connect wallet to view account"
 msgstr "连接钱包查看账户"
+
+#: src/components/trade/mobile/mobile-positions-view.tsx:139
+msgid "Connect wallet to view positions"
+msgstr ""
 
 #: src/components/trade/components/mobile-agent-sync-modal.tsx:150
 msgid "Connect your wallet before linking a mobile device."
@@ -560,7 +590,7 @@ msgstr ""
 msgid "Connect your wallet before resetting mobile access."
 msgstr ""
 
-#: src/components/trade/tradebox/bridge/shared-ui.tsx:77
+#: src/components/trade/tradebox/bridge/shared-ui.tsx:78
 msgid "Connect your wallet to bridge funds"
 msgstr ""
 
@@ -573,49 +603,48 @@ msgstr ""
 #~ msgstr ""
 
 #: src/components/trade/mobile/mobile-balances-tab.tsx:101
-#: src/components/trade/positions/balances-tab.tsx:199
+#: src/components/trade/positions/balances-tab.tsx:237
 msgid "Connect your wallet to view balances."
 msgstr "连接钱包查看余额。"
 
-#: src/components/trade/mobile/mobile-funding-tab.tsx:43
-#: src/components/trade/positions/funding-tab.tsx:46
+#: src/components/trade/mobile/mobile-funding-tab.tsx:42
+#: src/components/trade/positions/funding-tab.tsx:130
 msgid "Connect your wallet to view funding payments."
 msgstr "连接钱包查看资金费用。"
 
 #: src/components/trade/mobile/mobile-orders-tab.tsx:125
-#: src/components/trade/positions/orders-tab.tsx:179
+#: src/components/trade/positions/orders-tab.tsx:178
 msgid "Connect your wallet to view open orders."
 msgstr "连接钱包查看未成交订单。"
 
-#: src/components/trade/mobile/mobile-orders-history-tab.tsx:42
-#: src/components/trade/positions/orders-history-tab.tsx:46
+#: src/components/trade/positions/orders-history-tab.tsx:83
 msgid "Connect your wallet to view order history."
 msgstr ""
 
 #: src/components/trade/mobile/mobile-positions-tab.tsx:123
-#: src/components/trade/positions/positions-tab.tsx:133
+#: src/components/trade/positions/positions-tab.tsx:208
 msgid "Connect your wallet to view positions."
 msgstr "连接钱包查看仓位。"
 
 #: src/components/trade/mobile/mobile-history-tab.tsx:43
-#: src/components/trade/positions/history-tab.tsx:51
+#: src/components/trade/positions/history-tab.tsx:70
 msgid "Connect your wallet to view trade history."
 msgstr "连接钱包查看交易历史。"
 
-#: src/components/trade/mobile/mobile-twap-tab.tsx:48
-#: src/components/trade/positions/twap-tab.tsx:57
+#: src/components/trade/mobile/mobile-twap-tab.tsx:47
+#: src/components/trade/positions/twap-tab.tsx:58
 msgid "Connect your wallet to view TWAP orders."
 msgstr "连接钱包查看 TWAP 订单。"
 
-#: src/components/trade/mobile/mobile-account-view.tsx:71
+#: src/components/trade/mobile/mobile-account-view.tsx:72
 msgid "Connect your wallet to view your account, positions, and start trading."
 msgstr ""
 
-#: src/components/trade/tradebox/deposit/shared-ui.tsx:121
+#: src/components/trade/tradebox/deposit/shared-ui.tsx:119
 msgid "Connect your wallet to withdraw funds"
 msgstr ""
 
-#: src/components/trade/footer/footer-bar.tsx:18
+#: src/components/trade/footer/footer-bar.tsx:16
 msgid "Connected"
 msgstr "已连接"
 
@@ -623,26 +652,24 @@ msgstr "已连接"
 #~ msgid "Connected: {0}...{1}"
 #~ msgstr ""
 
-#: src/components/trade/components/wallet-modal.tsx:397
-#: src/components/trade/footer/footer-bar.tsx:24
+#: src/components/trade/footer/footer-bar.tsx:18
 msgid "Connecting"
 msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:424
-msgid "Connecting desktop wallet"
-msgstr ""
+#~ msgid "Connecting desktop wallet"
+#~ msgstr ""
 
 #: src/components/trade/header/user-menu.tsx:54
-msgid "Connecting..."
-msgstr "连接中..."
+#~ msgid "Connecting..."
+#~ msgstr "连接中..."
 
-#: src/components/trade/tradebox/bridge/amount-entry-screen.tsx:129
+#: src/components/trade/tradebox/bridge/amount-entry-screen.tsx:98
 msgid "Continue"
 msgstr ""
 
 #: src/components/trade/components/mobile-agent-sync-modal.tsx:405
 #: src/components/trade/components/mobile-agent-sync-modal.tsx:452
-#: src/components/trade/components/wallet-modal.tsx:576
 msgid "Copied"
 msgstr ""
 
@@ -651,24 +678,24 @@ msgid "Copied to clipboard"
 msgstr ""
 
 #: src/components/trade/header/user-menu.tsx:86
-msgid "Copied!"
-msgstr ""
+#~ msgid "Copied!"
+#~ msgstr ""
 
-#: src/components/trade/mobile/mobile-account-view.tsx:103
+#: src/components/trade/mobile/mobile-account-view.tsx:102
 msgid "Copy address"
 msgstr ""
 
 #: src/components/trade/header/user-menu.tsx:86
-msgid "Copy Address"
-msgstr "复制地址"
+#~ msgid "Copy Address"
+#~ msgstr "复制地址"
 
 #: src/components/trade/components/mobile-agent-sync-modal.tsx:405
 msgid "Copy code"
 msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:576
-msgid "Copy link"
-msgstr ""
+#~ msgid "Copy link"
+#~ msgstr ""
 
 #: src/components/trade/components/mobile-agent-sync-modal.tsx:452
 msgid "Copy phone link"
@@ -678,13 +705,13 @@ msgstr ""
 #~ msgid "Could not create wallet"
 #~ msgstr "无法创建钱包"
 
-#: src/components/trade/tradebox/bridge/asset-selection-screen.tsx:77
+#: src/components/trade/tradebox/bridge/asset-selection-screen.tsx:85
 msgid "Could not fetch your token balances"
 msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:686
-msgid "Could not import phone access."
-msgstr ""
+#~ msgid "Could not import phone access."
+#~ msgstr ""
 
 #: src/components/trade/components/mobile-agent-sync-modal.tsx:187
 msgid "Could not link mobile device."
@@ -692,11 +719,10 @@ msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:359
 #: src/components/trade/components/wallet-modal.tsx:365
-msgid "Could not open the camera."
-msgstr ""
+#~ msgid "Could not open the camera."
+#~ msgstr ""
 
 #: src/components/trade/components/mobile-agent-sync-modal.tsx:122
-#: src/components/trade/components/wallet-modal.tsx:500
 msgid "Could not render QR"
 msgstr ""
 
@@ -720,7 +746,7 @@ msgstr ""
 msgid "Create secure phone access for trading from this account."
 msgstr ""
 
-#: src/components/trade/positions/twap-tab.tsx:107
+#: src/components/trade/positions/twap-tab.tsx:73
 msgid "Created"
 msgstr ""
 
@@ -728,14 +754,14 @@ msgstr ""
 msgid "Creating link..."
 msgstr ""
 
-#: src/components/trade/positions/position-row.tsx:199
-#: src/components/trade/tradebox/margin-mode-modal.tsx:22
-#: src/components/trade/tradebox/margin-mode-modal.tsx:67
-#: src/components/trade/tradebox/trade-header.tsx:68
+#: src/components/trade/positions/position-row.tsx:189
+#: src/components/trade/tradebox/margin-mode-modal.tsx:33
+#: src/components/trade/tradebox/margin-mode-modal.tsx:78
+#: src/components/trade/tradebox/trade-header.tsx:66
 msgid "Cross"
 msgstr "全仓"
 
-#: src/components/trade/tradebox/account-panel.tsx:106
+#: src/components/trade/tradebox/account-panel.tsx:102
 msgid "Cross Account Leverage"
 msgstr ""
 
@@ -743,15 +769,15 @@ msgstr ""
 #~ msgid "Cross Leverage"
 #~ msgstr "全仓杠杆"
 
-#: src/components/trade/mobile/mobile-account-view.tsx:109
+#: src/components/trade/mobile/mobile-account-view.tsx:108
 msgid "Cross Margin"
 msgstr ""
 
-#: src/components/trade/tradebox/account-panel.tsx:96
+#: src/components/trade/tradebox/account-panel.tsx:94
 msgid "Cross Margin Ratio"
 msgstr ""
 
-#: src/components/trade/tradebox/margin-mode-modal.tsx:108
+#: src/components/trade/tradebox/margin-mode-modal.tsx:174
 msgid "Current"
 msgstr ""
 
@@ -764,8 +790,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:905
-msgid "Custom wallet address"
-msgstr ""
+#~ msgid "Custom wallet address"
+#~ msgstr ""
 
 #: src/components/trade/components/global-settings-dialog.tsx:
 #~ msgid "Customize your trading experience."
@@ -775,29 +801,29 @@ msgstr ""
 #~ msgid "Dark"
 #~ msgstr ""
 
-#: src/components/trade/chart/chart-source-toggle.tsx:48
+#: src/components/trade/chart/chart-source-toggle.tsx:46
+#: src/components/trade/chart/tradingview-chart.tsx:148
 msgid "Default"
 msgstr ""
 
-#: src/components/trade/header/top-nav.tsx:101
-#: src/components/trade/mobile/mobile-nav-drawer.tsx:135
-#: src/components/trade/tradebox/account-panel.tsx:163
-#: src/components/trade/tradebox/account-panel.tsx:166
-#: src/components/trade/tradebox/deposit-modal.tsx:119
-#: src/components/trade/tradebox/deposit-modal.tsx:141
-#: src/components/trade/tradebox/deposit-modal.tsx:162
-#: src/components/trade/tradebox/deposit-modal.tsx:230
-#: src/components/trade/tradebox/deposit/deposit-form.tsx:96
-#: src/components/trade/tradebox/trade-form-fields.tsx:146
+#: src/components/trade/header/top-nav.tsx:83
+#: src/components/trade/mobile/mobile-nav-drawer.tsx:125
+#: src/components/trade/tradebox/account-panel.tsx:158
+#: src/components/trade/tradebox/account-panel.tsx:161
+#: src/components/trade/tradebox/deposit-modal.tsx:77
+#: src/components/trade/tradebox/deposit-modal.tsx:99
+#: src/components/trade/tradebox/deposit-modal.tsx:120
+#: src/components/trade/tradebox/deposit/deposit-form.tsx:93
+#: src/components/trade/tradebox/trade-form-fields.tsx:151
 #: src/lib/trade/use-button-content.ts:72
 msgid "Deposit"
 msgstr "存款"
 
-#: src/components/trade/tradebox/deposit-modal.tsx:121
+#: src/components/trade/tradebox/deposit-modal.tsx:79
 msgid "Deposit complete"
 msgstr ""
 
-#: src/components/trade/tradebox/deposit-modal.tsx:143
+#: src/components/trade/tradebox/deposit-modal.tsx:101
 msgid "Deposit failed"
 msgstr ""
 
@@ -818,16 +844,16 @@ msgid "Deposit successful"
 msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:410
-msgid "Desktop wallet QR scanner"
-msgstr ""
+#~ msgid "Desktop wallet QR scanner"
+#~ msgstr ""
 
-#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:78
+#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:63
 #: src/components/trade/tradebox/bridge/executing-screen.tsx:99
 #: src/components/trade/tradebox/bridge/success-screen.tsx:83
 msgid "Destination"
 msgstr ""
 
-#: src/components/trade/positions/send-modal.tsx:193
+#: src/components/trade/positions/send-modal.tsx:216
 msgid "Destination address"
 msgstr ""
 
@@ -839,28 +865,36 @@ msgstr ""
 #~ msgid "Direct mode: Sign each order with wallet"
 #~ msgstr ""
 
-#: src/components/trade/header/user-menu.tsx:140
-msgid "Disconnect"
-msgstr "断开连接"
+#: src/components/trade/tradebox/deposit/wrong-network-screen.tsx:31
+msgid "Direct USDC deposits use Arbitrum. To deposit native ETH from Ethereum, choose the ETH deposit route."
+msgstr ""
 
-#: src/components/trade/mobile/mobile-account-view.tsx:119
+#: src/components/trade/positions/history-tab.tsx:90
+msgid "Direction"
+msgstr "Direction"
+
+#: src/components/trade/header/user-menu.tsx:140
+#~ msgid "Disconnect"
+#~ msgstr "断开连接"
+
+#: src/components/trade/mobile/mobile-account-view.tsx:117
 msgid "Disconnect wallet"
 msgstr ""
 
-#: src/components/trade/footer/footer-bar.tsx:30
+#: src/components/trade/footer/footer-bar.tsx:20
 msgid "Disconnected"
 msgstr ""
 
-#: src/components/trade/mobile/offline-banner.tsx:86
-#: src/components/trade/tradebox/order-toast.tsx:134
+#: src/components/trade/mobile/offline-banner.tsx:87
+#: src/components/trade/tradebox/order-toast.tsx:120
 msgid "Dismiss"
 msgstr "关闭"
 
-#: src/components/trade/components/global-settings-modal.tsx:113
+#: src/components/trade/components/global-settings-modal.tsx:120
 msgid "Display"
 msgstr ""
 
-#: src/components/trade/components/global-settings-modal.tsx:117
+#: src/components/trade/components/global-settings-modal.tsx:129
 msgid "Display language"
 msgstr ""
 
@@ -876,8 +910,7 @@ msgstr ""
 #~ msgid "Docs"
 #~ msgstr "文档"
 
-#: src/components/trade/tradebox/deposit-modal.tsx:132
-#: src/components/trade/tradebox/deposit-modal.tsx:187
+#: src/components/trade/tradebox/deposit-modal.tsx:90
 msgid "Done"
 msgstr ""
 
@@ -885,15 +918,19 @@ msgstr ""
 #~ msgid "Duration (Minutes)"
 #~ msgstr ""
 
-#: src/components/trade/tradebox/margin-mode-modal.tsx:76
+#: src/components/trade/tradebox/margin-mode-modal.tsx:87
 msgid "Each position uses only its allocated margin. If the margin ratio reaches 100%, the position is liquidated. Margin can be added or removed individually."
 msgstr ""
 
-#: src/components/trade/positions/position-row.tsx:246
+#: src/components/trade/mobile/mobile-trade-view.tsx:467
+msgid "Edit slippage"
+msgstr ""
+
+#: src/components/trade/positions/position-row.tsx:76
 msgid "Edit TP/SL"
 msgstr ""
 
-#: src/components/trade/components/trading-action-button.tsx:47
+#: src/components/trade/components/trading-action-button.tsx:23
 msgid "Enable"
 msgstr ""
 
@@ -901,7 +938,7 @@ msgstr ""
 msgid "Enable Trading"
 msgstr "启用交易"
 
-#: src/components/trade/components/trading-action-button.tsx:44
+#: src/components/trade/components/trading-action-button.tsx:19
 msgid "Enabling"
 msgstr ""
 
@@ -909,8 +946,8 @@ msgstr ""
 #~ msgid "Enabling..."
 #~ msgstr ""
 
-#: src/components/trade/tradebox/scale-order-summary.tsx:48
-#: src/components/trade/tradebox/trade-form-scale.tsx:33
+#: src/components/trade/tradebox/scale-order-summary.tsx:44
+#: src/components/trade/tradebox/trade-form-scale.tsx:32
 msgid "End Price"
 msgstr ""
 
@@ -933,12 +970,12 @@ msgid "Enter size"
 msgstr "输入数量"
 
 #: src/routes/mobile-agent-sync.tsx:654
-msgid "Enter the 16-character pairing code."
-msgstr ""
+#~ msgid "Enter the 16-character pairing code."
+#~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:537
-msgid "Enter the desktop code"
-msgstr ""
+#~ msgid "Enter the desktop code"
+#~ msgstr ""
 
 #: src/lib/errors/definitions/tpsl.ts:21
 msgid "Enter TP or SL price"
@@ -948,17 +985,17 @@ msgstr ""
 msgid "Enter trigger price"
 msgstr ""
 
-#: src/components/trade/mobile/mobile-position-card.tsx:159
-#: src/components/trade/positions/positions-tab.tsx:188
+#: src/components/trade/mobile/mobile-position-card.tsx:169
 msgid "Entry"
 msgstr "开仓价"
 
-#: src/components/trade/positions/position-limit-close-modal.tsx:120
+#: src/components/trade/positions/position-limit-close-modal.tsx:124
 #: src/components/trade/positions/position-tpsl-modal.tsx:123
+#: src/components/trade/positions/positions-tab.tsx:220
 msgid "Entry Price"
 msgstr ""
 
-#: src/components/trade/components/global-settings-modal.tsx:138
+#: src/components/trade/components/global-settings-modal.tsx:152
 msgid "Environment"
 msgstr ""
 
@@ -967,7 +1004,7 @@ msgstr ""
 #~ msgstr "净值"
 
 #: src/components/trade/tradebox/order-summary.tsx:83
-#: src/components/trade/tradebox/scale-order-summary.tsx:70
+#: src/components/trade/tradebox/scale-order-summary.tsx:66
 msgid "Est. Fee"
 msgstr "预估费用"
 
@@ -976,7 +1013,7 @@ msgstr "预估费用"
 #~ msgid "Est. P&L"
 #~ msgstr ""
 
-#: src/components/trade/positions/position-limit-close-modal.tsx:185
+#: src/components/trade/positions/position-limit-close-modal.tsx:168
 msgid "Est. P&L at Limit"
 msgstr ""
 
@@ -984,9 +1021,8 @@ msgstr ""
 #~ msgid "Est. time"
 #~ msgstr ""
 
-#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:83
-#: src/components/trade/tradebox/deposit/deposit-form.tsx:73
-#: src/components/trade/tradebox/deposit/withdraw-form.tsx:98
+#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:68
+#: src/components/trade/tradebox/deposit/deposit-form.tsx:70
 msgid "Estimated time"
 msgstr ""
 
@@ -995,7 +1031,7 @@ msgid "Exceeds max size"
 msgstr "超过最大数量"
 
 #: src/components/trade/mobile/mobile-twap-tab.tsx:118
-#: src/components/trade/positions/twap-tab.tsx:91
+#: src/components/trade/positions/twap-tab.tsx:69
 msgid "Executed"
 msgstr "已执行"
 
@@ -1012,77 +1048,80 @@ msgstr ""
 #~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:513
-msgid "Expires {expiresAtLabel}."
-msgstr ""
+#~ msgid "Expires {expiresAtLabel}."
+#~ msgstr ""
 
-#: src/components/trade/mobile/mobile-history-tab.tsx:128
+#: src/components/trade/mobile/mobile-history-tab.tsx:122
 msgid "Explorer"
 msgstr ""
 
-#: src/components/trade/tradebox/order-toast.tsx:193
+#: src/components/trade/tradebox/order-toast.tsx:171
 msgid "failed"
 msgstr "失败"
 
 #: src/components/trade/mobile/mobile-positions-tab.tsx:92
-#: src/components/trade/positions/positions-tab.tsx:94
+#: src/components/trade/positions/positions-tab.tsx:119
 msgid "Failed to close position"
 msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:707
-msgid "Failed to connect with custom address"
-msgstr ""
+#~ msgid "Failed to connect with custom address"
+#~ msgstr ""
 
 #: src/hooks/ui/use-copy-to-clipboard.ts:23
 msgid "Failed to copy"
 msgstr ""
 
 #: src/components/trade/tradebox/trade-panel.tsx:258
-msgid "Failed to enable trading"
-msgstr "启用交易失败"
+#~ msgid "Failed to enable trading"
+#~ msgstr "启用交易失败"
 
 #: src/components/trade/components/wallet-modal.tsx:621
-msgid "Failed to link desktop wallet"
-msgstr ""
+#~ msgid "Failed to link desktop wallet"
+#~ msgstr ""
 
-#: src/components/trade/tradebox/bridge/asset-selection-screen.tsx:74
+#: src/components/trade/tradebox/bridge/asset-selection-screen.tsx:82
 msgid "Failed to load balances"
 msgstr ""
 
 #: src/components/trade/mobile/mobile-balances-tab.tsx:109
-#: src/components/trade/positions/balances-tab.tsx:201
+#: src/components/trade/positions/balances-tab.tsx:239
 msgid "Failed to load balances."
 msgstr "加载余额失败。"
 
-#: src/components/trade/mobile/mobile-funding-tab.tsx:51
-#: src/components/trade/positions/funding-tab.tsx:52
+#: src/components/trade/chart/kline-chart.tsx:282
+msgid "Failed to load chart."
+msgstr ""
+
+#: src/components/trade/mobile/mobile-funding-tab.tsx:50
+#: src/components/trade/positions/funding-tab.tsx:135
 msgid "Failed to load funding history."
 msgstr "加载资金费用历史失败。"
 
 #: src/components/trade/mobile/mobile-orders-tab.tsx:133
-#: src/components/trade/positions/orders-tab.tsx:184
+#: src/components/trade/positions/orders-tab.tsx:183
 msgid "Failed to load open orders."
 msgstr "加载未成交订单失败。"
 
-#: src/components/trade/orderbook/orderbook-panel.tsx:155
+#: src/components/trade/orderbook/orderbook-panel.tsx:160
 msgid "Failed to load order book."
 msgstr "加载订单簿失败。"
 
-#: src/components/trade/mobile/mobile-orders-history-tab.tsx:50
-#: src/components/trade/positions/orders-history-tab.tsx:51
+#: src/components/trade/positions/orders-history-tab.tsx:90
 msgid "Failed to load order history."
 msgstr ""
 
 #: src/components/trade/mobile/mobile-positions-tab.tsx:131
-#: src/components/trade/positions/positions-tab.tsx:138
+#: src/components/trade/positions/positions-tab.tsx:210
 msgid "Failed to load positions."
 msgstr "加载仓位失败。"
 
 #: src/components/trade/mobile/mobile-history-tab.tsx:51
-#: src/components/trade/positions/history-tab.tsx:56
+#: src/components/trade/positions/history-tab.tsx:75
 msgid "Failed to load trade history."
 msgstr "加载交易历史失败。"
 
-#: src/components/trade/orderbook/trades-panel.tsx:84
+#: src/components/trade/orderbook/trades-panel.tsx:80
 msgid "Failed to load trades."
 msgstr "加载成交记录失败。"
 
@@ -1090,7 +1129,7 @@ msgstr "加载成交记录失败。"
 #~ msgid "Failed to load TWAP history."
 #~ msgstr "加载 TWAP 历史失败。"
 
-#: src/components/trade/positions/position-limit-close-modal.tsx:91
+#: src/components/trade/positions/position-limit-close-modal.tsx:99
 msgid "Failed to place limit close order"
 msgstr ""
 
@@ -1098,7 +1137,7 @@ msgstr ""
 #~ msgid "Failed to register builder code"
 #~ msgstr ""
 
-#: src/components/trade/positions/positions-tab.tsx:94
+#: src/components/trade/positions/positions-tab.tsx:119
 msgid "Failed to reverse position"
 msgstr ""
 
@@ -1106,12 +1145,12 @@ msgstr ""
 #~ msgid "Failed to switch margin mode"
 #~ msgstr ""
 
-#: src/components/trade/positions/position-tpsl-modal.tsx:91
+#: src/components/trade/positions/position-tpsl-modal.tsx:100
 msgid "Failed to update TP/SL orders"
 msgstr ""
 
-#: src/components/trade/mobile/mobile-history-tab.tsx:113
-#: src/components/trade/positions/history-tab.tsx:103
+#: src/components/trade/mobile/mobile-history-tab.tsx:106
+#: src/components/trade/positions/history-tab.tsx:94
 msgid "Fee"
 msgstr "手续费"
 
@@ -1123,7 +1162,7 @@ msgstr "手续费"
 #~ msgid "Fee rate must be between 0.001% and 1%"
 #~ msgstr ""
 
-#: src/components/trade/tradebox/twap-order-summary.tsx:61
+#: src/components/trade/tradebox/twap-order-summary.tsx:57
 msgid "Fees"
 msgstr ""
 
@@ -1145,11 +1184,11 @@ msgid "Filled"
 msgstr "已成交"
 
 #. placeholder {0}: sub.label
-#: src/components/trade/chart/token-selector-content.tsx:160
+#: src/components/trade/chart/token-selector-content.tsx:152
 msgid "Filter by {0}"
 msgstr "按 {0} 筛选"
 
-#: src/components/trade/positions/transfer-modal.tsx:126
+#: src/components/trade/positions/transfer-modal.tsx:217
 msgid "Flip transfer direction"
 msgstr ""
 
@@ -1157,12 +1196,12 @@ msgstr ""
 #~ msgid "Format for numbers and dates"
 #~ msgstr ""
 
-#: src/components/trade/tradebox/twap-order-summary.tsx:41
+#: src/components/trade/tradebox/twap-order-summary.tsx:37
 msgid "Frequency"
 msgstr ""
 
-#: src/components/trade/components/spot-swap-modal.tsx:210
-#: src/components/trade/tradebox/deposit/deposit-form.tsx:27
+#: src/components/trade/positions/transfer-modal.tsx:209
+#: src/components/trade/tradebox/deposit/deposit-form.tsx:26
 msgid "From"
 msgstr ""
 
@@ -1170,18 +1209,19 @@ msgstr ""
 #~ msgid "Full Position"
 #~ msgstr ""
 
-#: src/components/trade/chart/token-selector-columns.ts:82
-#: src/components/trade/chart/token-selector-content.tsx:23
-#: src/components/trade/mobile/mobile-position-card.tsx:172
-#: src/components/trade/positions/positions-tab.tsx:197
+#: src/components/trade/chart/token-selector-columns.ts:83
+#: src/components/trade/chart/token-selector-content.tsx:25
+#: src/components/trade/mobile/mobile-chart-view.tsx:95
+#: src/components/trade/mobile/mobile-position-card.tsx:180
+#: src/components/trade/positions/positions-tab.tsx:225
 msgid "Funding"
 msgstr "资金费率"
 
-#: src/components/trade/market-overview.tsx:155
+#: src/components/trade/market-overview.tsx:139
 msgid "FUNDING"
 msgstr ""
 
-#: src/components/trade/mobile/mobile-funding-tab.tsx:70
+#: src/components/trade/mobile/mobile-funding-tab.tsx:68
 msgid "Funding History"
 msgstr ""
 
@@ -1190,7 +1230,7 @@ msgstr ""
 #~ msgstr "资金费用"
 
 #. placeholder {0}: gas.token.symbol
-#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:127
+#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:111
 msgid "Gas ({0})"
 msgstr ""
 
@@ -1206,7 +1246,7 @@ msgstr ""
 #~ msgid "Go to previous page"
 #~ msgstr "上一页"
 
-#: src/components/trade/mobile/mobile-positions-tab.tsx:150
+#: src/components/trade/mobile/mobile-positions-tab.tsx:147
 msgid "Go to Trade"
 msgstr ""
 
@@ -1223,12 +1263,11 @@ msgstr ""
 msgid "H"
 msgstr ""
 
-#: src/components/trade/mobile/mobile-balances-tab.tsx:209
-#: src/components/trade/positions/balances-tab.tsx:217
+#: src/components/trade/mobile/mobile-balances-tab.tsx:206
 msgid "Hide small"
 msgstr ""
 
-#: src/components/trade/chart/token-selector-content.tsx:97
+#: src/components/trade/chart/token-selector-content.tsx:99
 msgid "HIP-3"
 msgstr ""
 
@@ -1238,12 +1277,12 @@ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:322
 #: src/routes/mobile-agent-sync.tsx:465
-msgid "Import phone access"
-msgstr ""
+#~ msgid "Import phone access"
+#~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:465
-msgid "Importing..."
-msgstr ""
+#~ msgid "Importing..."
+#~ msgstr ""
 
 #: src/components/trade/tradebox/account-panel.tsx:
 #~ msgid "In Orders"
@@ -1254,8 +1293,8 @@ msgstr ""
 #~ msgstr "使用中"
 
 #: src/components/trade/components/wallet-modal.tsx:827
-msgid "Install a wallet extension to continue"
-msgstr ""
+#~ msgid "Install a wallet extension to continue"
+#~ msgstr ""
 
 #. placeholder {0}: ctx.baseToken
 #. placeholder {0}: ctx.quoteToken
@@ -1269,8 +1308,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/components/trade/components/spot-swap-modal.tsx:293
-msgid "Insufficient <0/> balance"
-msgstr ""
+#~ msgid "Insufficient <0/> balance"
+#~ msgstr ""
 
 #: src/lib/errors/definitions/deposit.ts:42
 #: src/lib/errors/definitions/deposit.ts:60
@@ -1293,17 +1332,17 @@ msgid "Invalid amount"
 msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:688
-msgid "Invalid Ethereum address"
-msgstr ""
+#~ msgid "Invalid Ethereum address"
+#~ msgstr ""
 
 #: src/config/tooltips.ts:27
 msgid "IOC (Immediate Or Cancel)"
 msgstr ""
 
-#: src/components/trade/positions/position-row.tsx:199
-#: src/components/trade/tradebox/margin-mode-modal.tsx:22
-#: src/components/trade/tradebox/margin-mode-modal.tsx:74
-#: src/components/trade/tradebox/trade-header.tsx:68
+#: src/components/trade/positions/position-row.tsx:189
+#: src/components/trade/tradebox/margin-mode-modal.tsx:33
+#: src/components/trade/tradebox/margin-mode-modal.tsx:85
+#: src/components/trade/tradebox/trade-header.tsx:66
 msgid "Isolated"
 msgstr "逐仓"
 
@@ -1311,17 +1350,17 @@ msgstr "逐仓"
 #~ msgid "Latency:"
 #~ msgstr "延迟:"
 
-#: src/config/nav.tsx:73
+#: src/config/nav.tsx:72
 msgid "Leaderboard"
 msgstr "排行榜"
 
 #: src/components/trade/components/wallet-modal.tsx:949
-msgid "Learn more"
-msgstr ""
+#~ msgid "Learn more"
+#~ msgstr ""
 
-#: src/components/trade/tradebox/leverage-control.tsx:38
-#: src/components/trade/tradebox/leverage-control.tsx:131
-#: src/components/trade/tradebox/margin-mode-modal.tsx:203
+#: src/components/trade/tradebox/leverage-control.tsx:39
+#: src/components/trade/tradebox/leverage-control.tsx:125
+#: src/components/trade/tradebox/margin-mode-modal.tsx:188
 msgid "Leverage"
 msgstr ""
 
@@ -1333,23 +1372,22 @@ msgstr ""
 #~ msgid "limit"
 #~ msgstr "限价"
 
-#: src/components/trade/tradebox/trade-header.tsx:44
-#: src/components/trade/tradebox/trade-header.tsx:49
+#: src/components/trade/positions/position-row.tsx:216
+#: src/components/trade/tradebox/trade-header.tsx:78
 msgid "Limit"
 msgstr "限价"
 
-#: src/components/trade/mobile/mobile-position-card.tsx:233
+#: src/components/trade/mobile/mobile-position-card.tsx:241
 #: src/components/trade/positions/position-actions-dropdown.tsx:32
-#: src/components/trade/positions/position-limit-close-modal.tsx:107
+#: src/components/trade/positions/position-limit-close-modal.tsx:115
 msgid "Limit Close"
 msgstr ""
 
-#: src/components/trade/positions/position-limit-close-modal.tsx:88
+#: src/components/trade/positions/position-limit-close-modal.tsx:96
 msgid "Limit close order placed"
 msgstr ""
 
-#: src/components/trade/positions/position-limit-close-modal.tsx:146
-#: src/components/trade/tradebox/trade-form-fields.tsx:189
+#: src/components/trade/tradebox/trade-form-fields.tsx:186
 msgid "Limit Price"
 msgstr "限价"
 
@@ -1362,65 +1400,66 @@ msgstr "限价"
 #~ msgstr "限价只减仓"
 
 #: src/components/trade/components/wallet-modal.tsx:173
-msgid "Link desktop wallet"
-msgstr ""
+#~ msgid "Link desktop wallet"
+#~ msgstr ""
 
 #: src/components/trade/components/mobile-agent-sync-modal.tsx:236
-#: src/components/trade/header/user-menu.tsx:102
 msgid "Link mobile device"
 msgstr ""
 
-#: src/components/trade/mobile/mobile-position-card.tsx:168
-#: src/components/trade/positions/positions-tab.tsx:194
+#: src/components/trade/mobile/mobile-position-card.tsx:176
 msgid "Liq"
 msgstr "清算"
 
-#: src/components/trade/tradebox/order-summary.tsx:53
+#: src/components/trade/positions/positions-tab.tsx:223
+#: src/components/trade/tradebox/order-summary.tsx:50
 msgid "Liq. Price"
 msgstr "清算价"
 
-#: src/components/trade/mobile/mobile-history-tab.tsx:99
-#: src/components/trade/positions/history-tab.tsx:148
+#: src/components/trade/mobile/mobile-history-tab.tsx:92
+#: src/components/trade/positions/history-tab.tsx:235
 msgid "Liquidated"
 msgstr ""
 
+#: src/components/trade/chart/chart-panel.tsx:64
+#: src/components/trade/chart/kline-chart.tsx:281
 #: src/components/ui/spinner.tsx:9
 msgid "Loading"
 msgstr "加载中"
 
-#: src/components/trade/tradebox/bridge/asset-selection-screen.tsx:60
+#: src/components/trade/tradebox/bridge/asset-selection-screen.tsx:68
 msgid "Loading balances across all chains..."
 msgstr ""
 
-#: src/components/trade/positions/balances-tab.tsx:200
+#: src/components/trade/positions/balances-tab.tsx:238
 msgid "Loading balances..."
 msgstr "加载余额中..."
 
-#: src/components/trade/positions/funding-tab.tsx:48
+#: src/components/trade/positions/funding-tab.tsx:131
 msgid "Loading funding history..."
 msgstr "加载资金费用历史中..."
 
-#: src/components/trade/chart/token-selector-content.tsx:228
+#: src/components/trade/chart/token-selector-content.tsx:205
 msgid "Loading markets..."
 msgstr "加载市场中..."
 
-#: src/components/trade/positions/orders-tab.tsx:180
+#: src/components/trade/positions/orders-tab.tsx:179
 msgid "Loading open orders..."
 msgstr "加载未成交订单中..."
 
-#: src/components/trade/positions/orders-history-tab.tsx:47
+#: src/components/trade/positions/orders-history-tab.tsx:85
 msgid "Loading order history..."
 msgstr ""
 
-#: src/components/trade/positions/positions-tab.tsx:134
+#: src/components/trade/positions/positions-tab.tsx:209
 msgid "Loading positions..."
 msgstr "加载仓位中..."
 
-#: src/components/trade/positions/history-tab.tsx:52
+#: src/components/trade/positions/history-tab.tsx:71
 msgid "Loading trade history..."
 msgstr "加载交易历史中..."
 
-#: src/components/trade/positions/twap-tab.tsx:58
+#: src/components/trade/positions/twap-tab.tsx:59
 msgid "Loading TWAP orders..."
 msgstr "加载 TWAP 订单中..."
 
@@ -1428,12 +1467,13 @@ msgstr "加载 TWAP 订单中..."
 msgid "Loading wallet..."
 msgstr "加载钱包中..."
 
+#: src/components/trade/positions/positions-panel.tsx:137
 #: src/lib/trade/use-button-content.ts:27
 #: src/lib/trade/use-button-content.ts:28
 msgid "Loading..."
 msgstr "加载中..."
 
-#: src/components/trade/mobile/mobile-position-card.tsx:136
+#: src/components/trade/mobile/mobile-position-card.tsx:141
 msgid "Long"
 msgstr "多"
 
@@ -1441,15 +1481,15 @@ msgstr "多"
 #~ msgid "Long {0} position"
 #~ msgstr ""
 
-#: src/components/trade/positions/position-tpsl-modal.tsx:109
+#: src/components/trade/positions/position-tpsl-modal.tsx:116
 msgid "Long position"
 msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:399
-msgid "Looking for a WalletConnect QR code"
-msgstr ""
+#~ msgid "Looking for a WalletConnect QR code"
+#~ msgstr ""
 
-#: src/components/trade/tradebox/bridge/asset-selection-screen.tsx:41
+#: src/components/trade/tradebox/bridge/asset-selection-screen.tsx:45
 msgid "Low balance"
 msgstr ""
 
@@ -1457,20 +1497,20 @@ msgstr ""
 #~ msgid "Low Balance"
 #~ msgstr ""
 
-#: src/components/trade/tradebox/trade-form-twap.tsx:68
+#: src/components/trade/tradebox/trade-form-twap.tsx:67
 msgid "M"
 msgstr ""
 
-#: src/components/trade/components/global-settings-modal.tsx:144
+#: src/components/trade/components/global-settings-modal.tsx:158
 msgid "Mainnet"
 msgstr ""
 
-#: src/components/trade/mobile/mobile-account-view.tsx:154
-#: src/components/trade/tradebox/account-panel.tsx:101
+#: src/components/trade/mobile/mobile-account-view.tsx:176
+#: src/components/trade/tradebox/account-panel.tsx:98
 msgid "Maintenance Margin"
 msgstr ""
 
-#: src/components/trade/positions/position-tpsl-modal.tsx:102
+#: src/components/trade/positions/position-tpsl-modal.tsx:109
 msgid "Manage TP/SL"
 msgstr ""
 
@@ -1479,12 +1519,12 @@ msgstr ""
 #~ msgstr ""
 
 #. placeholder {0}: position.coin
-#: src/components/trade/positions/position-tpsl-modal.tsx:188
+#: src/components/trade/positions/position-tpsl-modal.tsx:184
 msgid "Manage TP/SL for {0} long position"
 msgstr ""
 
 #. placeholder {0}: position.coin
-#: src/components/trade/positions/position-tpsl-modal.tsx:189
+#: src/components/trade/positions/position-tpsl-modal.tsx:185
 msgid "Manage TP/SL for {0} short position"
 msgstr ""
 
@@ -1492,20 +1532,20 @@ msgstr ""
 #~ msgid "Manage your risk on individual positions by restricting the amount of margin allocated to each. If the margin ratio of an isolated position reaches 100%, the position will be liquidated. Margin can be added or removed to individual positions in this mode."
 #~ msgstr ""
 
-#: src/components/trade/mobile/mobile-position-card.tsx:164
-#: src/components/trade/positions/positions-tab.tsx:185
+#: src/components/trade/mobile/mobile-position-card.tsx:172
+#: src/components/trade/positions/positions-tab.tsx:224
 msgid "Margin"
 msgstr ""
 
-#: src/components/trade/mobile/mobile-position-card.tsx:164
+#: src/components/trade/mobile/mobile-position-card.tsx:172
 msgid "Margin · Iso"
 msgstr ""
 
-#: src/components/trade/tradebox/margin-mode-modal.tsx:172
+#: src/components/trade/tradebox/margin-mode-modal.tsx:152
 msgid "Margin & leverage"
 msgstr ""
 
-#: src/components/trade/tradebox/margin-mode-modal.tsx:179
+#: src/components/trade/tradebox/margin-mode-modal.tsx:159
 msgid "Margin mode"
 msgstr ""
 
@@ -1517,8 +1557,8 @@ msgstr ""
 #~ msgid "Margin Ratio"
 #~ msgstr "保证金率"
 
-#: src/components/trade/tradebox/order-summary.tsx:65
-#: src/components/trade/tradebox/scale-order-summary.tsx:64
+#: src/components/trade/tradebox/order-summary.tsx:62
+#: src/components/trade/tradebox/scale-order-summary.tsx:60
 msgid "Margin Req."
 msgstr "保证金要求"
 
@@ -1526,8 +1566,7 @@ msgstr "保证金要求"
 #~ msgid "Margin Used"
 #~ msgstr "已用保证金"
 
-#: src/components/trade/mobile/mobile-position-card.tsx:160
-#: src/components/trade/positions/positions-tab.tsx:191
+#: src/components/trade/mobile/mobile-position-card.tsx:170
 msgid "Mark"
 msgstr "标记价"
 
@@ -1535,8 +1574,9 @@ msgstr "标记价"
 #~ msgid "MARK"
 #~ msgstr "标记"
 
-#: src/components/trade/positions/position-limit-close-modal.tsx:126
-#: src/components/trade/positions/position-tpsl-modal.tsx:129
+#: src/components/trade/positions/position-limit-close-modal.tsx:125
+#: src/components/trade/positions/position-tpsl-modal.tsx:124
+#: src/components/trade/positions/positions-tab.tsx:221
 msgid "Mark Price"
 msgstr ""
 
@@ -1547,12 +1587,13 @@ msgstr ""
 #~ msgid "Mark:"
 #~ msgstr ""
 
-#: src/components/trade/chart/token-selector-columns.ts:50
-#: src/components/trade/chart/token-selector-content.tsx:179
+#: src/components/trade/chart/token-selector-columns.ts:51
+#: src/components/trade/chart/token-selector-content.tsx:168
 #: src/components/trade/mobile/mobile-orders-tab.tsx:230
-#: src/components/trade/positions/orders-tab.tsx:371
-#: src/components/trade/tradebox/trade-header.tsx:43
-#: src/components/trade/tradebox/trade-header.tsx:48
+#: src/components/trade/positions/history-tab.tsx:89
+#: src/components/trade/positions/position-row.tsx:219
+#: src/components/trade/positions/positions-tab.tsx:217
+#: src/components/trade/tradebox/trade-header.tsx:77
 msgid "Market"
 msgstr "市场"
 
@@ -1572,12 +1613,12 @@ msgstr "市场未就绪"
 #~ msgid "Market Order Slippage"
 #~ msgstr "市价单滑点"
 
-#: src/components/trade/chart/token-selector-content.tsx:267
+#: src/components/trade/chart/token-selector-content.tsx:251
 msgid "markets"
 msgstr "个市场"
 
-#: src/components/trade/chart/token-selector-content.tsx:235
-#: src/components/trade/mobile/mobile-nav-drawer.tsx:84
+#: src/components/trade/chart/token-selector-content.tsx:219
+#: src/components/trade/mobile/mobile-nav-drawer.tsx:67
 msgid "Markets"
 msgstr ""
 
@@ -1585,7 +1626,11 @@ msgstr ""
 #~ msgid "Master"
 #~ msgstr ""
 
-#: src/components/trade/tradebox/bridge/amount-entry-screen.tsx:94
+#: src/components/trade/positions/position-limit-close-modal.tsx:153
+#: src/components/trade/positions/send-modal.tsx:256
+#: src/components/trade/positions/transfer-modal.tsx:244
+#: src/components/trade/tradebox/bridge/amount-entry-screen.tsx:64
+#: src/components/trade/tradebox/deposit/deposit-form.tsx:46
 msgid "Max"
 msgstr "最大"
 
@@ -1625,7 +1670,7 @@ msgstr ""
 msgid "Min order $10"
 msgstr "最小订单 $10"
 
-#: src/components/trade/tradebox/deposit/deposit-form.tsx:62
+#: src/components/trade/tradebox/deposit/deposit-form.tsx:61
 msgid "Minimum"
 msgstr ""
 
@@ -1647,23 +1692,23 @@ msgstr ""
 msgid "Minimum withdrawal is ${MIN_WITHDRAW_USD}"
 msgstr ""
 
-#: src/components/trade/tradebox/trade-form-twap.tsx:62
+#: src/components/trade/tradebox/trade-form-twap.tsx:61
 msgid "Minute(s)"
 msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:852
-msgid "Mock Wallet (Testing)"
-msgstr ""
+#~ msgid "Mock Wallet (Testing)"
+#~ msgstr ""
 
-#: src/components/trade/header/top-nav.tsx:
-#~ msgid "More"
-#~ msgstr "更多"
+#: src/components/trade/tradebox/trade-header.tsx:44
+msgid "More"
+msgstr "更多"
 
 #: src/components/trade/tradebox/bridge/success-screen.tsx:101
 msgid "More details"
 msgstr ""
 
-#: src/components/trade/chart/kline-toolbar.tsx:65
+#: src/components/trade/chart/kline-toolbar.tsx:67
 msgid "More intervals"
 msgstr ""
 
@@ -1675,7 +1720,7 @@ msgstr ""
 #~ msgid "More pages"
 #~ msgstr "更多页面"
 
-#: src/components/trade/positions/transfer-modal.tsx:107
+#: src/components/trade/positions/transfer-modal.tsx:203
 msgid "Move USDC between your Perp and Spot accounts."
 msgstr ""
 
@@ -1684,45 +1729,44 @@ msgstr ""
 #~ msgstr ""
 
 #: src/components/trade/tradebox/deposit/withdraw-form.tsx:87
-msgid "Net received"
-msgstr ""
+#~ msgid "Net received"
+#~ msgstr ""
 
-#: src/components/trade/components/global-settings-modal.tsx:137
-#: src/routes/mobile-agent-sync.tsx:529
+#: src/components/trade/components/global-settings-modal.tsx:151
 msgid "Network"
 msgstr ""
 
 #: src/components/trade/tradebox/deposit/withdraw-form.tsx:76
-msgid "Network fee"
-msgstr ""
+#~ msgid "Network fee"
+#~ msgstr ""
 
-#: src/components/trade/chart/token-selector-row.tsx:98
+#: src/components/trade/chart/token-selector-row.tsx:117
 msgid "NEW"
 msgstr "新"
 
-#: src/components/trade/tradebox/bridge/success-screen.tsx:139
+#: src/components/trade/tradebox/bridge/success-screen.tsx:138
 msgid "New deposit"
 msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:941
-msgid "New to wallets?"
-msgstr ""
+#~ msgid "New to wallets?"
+#~ msgstr ""
 
 #: src/components/ui/pagination.tsx:
 #~ msgid "Next"
 #~ msgstr "下一页"
 
-#: src/components/trade/positions/twap-tab.tsx:167
+#: src/components/trade/positions/twap-tab.tsx:133
 msgid "No"
 msgstr ""
 
-#: src/components/trade/mobile/mobile-positions-tab.tsx:142
-#: src/components/trade/positions/positions-tab.tsx:142
+#: src/components/trade/mobile/mobile-positions-tab.tsx:139
+#: src/components/trade/positions/positions-tab.tsx:211
 msgid "No active positions."
 msgstr "无活跃仓位。"
 
-#: src/components/trade/mobile/mobile-twap-tab.tsx:56
-#: src/components/trade/positions/twap-tab.tsx:59
+#: src/components/trade/mobile/mobile-twap-tab.tsx:55
+#: src/components/trade/positions/twap-tab.tsx:60
 msgid "No active TWAP orders."
 msgstr ""
 
@@ -1734,26 +1778,26 @@ msgstr "无余额"
 msgid "No balance on Hyperliquid. Deposit first."
 msgstr ""
 
-#: src/components/trade/tradebox/bridge/asset-selection-screen.tsx:95
+#: src/components/trade/tradebox/bridge/asset-selection-screen.tsx:103
 msgid "No balances found"
 msgstr ""
 
 #: src/components/trade/mobile/mobile-balances-tab.tsx:117
-#: src/components/trade/positions/balances-tab.tsx:203
+#: src/components/trade/positions/balances-tab.tsx:241
 msgid "No balances found. Deposit funds to start trading."
 msgstr "未找到余额。存入资金开始交易。"
 
 #: src/components/trade/components/wallet-modal.tsx:355
-msgid "No camera was found on this device."
-msgstr ""
+#~ msgid "No camera was found on this device."
+#~ msgstr ""
 
 #: src/components/trade/mobile/mobile-history-tab.tsx:59
-#: src/components/trade/positions/history-tab.tsx:61
+#: src/components/trade/positions/history-tab.tsx:81
 msgid "No fills found."
 msgstr "未找到成交记录。"
 
-#: src/components/trade/mobile/mobile-funding-tab.tsx:60
-#: src/components/trade/positions/funding-tab.tsx:57
+#: src/components/trade/mobile/mobile-funding-tab.tsx:59
+#: src/components/trade/positions/funding-tab.tsx:143
 msgid "No funding payments found."
 msgstr "未找到资金费用记录。"
 
@@ -1765,29 +1809,29 @@ msgstr "无标记价格"
 msgid "No market"
 msgstr "无市场"
 
-#: src/components/trade/chart/token-selector-content.tsx:231
+#: src/components/trade/chart/token-selector-content.tsx:215
 msgid "No markets found."
 msgstr "未找到市场。"
 
 #: src/routes/mobile-agent-sync.tsx:656
-msgid "No mobile link found."
-msgstr ""
+#~ msgid "No mobile link found."
+#~ msgstr ""
 
-#: src/components/trade/mobile/mobile-orders-tab.tsx:145
-#: src/components/trade/positions/orders-tab.tsx:189
+#: src/components/trade/mobile/mobile-orders-tab.tsx:142
+#: src/components/trade/positions/orders-tab.tsx:188
 msgid "No open orders."
 msgstr "无未成交订单。"
 
 #: src/components/trade/mobile/mobile-orders-history-tab.tsx:59
 #: src/components/trade/positions/orders-history-tab.tsx:56
-msgid "No order history found."
-msgstr ""
+#~ msgid "No order history found."
+#~ msgstr ""
 
 #: src/hooks/trade/use-order-submit.ts:162
 #~ msgid "No response from exchange"
 #~ msgstr ""
 
-#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:143
+#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:127
 msgid "No route available. Try a different amount or asset."
 msgstr ""
 
@@ -1795,7 +1839,7 @@ msgstr ""
 #~ msgid "No tokens available"
 #~ msgstr ""
 
-#: src/components/trade/tradebox/bridge/asset-selection-screen.tsx:98
+#: src/components/trade/tradebox/bridge/asset-selection-screen.tsx:106
 msgid "No tokens with value found across supported chains"
 msgstr ""
 
@@ -1808,8 +1852,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/components/trade/components/spot-swap-modal.tsx:304
-msgid "No trading pair available for <0/>/<1/>"
-msgstr ""
+#~ msgid "No trading pair available for <0/>/<1/>"
+#~ msgstr ""
 
 #: src/components/trade/positions/twap-tab.tsx:
 #~ msgid "No TWAP orders found."
@@ -1820,12 +1864,12 @@ msgstr ""
 #~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:342
-msgid "No wallet connected"
-msgstr ""
+#~ msgid "No wallet connected"
+#~ msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:824
-msgid "No wallets found"
-msgstr "未找到钱包"
+#~ msgid "No wallets found"
+#~ msgstr "未找到钱包"
 
 #: src/lib/errors/definitions/connection.ts:27
 msgid "Not connected"
@@ -1835,7 +1879,7 @@ msgstr "未连接"
 #~ msgid "Notifications"
 #~ msgstr "通知"
 
-#: src/components/trade/components/global-settings-modal.tsx:126
+#: src/components/trade/components/global-settings-modal.tsx:139
 msgid "Number format"
 msgstr ""
 
@@ -1843,13 +1887,13 @@ msgstr ""
 #~ msgid "Number Format"
 #~ msgstr ""
 
-#: src/components/trade/tradebox/scale-order-summary.tsx:53
-#: src/components/trade/tradebox/trade-form-scale.tsx:44
-#: src/components/trade/tradebox/twap-order-summary.tsx:49
+#: src/components/trade/tradebox/scale-order-summary.tsx:49
+#: src/components/trade/tradebox/trade-form-scale.tsx:42
+#: src/components/trade/tradebox/twap-order-summary.tsx:45
 msgid "Number of Orders"
 msgstr ""
 
-#: src/components/trade/footer/footer-bar.tsx:36
+#: src/components/trade/footer/footer-bar.tsx:22
 msgid "Offline"
 msgstr ""
 
@@ -1873,20 +1917,23 @@ msgstr ""
 #~ msgid "Open a WalletConnect wallet or copy the pairing link."
 #~ msgstr ""
 
-#: src/components/trade/footer/footer-bar.tsx:78
+#: src/components/trade/footer/footer-bar.tsx:59
 msgid "Open command menu"
 msgstr ""
 
-#: src/components/trade/market-overview.tsx:144
+#: src/components/trade/chart/token-selector-columns.ts:70
+msgid "Open Int"
+msgstr ""
+
+#: src/components/trade/market-overview.tsx:137
 msgid "OPEN INT"
 msgstr ""
 
-#: src/components/trade/chart/token-selector-columns.ts:69
-#: src/components/trade/chart/token-selector-content.tsx:19
+#: src/components/trade/chart/token-selector-content.tsx:21
 msgid "Open Interest"
 msgstr "未平仓量"
 
-#: src/components/trade/mobile/mobile-orders-tab.tsx:155
+#: src/components/trade/mobile/mobile-orders-tab.tsx:151
 msgid "Open Orders"
 msgstr "未成交订单"
 
@@ -1895,35 +1942,39 @@ msgstr "未成交订单"
 #~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:626
-msgid "Open terminal"
-msgstr ""
+#~ msgid "Open terminal"
+#~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:326
-msgid "Open the phone link, then enter the pairing code shown on desktop."
-msgstr ""
+#~ msgid "Open the phone link, then enter the pairing code shown on desktop."
+#~ msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:562
-msgid "Open wallet"
-msgstr ""
+#~ msgid "Open wallet"
+#~ msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:439
-msgid "Opening camera..."
-msgstr ""
+#~ msgid "Opening camera..."
+#~ msgstr ""
 
 #: src/components/trade/layout/market-overview-variants-demo.tsx:
 #~ msgid "Oracle"
 #~ msgstr ""
 
-#: src/components/trade/market-overview.tsx:131
+#: src/components/trade/market-overview.tsx:135
 msgid "ORACLE"
 msgstr "预言机"
 
-#: src/components/trade/orderbook/orderbook-panel.tsx:94
-#: src/components/trade/orderbook/orderbook-panel.tsx:95
+#: src/components/trade/orderbook/orderbook-panel.tsx:102
 msgid "Order Book"
 msgstr "订单簿"
 
-#: src/components/trade/components/global-settings-modal.tsx:114
+#: src/components/trade/orderbook/orderbook-panel.tsx:122
+msgid "Order book depth per side"
+msgstr ""
+
+#: src/components/trade/components/global-settings-modal.tsx:121
+#: src/components/trade/components/global-settings-modal.tsx:126
 msgid "Order book in quote asset"
 msgstr ""
 
@@ -1932,28 +1983,28 @@ msgstr ""
 msgid "Order failed"
 msgstr "下单失败"
 
-#: src/components/trade/tradebox/bridge/success-screen.tsx:127
+#: src/components/trade/tradebox/bridge/success-screen.tsx:126
 msgid "Order filled"
 msgstr ""
 
 #: src/components/trade/mobile/mobile-orders-history-tab.tsx:69
-msgid "Order History"
-msgstr ""
+#~ msgid "Order History"
+#~ msgstr ""
 
-#: src/components/trade/tradebox/order-toast.tsx:183
+#: src/components/trade/tradebox/order-toast.tsx:161
 msgid "Order Queue"
 msgstr "订单队列"
 
-#: src/components/trade/tradebox/bridge/success-screen.tsx:120
+#: src/components/trade/tradebox/bridge/success-screen.tsx:119
 msgid "Order submitted"
 msgstr ""
 
-#: src/components/trade/tradebox/trade-header.tsx:79
+#: src/components/trade/tradebox/trade-header.tsx:93
 msgid "Order type"
 msgstr ""
 
-#: src/components/trade/tradebox/order-summary.tsx:59
-#: src/components/trade/tradebox/scale-order-summary.tsx:58
+#: src/components/trade/tradebox/order-summary.tsx:56
+#: src/components/trade/tradebox/scale-order-summary.tsx:54
 msgid "Order Value"
 msgstr "订单价值"
 
@@ -1967,16 +2018,19 @@ msgstr ""
 
 #: src/components/trade/positions/orders-history-tab.tsx:43
 #: src/components/trade/positions/orders-tab.tsx:200
-msgid "orders"
-msgstr ""
+#~ msgid "orders"
+#~ msgstr ""
 
 #: src/components/trade/positions/orders-history-tab.tsx:
 #~ msgid "Orders"
 #~ msgstr ""
 
+#: src/components/trade/positions/positions-tab.tsx:305
+msgid "Orders are sent one at a time. If an order fails or the wallet changes, remaining orders are stopped."
+msgstr ""
+
 #: src/components/trade/tradebox/advanced-order-dropdown.tsx:72
 #: src/components/trade/tradebox/advanced-order-dropdown.tsx:94
-#: src/components/trade/tradebox/trade-header.tsx:41
 msgid "Other"
 msgstr ""
 
@@ -1985,16 +2039,16 @@ msgstr ""
 #~ msgstr ""
 
 #: src/config/nav.tsx:58
-msgid "Outcome"
-msgstr ""
+#~ msgid "Outcome"
+#~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:614
-msgid "Owner account"
-msgstr ""
+#~ msgid "Owner account"
+#~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:531
-msgid "Owner wallet"
-msgstr ""
+#~ msgid "Owner wallet"
+#~ msgstr ""
 
 #: src/components/trade/positions/position-tpsl-modal.tsx:
 #~ msgid "P&L"
@@ -2004,7 +2058,7 @@ msgstr ""
 msgid "Page not found"
 msgstr "页面未找到"
 
-#: src/components/trade/components/global-settings-modal.tsx:138
+#: src/components/trade/components/global-settings-modal.tsx:152
 msgid "Page reloads when changed"
 msgstr ""
 
@@ -2013,37 +2067,35 @@ msgstr ""
 #~ msgstr "分页"
 
 #: src/components/trade/components/mobile-agent-sync-modal.tsx:393
-#: src/routes/mobile-agent-sync.tsx:423
-#: src/routes/mobile-agent-sync.tsx:536
 msgid "Pairing code"
 msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:668
-msgid "Pairing code does not match this link."
-msgstr ""
+#~ msgid "Pairing code does not match this link."
+#~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:447
-msgid "Paste code"
-msgstr ""
+#~ msgid "Paste code"
+#~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:385
-msgid "Paste link from desktop"
-msgstr ""
+#~ msgid "Paste link from desktop"
+#~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:683
-msgid "Paste the full phone link from desktop."
-msgstr ""
+#~ msgid "Paste the full phone link from desktop."
+#~ msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:446
 #: src/components/trade/components/wallet-modal.tsx:449
-msgid "Paste WalletConnect URI"
-msgstr ""
+#~ msgid "Paste WalletConnect URI"
+#~ msgstr ""
 
 #: src/components/trade/positions/funding-tab.tsx:98
-msgid "Payment"
-msgstr "支付"
+#~ msgid "Payment"
+#~ msgstr "支付"
 
-#: src/components/trade/tradebox/order-toast.tsx:188
+#: src/components/trade/tradebox/order-toast.tsx:166
 msgid "pending"
 msgstr "待处理"
 
@@ -2051,27 +2103,26 @@ msgstr "待处理"
 #~ msgid "perp"
 #~ msgstr "永续"
 
-#: src/components/trade/chart/token-selector-content.tsx:95
-#: src/components/trade/positions/transfer-modal.tsx:67
-#: src/components/trade/positions/transfer-modal.tsx:68
-#: src/config/nav.tsx:40
+#: src/components/trade/chart/token-selector-content.tsx:97
+#: src/components/trade/positions/transfer-modal.tsx:85
+#: src/components/trade/positions/transfer-modal.tsx:86
+#: src/config/nav.tsx:42
 msgid "Perp"
 msgstr ""
 
-#: src/components/trade/mobile/mobile-balances-tab.tsx:217
-#: src/components/trade/positions/balances-tab.tsx:281
+#: src/components/trade/mobile/mobile-balances-tab.tsx:214
 msgid "Perpetuals"
 msgstr ""
 
-#: src/components/trade/tradebox/account-panel.tsx:131
+#: src/components/trade/tradebox/account-panel.tsx:124
 msgid "Perps"
 msgstr "永续合约"
 
-#: src/components/trade/positions/send-modal.tsx:174
+#: src/components/trade/positions/send-modal.tsx:178
 msgid "Perps Account"
 msgstr ""
 
-#: src/components/trade/tradebox/account-panel.tsx:139
+#: src/components/trade/tradebox/account-panel.tsx:132
 msgid "Perps Overview"
 msgstr ""
 
@@ -2080,16 +2131,16 @@ msgstr ""
 #~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:607
-msgid "Phone access ready"
-msgstr ""
+#~ msgid "Phone access ready"
+#~ msgstr ""
 
 #: src/components/trade/components/mobile-agent-sync-modal.tsx:565
 msgid "Phone access reset. The replacement key expires at {expiresAtLabel}."
 msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:382
-msgid "Phone link"
-msgstr ""
+#~ msgid "Phone link"
+#~ msgstr ""
 
 #: src/components/trade/components/mobile-agent-sync-modal.tsx:490
 msgid "Phone link expired"
@@ -2100,8 +2151,8 @@ msgid "Phone link expires {linkExpiresLabel}"
 msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:507
-msgid "Phone link loaded"
-msgstr ""
+#~ msgid "Phone link loaded"
+#~ msgstr ""
 
 #: src/components/trade/components/mobile-agent-sync-modal.tsx:428
 msgid "Phone link QR"
@@ -2116,7 +2167,7 @@ msgstr ""
 msgid "Place {0} Order"
 msgstr ""
 
-#: src/components/trade/positions/position-limit-close-modal.tsx:209
+#: src/components/trade/positions/position-limit-close-modal.tsx:206
 msgid "Place Limit Close"
 msgstr ""
 
@@ -2124,35 +2175,38 @@ msgstr ""
 msgid "Placed"
 msgstr ""
 
-#: src/components/trade/mobile/mobile-nav-drawer.tsx:106
+#: src/components/trade/mobile/mobile-nav-drawer.tsx:96
 msgid "Platform"
 msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:684
-msgid "Please enter an address"
-msgstr ""
+#~ msgid "Please enter an address"
+#~ msgstr ""
 
 #: src/components/trade/positions/balances-tab.tsx:262
 #: src/components/trade/positions/history-tab.tsx:110
 #: src/components/trade/positions/positions-tab.tsx:204
-msgid "PNL"
-msgstr "盈亏"
+#~ msgid "PNL"
+#~ msgstr "盈亏"
+
+#: src/components/trade/positions/positions-tab.tsx:222
+msgid "PNL (ROE %)"
+msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:401
-msgid "Point your camera at the WalletConnect QR code on your desktop wallet."
-msgstr ""
+#~ msgid "Point your camera at the WalletConnect QR code on your desktop wallet."
+#~ msgstr ""
 
 #: src/components/trade/components/wallet-dialog.tsx:
 #~ msgid "Popular"
 #~ msgstr ""
 
-#: src/config/nav.tsx:71
+#: src/config/nav.tsx:70
 msgid "Portfolio"
 msgstr "投资组合"
 
-#: src/components/trade/mobile/mobile-funding-tab.tsx:100
-#: src/components/trade/positions/funding-tab.tsx:84
-#: src/components/trade/tradebox/trade-form-fields.tsx:154
+#: src/components/trade/mobile/mobile-funding-tab.tsx:97
+#: src/components/trade/tradebox/trade-form-fields.tsx:161
 msgid "Position"
 msgstr "仓位"
 
@@ -2170,7 +2224,7 @@ msgstr ""
 #~ msgstr ""
 
 #: src/components/trade/mobile/mobile-positions-tab.tsx:88
-#: src/components/trade/positions/positions-tab.tsx:93
+#: src/components/trade/positions/positions-tab.tsx:118
 msgid "Position closed — {coin}"
 msgstr ""
 
@@ -2178,15 +2232,19 @@ msgstr ""
 #~ msgid "Position reversed"
 #~ msgstr ""
 
-#: src/components/trade/positions/positions-tab.tsx:93
+#: src/components/trade/positions/positions-tab.tsx:118
 msgid "Position reversed — {coin}"
 msgstr ""
 
-#: src/components/trade/positions/positions-tab.tsx:153
-msgid "positions"
+#: src/components/trade/positions/positions-tab.tsx:219
+msgid "Position Value"
 msgstr ""
 
-#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:159
+#: src/components/trade/positions/positions-tab.tsx:153
+#~ msgid "positions"
+#~ msgstr ""
+
+#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:143
 msgid "Preparing your quote..."
 msgstr ""
 
@@ -2194,17 +2252,15 @@ msgstr ""
 #~ msgid "Previous"
 #~ msgstr "上一页"
 
-#: src/components/trade/chart/token-selector-columns.ts:56
-#: src/components/trade/chart/token-selector-content.tsx:15
-#: src/components/trade/mobile/mobile-history-tab.tsx:110
-#: src/components/trade/mobile/mobile-orders-history-tab.tsx:111
+#: src/components/trade/chart/token-selector-columns.ts:57
+#: src/components/trade/chart/token-selector-content.tsx:17
+#: src/components/trade/mobile/mobile-history-tab.tsx:103
 #: src/components/trade/mobile/mobile-orders-tab.tsx:229
-#: src/components/trade/orderbook/orderbook-panel.tsx:106
-#: src/components/trade/orderbook/trades-panel.tsx:70
-#: src/components/trade/positions/history-tab.tsx:89
-#: src/components/trade/positions/orders-history-tab.tsx:87
-#: src/components/trade/positions/orders-tab.tsx:261
-#: src/components/trade/tradebox/price-input-with-percent.tsx:57
+#: src/components/trade/orderbook/orderbook-panel.tsx:134
+#: src/components/trade/orderbook/trades-panel.tsx:104
+#: src/components/trade/positions/history-tab.tsx:91
+#: src/components/trade/positions/position-limit-close-modal.tsx:140
+#: src/components/trade/tradebox/price-input-with-percent.tsx:38
 msgid "Price"
 msgstr "价格"
 
@@ -2212,7 +2268,7 @@ msgstr "价格"
 #~ msgid "PRICE"
 #~ msgstr ""
 
-#: src/components/trade/orderbook/orderbook-panel.tsx:117
+#: src/components/trade/orderbook/orderbook-panel.tsx:110
 msgid "Price grouping"
 msgstr ""
 
@@ -2225,12 +2281,11 @@ msgstr ""
 msgid "Processing"
 msgstr ""
 
-#: src/components/trade/tradebox/deposit-modal.tsx:164
+#: src/components/trade/tradebox/deposit-modal.tsx:122
 msgid "Processing deposit"
 msgstr ""
 
-#: src/components/trade/tradebox/deposit/deposit-form.tsx:91
-#: src/components/trade/tradebox/deposit/withdraw-form.tsx:116
+#: src/components/trade/tradebox/deposit/deposit-form.tsx:88
 msgid "Processing..."
 msgstr ""
 
@@ -2239,46 +2294,44 @@ msgstr ""
 #~ msgstr "进度"
 
 #: src/components/trade/components/wallet-modal.tsx:262
-msgid "QR scanning is not available in this browser."
-msgstr ""
+#~ msgid "QR scanning is not available in this browser."
+#~ msgstr ""
 
 #: src/components/trade/components/mobile-agent-sync-modal.tsx:463
 msgid "QR visible"
 msgstr ""
 
-#: src/components/trade/tradebox/trade-form-twap.tsx:80
+#: src/components/trade/tradebox/trade-form-twap.tsx:78
 msgid "Randomize timing"
 msgstr ""
 
-#: src/components/trade/components/spot-swap-modal.tsx:267
-#: src/components/trade/mobile/mobile-funding-tab.tsx:104
-#: src/components/trade/positions/funding-tab.tsx:91
+#: src/components/trade/mobile/mobile-funding-tab.tsx:101
 msgid "Rate"
 msgstr "费率"
 
 #: src/routes/mobile-agent-sync.tsx:537
-msgid "Ready"
-msgstr ""
+#~ msgid "Ready"
+#~ msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:126
-msgid "Recent"
-msgstr ""
+#~ msgid "Recent"
+#~ msgstr ""
 
 #: src/components/trade/orderbook/orderbook-panel.tsx:97
-msgid "Recent Trades"
-msgstr "最近成交"
+#~ msgid "Recent Trades"
+#~ msgstr "最近成交"
 
 #: src/routes/mobile-agent-sync.tsx:511
-msgid "Recovered after reload. Expires {expiresAtLabel}."
-msgstr ""
+#~ msgid "Recovered after reload. Expires {expiresAtLabel}."
+#~ msgstr ""
 
 #: src/components/trade/positions/orders-tab.tsx:
 #~ msgid "Reduce"
 #~ msgstr ""
 
-#: src/components/trade/positions/twap-tab.tsx:104
-#: src/components/trade/tradebox/trade-form-fields.tsx:288
-#: src/components/trade/tradebox/trade-form-fields.tsx:292
+#: src/components/trade/positions/twap-tab.tsx:72
+#: src/components/trade/tradebox/trade-form-fields.tsx:268
+#: src/components/trade/tradebox/trade-form-fields.tsx:272
 msgid "Reduce Only"
 msgstr "只减仓"
 
@@ -2292,11 +2345,11 @@ msgstr "只减仓"
 #~ msgstr ""
 
 #. placeholder {0}: market.pairName
-#: src/components/trade/chart/token-selector-row.tsx:108
+#: src/components/trade/chart/token-selector-row.tsx:86
 msgid "Remove {0} from favorites"
 msgstr ""
 
-#: src/components/trade/header/favorites-strip.tsx:100
+#: src/components/trade/header/favorites-strip.tsx:86
 msgid "Remove {displayName} from favorites"
 msgstr ""
 
@@ -2313,7 +2366,6 @@ msgstr ""
 #~ msgstr ""
 
 #: src/components/trade/components/mobile-agent-sync-modal.tsx:558
-#: src/routes/mobile-agent-sync.tsx:523
 msgid "Reset"
 msgstr ""
 
@@ -2321,7 +2373,7 @@ msgstr ""
 msgid "Reset phone access"
 msgstr ""
 
-#: src/components/trade/market-overview.tsx:38
+#: src/components/trade/market-overview.tsx:37
 msgid "Resets in"
 msgstr ""
 
@@ -2330,21 +2382,21 @@ msgid "Resetting..."
 msgstr ""
 
 #: src/components/trade/mobile/offline-banner.tsx:80
-#: src/components/trade/tradebox/deposit-modal.tsx:152
-#: src/components/trade/tradebox/deposit-modal.tsx:207
-#: src/components/trade/tradebox/leverage-control.tsx:198
+#: src/components/trade/tradebox/deposit-modal.tsx:110
+#: src/components/trade/tradebox/leverage-control.tsx:192
 msgid "Retry"
 msgstr ""
 
 #: src/components/trade/positions/position-actions-dropdown.tsx:41
+#: src/components/trade/positions/position-row.tsx:229
 msgid "Reverse"
 msgstr ""
 
-#: src/components/trade/tradebox/tp-sl-section.tsx:144
+#: src/components/trade/tradebox/tp-sl-section.tsx:131
 msgid "Risk/Reward"
 msgstr ""
 
-#: src/components/trade/mobile/mobile-orders-tab.tsx:223
+#: src/components/trade/mobile/mobile-orders-tab.tsx:221
 #: src/components/trade/mobile/mobile-twap-tab.tsx:96
 msgid "RO"
 msgstr ""
@@ -2358,15 +2410,15 @@ msgstr ""
 msgid "Running Time ({TWAP_MINUTES_MIN}m - {0}h)"
 msgstr ""
 
-#: src/components/trade/tradebox/twap-order-summary.tsx:44
+#: src/components/trade/tradebox/twap-order-summary.tsx:40
 msgid "Runtime"
 msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:136
-msgid "Saved phone link was invalid. Paste the link again."
-msgstr ""
+#~ msgid "Saved phone link was invalid. Paste the link again."
+#~ msgstr ""
 
-#: src/components/trade/tradebox/trade-header.tsx:65
+#: src/components/trade/tradebox/trade-header.tsx:63
 #: src/lib/trade/order-types.ts:17
 msgid "Scale"
 msgstr ""
@@ -2380,13 +2432,13 @@ msgid "Scale levels must be {SCALE_LEVELS_MIN}-{SCALE_LEVELS_MAX}"
 msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:176
-msgid "Scan a QR code from a desktop wallet."
-msgstr ""
+#~ msgid "Scan a QR code from a desktop wallet."
+#~ msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:607
 #: src/components/trade/components/wallet-modal.tsx:643
-msgid "Scan a WalletConnect QR code."
-msgstr ""
+#~ msgid "Scan a WalletConnect QR code."
+#~ msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:
 #~ msgid "Scan desktop wallet QR"
@@ -2397,22 +2449,22 @@ msgid "Scan on your phone"
 msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:531
-msgid "Scan this QR with your desktop wallet."
-msgstr ""
+#~ msgid "Scan this QR with your desktop wallet."
+#~ msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:533
-msgid "Scan this QR with your mobile wallet."
-msgstr ""
+#~ msgid "Scan this QR with your mobile wallet."
+#~ msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:393
-msgid "Scan WalletConnect QR"
-msgstr ""
+#~ msgid "Scan WalletConnect QR"
+#~ msgstr ""
 
 #: src/components/trade/footer/footer-bar.tsx:
 #~ msgid "Search"
 #~ msgstr ""
 
-#: src/components/trade/chart/token-selector-content.tsx:110
+#: src/components/trade/chart/token-selector-content.tsx:119
 msgid "Search markets..."
 msgstr "搜索市场..."
 
@@ -2424,13 +2476,13 @@ msgstr "搜索市场..."
 #~ msgid "Select {coin} market"
 #~ msgstr "选择 {coin} 市场"
 
-#: src/components/trade/header/favorites-strip.tsx:74
+#: src/components/trade/header/favorites-strip.tsx:75
 msgid "Select {displayName} market"
 msgstr ""
 
 #: src/components/trade/positions/orders-tab.tsx:243
-msgid "Select all orders"
-msgstr "选择所有订单"
+#~ msgid "Select all orders"
+#~ msgstr "选择所有订单"
 
 #: src/components/trade/tradebox/bridge-tab.tsx:
 #~ msgid "Select asset to bridge"
@@ -2448,13 +2500,13 @@ msgstr "选择收藏市场"
 #~ msgid "Select leverage"
 #~ msgstr "选择杠杆"
 
-#: src/components/trade/chart/token-selector-content.tsx:107
+#: src/components/trade/chart/token-selector-content.tsx:116
 msgid "Select market"
 msgstr ""
 
 #: src/components/trade/positions/orders-tab.tsx:338
-msgid "Select order"
-msgstr "选择订单"
+#~ msgid "Select order"
+#~ msgstr "选择订单"
 
 #: src/components/trade/orderbook/orderbook-panel.tsx:
 #~ msgid "Select order book aggregation"
@@ -2470,12 +2522,12 @@ msgid "Select token"
 msgstr "选择代币"
 
 #: src/components/trade/components/spot-swap-modal.tsx:201
-msgid "Select tokens to swap"
-msgstr ""
+#~ msgid "Select tokens to swap"
+#~ msgstr ""
 
 #: src/components/trade/positions/orders-tab.tsx:205
-msgid "selected"
-msgstr ""
+#~ msgid "selected"
+#~ msgstr ""
 
 #: src/components/trade/positions/twap-tab.tsx:
 #~ msgid "sell"
@@ -2489,29 +2541,28 @@ msgstr "卖出"
 #~ msgid "Sell Short"
 #~ msgstr "卖出做空"
 
-#: src/components/trade/mobile/mobile-balances-tab.tsx:189
-#: src/components/trade/positions/balances-tab.tsx:189
-#: src/components/trade/positions/send-modal.tsx:251
+#: src/components/trade/mobile/mobile-balances-tab.tsx:187
+#: src/components/trade/positions/send-modal.tsx:281
 msgid "Send"
 msgstr ""
 
-#: src/components/trade/positions/send-modal.tsx:168
+#: src/components/trade/positions/send-modal.tsx:172
 msgid "Send failed"
 msgstr ""
 
-#: src/components/trade/positions/send-modal.tsx:186
+#: src/components/trade/positions/send-modal.tsx:198
 msgid "Send Tokens"
 msgstr ""
 
-#: src/components/trade/positions/send-modal.tsx:187
+#: src/components/trade/positions/send-modal.tsx:199
 msgid "Send tokens to another account on the Hyperliquid L1."
 msgstr ""
 
-#: src/components/trade/positions/send-modal.tsx:251
+#: src/components/trade/positions/send-modal.tsx:281
 msgid "Sending..."
 msgstr ""
 
-#: src/components/trade/tradebox/deposit-modal.tsx:125
+#: src/components/trade/tradebox/deposit-modal.tsx:83
 msgid "sent to Hyperliquid"
 msgstr ""
 
@@ -2527,7 +2578,7 @@ msgstr ""
 #~ msgid "Set SL to {p}%"
 #~ msgstr ""
 
-#: src/components/trade/tradebox/price-input-with-percent.tsx:71
+#: src/components/trade/tradebox/price-input-with-percent.tsx:60
 msgid "Set to {p}%"
 msgstr ""
 
@@ -2543,12 +2594,12 @@ msgstr ""
 #~ msgid "Set TP/SL for {0}"
 #~ msgstr ""
 
-#: src/components/trade/components/global-settings-modal.tsx:76
-#: src/components/trade/header/top-nav.tsx:113
+#: src/components/trade/components/global-settings-modal.tsx:77
+#: src/components/trade/header/top-nav.tsx:103
 msgid "Settings"
 msgstr "设置"
 
-#: src/components/trade/mobile/mobile-position-card.tsx:136
+#: src/components/trade/mobile/mobile-position-card.tsx:141
 msgid "Short"
 msgstr "空"
 
@@ -2556,7 +2607,7 @@ msgstr "空"
 #~ msgid "Short {0} position"
 #~ msgstr ""
 
-#: src/components/trade/positions/position-tpsl-modal.tsx:109
+#: src/components/trade/positions/position-tpsl-modal.tsx:116
 msgid "Short position"
 msgstr ""
 
@@ -2573,8 +2624,8 @@ msgstr ""
 #~ msgstr "在图表上显示成交"
 
 #: src/components/trade/components/wallet-modal.tsx:807
-msgid "Show fewer wallets"
-msgstr ""
+#~ msgid "Show fewer wallets"
+#~ msgstr ""
 
 #: src/components/trade/components/global-settings-dialog.tsx:
 #~ msgid "Show Orders"
@@ -2628,49 +2679,54 @@ msgstr "签名器未就绪"
 #~ msgid "Signing..."
 #~ msgstr "签名中..."
 
-#: src/components/trade/mobile/mobile-history-tab.tsx:111
-#: src/components/trade/mobile/mobile-orders-history-tab.tsx:112
+#: src/components/trade/mobile/mobile-history-tab.tsx:104
 #: src/components/trade/mobile/mobile-orders-tab.tsx:233
-#: src/components/trade/mobile/mobile-position-card.tsx:147
+#: src/components/trade/mobile/mobile-position-card.tsx:159
 #: src/components/trade/mobile/mobile-twap-tab.tsx:116
-#: src/components/trade/orderbook/orderbook-panel.tsx:126
-#: src/components/trade/orderbook/trades-panel.tsx:76
-#: src/components/trade/positions/history-tab.tsx:96
-#: src/components/trade/positions/orders-history-tab.tsx:94
-#: src/components/trade/positions/orders-tab.tsx:268
-#: src/components/trade/positions/position-limit-close-modal.tsx:114
-#: src/components/trade/positions/position-limit-close-modal.tsx:160
-#: src/components/trade/positions/position-tpsl-modal.tsx:117
-#: src/components/trade/positions/positions-tab.tsx:178
-#: src/components/trade/positions/twap-tab.tsx:84
-#: src/components/trade/tradebox/order-toast.tsx:103
-#: src/components/trade/tradebox/trade-form-fields.tsx:211
+#: src/components/trade/orderbook/orderbook-panel.tsx:136
+#: src/components/trade/orderbook/trades-panel.tsx:110
+#: src/components/trade/positions/history-tab.tsx:92
+#: src/components/trade/positions/position-limit-close-modal.tsx:123
+#: src/components/trade/positions/position-limit-close-modal.tsx:151
+#: src/components/trade/positions/position-tpsl-modal.tsx:122
+#: src/components/trade/positions/positions-tab.tsx:218
+#: src/components/trade/positions/twap-tab.tsx:68
+#: src/components/trade/tradebox/order-toast.tsx:88
+#: src/components/trade/tradebox/trade-form-fields.tsx:201
 msgid "Size"
 msgstr "数量"
 
-#: src/components/trade/positions/position-limit-close-modal.tsx:178
+#: src/components/trade/positions/position-limit-close-modal.tsx:159
 msgid "Size exceeds position"
 msgstr ""
 
-#: src/components/trade/tradebox/twap-order-summary.tsx:54
+#: src/components/trade/tradebox/twap-order-summary.tsx:50
 msgid "Size per Suborder"
+msgstr ""
+
+#: src/components/trade/mobile/mobile-trade-view.tsx:389
+#: src/components/trade/mobile/mobile-trade-view.tsx:401
+#: src/components/trade/tradebox/trade-form-fields.tsx:242
+#: src/components/trade/tradebox/trade-form-fields.tsx:254
+msgid "Size percentage"
 msgstr ""
 
 #: src/components/trade/positions/orders-tab.tsx:
 #~ msgid "SL"
 #~ msgstr ""
 
-#: src/components/trade/positions/position-tpsl-modal.tsx:71
+#: src/components/trade/positions/position-tpsl-modal.tsx:80
 #: src/lib/errors/definitions/tpsl.ts:49
 msgid "SL must be above entry"
 msgstr ""
 
-#: src/components/trade/positions/position-tpsl-modal.tsx:71
+#: src/components/trade/positions/position-tpsl-modal.tsx:80
 #: src/lib/errors/definitions/tpsl.ts:49
 msgid "SL must be below entry"
 msgstr ""
 
-#: src/components/trade/tradebox/tp-sl-section.tsx:97
+#: src/components/trade/tradebox/tp-sl-section.tsx:89
+#: src/components/trade/tradebox/tp-sl-section.tsx:117
 msgid "SL Price"
 msgstr ""
 
@@ -2678,12 +2734,13 @@ msgstr ""
 #~ msgid "SL trigger price"
 #~ msgstr ""
 
-#: src/components/trade/tradebox/order-summary.tsx:72
+#: src/components/trade/tradebox/order-summary.tsx:69
+#: src/components/trade/tradebox/order-summary.tsx:75
 msgid "Slippage"
 msgstr "滑点"
 
-#: src/components/trade/components/global-settings-modal.tsx:83
-#: src/components/trade/components/spot-swap-modal.tsx:283
+#: src/components/trade/components/global-settings-modal.tsx:84
+#: src/components/trade/components/global-settings-modal.tsx:96
 msgid "Slippage tolerance"
 msgstr ""
 
@@ -2691,7 +2748,7 @@ msgstr ""
 #~ msgid "Something went wrong"
 #~ msgstr "出错了"
 
-#: src/components/trade/mobile/mobile-nav-drawer.tsx:115
+#: src/components/trade/mobile/mobile-nav-drawer.tsx:105
 msgid "Soon"
 msgstr ""
 
@@ -2703,16 +2760,16 @@ msgstr ""
 #~ msgid "Sort by {headerLabel}"
 #~ msgstr "按 {headerLabel} 排序"
 
-#: src/components/trade/chart/token-selector-content.tsx:208
+#: src/components/trade/chart/token-selector-content.tsx:184
 msgid "Sort by {sortLabel}"
 msgstr ""
 
 #. placeholder {0}: getColumnSortLabel(sorting[0].id)
-#: src/components/trade/chart/token-selector-content.tsx:270
+#: src/components/trade/chart/token-selector-content.tsx:254
 msgid "Sorted by {0}"
 msgstr "已按 {0} 排序"
 
-#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:70
+#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:55
 #: src/components/trade/tradebox/bridge/executing-screen.tsx:91
 #: src/components/trade/tradebox/bridge/success-screen.tsx:68
 msgid "Source"
@@ -2722,17 +2779,17 @@ msgstr ""
 #~ msgid "spot"
 #~ msgstr "现货"
 
-#: src/components/trade/chart/token-selector-content.tsx:96
-#: src/components/trade/mobile/mobile-balances-tab.tsx:223
-#: src/components/trade/positions/balances-tab.tsx:294
-#: src/components/trade/positions/transfer-modal.tsx:67
-#: src/components/trade/positions/transfer-modal.tsx:68
-#: src/components/trade/tradebox/account-panel.tsx:126
-#: src/config/nav.tsx:46
+#: src/components/trade/chart/token-selector-content.tsx:98
+#: src/components/trade/chart/token-selector-row.tsx:107
+#: src/components/trade/mobile/mobile-balances-tab.tsx:222
+#: src/components/trade/positions/transfer-modal.tsx:85
+#: src/components/trade/positions/transfer-modal.tsx:86
+#: src/components/trade/tradebox/account-panel.tsx:120
+#: src/config/nav.tsx:49
 msgid "Spot"
 msgstr "现货"
 
-#: src/components/trade/positions/send-modal.tsx:175
+#: src/components/trade/positions/send-modal.tsx:179
 msgid "Spot Account"
 msgstr ""
 
@@ -2740,11 +2797,11 @@ msgstr ""
 #~ msgid "Spot: Max 1% (100 basis points)"
 #~ msgstr ""
 
-#: src/components/trade/orderbook/orderbook-panel.tsx:164
+#: src/components/trade/orderbook/orderbook-panel.tsx:170
 msgid "Spread"
 msgstr "价差"
 
-#: src/config/nav.tsx:72
+#: src/config/nav.tsx:71
 msgid "Staking"
 msgstr "质押"
 
@@ -2752,7 +2809,7 @@ msgstr "质押"
 msgid "Start and end must differ"
 msgstr ""
 
-#: src/components/trade/tradebox/scale-order-summary.tsx:43
+#: src/components/trade/tradebox/scale-order-summary.tsx:39
 #: src/components/trade/tradebox/trade-form-scale.tsx:22
 msgid "Start Price"
 msgstr ""
@@ -2762,24 +2819,23 @@ msgstr ""
 #~ msgstr ""
 
 #: src/components/trade/positions/orders-history-tab.tsx:97
-msgid "Status"
-msgstr "状态"
+#~ msgid "Status"
+#~ msgstr "状态"
 
 #: src/components/trade/order-entry/order-entry-panel.tsx:
 #~ msgid "Stop"
 #~ msgstr "止损"
 
-#: src/components/trade/tradebox/trade-header.tsx:58
+#: src/components/trade/tradebox/trade-header.tsx:56
 #: src/lib/trade/order-types.ts:9
 msgid "Stop Limit"
 msgstr ""
 
-#: src/components/trade/tradebox/tp-sl-section.tsx:96
-#: src/components/trade/tradebox/tp-sl-section.tsx:129
+#: src/components/trade/tradebox/tp-sl-section.tsx:91
 msgid "Stop Loss"
 msgstr ""
 
-#: src/components/trade/tradebox/trade-header.tsx:53
+#: src/components/trade/tradebox/trade-header.tsx:51
 #: src/lib/trade/order-types.ts:7
 msgid "Stop Market"
 msgstr ""
@@ -2792,8 +2848,13 @@ msgstr ""
 msgid "Stop trigger must be below mark"
 msgstr ""
 
-#: src/components/trade/positions/position-limit-close-modal.tsx:206
-#: src/components/trade/positions/position-tpsl-modal.tsx:176
+#. placeholder {0}: positions.length
+#: src/components/trade/positions/positions-tab.tsx:300
+msgid "Submit market orders to close all {0} positions shown here. Market slippage and trading fees apply."
+msgstr ""
+
+#: src/components/trade/positions/position-limit-close-modal.tsx:203
+#: src/components/trade/positions/position-tpsl-modal.tsx:172
 msgid "Submitting..."
 msgstr ""
 
@@ -2805,63 +2866,64 @@ msgstr ""
 #~ msgid "Support"
 #~ msgstr "支持"
 
-#: src/components/trade/components/spot-swap-modal.tsx:195
-#: src/components/trade/components/spot-swap-modal.tsx:339
-#: src/components/trade/mobile/mobile-balances-tab.tsx:177
-#: src/components/trade/positions/balances-tab.tsx:179
-#: src/components/trade/tradebox/trade-form-fields.tsx:141
+#: src/components/trade/components/spot-swap-modal.tsx:341
+#: src/components/trade/mobile/mobile-balances-tab.tsx:175
+#: src/components/trade/tradebox/trade-form-fields.tsx:146
 msgid "Swap"
 msgstr ""
 
-#: src/components/trade/components/spot-swap-modal.tsx:238
+#: src/components/trade/components/spot-swap-modal.tsx:409
 msgid "Swap direction"
 msgstr ""
 
-#: src/components/trade/components/spot-swap-modal.tsx:181
+#: src/components/trade/components/spot-swap-modal.tsx:225
 msgid "Swap failed"
 msgstr ""
 
 #: src/components/trade/components/spot-swap-modal.tsx:323
-msgid "Swap submitted"
-msgstr ""
+#~ msgid "Swap submitted"
+#~ msgstr ""
 
 #: src/components/trade/components/spot-swap-modal.tsx:336
-msgid "Swapping..."
-msgstr ""
+#~ msgid "Swapping..."
+#~ msgstr ""
 
 #: src/components/trade/components/global-settings-modal.tsx:
 #~ msgid "Switch between mainnet and testnet. Page will reload."
 #~ msgstr ""
 
+#: src/components/trade/mobile/mobile-trade-view.tsx:364
+msgid "Switch size unit"
+msgstr ""
+
 #. placeholder {0}: fill.coin
 #. placeholder {0}: update.coin
-#: src/components/trade/mobile/mobile-funding-tab.tsx:90
-#: src/components/trade/positions/funding-tab.tsx:126
-#: src/components/trade/positions/history-tab.tsx:138
+#: src/components/trade/mobile/mobile-funding-tab.tsx:85
+#: src/components/trade/positions/history-tab.tsx:231
 msgid "Switch to {0} market"
 msgstr ""
 
 #. placeholder {0}: state.coin
-#: src/components/trade/positions/twap-tab.tsx:140
+#: src/components/trade/positions/twap-tab.tsx:119
 msgid "Switch to {0} market, buy TWAP"
 msgstr ""
 
 #. placeholder {0}: order.coin
 #: src/components/trade/positions/orders-history-tab.tsx:132
 #: src/components/trade/positions/orders-tab.tsx:354
-msgid "Switch to {0} market, long order"
-msgstr ""
+#~ msgid "Switch to {0} market, long order"
+#~ msgstr ""
 
 #. placeholder {0}: state.coin
-#: src/components/trade/positions/twap-tab.tsx:141
+#: src/components/trade/positions/twap-tab.tsx:120
 msgid "Switch to {0} market, sell TWAP"
 msgstr ""
 
 #. placeholder {0}: order.coin
 #: src/components/trade/positions/orders-history-tab.tsx:133
 #: src/components/trade/positions/orders-tab.tsx:354
-msgid "Switch to {0} market, short order"
-msgstr ""
+#~ msgid "Switch to {0} market, short order"
+#~ msgstr ""
 
 #: src/components/trade/positions/orders-tab.tsx:
 #~ msgid "Switch to {displayCoin} market"
@@ -2871,45 +2933,43 @@ msgstr ""
 #~ msgid "Switch to {displayName} market"
 #~ msgstr ""
 
-#: src/components/trade/mobile/mobile-position-card.tsx:130
-#: src/components/trade/positions/position-row.tsx:177
+#: src/components/trade/mobile/mobile-position-card.tsx:135
 msgid "Switch to {displayName} market, long position"
 msgstr ""
 
-#: src/components/trade/mobile/mobile-position-card.tsx:131
-#: src/components/trade/positions/position-row.tsx:178
+#: src/components/trade/mobile/mobile-position-card.tsx:136
 msgid "Switch to {displayName} market, short position"
 msgstr ""
 
-#: src/components/trade/tradebox/deposit/wrong-network-screen.tsx:44
+#: src/components/trade/tradebox/deposit/wrong-network-screen.tsx:65
 #: src/lib/trade/use-button-content.ts:56
 msgid "Switch to Arbitrum"
 msgstr "切换到 Arbitrum"
 
 #: src/components/trade/tradebox/deposit/wrong-network-screen.tsx:32
-msgid "Switch to Arbitrum to deposit USDC to Hyperliquid"
-msgstr ""
+#~ msgid "Switch to Arbitrum to deposit USDC to Hyperliquid"
+#~ msgstr ""
 
-#: src/components/trade/header/theme-toggle.tsx:31
+#: src/components/trade/header/theme-toggle.tsx:34
 msgid "Switch to dark mode"
 msgstr "切换到深色模式"
 
-#: src/components/trade/header/theme-toggle.tsx:31
+#: src/components/trade/header/theme-toggle.tsx:34
 msgid "Switch to light mode"
 msgstr "切换到浅色模式"
 
-#: src/components/trade/testnet-banner.tsx:30
+#: src/components/trade/testnet-banner.tsx:24
 msgid "Switch to Mainnet"
 msgstr ""
 
-#: src/components/trade/tradebox/deposit/wrong-network-screen.tsx:41
+#: src/components/trade/tradebox/deposit/wrong-network-screen.tsx:62
 #: src/lib/trade/use-button-content.ts:56
 msgid "Switching..."
 msgstr "切换中..."
 
 #: src/routes/mobile-agent-sync.tsx:528
-msgid "Sync ID"
-msgstr ""
+#~ msgid "Sync ID"
+#~ msgstr ""
 
 #: src/lib/trade/order-types.ts:
 #~ msgid "Take Limit"
@@ -2919,12 +2979,11 @@ msgstr ""
 #~ msgid "Take Market"
 #~ msgstr ""
 
-#: src/components/trade/tradebox/tp-sl-section.tsx:82
-#: src/components/trade/tradebox/tp-sl-section.tsx:116
+#: src/components/trade/tradebox/tp-sl-section.tsx:81
 msgid "Take Profit"
 msgstr ""
 
-#: src/components/trade/tradebox/trade-form-fields.tsx:297
+#: src/components/trade/tradebox/trade-form-fields.tsx:277
 msgid "Take Profit / Stop Loss"
 msgstr "止盈 / 止损"
 
@@ -2948,7 +3007,7 @@ msgstr ""
 msgid "Taking longer than expected"
 msgstr ""
 
-#: src/components/trade/components/global-settings-modal.tsx:145
+#: src/components/trade/components/global-settings-modal.tsx:159
 msgid "Testnet"
 msgstr ""
 
@@ -2965,49 +3024,46 @@ msgstr "您查找的页面不存在。"
 #~ msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:651
-msgid "This is a phone-access QR. Open it with the phone camera or paste it on the phone access page."
-msgstr ""
+#~ msgid "This is a phone-access QR. Open it with the phone camera or paste it on the phone access page."
+#~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:664
-msgid "This is not a valid HypeTerminal mobile link."
-msgstr ""
+#~ msgid "This is not a valid HypeTerminal mobile link."
+#~ msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:656
-msgid "This is not a WalletConnect QR code."
-msgstr ""
+#~ msgid "This is not a WalletConnect QR code."
+#~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:672
-msgid "This link was created for a different network."
-msgstr ""
+#~ msgid "This link was created for a different network."
+#~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:670
-msgid "This link was created for a different site."
-msgstr ""
+#~ msgid "This link was created for a different site."
+#~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:84
 #: src/routes/mobile-agent-sync.tsx:132
 #: src/routes/mobile-agent-sync.tsx:666
-msgid "This mobile link expired."
-msgstr ""
+#~ msgid "This mobile link expired."
+#~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:679
-msgid "This phone link is not approved on Hyperliquid."
-msgstr ""
+#~ msgid "This phone link is not approved on Hyperliquid."
+#~ msgstr ""
 
 #: src/components/trade/tradebox/trade-form-tif.tsx:21
 msgid "TIF"
 msgstr ""
 
-#: src/components/trade/mobile/mobile-funding-tab.tsx:108
-#: src/components/trade/orderbook/trades-panel.tsx:69
-#: src/components/trade/positions/funding-tab.tsx:105
-#: src/components/trade/positions/history-tab.tsx:117
-#: src/components/trade/positions/orders-history-tab.tsx:74
-#: src/components/trade/positions/orders-tab.tsx:248
+#: src/components/trade/mobile/mobile-funding-tab.tsx:105
+#: src/components/trade/orderbook/trades-panel.tsx:103
+#: src/components/trade/positions/history-tab.tsx:88
 msgid "Time"
 msgstr "时间"
 
-#: src/components/trade/positions/twap-tab.tsx:101
+#: src/components/trade/positions/twap-tab.tsx:71
 msgid "Time / Total"
 msgstr ""
 
@@ -3019,18 +3075,15 @@ msgstr ""
 msgid "Time In Force"
 msgstr ""
 
-#: src/components/trade/components/spot-swap-modal.tsx:245
-#: src/components/trade/tradebox/deposit/withdraw-form.tsx:40
+#: src/components/trade/positions/transfer-modal.tsx:223
 msgid "To"
 msgstr ""
 
 #: src/components/trade/mobile/mobile-balances-tab.tsx:128
-#: src/components/trade/positions/balances-tab.tsx:130
 msgid "To Perp"
 msgstr ""
 
 #: src/components/trade/mobile/mobile-balances-tab.tsx:128
-#: src/components/trade/positions/balances-tab.tsx:130
 msgid "To Spot"
 msgstr ""
 
@@ -3040,17 +3093,16 @@ msgstr ""
 #~ msgid "Toggle Sidebar"
 #~ msgstr "切换侧边栏"
 
-#: src/components/trade/tradebox/trade-form-fields.tsx:240
+#: src/components/trade/tradebox/trade-form-fields.tsx:208
 msgid "Toggle size mode"
 msgstr "切换数量模式"
 
-#: src/components/trade/market-overview.tsx:187
+#: src/components/trade/market-overview.tsx:150
 msgid "TOKEN"
 msgstr ""
 
-#: src/components/trade/mobile/mobile-balances-tab.tsx:151
-#: src/components/trade/orderbook/orderbook-panel.tsx:134
-#: src/components/trade/positions/balances-tab.tsx:248
+#: src/components/trade/mobile/mobile-balances-tab.tsx:149
+#: src/components/trade/orderbook/orderbook-panel.tsx:139
 msgid "Total"
 msgstr "合计"
 
@@ -3070,17 +3122,18 @@ msgstr ""
 #~ msgid "TP"
 #~ msgstr ""
 
-#: src/components/trade/positions/position-tpsl-modal.tsx:70
+#: src/components/trade/positions/position-tpsl-modal.tsx:79
 #: src/lib/errors/definitions/tpsl.ts:35
 msgid "TP must be above entry"
 msgstr ""
 
-#: src/components/trade/positions/position-tpsl-modal.tsx:70
+#: src/components/trade/positions/position-tpsl-modal.tsx:79
 #: src/lib/errors/definitions/tpsl.ts:35
 msgid "TP must be below entry"
 msgstr ""
 
-#: src/components/trade/tradebox/tp-sl-section.tsx:83
+#: src/components/trade/tradebox/tp-sl-section.tsx:79
+#: src/components/trade/tradebox/tp-sl-section.tsx:105
 msgid "TP Price"
 msgstr ""
 
@@ -3088,9 +3141,9 @@ msgstr ""
 #~ msgid "TP trigger price"
 #~ msgstr ""
 
-#: src/components/trade/mobile/mobile-position-card.tsx:222
-#: src/components/trade/positions/positions-tab.tsx:211
-#: src/components/trade/tradebox/trade-form-fields.tsx:301
+#: src/components/trade/mobile/mobile-position-card.tsx:230
+#: src/components/trade/positions/positions-tab.tsx:226
+#: src/components/trade/tradebox/trade-form-fields.tsx:281
 msgid "TP/SL"
 msgstr "止盈止损"
 
@@ -3106,24 +3159,28 @@ msgstr ""
 #~ msgid "Trade ClockCounterClockwise"
 #~ msgstr ""
 
-#: src/components/trade/mobile/mobile-history-tab.tsx:68
+#: src/components/trade/mobile/mobile-history-tab.tsx:67
 msgid "Trade History"
 msgstr "交易历史"
 
+#: src/components/trade/positions/history-tab.tsx:93
+msgid "Trade Value"
+msgstr "Trade Value"
+
 #. placeholder {0}: spotMarket.pairName
 #: src/components/trade/components/spot-swap-modal.tsx:199
-msgid "Trade via {0} spot market"
-msgstr ""
+#~ msgid "Trade via {0} spot market"
+#~ msgstr ""
 
 #: src/components/trade/positions/history-tab.tsx:48
-msgid "trades"
-msgstr ""
+#~ msgid "trades"
+#~ msgstr ""
 
-#: src/components/trade/orderbook/orderbook-panel.tsx:98
+#: src/components/trade/orderbook/orderbook-panel.tsx:103
 msgid "Trades"
 msgstr "成交"
 
-#: src/components/trade/components/global-settings-modal.tsx:80
+#: src/components/trade/components/global-settings-modal.tsx:81
 msgid "Trading"
 msgstr ""
 
@@ -3139,11 +3196,20 @@ msgstr ""
 msgid "Trading key still approved until {agentExpiresLabel}. Create a new link to import on your phone."
 msgstr ""
 
-#: src/components/trade/chart/chart-source-toggle.tsx:60
+#: src/components/trade/chart/chart-source-toggle.tsx:59
+#: src/components/trade/chart/tradingview-chart.tsx:138
 msgid "TradingView"
 msgstr ""
 
-#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:117
+#: src/components/trade/positions/position-row.tsx:224
+msgid "Trailing"
+msgstr ""
+
+#: src/components/trade/positions/position-row.tsx:221
+msgid "Trailing stops are not available yet."
+msgstr ""
+
+#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:102
 msgid "Transaction breakdown"
 msgstr ""
 
@@ -3151,17 +3217,16 @@ msgstr ""
 msgid "Transaction was rejected"
 msgstr ""
 
-#: src/components/trade/positions/transfer-modal.tsx:179
-#: src/components/trade/tradebox/deposit-modal.tsx:219
-#: src/components/trade/tradebox/deposit/wrong-network-screen.tsx:19
+#: src/components/trade/positions/transfer-modal.tsx:269
+#: src/components/trade/tradebox/deposit/wrong-network-screen.tsx:20
 msgid "Transfer"
 msgstr ""
 
-#: src/components/trade/positions/transfer-modal.tsx:90
+#: src/components/trade/positions/transfer-modal.tsx:108
 msgid "Transfer failed"
 msgstr ""
 
-#: src/components/trade/positions/transfer-modal.tsx:106
+#: src/components/trade/positions/transfer-modal.tsx:202
 msgid "Transfer USDC"
 msgstr ""
 
@@ -3169,17 +3234,16 @@ msgstr ""
 #~ msgid "Transfer USDC to your Hyperliquid account to start trading."
 #~ msgstr "将 USDC 转入您的 Hyperliquid 账户以开始交易。"
 
-#: src/components/trade/positions/transfer-modal.tsx:179
+#: src/components/trade/positions/transfer-modal.tsx:269
 msgid "Transferring..."
 msgstr ""
 
 #: src/components/trade/mobile/mobile-orders-tab.tsx:240
-#: src/components/trade/positions/orders-tab.tsx:271
 #: src/components/trade/tradebox/advanced-order-dropdown.tsx:86
 msgid "Trigger"
 msgstr ""
 
-#: src/components/trade/tradebox/trade-form-fields.tsx:167
+#: src/components/trade/tradebox/trade-form-fields.tsx:172
 msgid "Trigger Price"
 msgstr ""
 
@@ -3191,12 +3255,12 @@ msgstr ""
 msgid "Try again"
 msgstr ""
 
-#: src/components/trade/tradebox/bridge/asset-selection-screen.tsx:81
-#: src/components/trade/tradebox/bridge/bridge-error-screen.tsx:32
+#: src/components/trade/tradebox/bridge/asset-selection-screen.tsx:89
+#: src/components/trade/tradebox/bridge/bridge-error-screen.tsx:33
 msgid "Try Again"
 msgstr ""
 
-#: src/components/trade/tradebox/trade-header.tsx:64
+#: src/components/trade/tradebox/trade-header.tsx:62
 #: src/lib/trade/order-types.ts:15
 msgid "TWAP"
 msgstr ""
@@ -3209,7 +3273,7 @@ msgstr ""
 msgid "TWAP order value too small. Min is ${min}, which is ${TWAP_MIN_NOTIONAL_PER_MINUTE_USD} per minute."
 msgstr ""
 
-#: src/components/trade/mobile/mobile-twap-tab.tsx:66
+#: src/components/trade/mobile/mobile-twap-tab.tsx:64
 msgid "TWAP Orders"
 msgstr "TWAP 订单"
 
@@ -3217,8 +3281,8 @@ msgstr "TWAP 订单"
 #: src/components/trade/positions/history-tab.tsx:82
 #: src/components/trade/positions/orders-history-tab.tsx:80
 #: src/components/trade/positions/orders-tab.tsx:254
-msgid "Type"
-msgstr "类型"
+#~ msgid "Type"
+#~ msgstr "类型"
 
 #: src/components/trade/positions/orders-tab.tsx:
 #~ msgid "Unable to cancel orders."
@@ -3233,58 +3297,55 @@ msgstr "类型"
 msgid "Unknown error"
 msgstr ""
 
-#: src/components/trade/chart/datafeed.ts:142
+#: src/components/trade/chart/datafeed.ts:173
 msgid "Unknown symbol: {symbolName}"
 msgstr "未知交易对: {symbolName}"
 
-#: src/components/trade/positions/position-limit-close-modal.tsx:132
-#: src/components/trade/positions/position-tpsl-modal.tsx:135
+#: src/components/trade/positions/position-limit-close-modal.tsx:127
+#: src/components/trade/positions/position-tpsl-modal.tsx:126
 msgid "Unrealized P&L"
 msgstr ""
 
-#: src/components/trade/tradebox/account-panel.tsx:91
+#: src/components/trade/tradebox/account-panel.tsx:89
 msgid "Unrealized PNL"
 msgstr "未实现盈亏"
 
 #. placeholder {0}: String(resolution)
-#: src/components/trade/chart/datafeed.ts:182
+#: src/components/trade/chart/datafeed.ts:213
 msgid "Unsupported resolution: {0}"
 msgstr "不支持的分辨率: {0}"
 
-#: src/components/trade/tradebox/leverage-control.tsx:162
-#: src/components/trade/tradebox/margin-mode-modal.tsx:236
+#: src/components/trade/tradebox/leverage-control.tsx:156
+#: src/components/trade/tradebox/margin-mode-modal.tsx:216
 msgid "Update failed"
 msgstr ""
 
-#: src/components/trade/mobile/mobile-orders-history-tab.tsx:120
-#: src/components/trade/positions/orders-history-tab.tsx:104
-#: src/components/trade/tradebox/leverage-control.tsx:174
-#: src/components/trade/tradebox/margin-mode-modal.tsx:256
+#: src/components/trade/tradebox/leverage-control.tsx:168
+#: src/components/trade/tradebox/margin-mode-modal.tsx:230
 msgid "Updated"
 msgstr ""
 
-#: src/components/trade/chart/token-selector-content.tsx:270
+#: src/components/trade/chart/token-selector-content.tsx:254
 msgid "Updated live"
 msgstr "实时更新"
 
 #: src/components/trade/positions/balances-tab.tsx:255
-msgid "USD Value"
-msgstr "美元价值"
+#~ msgid "USD Value"
+#~ msgstr "美元价值"
 
 #: src/components/trade/tradebox/bridge/executing-screen.tsx:108
 msgid "USDC"
 msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:375
-msgid "Use a different phone link"
-msgstr ""
+#~ msgid "Use a different phone link"
+#~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:399
-msgid "Use phone link"
-msgstr ""
+#~ msgid "Use phone link"
+#~ msgstr ""
 
 #: src/components/trade/components/mobile-agent-sync-modal.tsx:247
-#: src/routes/mobile-agent-sync.tsx:333
 msgid "Using"
 msgstr ""
 
@@ -3292,7 +3353,7 @@ msgstr ""
 #~ msgid "Value"
 #~ msgstr "价值"
 
-#: src/config/nav.tsx:70
+#: src/config/nav.tsx:69
 msgid "Vaults"
 msgstr "金库"
 
@@ -3300,7 +3361,7 @@ msgstr "金库"
 msgid "Verifying..."
 msgstr ""
 
-#: src/components/trade/tradebox/deposit/shared-ui.tsx:98
+#: src/components/trade/tradebox/deposit/shared-ui.tsx:96
 msgid "View on explorer"
 msgstr ""
 
@@ -3308,8 +3369,8 @@ msgstr ""
 #~ msgid "VOL"
 #~ msgstr "成交量"
 
-#: src/components/trade/chart/token-selector-columns.ts:75
-#: src/components/trade/chart/token-selector-content.tsx:21
+#: src/components/trade/chart/token-selector-columns.ts:76
+#: src/components/trade/chart/token-selector-content.tsx:23
 msgid "Volume"
 msgstr "成交量"
 
@@ -3317,16 +3378,16 @@ msgstr "成交量"
 #~ msgid "waiting"
 #~ msgstr ""
 
-#: src/components/trade/orderbook/orderbook-panel.tsx:155
+#: src/components/trade/orderbook/orderbook-panel.tsx:160
 msgid "Waiting for order book..."
 msgstr "等待订单簿..."
 
-#: src/components/trade/orderbook/trades-panel.tsx:88
+#: src/components/trade/orderbook/trades-panel.tsx:83
 msgid "Waiting for trades..."
 msgstr "等待成交记录..."
 
 #. placeholder {0}: shortenAddress(address)
-#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:74
+#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:59
 msgid "Wallet ({0})"
 msgstr ""
 
@@ -3335,18 +3396,18 @@ msgstr ""
 #~ msgstr "钱包客户端未就绪"
 
 #: src/components/trade/components/mobile-agent-sync-modal.tsx:256
-#: src/components/trade/tradebox/bridge/shared-ui.tsx:74
-#: src/components/trade/tradebox/deposit/shared-ui.tsx:118
+#: src/components/trade/tradebox/bridge/shared-ui.tsx:75
+#: src/components/trade/tradebox/deposit/shared-ui.tsx:116
 msgid "Wallet not connected"
 msgstr "钱包未连接"
 
 #: src/components/trade/components/wallet-modal.tsx:527
-msgid "WalletConnect pairing ready"
-msgstr ""
+#~ msgid "WalletConnect pairing ready"
+#~ msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:540
-msgid "WalletConnect QR code"
-msgstr ""
+#~ msgid "WalletConnect QR code"
+#~ msgstr ""
 
 #: src/components/trade/orderbook/orderbook-panel.tsx:
 #~ msgid "WebSocket error"
@@ -3358,8 +3419,8 @@ msgstr ""
 
 #. placeholder {0}: ARBITRUM_NETWORK.estimatedWithdrawTime
 #: src/components/trade/tradebox/deposit-modal.tsx:181
-msgid "will arrive in {0}"
-msgstr ""
+#~ msgid "will arrive in {0}"
+#~ msgstr ""
 
 #: src/components/trade/order-entry/deposit-modal.tsx:
 #~ msgid "will arrive in ~3 min"
@@ -3369,32 +3430,28 @@ msgstr ""
 #~ msgid "will arrive in ~5 min"
 #~ msgstr ""
 
-#: src/components/trade/tradebox/account-panel.tsx:154
-#: src/components/trade/tradebox/account-panel.tsx:157
-#: src/components/trade/tradebox/deposit-modal.tsx:175
-#: src/components/trade/tradebox/deposit-modal.tsx:196
-#: src/components/trade/tradebox/deposit-modal.tsx:233
-#: src/components/trade/tradebox/deposit/withdraw-form.tsx:121
+#: src/components/trade/tradebox/account-panel.tsx:148
+#: src/components/trade/tradebox/account-panel.tsx:151
 msgid "Withdraw"
 msgstr "提款"
 
 #: src/components/trade/tradebox/deposit-modal.tsx:198
-msgid "Withdrawal failed"
-msgstr ""
+#~ msgid "Withdrawal failed"
+#~ msgstr ""
 
 #: src/components/trade/tradebox/deposit-modal.tsx:177
-msgid "Withdrawal submitted"
-msgstr ""
+#~ msgid "Withdrawal submitted"
+#~ msgstr ""
 
 #: src/components/trade/tradebox/deposit/wrong-network-screen.tsx:29
-msgid "Wrong network"
-msgstr ""
+#~ msgid "Wrong network"
+#~ msgstr ""
 
 #: src/components/trade/components/wallet-modal.tsx:393
-msgid "Wrong QR type"
-msgstr ""
+#~ msgid "Wrong QR type"
+#~ msgstr ""
 
-#: src/components/trade/positions/twap-tab.tsx:167
+#: src/components/trade/positions/twap-tab.tsx:133
 msgid "Yes"
 msgstr ""
 
@@ -3406,19 +3463,19 @@ msgstr ""
 #~ msgid "You can revoke permissions at any time by registering a new approval with 0% fee rate. Builder codes are processed entirely onchain as part of the fee logic."
 #~ msgstr ""
 
-#: src/components/trade/tradebox/bridge/amount-entry-screen.tsx:114
-#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:101
+#: src/components/trade/tradebox/bridge/amount-entry-screen.tsx:83
+#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:86
 #: src/components/trade/tradebox/bridge/executing-screen.tsx:104
 #: src/components/trade/tradebox/bridge/success-screen.tsx:88
 msgid "You receive"
 msgstr ""
 
-#: src/components/trade/tradebox/bridge/amount-entry-screen.tsx:104
-#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:92
+#: src/components/trade/tradebox/bridge/amount-entry-screen.tsx:73
+#: src/components/trade/tradebox/bridge/confirmation-screen.tsx:77
 msgid "You send"
 msgstr ""
 
-#: src/components/trade/mobile/offline-banner.tsx:66
+#: src/components/trade/mobile/offline-banner.tsx:65
 msgid "You're offline"
 msgstr ""
 
@@ -3430,7 +3487,7 @@ msgstr ""
 msgid "Your bridge is still processing. Funds are safe."
 msgstr ""
 
-#: src/components/trade/tradebox/trade-form-fields.tsx:153
+#: src/components/trade/tradebox/trade-form-fields.tsx:160
 msgid "Your current open position on this market"
 msgstr ""
 
@@ -3445,12 +3502,3 @@ msgstr ""
 #: src/components/trade/components/mobile-agent-sync-modal.tsx:280
 msgid "Your wallet approves one trading key for this phone. It cannot withdraw funds."
 msgstr ""
-
-msgid "Direction"
-msgstr "Direction"
-
-msgid "Trade Value"
-msgstr "Trade Value"
-
-msgid "Closed PNL"
-msgstr "Closed PNL"

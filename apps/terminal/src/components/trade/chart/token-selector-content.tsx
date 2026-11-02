@@ -1,4 +1,4 @@
-import { Button, SearchInput, TableHead, TableHeader, TableRow, tableVariants } from "@hypeterminal/ui";
+import { Button, SearchInput, Tabs, TabsList, TabsTrigger } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { ArrowDownIcon, ArrowsDownUpIcon, ArrowUpIcon } from "@phosphor-icons/react";
 import { flexRender } from "@tanstack/react-table";
@@ -8,6 +8,8 @@ import { useRenderCommitTrack } from "@/lib/performance/render-profile";
 import { getMarketTableColumnClass, type MarketScope } from "./token-selector-columns";
 import { TokenSelectorRow } from "./token-selector-row";
 import type { useTokenSelector } from "./use-token-selector";
+
+const LOADING_ROW_KEYS = ["a", "b", "c", "d", "e", "f", "g", "h"];
 
 function getColumnSortLabel(columnId: string): string {
 	switch (columnId) {
@@ -28,9 +30,9 @@ function getColumnSortLabel(columnId: string): string {
 
 function SortIcon({ columnId, sorting }: { columnId: string; sorting: { id: string; desc: boolean }[] }) {
 	const sort = sorting.find((s) => s.id === columnId);
-	if (sort?.desc === false) return <ArrowUpIcon className="size-3" />;
-	if (sort?.desc === true) return <ArrowDownIcon className="size-3" />;
-	return <ArrowsDownUpIcon className="size-3 opacity-50" />;
+	if (sort?.desc === false) return <ArrowUpIcon className="size-3 text-fg" />;
+	if (sort?.desc === true) return <ArrowDownIcon className="size-3 text-fg" />;
+	return <ArrowsDownUpIcon className="size-3 text-fg-muted" />;
 }
 
 interface Props {
@@ -98,12 +100,19 @@ export function TokenSelectorContent({
 	];
 	const showScopeTabs = exchangeScope === "all";
 	const showSubcategoryTabs = !exchangeDex && subcategories.length > 0;
-	const showSelectorFilters = showScopeTabs || showSubcategoryTabs;
+
+	const headerCellClass = "h-6 shrink-0 pl-2 text-2xs font-normal uppercase tracking-micro text-fg-muted";
+
+	function handleScopeTabChange(value: unknown) {
+		handleScopeSelect(value as MarketScope);
+	}
 
 	return (
-		<div className={cn("flex flex-col", mobile ? "h-full" : "max-h-[min(--spacing(144),var(--available-height))]")}>
-			<div className="border-b border-stroke-weak shrink-0 px-2 pt-3 pb-2 space-y-2">
-				<h2 id={headingId} className="text-sm font-semibold text-fg tracking-tight">
+		<div
+			className={cn("flex flex-col", mobile ? "min-h-0 flex-1" : "max-h-[min(--spacing(144),var(--available-height))]")}
+		>
+			<div className="shrink-0 space-y-2 px-3 pt-3 pb-2">
+				<h2 id={headingId} className="text-base font-medium text-fg">
 					{t`Select market`}
 				</h2>
 				<SearchInput
@@ -111,124 +120,99 @@ export function TokenSelectorContent({
 					value={search}
 					onChange={(e) => setSearch(e.target.value)}
 					onClear={() => setSearch("")}
-					size={mobile ? "md" : "sm"}
+					size="sm"
 					aria-labelledby={headingId}
 				/>
 			</div>
 
-			{showSelectorFilters ? (
-				<div className="p-2 border-b border-stroke-weak bg-background shrink-0">
-					{showScopeTabs ? (
-						<div className="flex items-center gap-0.5 flex-wrap">
-							{marketScopes.map((s) => {
-								const isSelected = scope === s.value;
-								return (
-									<Button
-										key={s.value}
-										variant="link"
-										intent="neutral"
-										onClick={() => handleScopeSelect(s.value)}
-										className={cn(
-											"px-2 py-1 uppercase tracking-wider cursor-pointer no-underline text-xs",
-											isSelected
-												? "bg-brand-soft text-brand hover:bg-brand-soft hover:text-brand"
-												: "text-fg hover:bg-transparent",
-										)}
-									>
-										{s.label}
-									</Button>
-								);
-							})}
-						</div>
-					) : null}
-					{showSubcategoryTabs ? (
-						<div className="flex items-center gap-0.5 flex-wrap mt-1.5 pt-1.5 pl-2 ml-1">
-							{subcategories.map((sub) => {
-								const isSelected = subcategory === sub.value;
-								return (
-									<Button
-										key={sub.value}
-										variant="link"
-										intent="neutral"
-										onClick={() => handleSubcategorySelect(sub.value)}
-										className={cn(
-											"px-2 py-0.5 tracking-wider cursor-pointer no-underline text-xs",
-											isSelected
-												? "bg-brand/10 text-brand hover:bg-brand/10 hover:text-brand"
-												: "text-fg hover:bg-transparent hover:text-fg",
-										)}
-										aria-label={t`Filter by ${sub.label}`}
-										aria-pressed={isSelected}
-									>
-										{sub.label}
-									</Button>
-								);
-							})}
-						</div>
-					) : null}
+			{showScopeTabs ? (
+				<Tabs value={scope} onValueChange={handleScopeTabChange} className="shrink-0">
+					<TabsList className="px-3">
+						{marketScopes.map((s) => (
+							<TabsTrigger key={s.value} value={s.value}>
+								{s.label}
+							</TabsTrigger>
+						))}
+					</TabsList>
+				</Tabs>
+			) : null}
+
+			{showSubcategoryTabs ? (
+				<div className="flex max-h-21 shrink-0 flex-wrap items-center gap-1 overflow-y-auto border-b border-stroke-weak px-3 py-2">
+					{subcategories.map((sub) => {
+						const isSelected = subcategory === sub.value;
+						return (
+							<Button
+								key={sub.value}
+								variant={isSelected ? "secondary" : "ghost"}
+								intent="neutral"
+								size="xxs"
+								onClick={() => handleSubcategorySelect(sub.value)}
+								className={isSelected ? "text-fg" : "text-fg-muted hover:text-fg"}
+								aria-label={t`Filter by ${sub.label}`}
+								aria-pressed={isSelected}
+							>
+								{sub.label}
+							</Button>
+						);
+					})}
 				</div>
 			) : null}
-			<div className="shrink-0 border-b border-stroke-weak bg-background px-0">
-				<table className={cn(tableVariants(), "table-fixed w-full border-0")}>
-					<TableHeader className="[&_tr]:border-t-0 [&_tr]:border-b [&_tr]:border-stroke-weak">
-						<TableRow className="border-0 hover:bg-transparent">
-							<TableHead
-								scope="col"
-								className="h-9 px-2 py-2 text-left align-middle text-3xs font-semibold uppercase tracking-widest text-fg-muted"
+
+			<div
+				className={cn(
+					"flex shrink-0 items-center bg-band pr-3 pl-1",
+					!showSubcategoryTabs && !showScopeTabs && "border-t border-stroke-weak",
+				)}
+			>
+				<span className={cn(headerCellClass, "flex min-w-0 flex-1 items-center pr-2")}>{t`Market`}</span>
+				{headerGroup?.headers
+					.filter((h) => h.id !== "pairName")
+					.map((header) => {
+						const hiddenOnMobile = ["oi", "volume", "funding"].includes(header.id);
+						const hideForSpot = scope === "spot" && ["oi", "funding"].includes(header.id);
+
+						if (hideForSpot) return null;
+
+						const sortLabel = getColumnSortLabel(header.id);
+						return (
+							<button
+								key={header.id}
+								type="button"
+								onClick={() => handleSort(header.id)}
+								title={sortLabel}
+								aria-label={t`Sort by ${sortLabel}`}
+								className={cn(
+									headerCellClass,
+									"cursor-pointer items-center justify-end gap-1 whitespace-nowrap transition-colors hover:text-fg focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-stroke-focus",
+									getMarketTableColumnClass(header.id, mobile ?? false),
+									hiddenOnMobile && !mobile ? "hidden sm:flex" : "flex",
+									hiddenOnMobile && mobile && "hidden",
+								)}
 							>
-								{t`Market`}
-							</TableHead>
-							{headerGroup?.headers
-								.filter((h) => h.id !== "pairName")
-								.map((header) => {
-									const hiddenOnMobile = ["oi", "volume", "funding"].includes(header.id);
-									const hideForSpot = scope === "spot" && ["oi", "funding"].includes(header.id);
-
-									if (hideForSpot) return null;
-
-									const sortLabel = getColumnSortLabel(header.id);
-									return (
-										<TableHead
-											key={header.id}
-											scope="col"
-											className={cn(
-												"h-9 px-2 py-2 text-right align-middle text-3xs font-semibold uppercase tracking-widest text-fg-muted",
-												getMarketTableColumnClass(header.id, mobile ?? false),
-												hiddenOnMobile && (mobile ? "hidden" : "hidden sm:table-cell"),
-											)}
-										>
-											<button
-												type="button"
-												onClick={() => handleSort(header.id)}
-												title={sortLabel}
-												className={cn(
-													"inline-flex w-full min-w-0 cursor-pointer items-center justify-end gap-1 rounded-4 px-0.5 py-0.5 text-inherit transition-colors",
-													"hover:bg-fill-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus",
-												)}
-												aria-label={t`Sort by ${sortLabel}`}
-											>
-												<span className="min-w-0 whitespace-normal text-right leading-tight text-balance">
-													{flexRender(header.column.columnDef.header, header.getContext())}
-												</span>
-												<span className="inline-flex shrink-0 text-fg-muted">
-													<SortIcon columnId={header.id} sorting={sorting} />
-												</span>
-											</button>
-										</TableHead>
-									);
-								})}
-						</TableRow>
-					</TableHeader>
-				</table>
+								<span className="min-w-0 truncate">
+									{flexRender(header.column.columnDef.header, header.getContext())}
+								</span>
+								<SortIcon columnId={header.id} sorting={sorting} />
+							</button>
+						);
+					})}
 			</div>
 
-			<div ref={containerRef} className="flex-1 min-h-0 overflow-auto">
+			<div ref={containerRef} className="min-h-0 flex-1 overflow-auto">
 				{isLoading ? (
-					<div className="flex items-center justify-center py-8">
-						<span className="text-fg text-xs">{t`Loading markets...`}</span>
+					<div aria-busy="true">
+						<span className="sr-only">{t`Loading markets...`}</span>
+						{LOADING_ROW_KEYS.map((key) => (
+							<div key={key} className="flex h-10 items-center gap-2 border-b border-stroke-faint px-3">
+								<div className="size-5 shrink-0 animate-pulse rounded-4 bg-control" />
+								<div className="h-3 w-24 animate-pulse rounded-4 bg-control" />
+								<div className="ml-auto h-3 w-16 animate-pulse rounded-4 bg-control" />
+							</div>
+						))}
 					</div>
 				) : rows.length === 0 ? (
-					<div className="py-8 text-center text-fg text-xs">{t`No markets found.`}</div>
+					<div className="py-8 text-center text-xs text-fg-muted">{t`No markets found.`}</div>
 				) : (
 					<div
 						role="listbox"
@@ -262,11 +246,11 @@ export function TokenSelectorContent({
 				)}
 			</div>
 
-			<div className="px-2 py-1.5 bg-fill-weak flex items-center justify-between text-fg shrink-0 text-xs">
-				<span>
+			<div className="flex h-8 shrink-0 items-center justify-between gap-4 border-t border-stroke-weak px-3 text-xs text-fg-muted">
+				<span className="tabular-nums">
 					{filteredMarkets.length} {t`markets`}
 				</span>
-				<span className="tabular-nums text-right min-w-0">
+				<span className="min-w-0 truncate text-right">
 					{sorting.length > 0 ? t`Sorted by ${getColumnSortLabel(sorting[0].id)}` : t`Updated live`}
 				</span>
 			</div>

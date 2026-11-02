@@ -1,6 +1,6 @@
 import { Checkbox as BaseCheckbox } from "@base-ui/react/checkbox";
 import { CheckboxGroup as BaseCheckboxGroup } from "@base-ui/react/checkbox-group";
-import { CheckIcon, MinusIcon, WarningCircleIcon } from "@phosphor-icons/react";
+import { CheckIcon, MinusIcon } from "@phosphor-icons/react";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { DEFAULT_SIZE } from "./config";
@@ -9,11 +9,12 @@ import { cn } from "./utils";
 const checkboxVariants = cva(
 	[
 		"relative inline-flex items-center justify-center shrink-0",
-		"border rounded-4 bg-background",
+		"rounded-4 bg-control",
 		"transition-colors duration-150 motion-reduce:transition-none",
+		"not-data-checked:not-data-indeterminate:hover:bg-control-hover",
 		"focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus",
-		"data-checked:bg-brand data-checked:border-transparent",
-		"data-indeterminate:bg-brand data-indeterminate:border-transparent",
+		"data-checked:bg-brand data-indeterminate:bg-brand",
+		"data-disabled:cursor-not-allowed data-checked:data-disabled:bg-control data-indeterminate:data-disabled:bg-control",
 		"after:content-[''] after:absolute after:top-1/2 after:left-1/2 after:-translate-1/2 after:size-11",
 	],
 	{
@@ -26,8 +27,8 @@ const checkboxVariants = cva(
 				lg: "size-6",
 			},
 			error: {
-				true: "border-stroke-error-strong",
-				false: "border-stroke-strong",
+				true: "ring-1 ring-inset ring-market-down",
+				false: "",
 			},
 		},
 		defaultVariants: {
@@ -63,7 +64,7 @@ const Checkbox = React.forwardRef<HTMLElement, CheckboxProps>(
 			<label
 				className={cn(
 					"inline-flex items-start gap-2 select-none",
-					disabled ? "cursor-not-allowed opacity-40" : "cursor-pointer",
+					disabled ? "cursor-not-allowed" : "cursor-pointer",
 					className,
 				)}
 			>
@@ -74,20 +75,17 @@ const Checkbox = React.forwardRef<HTMLElement, CheckboxProps>(
 					className={cn(checkboxVariants({ size, error }))}
 					{...props}
 				>
-					<BaseCheckbox.Indicator className="flex items-center justify-center text-icon-inverse-strong">
+					<BaseCheckbox.Indicator className="flex items-center justify-center text-fg-inverse in-data-disabled:text-fg-muted">
 						{indeterminate ? <MinusIcon size={iconSize} weight="bold" /> : <CheckIcon size={iconSize} weight="bold" />}
 					</BaseCheckbox.Indicator>
 				</BaseCheckbox.Root>
 				{(label || description || (error && errorMessage)) && (
 					<span className="flex flex-col gap-1">
-						{label && <span className="text-xs text-fg">{label}</span>}
-						{description && <span className="text-xs text-fg-muted">{description}</span>}
-						{error && errorMessage && (
-							<span className="flex items-center gap-1">
-								<WarningCircleIcon size={16} weight="fill" className="shrink-0 text-icon-error" />
-								<span className="text-xs text-error">{errorMessage}</span>
-							</span>
+						{label && (
+							<span className={cn("text-xs font-normal", disabled ? "text-fg-disabled" : "text-fg")}>{label}</span>
 						)}
+						{description && <span className="text-xs text-fg-muted">{description}</span>}
+						{error && errorMessage && <span className="text-xs text-market-down">{errorMessage}</span>}
 					</span>
 				)}
 			</label>
@@ -103,7 +101,7 @@ interface CheckboxGroupProps extends React.ComponentPropsWithoutRef<typeof BaseC
 const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
 	({ className, label, children, ...props }, ref) => (
 		<BaseCheckboxGroup ref={ref} className={cn("flex flex-col gap-3", className)} {...props}>
-			{label && <span className="text-xs font-semibold text-fg">{label}</span>}
+			{label && <span className="text-xs font-medium text-fg">{label}</span>}
 			{children}
 		</BaseCheckboxGroup>
 	),

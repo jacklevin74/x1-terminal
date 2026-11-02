@@ -6,7 +6,6 @@ import { InfoRow, InfoRowGroup } from "@/components/ui/info-row";
 import { DEFAULT_QUOTE_TOKEN, FALLBACK_VALUE_PLACEHOLDER } from "@/config/app";
 import { getSpotAvailableValue } from "@/domain/trade/balances";
 import { useDefaultDexBalances } from "@/hooks/trade/use-account-balances";
-import { cn } from "@/lib/cn";
 import { formatPercent, formatUSD } from "@/lib/format";
 import { toNumberOrZero } from "@/lib/trade/numbers";
 import { getValueColorClass } from "@/lib/ui/value-color";
@@ -85,71 +84,66 @@ export function AccountPanel() {
 				{
 					label: t`Balance`,
 					value: formatUSD(perpMetrics.balance),
-					valueClassName: "tabular-nums",
 				},
 				{
 					label: t`Unrealized PNL`,
 					value: formatUSD(perpMetrics.unrealizedPnl, { signDisplay: "exceptZero" }),
-					valueClassName: cn("tabular-nums", getValueColorClass(perpMetrics.unrealizedPnl)),
+					valueClassName: getValueColorClass(perpMetrics.unrealizedPnl),
 				},
 				{
 					label: t`Cross Margin Ratio`,
 					value: formatPercent(perpMetrics.marginRatio, { maximumFractionDigits: 2 }),
-					valueClassName: "tabular-nums",
 				},
 				{
 					label: t`Maintenance Margin`,
 					value: formatUSD(perpMetrics.maintenanceMargin),
-					valueClassName: "tabular-nums",
 				},
 				{
 					label: t`Cross Account Leverage`,
 					value: `${perpMetrics.crossLeverage.toFixed(2)}x`,
-					valueClassName: "tabular-nums",
 				},
 			]
 		: [];
 
 	return (
-		<div className="shrink-0 flex flex-col bg-surface border-t border-stroke-weak pb-6 overflow-hidden">
-			<div className="px-2 py-2 border-b border-stroke-weak">
-				<span className="text-xs font-medium text-fg-muted uppercase tracking-wide">{t`Account`}</span>
-			</div>
+		<div className="flex shrink-0 flex-col gap-3 overflow-hidden p-3">
+			<h2 className="text-2xs font-medium uppercase tracking-micro text-fg-muted">{t`Account`}</h2>
 
 			{!isConnected ? (
-				<div className="text-xs text-fg-muted text-center py-4">{t`Connect wallet to view account`}</div>
+				<p className="py-2 text-center text-xs text-fg-muted">{t`Connect wallet to view account`}</p>
 			) : (
-				<div className="p-2 overflow-y-auto">
-					<p className="text-xs font-medium text-fg mb-1">{t`Account Equity`}</p>
-					<InfoRowGroup className="divide-y-0">
-						<InfoRow
-							label={t`Spot`}
-							value={spotMetrics ? formatUSD(spotMetrics.totalValue) : FALLBACK_VALUE_PLACEHOLDER}
-							valueClassName="tabular-nums"
-						/>
-						<InfoRow
-							label={t`Perps`}
-							value={perpMetrics ? formatUSD(perpMetrics.accountValue) : FALLBACK_VALUE_PLACEHOLDER}
-							valueClassName="tabular-nums"
-						/>
-					</InfoRowGroup>
+				<div className="flex flex-col gap-3 overflow-y-auto">
+					<section className="flex flex-col">
+						<h3 className="flex min-h-6 items-center text-xs font-medium text-fg">{t`Account Equity`}</h3>
+						<InfoRowGroup>
+							<InfoRow
+								label={t`Spot`}
+								value={spotMetrics ? formatUSD(spotMetrics.totalValue) : FALLBACK_VALUE_PLACEHOLDER}
+							/>
+							<InfoRow
+								label={t`Perps`}
+								value={perpMetrics ? formatUSD(perpMetrics.accountValue) : FALLBACK_VALUE_PLACEHOLDER}
+							/>
+						</InfoRowGroup>
+					</section>
 
 					{hasPerpData && (
-						<>
-							<p className="text-xs font-medium text-fg mt-3 mb-1">{t`Perps Overview`}</p>
-							<InfoRowGroup className="divide-y-0">
+						<section className="flex flex-col">
+							<h3 className="flex min-h-6 items-center text-xs font-medium text-fg">{t`Perps Overview`}</h3>
+							<InfoRowGroup>
 								{perpRows.map((row) => (
 									<InfoRow key={row.label} label={row.label} value={row.value} valueClassName={row.valueClassName} />
 								))}
 							</InfoRowGroup>
-						</>
+						</section>
 					)}
 
 					{(hasPerpData || hasSpotData) && (
-						<div className="grid grid-cols-3 gap-1 mt-4">
+						<div className="grid grid-cols-3 gap-2">
 							<Button
-								variant="outline"
+								variant="secondary"
 								intent="neutral"
+								size="sm"
 								onClick={() => openDepositModal("withdraw")}
 								aria-label={t`Withdraw`}
 								iconLeft={<UploadSimpleIcon className="size-4" />}
@@ -157,8 +151,9 @@ export function AccountPanel() {
 								{t`Withdraw`}
 							</Button>
 							<Button
-								variant="outline"
+								variant="secondary"
 								intent="neutral"
+								size="sm"
 								onClick={() => openDepositModal("deposit")}
 								aria-label={t`Deposit`}
 								iconLeft={<DownloadSimpleIcon className="size-4" />}
@@ -166,8 +161,9 @@ export function AccountPanel() {
 								{t`Deposit`}
 							</Button>
 							<Button
-								variant="outline"
+								variant="secondary"
 								intent="neutral"
+								size="sm"
 								onClick={() => openDepositModal("bridge")}
 								aria-label={t`Bridge`}
 								iconLeft={<ArrowsLeftRightIcon className="size-4" />}

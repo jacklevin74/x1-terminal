@@ -17,13 +17,13 @@ export function MobileBottomNav({ activeTab, onTabChange, badges, className }: P
 	return (
 		<nav
 			className={cn(
-				"fixed inset-x-0 bottom-0 z-50 bg-surface/95 backdrop-blur-sm border-t border-stroke-weak/60",
+				"fixed inset-x-0 bottom-0 z-50 bg-surface border-t border-stroke-weak",
 				"pb-[env(safe-area-inset-bottom)]",
 				className,
 			)}
 			aria-label="Primary navigation"
 		>
-			<div className="flex items-stretch">
+			<div className="flex items-stretch px-1">
 				{MOBILE_NAV_ITEMS.map((item) => {
 					const isActive = activeTab === item.id;
 					const badgeCount = badges?.[item.id];
@@ -37,32 +37,30 @@ export function MobileBottomNav({ activeTab, onTabChange, badges, className }: P
 							onClick={() => onTabChange(item.id)}
 							style={{ minHeight: `${MOBILE_BOTTOM_NAV_HEIGHT_PX}px` }}
 							className={cn(
-								"flex-1 flex flex-col items-center justify-center gap-0.5 rounded-none",
-								"py-2 px-1",
-								"transition-colors duration-150 ease-out",
-								"active:bg-fill-press active:scale-95",
-								isActive ? "text-brand" : "text-fg",
+								"flex-1 flex flex-col items-center justify-center gap-1 rounded-8 px-1",
+								"text-xs transition-colors duration-150 ease-out motion-reduce:transition-none",
+								"focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-stroke-focus",
+								isActive ? "text-fg font-medium" : "text-fg-muted hover:text-fg",
 							)}
 							aria-current={isActive ? "page" : undefined}
 							aria-label={item.label}
 						>
 							<span className="relative">
-								<Icon className="size-5" />
-								{isActive && <span className="absolute -top-0.5 -right-0.5 size-1.5 rounded-full bg-brand" />}
+								<Icon className="size-5" weight={isActive ? "fill" : "regular"} />
 								{showBadge && (
 									<span
 										className={cn(
-											"absolute -top-1 -right-2 min-w-4 h-4 px-1",
+											"absolute -top-1 -right-3 min-w-4 h-4 px-1",
 											"flex items-center justify-center",
-											"rounded-full text-xs font-medium tabular-nums",
-											"bg-brand text-white",
+											"rounded-4 text-2xs uppercase tracking-micro font-medium tabular-nums",
+											"bg-control-hover text-fg",
 										)}
 									>
 										{badgeCount > NAV_BADGE_MAX_COUNT ? `${NAV_BADGE_MAX_COUNT}+` : badgeCount}
 									</span>
 								)}
 							</span>
-							<span className="text-xs font-medium tracking-wide">{item.label}</span>
+							<span>{item.label}</span>
 						</button>
 					);
 				})}

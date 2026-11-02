@@ -10,7 +10,7 @@ export const registerPositionLineOverlay = createLineOverlay({
 		const isLong = data?.isLong === true;
 		return {
 			label: isLong ? "Long" : "Short",
-			isBuy: isLong,
+			tone: isLong ? "up" : "down",
 		};
 	},
 });

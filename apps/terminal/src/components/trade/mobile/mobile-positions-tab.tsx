@@ -1,6 +1,6 @@
 import { Button } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
-import { ChartLineIcon, ListChecksIcon, TrendUpIcon } from "@phosphor-icons/react";
+import { TrendUpIcon } from "@phosphor-icons/react";
 import { Skeleton } from "boneyard-js/react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -119,7 +119,7 @@ export function MobilePositionsTab() {
 
 	if (!isConnected) {
 		return (
-			<div className="flex-1 flex items-center justify-center p-6 text-sm text-fg-muted">
+			<div className="flex-1 flex items-center justify-center px-3 py-6 text-center text-xs text-fg-muted">
 				{t`Connect your wallet to view positions.`}
 			</div>
 		);
@@ -127,7 +127,7 @@ export function MobilePositionsTab() {
 
 	if (positionsError) {
 		return (
-			<div className="flex-1 flex items-center justify-center p-6 text-sm text-error">
+			<div className="flex-1 flex items-center justify-center px-3 py-6 text-center text-xs text-market-down">
 				{t`Failed to load positions.`}
 			</div>
 		);
@@ -135,16 +135,13 @@ export function MobilePositionsTab() {
 
 	if (!positionsLoading && positions.length === 0) {
 		return (
-			<div className="flex-1 flex flex-col items-center justify-center gap-3 p-6 text-center">
-				<div className="size-12 rounded-full flex items-center justify-center bg-surface">
-					<ChartLineIcon className="size-6 text-fg-muted" />
-				</div>
-				<p className="text-sm text-fg-muted text-pretty">{t`No active positions.`}</p>
+			<div className="flex-1 flex flex-col items-center justify-center gap-3 px-3 py-6 text-center">
+				<p className="text-xs text-fg-muted text-pretty">{t`No active positions.`}</p>
 				<Button
-					variant="outline"
+					variant="secondary"
 					intent="neutral"
 					size="sm"
-					iconLeft={<TrendUpIcon className="size-4" />}
+					iconLeft={<TrendUpIcon className="size-3.5" />}
 					onClick={() => setMobileActiveTab("trade")}
 				>
 					{t`Go to Trade`}
@@ -156,12 +153,11 @@ export function MobilePositionsTab() {
 	return (
 		<Skeleton name="positions-tab" loading={positionsLoading}>
 			<div className="flex-1 min-h-0 flex flex-col">
-				<div className="px-3 py-2 flex items-center gap-2 text-xs uppercase text-fg-muted">
-					<ListChecksIcon className="size-3" />
-					{t`Active Positions`}
-					<span className="font-semibold text-success ml-auto tabular-nums">{headerCount}</span>
+				<div className="shrink-0 h-8 px-3 flex items-center justify-between gap-2">
+					<span className="text-2xs uppercase tracking-micro text-fg-muted">{t`Active Positions`}</span>
+					<span className="text-xs tabular-nums text-fg">{headerCount}</span>
 				</div>
-				<div className="flex-1 min-h-0 overflow-y-auto px-3 pb-3 space-y-2">
+				<div className="flex-1 min-h-0 overflow-y-auto divide-y divide-stroke-faint border-t border-stroke-faint">
 					{positions.map((p) => {
 						const assetId = markets.getAssetId(p.coin);
 						const isRowClosing = typeof assetId === "number" && closingAssetIds.has(assetId);

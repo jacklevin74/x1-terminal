@@ -1,4 +1,4 @@
-import { useKlineExecutions } from "./use-kline-executions";
+import { t } from "@lingui/core/macro";
 import type { Chart, KLineData } from "klinecharts";
 import { dispose, FormatDateType, init, LoadDataType } from "klinecharts";
 import { useEffect, useRef, useState } from "react";
@@ -13,7 +13,9 @@ import { registerOrderLineOverlay } from "@/lib/chart/order-line-overlay";
 import { registerPositionLineOverlay } from "@/lib/chart/position-line-overlay";
 import { getInfoClient, useSubscription } from "@/lib/hyperliquid";
 import type { ChartSource, ChartSourceToggleIntentHandlers } from "./chart-source-toggle";
+import { ChartStatus } from "./chart-status";
 import { KlineToolbar } from "./kline-toolbar";
+import { useKlineExecutions } from "./use-kline-executions";
 import { useKlineOrderOverlays } from "./use-kline-order-overlays";
 import { useKlinePositionOverlays } from "./use-kline-position-overlays";
 
@@ -72,6 +74,8 @@ export function KlineChart({
 	const [activeInterval, setActiveInterval] = useState(DEFAULT_INTERVAL);
 	const [activeChartType, setActiveChartType] = useState<ChartTypeConfig>(DEFAULT_CHART_TYPE);
 	const activeCandleType = activeChartType.type;
+	const loadKey = `${symbol}:${activeInterval.resolution}`;
+	const [loadResult, setLoadResult] = useState<{ key: string; failed: boolean } | null>(null);
 	const intervalRef = useRef(activeInterval);
 	intervalRef.current = activeInterval;
 	const isHiddenRef = useRef(false);
@@ -138,6 +142,7 @@ export function KlineChart({
 			}
 		});
 
+		const requestKey = `${symbol}:${activeInterval.resolution}`;
 		const endTime = Date.now();
 		const startTime = endTime - INITIAL_CANDLE_COUNT * activeInterval.barMs;
 
@@ -153,12 +158,14 @@ export function KlineChart({
 			.then((candles) => {
 				if (chartRef.current === chart) {
 					chart.applyNewData(candlesToKLineData(candles), true);
+					setLoadResult({ key: requestKey, failed: false });
 				}
 			})
 			.catch((err) => {
 				logRecoverableCandleFetchFailure("initial", err);
 				if (chartRef.current === chart) {
 					chart.applyNewData([], false);
+					setLoadResult({ key: requestKey, failed: true });
 				}
 			});
 
@@ -253,8 +260,11 @@ export function KlineChart({
 	}, [candleData.data]);
 
 	useKlineExecutions(chartRef, symbol, activeInterval.barMs);
- useKlineOrderOverlays({ chartRef, symbol });
+	useKlineOrderOverlays({ chartRef, symbol });
 	useKlinePositionOverlays({ chartRef, symbol, dex: positionDex });
+
+	const isLoading = loadResult?.key !== loadKey;
+	const hasFailed = !isLoading && loadResult?.failed === true;
 
 	return (
 		<div className="flex flex-col h-full">
@@ -266,7 +276,11 @@ export function KlineChart({
 				onChartSourceChange={onChartSourceChange}
 				tradingViewIntentHandlers={tradingViewIntentHandlers}
 			/>
-			<div ref={containerRef} className="flex-1 min-h-0" />
+			<div className="relative flex-1 min-h-0">
+				<div ref={containerRef} className="absolute inset-0" />
+				{isLoading ? <ChartStatus label={t`Loading`} pulse /> : null}
+				{hasFailed ? <ChartStatus label={t`Failed to load chart.`} /> : null}
+			</div>
 		</div>
 	);
 }

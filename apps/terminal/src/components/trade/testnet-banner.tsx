@@ -15,18 +15,12 @@ export function TestnetBanner() {
 		<div
 			className={cn(
 				APP_BANNER_HEIGHT_CLASS,
-				"fixed top-0 left-0 right-0 z-50 bg-warning text-fg-inverse flex items-center justify-center gap-2 text-xs font-medium",
+				"fixed top-0 right-0 left-0 z-50 flex items-center justify-center gap-2 bg-warning px-3 text-xs font-medium text-fg-inverse",
 			)}
 		>
-			<WarningIcon className="size-3.5" />
-			<span>{t`You are on Testnet`}</span>
-			<Button
-				variant="outline"
-				intent="inverse"
-				size="sm"
-				onClick={() => setNetwork("mainnet")}
-				className="h-5 px-2 text-xs font-medium"
-			>
+			<WarningIcon className="size-4 shrink-0" weight="fill" />
+			<span className="truncate">{t`You are on Testnet`}</span>
+			<Button variant="filled" intent="inverse" size="xxs" onClick={() => setNetwork("mainnet")} className="px-2">
 				{t`Switch to Mainnet`}
 			</Button>
 		</div>

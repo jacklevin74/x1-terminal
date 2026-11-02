@@ -9,7 +9,7 @@ export const registerOrderLineOverlay = createLineOverlay({
 		const data = extendData as { side?: "B" | "A"; label?: string } | undefined;
 		return {
 			label: data?.label ?? "",
-			isBuy: data?.side === "B",
+			tone: data?.side === "B" ? "up" : "down",
 		};
 	},
 });

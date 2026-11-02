@@ -1,4 +1,4 @@
-import { Badge } from "@hypeterminal/ui";
+import { Badge, ButtonIcon } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { FireIcon, StarIcon } from "@phosphor-icons/react";
 import { get24hChange, getOiUsd, isTokenInCategory } from "@/domain/market";
@@ -49,16 +49,11 @@ export function TokenSelectorRow({
 	onToggleFavorite,
 }: Props) {
 	const changePercent = get24hChange(market.prevDayPx, market.markPx);
-	const changeClass = cn(
-		"font-medium tabular-nums text-xs",
-		changePercent === null ? "text-fg-muted" : getValueColorClass(changePercent),
-	);
 	const changeText = formatPercent(changePercent !== null ? changePercent / 100 : null);
-
-	const isSpot = market.kind === "spot";
-	const isHip3 = market.kind === "builderPerp";
-
+	const maxLeverage = getMaxLeverage(market);
+	const dex = getDex(market);
 	const oiValue = getOiUsd(market.openInterest, market.markPx);
+	const cellClass = "shrink-0 pl-2 text-right";
 
 	return (
 		<div
@@ -71,89 +66,91 @@ export function TokenSelectorRow({
 			aria-selected={isSelected}
 			tabIndex={-1}
 			className={cn(
-				"flex items-center px-2 cursor-pointer border-b border-stroke-weak",
-				"hover:bg-fill-hover transition-colors",
-				"absolute top-0 left-0 w-full",
-				mobile ? "py-2.5" : "py-1.5",
-				isSelected && !isHighlighted && "bg-surface",
-				isHighlighted && "bg-fill-hover",
+				"absolute top-0 left-0 flex w-full cursor-pointer items-center border-b border-stroke-faint pr-3 pl-1 text-xs font-normal tabular-nums text-fg",
+				"transition-colors hover:bg-control/50",
+				isSelected && !isHighlighted && "bg-control/50",
+				isHighlighted && "bg-control",
 			)}
 			style={{ height: `${height}px`, transform: `translateY(${top}px)` }}
 		>
-			<div className="flex-1 min-w-0 flex items-center gap-2">
-				<AssetDisplay coin={market.name} hideName iconClassName={cn("shrink-0", mobile ? "size-6" : "size-5")} />
-				<div className="min-w-0 flex-1">
-					<div className="flex min-w-0 items-center gap-1">
-						<span
-							title={market.pairName}
-							className={cn(
-								"min-w-0 truncate font-semibold tracking-tight",
-								mobile ? "text-xs" : "text-2xs leading-snug",
-							)}
-						>
-							{market.pairName}
-						</span>
+			<div className="flex min-w-0 flex-1 items-center gap-2 pl-2">
+				<ButtonIcon
+					variant="ghost"
+					intent="neutral"
+					size="xxs"
+					onClick={(e) => {
+						e.stopPropagation();
+						onToggleFavorite(market.name);
+					}}
+					className="relative hover:bg-control-hover max-md:before:absolute max-md:before:-inset-1.5 max-md:before:content-['']"
+					aria-label={isFav ? t`Remove ${market.pairName} from favorites` : t`Add ${market.pairName} to favorites`}
+					aria-pressed={isFav}
+				>
+					<StarIcon
+						weight={isFav ? "fill" : "regular"}
+						className={cn("size-3.5 transition-colors", isFav ? "text-yellow" : "text-fg-muted hover:text-yellow")}
+					/>
+				</ButtonIcon>
+				<AssetDisplay coin={market.name} hideName iconClassName="size-5 shrink-0" />
+				<span className={cn("flex min-w-0", mobile ? "flex-col items-start" : "items-center gap-1")}>
+					<span title={market.pairName} className="min-w-0 max-w-full truncate font-medium">
+						{market.pairName}
+					</span>
+					<span className="flex shrink-0 items-center gap-1 empty:hidden">
+						{maxLeverage && (
+							<Badge tone="neutral" size="xs">
+								{maxLeverage}x
+							</Badge>
+						)}
+						{market.kind === "spot" && (
+							<Badge tone="neutral" size="xs">
+								{t`Spot`}
+							</Badge>
+						)}
+						{dex && (
+							<Badge tone="neutral" size="xs">
+								{dex}
+							</Badge>
+						)}
 						{isTokenInCategory(market.shortName, "new") && (
-							<Badge tone="neutral" size="sm" className="shrink-0 px-1 py-0 text-xs">
+							<Badge tone="neutral" size="xxs" className="uppercase tracking-micro">
 								{t`NEW`}
 							</Badge>
 						)}
-						<button
-							type="button"
-							onClick={(e) => {
-								e.stopPropagation();
-								onToggleFavorite(market.name);
-							}}
-							className="shrink-0 rounded-4 p-0.5 hover:scale-110 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus"
-							aria-label={isFav ? t`Remove ${market.pairName} from favorites` : t`Add ${market.pairName} to favorites`}
-							aria-pressed={isFav}
-						>
-							<StarIcon
-								weight={isFav ? "fill" : "regular"}
-								className={cn(
-									"transition-colors",
-									mobile ? "size-3" : "size-2.5",
-									isFav ? "text-yellow" : "text-fg-muted hover:text-yellow",
-								)}
-							/>
-						</button>
-					</div>
-					<div className={cn("flex items-center gap-1.5 text-fg", mobile ? "text-xs" : "text-2xs")}>
-						{getMaxLeverage(market) && <span>{getMaxLeverage(market)}x</span>}
-						{isSpot && <span className="text-brand">Spot</span>}
-						{isHip3 && <span className="text-warning">{getDex(market)}</span>}
-					</div>
-				</div>
-			</div>
-			<div className={cn("text-right", getMarketTableColumnClass("price", mobile))}>
-				<span className="font-medium tabular-nums text-xs">
-					{formatPrice(market.markPx, { szDecimals: getSzDecimals(market) })}
+					</span>
 				</span>
 			</div>
-			<div className={cn("text-right", getMarketTableColumnClass("24h-change", mobile))}>
-				<span className={changeClass}>{changeText}</span>
+			<div className={cn(cellClass, getMarketTableColumnClass("price", mobile))}>
+				{formatPrice(market.markPx, { szDecimals: getSzDecimals(market) })}
+			</div>
+			<div
+				className={cn(
+					cellClass,
+					getMarketTableColumnClass("24h-change", mobile),
+					changePercent === null ? "text-fg-muted" : getValueColorClass(changePercent),
+				)}
+			>
+				{changeText}
 			</div>
 			{scope !== "spot" && (
-				<div className={cn("text-right hidden sm:block", getMarketTableColumnClass("oi", mobile))}>
-					<span className="text-xs font-medium tabular-nums">{formatUSD(oiValue)}</span>
+				<div className={cn(cellClass, "hidden sm:block", getMarketTableColumnClass("oi", mobile))}>
+					{formatUSD(oiValue)}
 				</div>
 			)}
-			<div className={cn("text-right hidden sm:block", getMarketTableColumnClass("volume", mobile))}>
-				<span className="text-xs font-medium tabular-nums">{formatUSD(market.dayNtlVlm)}</span>
+			<div className={cn(cellClass, "hidden sm:block", getMarketTableColumnClass("volume", mobile))}>
+				{formatUSD(market.dayNtlVlm)}
 			</div>
 			{scope !== "spot" && (
-				<div className={cn("text-right hidden sm:block", getMarketTableColumnClass("funding", mobile))}>
-					<div className="flex items-center justify-end gap-1">
-						{market.funding && <FireIcon className={cn("size-2.5", getValueColorClass(market.funding))} />}
-						<span
-							className={cn(
-								"text-xs tabular-nums font-medium",
-								market.funding ? getValueColorClass(market.funding) : "text-fg-muted",
-							)}
-						>
-							{formatPercent(market.funding, { minimumFractionDigits: 4, signDisplay: "exceptZero" })}
-						</span>
-					</div>
+				<div
+					className={cn(
+						cellClass,
+						"hidden sm:flex items-center justify-end gap-1",
+						getMarketTableColumnClass("funding", mobile),
+						market.funding ? getValueColorClass(market.funding) : "text-fg-muted",
+					)}
+				>
+					{market.funding && <FireIcon className="size-3 shrink-0" />}
+					{formatPercent(market.funding, { minimumFractionDigits: 4, signDisplay: "exceptZero" })}
 				</div>
 			)}
 		</div>

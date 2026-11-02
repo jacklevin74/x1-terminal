@@ -3,6 +3,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { CaretDownIcon, CheckIcon, SpinnerGapIcon, WarningIcon } from "@phosphor-icons/react";
 import { type Ref, useEffect, useState } from "react";
+import { FieldLabel } from "@/components/ui/field-label";
 import { NumberInput } from "@/components/ui/number-input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { LEVERAGE_SUCCESS_DURATION_MS } from "@/config/time";
@@ -28,16 +29,16 @@ function LeverageBadge({ leverage, onClick, isLoading, className, ref }: BadgePr
 	return (
 		<Button
 			ref={ref}
-			variant="outline"
+			variant="secondary"
 			intent="neutral"
 			size="sm"
 			onClick={onClick}
-			className={cn("shrink-0", isLoading && "opacity-70", className)}
+			className={cn("shrink-0", className)}
 			aria-label={t`Change leverage`}
 		>
 			<span className="text-fg-muted">{t`Leverage`}</span>
-			<span className="tabular-nums font-medium text-fg">{leverage}x</span>
-			<CaretDownIcon className="size-2.5 text-fg-muted" />
+			<span className={cn("tabular-nums font-medium", isLoading ? "text-fg-muted" : "text-fg")}>{leverage}x</span>
+			<CaretDownIcon className="size-3 text-fg-muted" />
 		</Button>
 	);
 }
@@ -117,20 +118,13 @@ function LeverageEditor({
 		onOpenChange(false);
 	}
 
-	const iconSize = compact ? "size-3" : "size-4";
-
 	return (
-		<div className={compact ? "space-y-3" : "space-y-5"}>
+		<div className={compact ? "space-y-3" : "space-y-4"}>
 			<div className="flex items-center justify-between">
-				<span
-					className={cn(
-						"uppercase tracking-wide text-fg-muted",
-						compact ? "text-xs font-normal" : "text-xs font-medium",
-					)}
-				>
+				<FieldLabel>
 					<Trans>Leverage</Trans>
-				</span>
-				<div className={cn("flex items-center", compact ? "gap-1" : "gap-1.5")}>
+				</FieldLabel>
+				<div className="flex items-center gap-1">
 					<NumberInput
 						value={inputValue}
 						onChange={handleInputChange}
@@ -139,13 +133,13 @@ function LeverageEditor({
 						allowDecimals={false}
 						min={1}
 						max={maxLeverage}
-						inputSize={compact ? "sm" : "lg"}
+						inputSize={compact ? "sm" : "default"}
 						className={cn(
 							"text-center font-medium tabular-nums",
 							compact ? LEVERAGE_INPUT_WIDTH_COMPACT : LEVERAGE_INPUT_WIDTH_DEFAULT,
 						)}
 					/>
-					<span className={cn("text-fg-muted", compact ? "text-xs" : "text-base")}>x</span>
+					<span className="text-xs text-fg-muted">x</span>
 				</div>
 			</div>
 
@@ -154,11 +148,11 @@ function LeverageEditor({
 			{updateError && (
 				<div
 					className={cn(
-						"flex items-center bg-error-soft border border-stroke-error-strong/20 rounded-8 text-error",
-						compact ? "gap-1.5 p-1.5 text-xs" : "gap-2 p-2.5 text-sm",
+						"flex items-center gap-2 rounded-8 bg-error-soft text-xs text-market-down",
+						compact ? "p-2" : "p-3",
 					)}
 				>
-					<WarningIcon className={cn(iconSize, "shrink-0")} />
+					<WarningIcon className="size-3.5 shrink-0" />
 					<span className={compact ? "truncate" : undefined}>{updateError.message || t`Update failed`}</span>
 				</div>
 			)}
@@ -166,35 +160,35 @@ function LeverageEditor({
 			{showSuccess && (
 				<div
 					className={cn(
-						"flex items-center justify-center bg-success-soft border border-stroke-success-strong/20 rounded-8 text-success",
-						compact ? "gap-1.5 p-1.5 text-xs" : "gap-2 p-2.5 text-sm",
+						"flex items-center justify-center gap-2 rounded-8 bg-success-soft text-xs text-market-up",
+						compact ? "p-2" : "p-3",
 					)}
 				>
-					<CheckIcon className={iconSize} />
+					<CheckIcon className="size-3.5" />
 					<Trans>Updated</Trans>
 				</div>
 			)}
 
 			{updateError && (
-				<div className={cn("flex", compact ? "gap-2" : "gap-3")}>
+				<div className="flex gap-2">
 					<Button
-						variant="outline"
+						variant="secondary"
 						intent="neutral"
-						size={compact ? "sm" : "lg"}
+						size={compact ? "sm" : "md"}
 						className="flex-1"
 						onClick={handleCancel}
 					>
 						<Trans>Cancel</Trans>
 					</Button>
 					<Button
-						variant="outline"
-						intent="brand"
-						size={compact ? "sm" : "lg"}
+						variant="filled"
+						intent="neutral"
+						size={compact ? "sm" : "md"}
 						onClick={handleConfirm}
 						disabled={isUpdating}
 						className="flex-1"
 					>
-						{isUpdating && <SpinnerGapIcon className={cn(iconSize, "animate-spin")} />}
+						{isUpdating && <SpinnerGapIcon className="size-4 animate-spin" />}
 						<Trans>Retry</Trans>
 					</Button>
 				</div>
@@ -202,8 +196,8 @@ function LeverageEditor({
 
 			{!updateError && compact && (
 				<Button
-					variant="outline"
-					intent="brand"
+					variant="filled"
+					intent="neutral"
 					size="sm"
 					onClick={handleConfirm}
 					disabled={!isDirty || isUpdating || showSuccess}
@@ -216,9 +210,9 @@ function LeverageEditor({
 
 			{!updateError && !compact && (
 				<Button
-					variant="outline"
-					intent="brand"
-					size="lg"
+					variant="filled"
+					intent="neutral"
+					size="md"
 					onClick={handleConfirm}
 					disabled={!isDirty || isUpdating || showSuccess}
 					className="w-full"
@@ -285,7 +279,7 @@ export function LeverageControl({ className }: Props) {
 					className={className}
 				/>
 				<Drawer side="bottom" open={open} onOpenChange={handleOpenChange}>
-					<DrawerContent className="px-4 pb-8 pt-6">
+					<DrawerContent className="p-4">
 						<LeverageEditor {...editorProps} compact={false} />
 					</DrawerContent>
 				</Drawer>
@@ -298,7 +292,7 @@ export function LeverageControl({ className }: Props) {
 			<PopoverTrigger asChild>
 				<LeverageBadge leverage={displayLeverage} isLoading={isLoading} className={className} />
 			</PopoverTrigger>
-			<PopoverContent align="end" className={cn(LEVERAGE_POPOVER_WIDTH, "p-3")}>
+			<PopoverContent align="end" className={LEVERAGE_POPOVER_WIDTH}>
 				<LeverageEditor {...editorProps} compact />
 			</PopoverContent>
 		</Popover>

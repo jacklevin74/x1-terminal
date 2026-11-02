@@ -1,3 +1,5 @@
+import { szDecimalsToPriceDecimals } from "@/lib/format";
+
 export type RawBookLevel = { px: string; sz: string; n: number };
 
 export type BookLevel = {
@@ -113,4 +115,17 @@ function getTickSizeDecimals(tickSize: number): number {
 function formatTickSize(tickSize: number, decimals: number): string {
 	if (decimals === 0) return String(Math.trunc(tickSize));
 	return tickSize.toFixed(decimals).replace(/0+$/, "").replace(/\.$/, "");
+}
+
+export type OrderbookDepth = 5 | 10 | 15 | 20;
+
+export const ORDERBOOK_DEPTH_OPTIONS: { value: OrderbookDepth; label: string }[] = [
+	{ value: 5, label: "Fast · 5" },
+	{ value: 10, label: "Depth · 10" },
+	{ value: 15, label: "Depth · 15" },
+	{ value: 20, label: "Depth · 20" },
+];
+
+export function getDefaultBookPriceDecimals(markPx: number | undefined, szDecimals: number): number {
+	return getPriceGroupingOptions(markPx)[0]?.decimals ?? szDecimalsToPriceDecimals(szDecimals);
 }

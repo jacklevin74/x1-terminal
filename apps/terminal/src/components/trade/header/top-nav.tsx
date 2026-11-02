@@ -17,18 +17,8 @@ import X1TerminalLogo from "./x1-terminal-logo";
 
 const UserMenu = createLazyComponent(() => import("./user-menu"), "UserMenu");
 
-function getScopeAccentClass(scope: string): string {
-	switch (scope) {
-		case "perp":
-			return "border-scope-perp/40";
-		case "spot":
-			return "border-scope-spot/40";
-		case "builders-perp":
-			return "border-scope-builders/40";
-		default:
-			return "border-stroke-weak";
-	}
-}
+const NAV_LINK_CLASS =
+	"relative flex h-7 items-center rounded-8 px-3 text-sm font-normal transition-colors duration-150";
 
 export function TopNav() {
 	const { open: openDepositModal } = useDepositModalActions();
@@ -37,41 +27,41 @@ export function TopNav() {
 	const { scope } = useExchangeScope();
 	const isTestnet = useIsTestnet();
 
-	const accentClass = getScopeAccentClass(scope);
-
 	return (
 		<header
 			className={cn(
 				APP_HEADER_HEIGHT_CLASS,
-				"fixed left-0 right-0 z-40 border-b border-stroke-weak px-3 flex items-center justify-between bg-background transition-colors duration-300 ease-in-out",
+				"fixed left-0 right-0 z-40 flex items-center justify-between border-b border-stroke-weak bg-background px-3",
 				isTestnet ? "top-8" : "top-0",
-				accentClass,
 			)}
 		>
-			<div className="flex items-center gap-3 min-w-0">
+			<div className="flex min-w-0 items-center gap-4">
 				<X1TerminalLogo />
-				<Divider orientation="vertical" className="my-2 hidden lg:block" />
-				<nav className="hidden lg:flex items-center text-xs tracking-wide">
-					{SCOPE_NAV_ITEMS.map((item) => (
-						<Link
-							key={item.scope}
-							to={item.to}
-							className={cn(
-								"px-2.5 py-1 rounded-8 transition-colors duration-150",
-								scope === item.scope ? item.activeClass : "text-fg-muted hover:text-fg",
-							)}
-						>
-							{item.label}
-						</Link>
-					))}
-					<Divider orientation="vertical" className="my-2 mx-1" />
+				<nav className="hidden items-center gap-1 lg:flex">
+					{SCOPE_NAV_ITEMS.map((item) => {
+						const isActive = scope === item.scope;
+						return (
+							<Link
+								key={item.scope}
+								to={item.to}
+								aria-current={isActive ? "page" : undefined}
+								className={cn(NAV_LINK_CLASS, isActive ? item.activeClass : "text-fg-muted hover:text-fg")}
+							>
+								{isActive && (
+									<span aria-hidden className={cn("absolute top-1 right-1 size-1.5 rounded-full", item.accentClass)} />
+								)}
+								{item.label}
+							</Link>
+						);
+					})}
+					<Divider orientation="vertical" className="mx-2 h-4 self-center" />
 					{STATIC_NAV_ITEMS.map((item) => (
 						<button
 							key={item.key}
 							type="button"
 							disabled
-							className="px-2.5 py-1.5 text-fg-disabled cursor-not-allowed"
 							tabIndex={-1}
+							className={cn(NAV_LINK_CLASS, "cursor-not-allowed text-fg-disabled")}
 						>
 							{item.label}
 						</button>
@@ -79,16 +69,16 @@ export function TopNav() {
 				</nav>
 			</div>
 
-			<div className="flex items-center gap-2 min-h-8">
+			<div className="flex items-center gap-2">
 				{isConnected && (
-					<div className="flex items-center gap-0.5">
+					<div className="flex items-center gap-px">
 						<Button
-							variant="filled"
-							intent="brand"
+							variant="secondary"
+							intent="neutral"
 							size="sm"
 							onClick={() => openDepositModal("deposit")}
-							iconLeft={<DownloadSimpleIcon className="size-3.5" />}
-							className={cn(APP_BAR_BUTTON_HEIGHT_CLASS, "shrink-0 px-3")}
+							iconLeft={<DownloadSimpleIcon className="size-4" />}
+							className={cn(APP_BAR_BUTTON_HEIGHT_CLASS, "rounded-r-none")}
 						>
 							<Trans>Deposit</Trans>
 						</Button>
@@ -97,7 +87,7 @@ export function TopNav() {
 							size="sm"
 							triggerAriaLabel="More deposit options"
 							trigger={<span className="sr-only">More deposit options</span>}
-							triggerClassName="h-8 !px-2"
+							triggerClassName="h-8 max-md:h-8 rounded-l-none px-2"
 							items={[
 								{ label: "Deposit from wallet", onSelect: () => openDepositModal("wallet") },
 								{ label: "Deposit USDC from Arbitrum", onSelect: () => openDepositModal("usdc") },
@@ -110,13 +100,7 @@ export function TopNav() {
 					<UserMenu />
 				</Suspense>
 				<ThemeToggle />
-				<ButtonIcon
-					variant="ghost"
-					intent="neutral"
-					className="size-8 shrink-0"
-					onClick={openSettingsDialog}
-					aria-label={t`Settings`}
-				>
+				<ButtonIcon variant="ghost" intent="neutral" size="sm" onClick={openSettingsDialog} aria-label={t`Settings`}>
 					<GearIcon className="size-4" />
 				</ButtonIcon>
 			</div>
@@ -125,5 +109,5 @@ export function TopNav() {
 }
 
 function UserMenuSkeleton() {
-	return <div className={cn(APP_BAR_BUTTON_HEIGHT_CLASS, "h-8 w-32 shrink-0 rounded-8 bg-surface animate-pulse")} />;
+	return <div className={cn(APP_BAR_BUTTON_HEIGHT_CLASS, "w-32 shrink-0 animate-pulse rounded-8 bg-control")} />;
 }

@@ -14,7 +14,7 @@ const TabsContext = React.createContext<{
 	disabled: boolean;
 }>({
 	size: "sm",
-	variant: "underline",
+	variant: "pills",
 	fullWidth: false,
 	disabled: false,
 });
@@ -27,10 +27,7 @@ interface TabsRootProps extends React.ComponentPropsWithoutRef<typeof Tabs.Root>
 }
 
 const TabsRoot = React.forwardRef<HTMLDivElement, TabsRootProps>(
-	(
-		{ size: sizeProp, variant = "underline", fullWidth = false, disabled = false, children, className, ...props },
-		ref,
-	) => {
+	({ size: sizeProp, variant = "pills", fullWidth = false, disabled = false, children, className, ...props }, ref) => {
 		const size = (sizeProp ?? DEFAULT_SIZE) as TabsSize;
 
 		return (
@@ -48,11 +45,11 @@ const tabsListVariants = cva("relative flex items-center", {
 	variants: {
 		variant: {
 			underline: "border-b border-stroke-weak",
-			pills: "inline-flex bg-fill-weak border border-stroke-weak rounded-8",
+			pills: "h-9 max-md:h-10 gap-1 border-b border-stroke-weak",
 		},
 	},
 	defaultVariants: {
-		variant: "underline",
+		variant: "pills",
 	},
 });
 
@@ -66,24 +63,15 @@ const TabsList = React.forwardRef<HTMLDivElement, TabsListProps>(
 
 		return (
 			<Tabs.List ref={ref} className={cn(tabsListVariants({ variant }), fullWidth && "w-full", className)} {...props}>
-				{!hideIndicator &&
-					(variant === "underline" ? (
-						<Tabs.Indicator
-							className="absolute -bottom-px h-0.5 bg-brand transition-[left,width] duration-200 ease-in-out motion-reduce:transition-none"
-							style={{
-								left: "var(--active-tab-left)",
-								width: "var(--active-tab-width)",
-							}}
-						/>
-					) : (
-						<Tabs.Indicator
-							className="absolute inset-y-0 rounded-8 bg-overlay border border-stroke-strong shadow-raised transition-[left,width] duration-200 ease-in-out motion-reduce:transition-none"
-							style={{
-								left: "var(--active-tab-left)",
-								width: "var(--active-tab-width)",
-							}}
-						/>
-					))}
+				{!hideIndicator && variant === "underline" && (
+					<Tabs.Indicator
+						className="absolute -bottom-px h-0.5 bg-fg transition-[left,width] duration-200 ease-in-out motion-reduce:transition-none"
+						style={{
+							left: "var(--active-tab-left)",
+							width: "var(--active-tab-width)",
+						}}
+					/>
+				)}
 				{children}
 			</Tabs.List>
 		);
@@ -105,8 +93,8 @@ const tabsTriggerVariants = cva(
 	{
 		variants: {
 			variant: {
-				underline: "bg-transparent",
-				pills: "relative rounded-8 border border-transparent",
+				underline: "bg-transparent data-active:font-medium",
+				pills: "relative rounded-8 bg-transparent data-active:bg-control data-active:font-medium",
 			},
 			size: {
 				xxs: "",
@@ -120,7 +108,7 @@ const tabsTriggerVariants = cva(
 			{
 				variant: "underline",
 				size: "xxs",
-				className: "py-1 px-1.5 text-2xs gap-1",
+				className: "py-1 px-1.5 text-xs gap-1",
 			},
 			{
 				variant: "underline",
@@ -144,32 +132,12 @@ const tabsTriggerVariants = cva(
 			},
 			{
 				variant: "pills",
-				size: "xxs",
-				className: "py-0.5 px-1.5 text-2xs gap-0.5",
-			},
-			{
-				variant: "pills",
-				size: "xs",
-				className: "py-1 px-2 text-xs gap-1",
-			},
-			{
-				variant: "pills",
-				size: "sm",
-				className: "py-1.5 px-3 text-xs gap-1",
-			},
-			{
-				variant: "pills",
-				size: "md",
-				className: "py-3 px-4 text-sm gap-1",
-			},
-			{
-				variant: "pills",
-				size: "lg",
-				className: "py-3 px-6 text-base gap-1.5",
+				size: ["xxs", "xs", "sm", "md", "lg"],
+				className: "h-7 max-md:h-8 px-3 text-xs gap-1",
 			},
 		],
 		defaultVariants: {
-			variant: "underline",
+			variant: "pills",
 			size: "sm",
 		},
 	},
@@ -191,7 +159,15 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
 				{...props}
 			>
 				{icon}
-				{children}
+				<span className="inline-grid">
+					<span
+						aria-hidden="true"
+						className="invisible col-start-1 row-start-1 inline-flex items-center gap-1 font-medium"
+					>
+						{children}
+					</span>
+					<span className="col-start-1 row-start-1 inline-flex items-center justify-center gap-1">{children}</span>
+				</span>
 			</Tabs.Tab>
 		);
 	},

@@ -1,5 +1,5 @@
 import { Button, Tabs, TabsContent, TabsList, TabsTrigger } from "@hypeterminal/ui";
-import { WalletIcon } from "@phosphor-icons/react";
+import { t } from "@lingui/core/macro";
 import { useState, useTransition } from "react";
 import { useConnection } from "wagmi";
 import { Spinner } from "@/components/ui/spinner";
@@ -66,31 +66,36 @@ export function MobilePositionsView({ className }: Props) {
 		return false;
 	}
 
-	const tabContentClass = cn("flex-1 min-h-0 flex flex-col mt-0", isPending && "opacity-70");
+	const tabContentClass = cn("flex-1 min-h-0 flex flex-col pt-0", isPending && "opacity-70");
 
 	return (
-		<div className={cn("flex-1 min-h-0 flex flex-col", className)}>
+		<div className={cn("flex-1 min-h-0 flex flex-col bg-surface", className)}>
 			<Tabs value={activeTab} onValueChange={handleTabChange} className="flex-1 min-h-0 flex flex-col">
-				<div className="shrink-0 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-					<TabsList className="px-3 min-w-max">
+				<div
+					className={cn(
+						"shrink-0 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+						"mask-r-from-[calc(100%-1.5rem)] mask-r-to-100%",
+					)}
+				>
+					<TabsList className="pl-3 pr-6 min-w-full w-max">
 						{MOBILE_POSITIONS_TABS.map((tab) => {
 							const count = getTabCount(tab.value);
 							const loading = isTabLoading(tab.value);
 
 							return (
-								<TabsTrigger key={tab.value} value={tab.value} className="inline-flex items-center gap-1">
-									<span>{tab.label}</span>
+								<TabsTrigger key={tab.value} value={tab.value}>
+									{tab.label}
 									{loading ? (
-										<Spinner className="size-3" />
+										<Spinner className="size-3 text-fg-muted" />
 									) : typeof count === "number" && count > 0 ? (
-										<span>({count})</span>
+										<span className="text-fg-muted tabular-nums">{count}</span>
 									) : null}
 								</TabsTrigger>
 							);
 						})}
 					</TabsList>
 				</div>
-				<div className="flex-1 min-h-0 overflow-y-auto">
+				<div className="flex-1 min-h-0 flex flex-col overflow-y-auto">
 					{!isConnected ? (
 						<EmptyState />
 					) : (
@@ -130,13 +135,10 @@ function EmptyState() {
 
 	return (
 		<>
-			<div className="h-full flex flex-col items-center justify-center gap-4 p-6 text-center">
-				<div className="size-16 rounded-full flex items-center justify-center bg-surface">
-					<WalletIcon className="size-8 text-fg-muted" />
-				</div>
-				<p className="text-sm text-fg-muted max-w-xs text-pretty">Connect wallet to view positions</p>
-				<Button variant="outline" intent="brand" size="sm" onClick={() => setWalletModalOpen(true)}>
-					Connect Wallet
+			<div className="flex-1 flex flex-col items-center justify-center gap-3 px-3 py-6 text-center">
+				<p className="text-xs text-fg-muted max-w-xs text-pretty">{t`Connect wallet to view positions`}</p>
+				<Button variant="secondary" intent="neutral" size="sm" onClick={() => setWalletModalOpen(true)}>
+					{t`Connect Wallet`}
 				</Button>
 			</div>
 			<WalletModal open={walletModalOpen} onOpenChange={setWalletModalOpen} />

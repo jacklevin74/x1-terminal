@@ -27,24 +27,36 @@ function useMobile(): boolean {
 
 // ─── Modal (centered overlay) ─────────────────────────────────────────────────
 
-const modalPopupVariants = cva(["relative w-full bg-overlay shadow-overlay rounded-12", "flex flex-col outline-none"], {
-	variants: {
-		size: {
-			sm: "max-w-sm",
-			md: "max-w-md",
-			lg: "max-w-lg",
+const modalPopupVariants = cva(
+	["relative w-full bg-overlay text-fg shadow-menu rounded-16", "flex flex-col outline-none"],
+	{
+		variants: {
+			size: {
+				sm: "max-w-sm",
+				md: "max-w-md",
+				lg: "max-w-lg",
+			},
+		},
+		defaultVariants: {
+			size: "md",
 		},
 	},
-	defaultVariants: {
-		size: "md",
-	},
-});
+);
 
 const Modal = Dialog.Root;
 
 const ModalTrigger = Dialog.Trigger;
 
 const ModalClose = Dialog.Close;
+
+const modalCloseClass = cn(
+	"absolute top-3 right-3 z-10",
+	"flex items-center justify-center size-8 rounded-8",
+	"text-fg-muted cursor-pointer",
+	"hover:bg-control hover:text-fg active:bg-control-hover",
+	"focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus",
+	"after:content-[''] after:absolute after:top-1/2 after:left-1/2 after:-translate-1/2 after:size-10",
+);
 
 interface ModalPopupProps
 	extends React.ComponentPropsWithoutRef<typeof Dialog.Popup>,
@@ -55,31 +67,24 @@ interface ModalPopupProps
 const ModalPopup = React.forwardRef<HTMLDivElement, ModalPopupProps>(
 	({ className, size, showClose = true, children, ...props }, ref) => (
 		<Dialog.Portal>
-			<Dialog.Backdrop className="fixed inset-0 z-40 bg-scrim backdrop-blur-sm transition-opacity duration-200 ease-out motion-reduce:transition-none data-starting-style:opacity-0 data-ending-style:opacity-0" />
-			<div className="fixed inset-0 z-50 overflow-y-auto p-6">
-				<div className="flex min-h-full items-center justify-center">
+			<Dialog.Backdrop className="fixed inset-0 z-[var(--z-overlay)] bg-scrim transition-opacity duration-200 ease-out motion-reduce:transition-none data-starting-style:opacity-0 data-ending-style:opacity-0" />
+			<div className="fixed inset-0 z-[var(--z-overlay)] overflow-y-auto p-6 max-md:p-0 max-md:overflow-hidden">
+				<div className="flex min-h-full items-center justify-center max-md:items-end">
 					<Dialog.Popup
 						className={cn(
 							modalPopupVariants({ size, className }),
 							"max-h-[calc(100dvh-3rem)] overflow-y-auto",
-							"transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none data-starting-style:opacity-0 data-starting-style:scale-95 data-ending-style:opacity-0 data-ending-style:scale-95",
+							"max-md:max-w-none max-md:max-h-[90dvh] max-md:rounded-b-none max-md:pb-[env(safe-area-inset-bottom)]",
+							"transition-[opacity,scale,translate] duration-200 ease-out motion-reduce:transition-none",
+							"data-starting-style:opacity-0 data-starting-style:scale-[0.97] data-ending-style:opacity-0 data-ending-style:scale-[0.97]",
+							"max-md:data-starting-style:scale-100 max-md:data-starting-style:translate-y-full max-md:data-ending-style:scale-100 max-md:data-ending-style:translate-y-full",
 						)}
 						ref={ref}
 						{...props}
 					>
 						{children}
 						{showClose && (
-							<Dialog.Close
-								className={cn(
-									"absolute top-4 right-4 z-10",
-									"flex items-center justify-center size-8 rounded-8",
-									"text-icon cursor-pointer",
-									"hover:bg-fill-hover active:bg-fill-press",
-									"focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus",
-									"after:content-[''] after:absolute after:top-1/2 after:left-1/2 after:-translate-1/2 after:size-11",
-								)}
-								aria-label="Close"
-							>
+							<Dialog.Close className={modalCloseClass} aria-label="Close">
 								<XIcon size={16} weight="bold" />
 							</Dialog.Close>
 						)}
@@ -109,7 +114,7 @@ ModalHeader.displayName = "ModalHeader";
 interface ModalTitleProps extends React.ComponentPropsWithoutRef<typeof Dialog.Title> {}
 
 const ModalTitle = React.forwardRef<HTMLHeadingElement, ModalTitleProps>(({ className, ...props }, ref) => (
-	<Dialog.Title className={cn("text-base font-semibold text-fg text-balance", className)} ref={ref} {...props} />
+	<Dialog.Title className={cn("text-base font-medium text-fg text-balance", className)} ref={ref} {...props} />
 ));
 ModalTitle.displayName = "ModalTitle";
 
@@ -132,7 +137,7 @@ ModalContent.displayName = "ModalContent";
 interface ModalFooterProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const ModalFooter = React.forwardRef<HTMLDivElement, ModalFooterProps>(({ className, ...props }, ref) => (
-	<div className={cn("flex items-center justify-end gap-3 p-4", className)} ref={ref} {...props} />
+	<div className={cn("flex items-center justify-end gap-2 p-4", className)} ref={ref} {...props} />
 ));
 ModalFooter.displayName = "ModalFooter";
 
@@ -158,21 +163,11 @@ function AdaptiveModal({ open, onOpenChange, size, showClose = true, children, c
 			<Drawer side="bottom" open={open} onOpenChange={onOpenChange}>
 				<DrawerContent className={cn("relative pb-[env(safe-area-inset-bottom)]", className)}>
 					<div
-						className="absolute top-2 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-fill/20"
+						className="absolute top-2 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-control-hover"
 						aria-hidden="true"
 					/>
 					{showClose && (
-						<DrawerClose
-							className={cn(
-								"absolute top-4 right-4 z-10",
-								"flex items-center justify-center size-8 rounded-8",
-								"text-icon cursor-pointer",
-								"hover:bg-fill-hover active:bg-fill-press",
-								"focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus",
-								"after:content-[''] after:absolute after:top-1/2 after:left-1/2 after:-translate-1/2 after:size-11",
-							)}
-							aria-label="Close"
-						>
+						<DrawerClose className={modalCloseClass} aria-label="Close">
 							<XIcon size={16} weight="bold" />
 						</DrawerClose>
 					)}

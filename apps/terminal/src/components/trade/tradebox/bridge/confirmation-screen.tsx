@@ -1,14 +1,6 @@
 import { Button } from "@hypeterminal/ui";
 import { Trans } from "@lingui/react/macro";
-import {
-	ArrowLeftIcon,
-	CaretDownIcon,
-	CaretUpIcon,
-	ClockIcon,
-	SpinnerGapIcon,
-	WalletIcon,
-	WarningCircleIcon,
-} from "@phosphor-icons/react";
+import { CaretDownIcon, ClockIcon, SpinnerGapIcon, WalletIcon, WarningCircleIcon } from "@phosphor-icons/react";
 import Big from "big.js";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { InfoRow, InfoRowGroup } from "@/components/ui/info-row";
@@ -16,7 +8,7 @@ import { formatSendAmount, formatTokenAmount } from "@/lib/bridge/format";
 import { formatDuration, formatUSD, shortenAddress } from "@/lib/format";
 import type { BridgeToken } from "@/lib/lifi/use-balances";
 import { type BridgeQuote, useBridgeQuote } from "@/lib/lifi/use-quote";
-import { HyperCoreUsdcIcon, QuoteCountdown, TokenIcon } from "./shared-ui";
+import { BackButton, disclosureTriggerClass, HyperCoreUsdcIcon, QuoteCountdown, TokenIcon } from "./shared-ui";
 
 interface Props {
 	token: BridgeToken;
@@ -52,20 +44,13 @@ export function ConfirmationScreen({ token, tokenAmount, address, onBack, onConf
 		<div className="flex flex-1 flex-col gap-3">
 			<div>
 				<div className="flex items-center justify-between">
-					<button
-						type="button"
-						onClick={onBack}
-						className="flex items-center gap-1 text-xs text-brand hover:opacity-80"
-					>
-						<ArrowLeftIcon className="size-3" />
-						<Trans>Back</Trans>
-					</button>
+					<BackButton onClick={onBack} />
 					{quote ? <QuoteCountdown dataUpdatedAt={dataUpdatedAt} /> : null}
 				</div>
 
-				<p className="text-4xl font-semibold text-fg tabular-nums text-center py-2">{usdDisplay}</p>
+				<p className="py-3 text-center text-base font-medium text-fg tabular-nums">{usdDisplay}</p>
 
-				<InfoRowGroup className="text-xs">
+				<InfoRowGroup>
 					<InfoRow
 						label={<Trans>Source</Trans>}
 						value={
@@ -87,7 +72,7 @@ export function ConfirmationScreen({ token, tokenAmount, address, onBack, onConf
 					/>
 				</InfoRowGroup>
 
-				<InfoRowGroup className="text-xs mt-3">
+				<InfoRowGroup className="mt-3 border-t border-stroke-faint pt-3">
 					<InfoRow
 						label={<Trans>You send</Trans>}
 						value={
@@ -103,7 +88,7 @@ export function ConfirmationScreen({ token, tokenAmount, address, onBack, onConf
 							<span className="flex items-center gap-1.5">
 								<HyperCoreUsdcIcon size="sm" />
 								{receiveAmount} USDC
-								{receiveAmountUSD ? <span className="text-fg-muted ml-1">{receiveAmountUSD}</span> : null}
+								{receiveAmountUSD ? <span className="ml-1 text-fg-muted">{receiveAmountUSD}</span> : null}
 							</span>
 						}
 					/>
@@ -112,15 +97,14 @@ export function ConfirmationScreen({ token, tokenAmount, address, onBack, onConf
 
 			{quote ? (
 				<Collapsible>
-					<CollapsibleTrigger className="flex w-full items-center justify-between rounded-8 px-2 py-1.5 text-xs text-fg-muted hover:bg-fill-hover transition-colors group">
+					<CollapsibleTrigger className={disclosureTriggerClass}>
 						<span>
 							<Trans>Transaction breakdown</Trans> ({formatUSD(quote.totalFeesUSD, 2)})
 						</span>
-						<CaretDownIcon className="size-3 group-data-[state=open]:hidden" />
-						<CaretUpIcon className="size-3 hidden group-data-[state=open]:block" />
+						<CaretDownIcon className="size-3 transition-transform group-data-panel-open:rotate-180 motion-reduce:transition-none" />
 					</CollapsibleTrigger>
 					<CollapsibleContent>
-						<InfoRowGroup className="text-xs">
+						<InfoRowGroup className="px-2">
 							{quote.gasCosts.map((gas) => (
 								<InfoRow
 									key={`gas-${gas.token.symbol}-${gas.amount}`}
@@ -137,9 +121,9 @@ export function ConfirmationScreen({ token, tokenAmount, address, onBack, onConf
 			) : null}
 
 			{quoteError ? (
-				<div className="flex items-center gap-2 rounded-8 border border-stroke-error-strong/30 bg-error-soft p-2.5">
-					<WarningCircleIcon className="size-4 text-error shrink-0" />
-					<span className="text-xs text-error">
+				<div className="flex items-center gap-2 rounded-8 bg-control p-3">
+					<WarningCircleIcon className="size-4 shrink-0 text-market-down" />
+					<span className="text-xs text-market-down">
 						<Trans>No route available. Try a different amount or asset.</Trans>
 					</span>
 				</div>
@@ -147,9 +131,9 @@ export function ConfirmationScreen({ token, tokenAmount, address, onBack, onConf
 
 			<Button
 				variant="filled"
-				intent="brand"
-				size="lg"
-				className="w-full mt-auto"
+				intent="neutral"
+				size="md"
+				className="mt-auto w-full"
 				disabled={!quote || quoteLoading}
 				onClick={() => quote && onConfirm(quote)}
 			>

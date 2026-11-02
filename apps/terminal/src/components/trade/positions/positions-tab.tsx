@@ -1,5 +1,18 @@
-import { closePositionsInSequence } from "@/lib/positions/close-all";
-import { Button, Modal, ModalContent, ModalHeader, ModalPopup, ModalTitle, Table, TableBody, TableHead, TableHeader, TableRow } from "@hypeterminal/ui";
+import {
+	Button,
+	Modal,
+	ModalContent,
+	ModalDescription,
+	ModalFooter,
+	ModalHeader,
+	ModalPopup,
+	ModalTitle,
+	Table,
+	TableBody,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -10,6 +23,7 @@ import { buildOrderPlan } from "@/domain/trade/order-intent";
 import { useSubmitPlan } from "@/hooks/trade/use-submit-plan";
 import { cn } from "@/lib/cn";
 import { useMarkets, useSubscription, useUserPositions } from "@/lib/hyperliquid";
+import { closePositionsInSequence } from "@/lib/positions/close-all";
 import { buildClosePositionDescription } from "@/lib/trade/close-toast";
 import { buildTpSlOrdersByCoin } from "@/lib/trade/open-orders";
 import type { Side } from "@/lib/trade/types";
@@ -17,23 +31,36 @@ import { useExchangeScope } from "@/providers/exchange-scope";
 import { useMarketOrderSlippageBps } from "@/stores/use-global-settings-store";
 import { useMarketActions } from "@/stores/use-market-store";
 import { useOrderEntryActions } from "@/stores/use-order-entry-store";
+import { ConnectPlaceholder } from "./connect-placeholder";
+import { LoadingRows } from "./loading-rows";
 import { Placeholder } from "./placeholder";
 import type { ClosePositionData, LimitClosePositionData, TpSlPositionData } from "./position-dialog-types";
 import { PositionLimitCloseModal } from "./position-limit-close-modal";
 import { PositionRow } from "./position-row";
 import { PositionTpSlModal } from "./position-tpsl-modal";
-import { positionViewHeadClass, positionViewHeaderClass, positionViewBodyClass, positionsPanelTableShellClass, positionsPanelTabRootClass } from "./positions-panel-table-styles";
+import {
+	accountHeadActionClass,
+	accountHeadClass,
+	accountInlineErrorClass,
+	accountNumHeadClass,
+	accountTableClass,
+	accountTableShellClass,
+	accountTabRootClass,
+	getAriaSort,
+} from "./positions-panel-table-styles";
+import { SortHeadButton } from "./sort-head-button";
 
 type CloseIntent = "close" | "reverse";
 
 export function PositionsTab() {
 	const { address, isConnected } = useConnection();
 	const slippageBps = useMarketOrderSlippageBps();
- const currentAddress = useRef(address); currentAddress.current = address;
- const [sortDescending, setSortDescending] = useState(true);
- const [closeAllOpen, setCloseAllOpen] = useState(false);
- const [closingAll, setClosingAll] = useState(false);
- const closeAllBusy = useRef(false);
+	const currentAddress = useRef(address);
+	currentAddress.current = address;
+	const [sortDescending, setSortDescending] = useState(true);
+	const [closeAllOpen, setCloseAllOpen] = useState(false);
+	const [closingAll, setClosingAll] = useState(false);
+	const closeAllBusy = useRef(false);
 	const { scope } = useExchangeScope();
 	const { setSelectedMarket } = useMarketActions();
 	const { setSide } = useOrderEntryActions();
@@ -107,26 +134,57 @@ export function PositionsTab() {
 			next.delete(assetId);
 			return next;
 		});
- return result.ok;
+		return result.ok;
 	}
 
- const sortedPositions = useMemo(() => [...positions].sort((a, b) => (Number(a.positionValue) - Number(b.positionValue)) * (sortDescending ? -1 : 1)), [positions, sortDescending]);
- const closeAllData = positions.map(p => {
-  const market = markets.getMarket(p.coin); const markPx = Number(mids?.[p.coin]); const size = Math.abs(Number(p.szi));
-  if (typeof market?.assetId !== "number" || !Number.isFinite(markPx) || markPx <= 0 || !Number.isFinite(size) || size <= 0) return null;
-  return { assetId: market.assetId, coin: p.coin, size, markPx, szDecimals: market.szDecimals, isLong: Number(p.szi) > 0, unrealizedPnl: Number(p.unrealizedPnl), roe: Number(p.returnOnEquity) } satisfies ClosePositionData;
- });
- const canCloseAll = closeAllData.length > 0 && closeAllData.every(p => p !== null) && closingAssetIds.size === 0;
- async function handleCloseAll() {
-  if (!canCloseAll || closeAllBusy.current || !address) return;
-  closeAllBusy.current = true; setClosingAll(true); setCloseAllOpen(false);
-  const startAddress = address;
-  try {
-   await closePositionsInSequence(closeAllData, () => currentAddress.current === startAddress,
-    async data => !!data && await submitCloseOrReverse("close", data));
-  } catch (error) { setActionError(error instanceof Error ? error.message : "Could not close positions."); }
-  finally { closeAllBusy.current = false; setClosingAll(false); }
- }
+	const sortedPositions = useMemo(
+		() =>
+			[...positions].sort((a, b) => (Number(a.positionValue) - Number(b.positionValue)) * (sortDescending ? -1 : 1)),
+		[positions, sortDescending],
+	);
+	const closeAllData = positions.map((p) => {
+		const market = markets.getMarket(p.coin);
+		const markPx = Number(mids?.[p.coin]);
+		const size = Math.abs(Number(p.szi));
+		if (
+			typeof market?.assetId !== "number" ||
+			!Number.isFinite(markPx) ||
+			markPx <= 0 ||
+			!Number.isFinite(size) ||
+			size <= 0
+		)
+			return null;
+		return {
+			assetId: market.assetId,
+			coin: p.coin,
+			size,
+			markPx,
+			szDecimals: market.szDecimals,
+			isLong: Number(p.szi) > 0,
+			unrealizedPnl: Number(p.unrealizedPnl),
+			roe: Number(p.returnOnEquity),
+		} satisfies ClosePositionData;
+	});
+	const canCloseAll = closeAllData.length > 0 && closeAllData.every((p) => p !== null) && closingAssetIds.size === 0;
+	async function handleCloseAll() {
+		if (!canCloseAll || closeAllBusy.current || !address) return;
+		closeAllBusy.current = true;
+		setClosingAll(true);
+		setCloseAllOpen(false);
+		const startAddress = address;
+		try {
+			await closePositionsInSequence(
+				closeAllData,
+				() => currentAddress.current === startAddress,
+				async (data) => !!data && (await submitCloseOrReverse("close", data)),
+			);
+		} catch (error) {
+			setActionError(error instanceof Error ? error.message : "Could not close positions.");
+		} finally {
+			closeAllBusy.current = false;
+			setClosingAll(false);
+		}
+	}
 
 	function handleClosePosition(data: ClosePositionData) {
 		submitCloseOrReverse("close", data);
@@ -147,43 +205,68 @@ export function PositionsTab() {
 	}
 
 	function renderPlaceholder() {
-		if (!isConnected) return <Placeholder>{t`Connect your wallet to view positions.`}</Placeholder>;
-		if (positionsLoading) return <Placeholder>{t`Loading positions...`}</Placeholder>;
-		if (positionsError) {
-			return (
-				<Placeholder variant="error">
-					<span>{t`Failed to load positions.`}</span>
-				</Placeholder>
-			);
-		}
+		if (!isConnected) return <ConnectPlaceholder message={t`Connect your wallet to view positions.`} />;
+		if (positionsLoading) return <LoadingRows label={t`Loading positions...`} />;
+		if (positionsError) return <Placeholder variant="error">{t`Failed to load positions.`}</Placeholder>;
 		if (positions.length === 0) return <Placeholder>{t`No active positions.`}</Placeholder>;
 		return null;
 	}
 
 	const placeholder = renderPlaceholder();
+	const headings = [
+		{ label: t`Market`, numeric: false },
+		{ label: t`Size`, numeric: true },
+		{ label: t`Position Value`, numeric: true },
+		{ label: t`Entry Price`, numeric: true },
+		{ label: t`Mark Price`, numeric: true },
+		{ label: t`PNL (ROE %)`, numeric: true },
+		{ label: t`Liq. Price`, numeric: true },
+		{ label: t`Margin`, numeric: true },
+		{ label: t`Funding`, numeric: true },
+		{ label: t`TP/SL`, numeric: true },
+	];
+	const positionValueLabel = headings[2].label;
 
 	return (
-		<div className={cn(positionsPanelTabRootClass, "bg-surface")}>
-
-			{actionError ? <div className="px-2.5 py-1 text-2xs text-error">{actionError}</div> : null}
-			<div className={positionsPanelTableShellClass}>
-				{placeholder ? (
-					<div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">{placeholder}</div>
-				) : (
+		<div className={accountTabRootClass}>
+			{actionError ? <p className={accountInlineErrorClass}>{actionError}</p> : null}
+			<div className={accountTableShellClass}>
+				{placeholder ?? (
 					<ScrollArea className="min-h-0 w-full flex-1">
-						<Table className="table-auto w-max min-w-0">
-       <TableHeader className={positionViewHeaderClass}>
-        <TableRow className="border-0">
-         {[
-          "Market", "Size", "Position Value", "Entry Price", "Mark Price", "PNL (ROE %)", "Liq. Price", "Margin", "Funding", "Close All",
-         ].map(label => <TableHead key={label} scope="col" size="dense" className={positionViewHeadClass} aria-sort={label === "Position Value" ? sortDescending ? "descending" : "ascending" : undefined}>
-          {label === "Position Value" ? <button type="button" onClick={() => setSortDescending(value => !value)} className="inline-flex items-center gap-1 hover:text-fg">{label}<span aria-hidden="true">{sortDescending ? "⌄" : "⌃"}</span></button>
-           : label === "Close All" ? <button type="button" className="text-[#50d8c5] hover:underline disabled:opacity-40" disabled={!canCloseAll || closingAll} onClick={() => setCloseAllOpen(true)}>{closingAll ? "Closing…" : label}</button>
-           : label}
-         </TableHead>)}
-        </TableRow>
-       </TableHeader>
-							<TableBody className={positionViewBodyClass}>
+						<Table className={accountTableClass}>
+							<TableHeader>
+								<TableRow>
+									{headings.map((heading) => (
+										<TableHead
+											key={heading.label}
+											scope="col"
+											className={cn(accountHeadClass, heading.numeric && accountNumHeadClass)}
+											aria-sort={getAriaSort(heading.label === positionValueLabel, sortDescending)}
+										>
+											{heading.label === positionValueLabel ? (
+												<SortHeadButton
+													label={heading.label}
+													descending={sortDescending}
+													onToggle={() => setSortDescending((value) => !value)}
+												/>
+											) : (
+												heading.label
+											)}
+										</TableHead>
+									))}
+									<TableHead scope="col" className={cn(accountHeadClass, accountNumHeadClass)}>
+										<button
+											type="button"
+											className={accountHeadActionClass}
+											disabled={!canCloseAll || closingAll}
+											onClick={() => setCloseAllOpen(true)}
+										>
+											{closingAll ? t`Closing...` : t`Close All`}
+										</button>
+									</TableHead>
+								</TableRow>
+							</TableHeader>
+							<TableBody>
 								{sortedPositions.map((p) => {
 									const assetId = markets.getAssetId(p.coin);
 									return (
@@ -210,13 +293,42 @@ export function PositionsTab() {
 			</div>
 
 			<Modal open={closeAllOpen} onOpenChange={setCloseAllOpen}>
-    <ModalPopup size="sm"><ModalHeader><ModalTitle>Close all positions?</ModalTitle></ModalHeader><ModalContent className="space-y-4">
-     <p className="text-sm">Submit market orders to close all {positions.length} positions shown here. Market slippage and trading fees apply.</p>
-     <p className="text-xs text-fg-muted">Orders are sent one at a time. If an order fails or the wallet changes, remaining orders are stopped.</p>
-     <div className="flex gap-2"><Button variant="outline" className="flex-1" onClick={() => setCloseAllOpen(false)}>Cancel</Button><Button className="flex-1" disabled={!canCloseAll || closingAll} onClick={() => void handleCloseAll()}>Close all at market</Button></div>
-    </ModalContent></ModalPopup>
-   </Modal>
-   <PositionTpSlModal open={tpSlModalOpen} onOpenChange={setTpSlModalOpen} position={selectedTpSlPosition} />
+				<ModalPopup size="sm">
+					<ModalHeader>
+						<ModalTitle>{t`Close all positions?`}</ModalTitle>
+						<ModalDescription>
+							{t`Submit market orders to close all ${positions.length} positions shown here. Market slippage and trading fees apply.`}
+						</ModalDescription>
+					</ModalHeader>
+					<ModalContent className="pb-0">
+						<p className="text-xs text-fg-muted">
+							{t`Orders are sent one at a time. If an order fails or the wallet changes, remaining orders are stopped.`}
+						</p>
+					</ModalContent>
+					<ModalFooter>
+						<Button
+							variant="secondary"
+							intent="neutral"
+							size="md"
+							className="flex-1"
+							onClick={() => setCloseAllOpen(false)}
+						>
+							{t`Cancel`}
+						</Button>
+						<Button
+							variant="filled"
+							intent="neutral"
+							size="md"
+							className="flex-1"
+							disabled={!canCloseAll || closingAll}
+							onClick={() => void handleCloseAll()}
+						>
+							{t`Close all at market`}
+						</Button>
+					</ModalFooter>
+				</ModalPopup>
+			</Modal>
+			<PositionTpSlModal open={tpSlModalOpen} onOpenChange={setTpSlModalOpen} position={selectedTpSlPosition} />
 			<PositionLimitCloseModal
 				open={limitCloseModalOpen}
 				onOpenChange={setLimitCloseModalOpen}

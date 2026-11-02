@@ -1,7 +1,6 @@
+import { Button } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
-import type { Icon } from "@phosphor-icons/react";
-import { FieldLabel } from "@/components/ui/field-label";
-import { Input } from "@/components/ui/input";
+import { NumberInput } from "@/components/ui/number-input";
 import { cn } from "@/lib/cn";
 import { formatUSD } from "@/lib/format";
 import { isPositive } from "@/lib/trade/numbers";
@@ -9,7 +8,6 @@ import { getValueColorClass } from "@/lib/ui/value-color";
 
 interface Props {
 	label: string;
-	icon: Icon;
 	value: string;
 	onChange: (value: string) => void;
 	percentOptions: readonly number[];
@@ -22,7 +20,6 @@ interface Props {
 
 export function PriceInputWithPercent({
 	label,
-	icon: Icon,
 	value,
 	onChange,
 	percentOptions,
@@ -32,50 +29,42 @@ export function PriceInputWithPercent({
 	disabled,
 	referencePrice,
 }: Props) {
+	const hasReference = isPositive(referencePrice);
+
 	return (
-		<div className="space-y-1.5">
-			<div className="flex items-center justify-between">
-				<div className="flex items-center gap-1.5">
-					<FieldLabel>{label}</FieldLabel>
-					<Icon className="size-3 text-fg-muted" />
-				</div>
+		<div className="flex min-w-0 flex-col gap-1">
+			<NumberInput
+				inlineLabel={label}
+				placeholder={t`Price`}
+				value={value}
+				onChange={(e) => onChange(e.target.value)}
+				invalid={!!error}
+				error={error || undefined}
+				disabled={disabled}
+			/>
+			<div className="flex min-h-5 min-w-0 items-center gap-2">
 				{pnlValue !== null && (
-					<span className={cn("text-xs tabular-nums", getValueColorClass(pnlValue))}>
+					<span className={cn("min-w-0 truncate text-xs tabular-nums", getValueColorClass(pnlValue))}>
 						{formatUSD(pnlValue, { signDisplay: "exceptZero" })}
 					</span>
 				)}
-			</div>
-			<div
-				className={cn(
-					"flex items-center rounded-8 border bg-background overflow-hidden transition-[border-color,box-shadow]",
-					error
-						? "border-stroke-error-strong ring-[2px] ring-stroke-error-strong/20"
-						: "border-stroke-weak focus-within:border-stroke-focus focus-within:ring-[2px] focus-within:ring-stroke-focus/20",
-				)}
-			>
-				<Input
-					placeholder={t`Price`}
-					value={value}
-					onChange={(e) => onChange(e.target.value)}
-					className="flex-1 border-0 focus-visible:ring-0 focus-visible:border-transparent tabular-nums bg-transparent"
-					disabled={disabled}
-				/>
-				<div className="flex items-center gap-0.5 px-1.5 border-l border-stroke-weak/40">
+				<div className="ml-auto flex shrink-0 items-center gap-1">
 					{percentOptions.map((p) => (
-						<button
+						<Button
 							key={p}
-							type="button"
+							variant="secondary"
+							intent="neutral"
+							size="xxs"
 							onClick={() => onPercentClick(p)}
-							disabled={disabled || !isPositive(referencePrice)}
-							className="px-1.5 py-1 text-xs font-medium text-fg-muted hover:text-fg hover:bg-fill-weak rounded-xs transition-colors disabled:opacity-50"
+							disabled={disabled || !hasReference}
 							aria-label={t`Set to ${p}%`}
+							className="tabular-nums"
 						>
 							{p}%
-						</button>
+						</Button>
 					))}
 				</div>
 			</div>
-			{error && <div className="text-xs text-error">{error}</div>}
 		</div>
 	);
 }

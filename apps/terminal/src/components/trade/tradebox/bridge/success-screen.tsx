@@ -1,13 +1,13 @@
 import { Button } from "@hypeterminal/ui";
 import { Trans } from "@lingui/react/macro";
-import { CaretDownIcon, CaretUpIcon, CheckCircleIcon, WalletIcon } from "@phosphor-icons/react";
+import { CaretDownIcon, CheckCircleIcon, WalletIcon } from "@phosphor-icons/react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { InfoRow, InfoRowGroup } from "@/components/ui/info-row";
 import { LIFI_EXPLORER_URL } from "@/config/bridge";
 import { formatTokenAmount, processTypeLabel } from "@/lib/bridge/format";
 import { formatDateTimeShort, shortenAddress } from "@/lib/format";
 import type { ProcessDetail } from "@/lib/lifi/use-bridge";
-import { ExplorerLink, HyperCoreUsdcIcon } from "./shared-ui";
+import { disclosureTriggerClass, ExplorerLink, HyperCoreUsdcIcon, StatusBadgeIcon } from "./shared-ui";
 
 interface Props {
 	address: string;
@@ -36,11 +36,11 @@ export function SuccessScreen({
 	return (
 		<div className="flex flex-1 flex-col gap-4">
 			<div className="flex flex-col items-center gap-3 pt-6 pb-2">
-				<div className="flex size-12 items-center justify-center rounded-full bg-success-soft border border-stroke-success-strong/30">
-					<CheckCircleIcon className="size-6 text-success" weight="fill" />
-				</div>
-				<div className="text-center space-y-1">
-					<p className="text-sm font-medium text-fg">
+				<StatusBadgeIcon>
+					<CheckCircleIcon className="size-6 text-market-up" weight="fill" />
+				</StatusBadgeIcon>
+				<div className="space-y-1 text-center">
+					<p className="text-base font-medium text-fg">
 						<Trans>Deposit successful</Trans>
 					</p>
 					<p className="text-xs text-fg-muted">
@@ -49,11 +49,11 @@ export function SuccessScreen({
 				</div>
 			</div>
 
-			<InfoRowGroup className="text-xs">
+			<InfoRowGroup>
 				<InfoRow
 					label={<Trans>Fill status</Trans>}
 					value={
-						<span className="text-success font-medium">
+						<span className="font-medium text-market-up">
 							<Trans>Successful</Trans>
 						</span>
 					}
@@ -63,7 +63,7 @@ export function SuccessScreen({
 				) : null}
 			</InfoRowGroup>
 
-			<InfoRowGroup className="text-xs">
+			<InfoRowGroup className="border-t border-stroke-faint pt-3">
 				<InfoRow
 					label={<Trans>Source</Trans>}
 					value={
@@ -83,7 +83,7 @@ export function SuccessScreen({
 				<InfoRow label={<Trans>Destination</Trans>} value="Hyperliquid" />
 			</InfoRowGroup>
 
-			<InfoRowGroup className="text-xs">
+			<InfoRowGroup className="border-t border-stroke-faint pt-3">
 				<InfoRow
 					label={<Trans>You receive</Trans>}
 					value={
@@ -97,13 +97,12 @@ export function SuccessScreen({
 
 			{processDetails.length > 0 ? (
 				<Collapsible>
-					<CollapsibleTrigger className="flex w-full items-center justify-between rounded-8 px-2 py-1.5 text-xs text-fg-muted hover:bg-fill-hover transition-colors group">
+					<CollapsibleTrigger className={disclosureTriggerClass}>
 						<Trans>More details</Trans>
-						<CaretDownIcon className="size-3 group-data-[state=open]:hidden" />
-						<CaretUpIcon className="size-3 hidden group-data-[state=open]:block" />
+						<CaretDownIcon className="size-3 transition-transform group-data-panel-open:rotate-180 motion-reduce:transition-none" />
 					</CollapsibleTrigger>
 					<CollapsibleContent>
-						<InfoRowGroup className="text-xs">
+						<InfoRowGroup className="px-2">
 							{processDetails.map((detail) => (
 								<InfoRow
 									key={detail.txHash}
@@ -131,11 +130,11 @@ export function SuccessScreen({
 				</Collapsible>
 			) : null}
 
-			<div className="flex gap-2 w-full mt-auto">
-				<Button variant="outline" intent="neutral" size="lg" className="flex-1" onClick={onDone}>
+			<div className="mt-auto flex w-full gap-2">
+				<Button variant="secondary" intent="neutral" size="md" className="flex-1" onClick={onDone}>
 					<Trans>Close</Trans>
 				</Button>
-				<Button variant="filled" intent="brand" size="lg" className="flex-1" onClick={onNewDeposit}>
+				<Button variant="filled" intent="neutral" size="md" className="flex-1" onClick={onNewDeposit}>
 					<Trans>New deposit</Trans>
 				</Button>
 			</div>

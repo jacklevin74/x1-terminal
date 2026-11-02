@@ -1,15 +1,14 @@
 import { Button } from "@hypeterminal/ui";
+import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { ArrowLeftIcon, ArrowRightIcon } from "@phosphor-icons/react";
+import { ArrowRightIcon } from "@phosphor-icons/react";
 import Big from "big.js";
 import { useState } from "react";
+import { NumberInput } from "@/components/ui/number-input";
 import { PERCENT_OPTIONS } from "@/config/bridge";
 import { isValidUsdInput, usdToTokenAmount } from "@/lib/bridge/format";
-import { cn } from "@/lib/cn";
 import type { BridgeToken } from "@/lib/lifi/use-balances";
-import { HyperCoreUsdcIcon, TokenIcon } from "./shared-ui";
-
-const BRIDGE_USD_INPUT_WIDTH = "w-36";
+import { BackButton, HyperCoreUsdcIcon, TokenIcon } from "./shared-ui";
 
 interface Props {
 	token: BridgeToken;
@@ -48,55 +47,25 @@ export function AmountEntryScreen({ token, initialUsd, onBack, onContinue }: Pro
 		if (tokenAmount) onContinue(tokenAmount, usdInput);
 	}
 
+	const chips = PERCENT_OPTIONS.map((p) => ({ label: <Trans>{p}%</Trans>, onClick: () => handlePercent(p) }));
+
 	return (
-		<div className="flex flex-1 flex-col gap-6">
-			<button
-				type="button"
-				onClick={onBack}
-				className="flex items-center gap-1 text-xs text-brand hover:opacity-80 self-start"
-			>
-				<ArrowLeftIcon className="size-3" />
-				<Trans>Back</Trans>
-			</button>
+		<div className="flex flex-1 flex-col gap-4">
+			<BackButton onClick={onBack} />
 
-			<div className="flex flex-col items-center gap-4 py-4">
-				<div className="flex items-baseline justify-center">
-					<span className="text-4xl font-semibold text-fg tabular-nums">$</span>
-					<input
-						type="text"
-						inputMode="decimal"
-						value={usdInput}
-						onChange={handleUsdChange}
-						placeholder="0.00"
-						className={cn(
-							BRIDGE_USD_INPUT_WIDTH,
-							"text-4xl font-semibold text-fg tabular-nums bg-transparent border-none outline-none text-center placeholder:text-fg-disabled",
-						)}
-					/>
-				</div>
+			<NumberInput
+				inlineLabel={t`Amount`}
+				suffix="USD"
+				value={usdInput}
+				onChange={handleUsdChange}
+				maxAllowedDecimals={2}
+				placeholder="0.00"
+				chips={chips}
+				maxLabel={<Trans>Max</Trans>}
+				onMaxClick={handleMax}
+			/>
 
-				<div className="flex items-center gap-2">
-					{PERCENT_OPTIONS.map((p) => (
-						<button
-							key={p}
-							type="button"
-							onClick={() => handlePercent(p)}
-							className="px-3 py-1.5 text-xs font-medium text-fg bg-surface hover:bg-brand/20 rounded-8 transition-colors"
-						>
-							<Trans>{p}%</Trans>
-						</button>
-					))}
-					<button
-						type="button"
-						onClick={handleMax}
-						className="px-3 py-1.5 text-xs font-medium text-fg bg-surface hover:bg-brand/20 rounded-8 transition-colors"
-					>
-						<Trans>Max</Trans>
-					</button>
-				</div>
-			</div>
-
-			<div className="flex items-center justify-center gap-3 rounded-8 border border-stroke-weak p-3">
+			<div className="flex items-center justify-center gap-3 rounded-8 bg-control p-3">
 				<div className="flex items-center gap-2">
 					<TokenIcon token={token} />
 					<div className="text-left">
@@ -106,7 +75,7 @@ export function AmountEntryScreen({ token, initialUsd, onBack, onContinue }: Pro
 						<p className="text-xs font-medium text-fg">{token.symbol}</p>
 					</div>
 				</div>
-				<ArrowRightIcon className="size-4 text-fg-muted shrink-0" />
+				<ArrowRightIcon className="size-4 shrink-0 text-fg-muted" />
 				<div className="flex items-center gap-2">
 					<HyperCoreUsdcIcon />
 					<div className="text-left">
@@ -120,9 +89,9 @@ export function AmountEntryScreen({ token, initialUsd, onBack, onContinue }: Pro
 
 			<Button
 				variant="filled"
-				intent="brand"
-				size="lg"
-				className="w-full mt-auto"
+				intent="neutral"
+				size="md"
+				className="mt-auto w-full"
 				disabled={!canContinue}
 				onClick={handleSubmit}
 			>

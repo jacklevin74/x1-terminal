@@ -11,16 +11,25 @@ interface Props {
 	getBalance: (token: string) => number;
 	disabled?: boolean;
 	className?: string;
+	ariaLabel?: string;
 }
 
-export function TokenSelectorDropdown({ tokens, selectedToken, onSelect, getBalance, disabled, className }: Props) {
+export function TokenSelectorDropdown({
+	tokens,
+	selectedToken,
+	onSelect,
+	getBalance,
+	disabled,
+	className,
+	ariaLabel = "Select token",
+}: Props) {
 	const selected = tokens.find((t) => t.name === selectedToken);
 
 	const items: DropdownItem[] = tokens.map((token) => {
 		const balance = getBalance(token.name);
 		return {
 			label: `${token.name}  ${formatToken(balance, 4)}`,
-			icon: <AssetDisplay coin={token.name} hideName iconClassName="size-5" />,
+			icon: <AssetDisplay coin={token.name} hideName iconClassName="size-4" />,
 			active: token.name === selectedToken,
 			onSelect: () => onSelect(token.name),
 		};
@@ -30,16 +39,19 @@ export function TokenSelectorDropdown({ tokens, selectedToken, onSelect, getBala
 		<Dropdown
 			items={items}
 			disabled={disabled}
+			align="end"
+			triggerVariant="minimal"
+			triggerAriaLabel={`${ariaLabel}: ${selected?.displayName ?? selectedToken}`}
+			triggerClassName="text-fg"
 			trigger={
-				<span className={cn("inline-flex items-center gap-2", className)}>
+				<span className={cn("inline-flex items-center gap-1", className)}>
 					{selected ? (
-						<AssetDisplay coin={selected.name} iconClassName="size-5" nameClassName="text-sm font-medium" />
+						<AssetDisplay coin={selected.name} iconClassName="size-4" nameClassName="text-xs font-medium" />
 					) : (
-						<span className="text-sm font-medium">{selectedToken}</span>
+						<span className="text-xs font-medium">{selectedToken}</span>
 					)}
 				</span>
 			}
-			className={cn(disabled && "opacity-50 cursor-not-allowed")}
 		/>
 	);
 }

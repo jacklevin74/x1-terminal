@@ -1,7 +1,9 @@
 import { Button, Checkbox, Slider } from "@hypeterminal/ui";
-import { CaretDownIcon, PencilIcon, SpinnerGapIcon } from "@phosphor-icons/react";
+import { t } from "@lingui/core/macro";
+import { PencilIcon, SpinnerGapIcon } from "@phosphor-icons/react";
 import { type ChangeEvent, useEffect, useState } from "react";
 import { useConnection, useSwitchChain, useWalletClient } from "wagmi";
+import { InfoRow, InfoRowGroup } from "@/components/ui/info-row";
 import { NumberInput } from "@/components/ui/number-input";
 import { PriceInput } from "@/components/ui/price-input";
 import { FALLBACK_VALUE_PLACEHOLDER } from "@/config/app";
@@ -84,6 +86,7 @@ export function MobileTradeView({ className }: Props) {
 	const [isDraggingSlider, setIsDraggingSlider] = useState(false);
 	const [dragSliderValue, setDragSliderValue] = useState(0);
 	const [approvalError, setApprovalError] = useState<string | null>(null);
+	const [percentInput, setPercentInput] = useState<string | null>(null);
 
 	const canUseTpSl = canUseTpSlForOrder(orderType);
 
@@ -250,6 +253,14 @@ export function MobileTradeView({ className }: Props) {
 	}
 
 	const sliderValue = isDraggingSlider ? dragSliderValue : getSliderValue(sizeValue, maxSize);
+	const percentDisplay = percentInput ?? formatPercentValue(sliderValue);
+
+	function handlePercentInputChange(value: string) {
+		setPercentInput(value);
+		const pct = Number(value);
+		if (value === "" || Number.isNaN(pct)) return;
+		applySizeFromPercent(Math.min(100, Math.max(0, pct)));
+	}
 
 	const buttonContent = getMobileOrderButtonContent({
 		isConnected,
@@ -271,6 +282,8 @@ export function MobileTradeView({ className }: Props) {
 	});
 
 	const isFormDisabled = !isConnected || availableBalance <= 0;
+	const isSliderDisabled = isFormDisabled || maxSize <= 0;
+	const sizeUnit = (sizeMode === "base" ? baseToken : quoteToken) || FALLBACK_VALUE_PLACEHOLDER;
 
 	function formatAvailableBalance(): string {
 		if (!isConnected) return FALLBACK_VALUE_PLACEHOLDER;
@@ -282,7 +295,7 @@ export function MobileTradeView({ className }: Props) {
 	const priceColorClass = change24h !== null ? getValueColorClass(change24h) : "text-fg";
 
 	return (
-		<div className={cn("flex flex-col h-full min-h-0 bg-background", className)}>
+		<div className={cn("flex flex-col h-full min-h-0 bg-surface", className)}>
 			<MarginModeModal
 				open={showMarginDialog}
 				onOpenChange={(open) => {
@@ -301,121 +314,111 @@ export function MobileTradeView({ className }: Props) {
 				showLeverage={capabilities.isLeveraged}
 				onApply={async (mode: MarginMode, lev: number) => applyMarginAndLeverage(mode, lev)}
 			/>
-			<div className="shrink-0 px-4 py-2 border-b border-stroke-weak/60 bg-surface">
-				<div className="flex items-center justify-between">
-					<TokenSelector selectedMarket={market} onValueChange={handleMarketChange} />
-					<div className="text-right">
-						<div className={cn("text-sm font-semibold tabular-nums", priceColorClass)}>
-							${formatPrice(markPx || null, { szDecimals: market?.szDecimals })}
-						</div>
-						{typeof change24h === "number" && (
-							<div className={cn("text-xs tabular-nums", getValueColorClass(change24h))}>
-								{change24h >= 0 ? "+" : ""}
-								{change24h.toFixed(2)}%
-							</div>
-						)}
+			<div className="shrink-0 h-12 px-3 flex items-center justify-between gap-3 border-b border-stroke-weak bg-surface">
+				<TokenSelector selectedMarket={market} onValueChange={handleMarketChange} />
+				<div className="text-right">
+					<div className={cn("text-base font-medium tabular-nums", priceColorClass)}>
+						{formatPrice(markPx || null, { szDecimals: market?.szDecimals })}
 					</div>
+					{typeof change24h === "number" && (
+						<div className={cn("text-xs tabular-nums", getValueColorClass(change24h))}>
+							{change24h >= 0 ? "+" : ""}
+							{change24h.toFixed(2)}%
+						</div>
+					)}
 				</div>
 			</div>
-			<div className="flex-1 min-h-0 overflow-y-auto">
-				<div className="px-3 py-4 space-y-4">
-					<TradeHeader
-						orderType={orderType}
-						side={side}
-						sideLabels={sideLabels}
-						marketKind={market?.kind}
-						onOrderTypeChange={setOrderType}
-						onSideChange={setSide}
-						marginMode={marginMode}
-						leverage={leverage}
-						onMarginLeverageClick={() => setShowMarginDialog(true)}
-						isLeveraged={capabilities.isLeveraged}
+			<div className="flex-1 min-h-0 overflow-y-auto bg-surface">
+				<TradeHeader
+					orderType={orderType}
+					side={side}
+					sideLabels={sideLabels}
+					marketKind={market?.kind}
+					onOrderTypeChange={setOrderType}
+					onSideChange={setSide}
+					marginMode={marginMode}
+					leverage={leverage}
+					onMarginLeverageClick={() => setShowMarginDialog(true)}
+					isLeveraged={capabilities.isLeveraged}
+					insetClassName="px-3"
+				/>
+				<div className="px-3 py-3 flex flex-col gap-3">
+					<InfoRow
+						label={ORDER_TEXT.AVAILABLE_LABEL}
+						value={
+							<>
+								{formatAvailableBalance()}
+								<span className="ml-1 text-fg-muted">{availableBalanceToken}</span>
+							</>
+						}
 					/>
 
-					<div className="flex items-center justify-end text-xs">
-						<span className="text-fg-muted uppercase text-2xs font-medium">{ORDER_TEXT.AVAILABLE_LABEL} </span>
-						<span className={cn("tabular-nums font-semibold text-xs ml-1", getValueColorClass(availableBalance))}>
-							{formatAvailableBalance()}
-						</span>
-						<span className="ml-1 text-2xs tabular-nums text-fg-muted">{availableBalanceToken}</span>
-					</div>
+					<NumberInput
+						inlineLabel={ORDER_TEXT.SIZE_LABEL}
+						inputMode="decimal"
+						placeholder="0.00"
+						value={sizeInput}
+						onChange={(e: ChangeEvent<HTMLInputElement>) => setSizeInput(e.target.value)}
+						suffix={sizeUnit}
+						onSuffixClick={isFormDisabled ? undefined : handleSizeModeToggle}
+						suffixAriaLabel={t`Switch size unit`}
+						disabled={isFormDisabled}
+					/>
 
-					<div className="space-y-3">
-						<p className="text-2xs font-medium uppercase text-fg-muted">{ORDER_TEXT.SIZE_LABEL}</p>
-						<div className="flex items-stretch gap-2">
-							<NumberInput
-								inputMode="decimal"
-								inputSize="xl"
-								placeholder="0.00"
-								value={sizeInput}
-								onChange={(e: ChangeEvent<HTMLInputElement>) => setSizeInput(e.target.value)}
-								className="flex-1 tabular-nums font-semibold"
-								disabled={isFormDisabled}
-							/>
-							<Button
-								variant="outline"
-								intent="neutral"
-								size="sm"
-								onClick={handleSizeModeToggle}
-								disabled={isFormDisabled}
-								iconRight={<CaretDownIcon className="size-3.5" />}
-								className="shrink-0 self-stretch"
-							>
-								{sizeMode === "base" ? baseToken || "\u2014" : quoteToken || "\u2014"}
-							</Button>
-						</div>
-						<div className="space-y-2">
-							<Slider
-								thumbSize="lg"
-								value={[sliderValue]}
-								onValueChange={(v) => {
-									const val = Array.isArray(v) ? v[0] : v;
-									setIsDraggingSlider(true);
-									setDragSliderValue(val);
-								}}
-								onValueCommitted={(v) => {
-									const val = Array.isArray(v) ? v[0] : v;
-									setIsDraggingSlider(false);
-									applySizeFromPercent(val);
-								}}
-								max={100}
-								step={0.1}
-								disabled={isFormDisabled || maxSize <= 0}
-							/>
-							<div className="flex items-center justify-between text-2xs text-fg-muted tabular-nums leading-none">
-								{SIZE_PERCENT_OPTIONS.map((pct) => (
-									<button
-										key={pct}
-										type="button"
-										onClick={() => applySizeFromPercent(pct)}
-										disabled={isFormDisabled || maxSize <= 0}
-										className="hover:text-fg transition-colors disabled:cursor-not-allowed"
-									>
-										{pct}%
-									</button>
-								))}
-							</div>
-						</div>
+					<div className="flex min-w-0 items-center gap-3">
+						<Slider
+							className="min-w-0 flex-1"
+							thumbSize="lg"
+							value={[sliderValue]}
+							onValueChange={(v) => {
+								const val = Array.isArray(v) ? v[0] : v;
+								setIsDraggingSlider(true);
+								setDragSliderValue(val);
+							}}
+							onValueCommitted={(v) => {
+								const val = Array.isArray(v) ? v[0] : v;
+								setIsDraggingSlider(false);
+								applySizeFromPercent(val);
+							}}
+							max={100}
+							step={0.1}
+							tone={side === "buy" ? "up" : "down"}
+							marks={SIZE_PERCENT_OPTIONS}
+							onMarkSelect={applySizeFromPercent}
+							disabled={isSliderDisabled}
+							aria-label={t`Size percentage`}
+						/>
+						<NumberInput
+							className="w-16 shrink-0"
+							placeholder="0"
+							value={percentDisplay}
+							onChange={(e: ChangeEvent<HTMLInputElement>) => handlePercentInputChange(e.target.value)}
+							onBlur={() => setPercentInput(null)}
+							maxAllowedDecimals={1}
+							min={0}
+							max={100}
+							suffix="%"
+							aria-label={t`Size percentage`}
+							disabled={isSliderDisabled}
+						/>
 					</div>
 
 					{usesLimitPrice && (
 						<PriceInput
-							label={ORDER_TEXT.LIMIT_PRICE_LABEL}
+							inlineLabel={ORDER_TEXT.LIMIT_PRICE_LABEL}
 							inputMode="decimal"
-							inputSize="xl"
 							placeholder="0.00"
 							value={limitPriceInput}
 							onChange={(e: ChangeEvent<HTMLInputElement>) => setLimitPriceInput(e.target.value)}
 							onMidClick={setLimitPriceInput}
 							midPrice={markPx}
 							szDecimals={market?.szDecimals}
-							className="tabular-nums font-semibold"
 							disabled={isFormDisabled}
 						/>
 					)}
 
 					{(capabilities.hasReduceOnly || (capabilities.hasTpSl && canUseTpSl)) && (
-						<div className="flex items-center gap-4">
+						<div className="flex min-h-8 items-center gap-4">
 							{capabilities.hasReduceOnly && (
 								<Checkbox
 									checked={reduceOnly}
@@ -435,71 +438,70 @@ export function MobileTradeView({ className }: Props) {
 						</div>
 					)}
 
-					<div className="divide-y divide-stroke-weak/40 text-xs">
+					<InfoRowGroup className="border-t border-stroke-weak pt-2">
 						{capabilities.isLeveraged && (
-							<SummaryRow
+							<InfoRow
 								label={ORDER_TEXT.SUMMARY_LIQ}
 								value={
 									liqPrice ? formatPrice(liqPrice, { szDecimals: market?.szDecimals }) : FALLBACK_VALUE_PLACEHOLDER
 								}
-								valueClass="text-error"
+								valueClassName={liqPrice ? "text-market-down" : undefined}
 							/>
 						)}
-						<SummaryRow
+						<InfoRow
 							label={ORDER_TEXT.SUMMARY_ORDER_VALUE}
 							value={orderValue > 0 ? formatUSD(orderValue) : FALLBACK_VALUE_PLACEHOLDER}
 						/>
 						{capabilities.isLeveraged && (
-							<SummaryRow
+							<InfoRow
 								label={ORDER_TEXT.SUMMARY_MARGIN_REQ}
 								value={marginRequired > 0 ? formatUSD(marginRequired) : FALLBACK_VALUE_PLACEHOLDER}
 							/>
 						)}
-						<div className="flex items-center justify-between py-2.5">
-							<span className="text-fg-muted">{ORDER_TEXT.SUMMARY_SLIPPAGE}</span>
-							<button
-								type="button"
-								onClick={openSettingsDialog}
-								className="inline-flex cursor-pointer items-center gap-1 hover:opacity-80"
-							>
-								<span className="tabular-nums text-error">{slippagePercent}%</span>
-								<PencilIcon className="size-2.5 text-fg-muted" />
-							</button>
-						</div>
-						<SummaryRow
+						<InfoRow
+							label={ORDER_TEXT.SUMMARY_SLIPPAGE}
+							value={
+								<button
+									type="button"
+									onClick={openSettingsDialog}
+									aria-label={t`Edit slippage`}
+									className="relative -mr-1 inline-flex h-6 cursor-pointer items-center gap-1 rounded-8 px-1 before:absolute before:-inset-y-1 max-md:before:-inset-y-2 before:inset-x-0 before:content-[''] text-fg transition-colors duration-150 hover:text-fg-secondary motion-reduce:transition-none"
+								>
+									<span className="tabular-nums">{slippagePercent}%</span>
+									<PencilIcon className="size-3 text-fg-muted" />
+								</button>
+							}
+						/>
+						<InfoRow
 							label={ORDER_TEXT.SUMMARY_FEE}
 							value={orderValue > 0 ? `${feeRatePercent} (${formatUSD(estimatedFee)})` : feeRatePercent}
-							valueClass="text-fg-muted"
 						/>
-					</div>
+					</InfoRowGroup>
 				</div>
 			</div>
 
-			<div className="shrink-0 px-3 py-3 border-t border-stroke-weak/40 bg-background">
+			<div className="shrink-0 px-3 pt-2 pb-2 border-t border-stroke-weak bg-surface">
 				{validation.errors.length > 0 && isConnected && availableBalance > 0 && !validation.needsApproval && (
-					<p className="text-xs text-error mb-2">{validation.errors.join(" \u2022 ")}</p>
+					<p className="text-xs text-market-down mb-2">{validation.errors.join(" \u2022 ")}</p>
 				)}
-				{approvalError && <p className="text-xs text-error mb-2">{approvalError}</p>}
+				{approvalError && <p className="text-xs text-market-down mb-2">{approvalError}</p>}
 				<Button
-					variant="outline"
+					variant="filled"
 					size="lg"
 					onClick={buttonContent.action}
 					disabled={buttonContent.disabled}
-					intent={buttonContent.variant === "cyan" ? "brand" : buttonContent.variant === "buy" ? "neutral" : "error"}
-					className={cn(
-						"w-full",
-						buttonContent.variant === "cyan"
-							? "bg-brand-soft border-stroke-brand-strong text-brand hover:bg-brand-soft/30"
-							: buttonContent.variant === "buy"
-								? "bg-success-soft border-stroke-success-strong text-success hover:bg-success-soft/30"
-								: "bg-error-soft border-stroke-error-strong text-error hover:bg-error-soft/30",
-					)}
-					iconLeft={isSubmitting || isRegistering ? <SpinnerGapIcon className="size-5 animate-spin" /> : undefined}
+					intent={getCtaIntent(buttonContent.variant)}
+					className="w-full"
+					iconLeft={
+						isSubmitting || isRegistering ? (
+							<SpinnerGapIcon className="size-4 animate-spin motion-reduce:animate-none" />
+						) : undefined
+					}
 				>
 					{buttonContent.text}
 				</Button>
-				<MobileBottomNavSpacer />
 			</div>
+			<MobileBottomNavSpacer className="bg-surface" />
 
 			<WalletModal open={walletModalOpen} onOpenChange={setWalletModalOpen} />
 			<OrderToast />
@@ -507,13 +509,15 @@ export function MobileTradeView({ className }: Props) {
 	);
 }
 
-function SummaryRow({ label, value, valueClass }: { label: string; value: string; valueClass?: string }) {
-	return (
-		<div className="flex items-center justify-between py-2.5">
-			<span className="text-fg-muted">{label}</span>
-			<span className={cn("tabular-nums", valueClass ?? "text-fg")}>{value}</span>
-		</div>
-	);
+function getCtaIntent(variant: ButtonContent["variant"]): "brand" | "up" | "down" {
+	if (variant === "buy") return "up";
+	if (variant === "sell") return "down";
+	return "brand";
+}
+
+function formatPercentValue(value: number): string {
+	if (value <= 0) return "";
+	return String(Math.round(value));
 }
 
 interface MobileButtonContentInput {

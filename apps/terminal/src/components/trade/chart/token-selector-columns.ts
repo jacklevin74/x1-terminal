@@ -7,8 +7,8 @@ export type MarketScope = "all" | "perp" | "spot" | "hip3";
 
 export type MarketRow = UnifiedMarketInfo;
 
-const TOKEN_SELECTOR_MOBILE_24H_CHANGE_WIDTH = "w-[7.25rem]";
-const TOKEN_SELECTOR_MOBILE_PRICE_WIDTH = "w-[4.75rem]";
+const TOKEN_SELECTOR_MOBILE_24H_CHANGE_WIDTH = "w-26";
+const TOKEN_SELECTOR_MOBILE_PRICE_WIDTH = "w-20";
 
 const columnHelper = createColumnHelper<MarketRow>();
 
@@ -34,12 +34,13 @@ export function getMarketTableColumnClass(columnId: string, mobile: boolean): st
 		case "price":
 			return "w-16 sm:w-20";
 		case "24h-change":
-			return "w-28 shrink-0";
+			return "w-26";
 		case "oi":
-			return "w-32 shrink-0";
+			return "w-22";
 		case "volume":
+			return "w-20";
 		case "funding":
-			return "w-20 sm:w-24 shrink-0";
+			return "w-22";
 		default:
 			return "w-16 sm:w-20";
 	}
@@ -66,8 +67,8 @@ export const TOKEN_SELECTOR_COLUMNS = [
 	}),
 	columnHelper.accessor((row: MarketRow) => getOiUsd(row.openInterest, row.markPx) ?? undefined, {
 		id: "oi",
-		header: t`Open Interest`,
-		size: 128,
+		header: t`Open Int`,
+		size: 88,
 		sortUndefined: "last",
 	}),
 	columnHelper.accessor("dayNtlVlm", {

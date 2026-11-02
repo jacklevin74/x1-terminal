@@ -1,20 +1,28 @@
-import { Button, Modal, ModalContent, ModalFooter, ModalHeader, ModalPopup, ModalTitle } from "@hypeterminal/ui";
+import {
+	Button,
+	Modal,
+	ModalContent,
+	ModalDescription,
+	ModalFooter,
+	ModalHeader,
+	ModalPopup,
+	ModalTitle,
+} from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { SpinnerGapIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { InfoRow } from "@/components/ui/info-row";
+import { InfoRow, InfoRowGroup } from "@/components/ui/info-row";
 import { NumberInput } from "@/components/ui/number-input";
 import { PriceInput } from "@/components/ui/price-input";
 import { buildOrderPlan } from "@/domain/trade/order-intent";
 import { useSubmitPlan } from "@/hooks/trade/use-submit-plan";
-import { cn } from "@/lib/cn";
 import { formatPercent, formatPrice, formatToken, formatUSD, szDecimalsToPriceDecimals } from "@/lib/format";
 import { useSubscription } from "@/lib/hyperliquid";
 import { formatDecimalFloor, isPositive, toNumber } from "@/lib/trade/numbers";
-import { getValueColorClass } from "@/lib/ui/value-color";
 import { TradingActionButton } from "../components/trading-action-button";
 import type { LimitClosePositionData } from "./position-dialog-types";
+import { getMarketValueClass } from "./positions-panel-table-styles";
 
 interface Props {
 	open: boolean;
@@ -26,7 +34,7 @@ export function PositionLimitCloseModal({ open, onOpenChange, position }: Props)
 	if (!position) return null;
 	return (
 		<Modal open={open} onOpenChange={onOpenChange}>
-			<ModalPopup size="sm" showClose={false}>
+			<ModalPopup size="sm">
 				<PositionLimitCloseModalBody
 					key={`${position.assetId}:${open ? "open" : "closed"}`}
 					position={position}
@@ -99,107 +107,96 @@ function PositionLimitCloseModalBody({ position, onOpenChange }: BodyProps) {
 	}
 
 	const priceDecimals = szDecimalsToPriceDecimals(position.szDecimals);
-	const visibleError = submitError;
+	const sizeExceeds = sizeNum !== null && sizeNum > position.size;
 
 	return (
 		<>
 			<ModalHeader>
 				<ModalTitle>{t`Limit Close`}</ModalTitle>
+				<ModalDescription>
+					{position.isLong ? t`${position.coin} long position` : t`${position.coin} short position`}
+				</ModalDescription>
 			</ModalHeader>
 
-			<ModalContent>
-				<div className="rounded-8 border border-stroke-weak bg-surface p-3 space-y-1 text-xs">
+			<ModalContent className="flex flex-col gap-4">
+				<InfoRowGroup className="rounded-8 bg-surface px-3 py-1">
+					<InfoRow label={t`Size`} value={`${formatToken(position.size, position.szDecimals)} ${position.coin}`} />
+					<InfoRow label={t`Entry Price`} value={formatPrice(position.entryPx, { szDecimals: position.szDecimals })} />
+					<InfoRow label={t`Mark Price`} value={formatPrice(liveMarkPx, { szDecimals: position.szDecimals })} />
 					<InfoRow
-						className="p-0"
-						label={t`Size`}
-						value={`${formatToken(position.size, position.szDecimals)} ${position.coin}`}
-						valueClassName="font-medium tabular-nums"
-					/>
-					<InfoRow
-						className="p-0"
-						label={t`Entry Price`}
-						value={formatPrice(position.entryPx, { szDecimals: position.szDecimals })}
-						valueClassName="font-medium tabular-nums"
-					/>
-					<InfoRow
-						className="p-0"
-						label={t`Mark Price`}
-						value={formatPrice(liveMarkPx, { szDecimals: position.szDecimals })}
-						valueClassName="font-medium tabular-nums text-warning"
-					/>
-					<InfoRow
-						className="p-0 border-t border-stroke-weak pt-3"
 						label={t`Unrealized P&L`}
 						value={
 							<>
-								{formatUSD(position.unrealizedPnl, { signDisplay: "exceptZero" })}
-								<span className="font-normal text-fg-muted ml-1">({formatPercent(position.roe, 1)})</span>
+								{formatUSD(position.unrealizedPnl, { signDisplay: "exceptZero" })}{" "}
+								<span className="text-fg-muted">({formatPercent(position.roe, 1)})</span>
 							</>
 						}
-						valueClassName={cn("font-semibold tabular-nums", getValueColorClass(position.unrealizedPnl))}
+						valueClassName={getMarketValueClass(position.unrealizedPnl)}
 					/>
-				</div>
-			</ModalContent>
+				</InfoRowGroup>
 
-			<div className="px-4 pb-4 space-y-4">
-				<PriceInput
-					label={t`Limit Price`}
-					value={priceInput}
-					onChange={(e) => setPriceInput(e.target.value)}
-					onMidClick={setPriceInput}
-					placeholder="0.00"
-					maxAllowedDecimals={priceDecimals}
-					midPrice={liveMarkPx}
-					szDecimals={position.szDecimals}
-					inputSize="sm"
-					className="w-full"
-				/>
-
-				<div>
+				<div className="flex flex-col gap-2">
+					<PriceInput
+						inlineLabel={t`Price`}
+						value={priceInput}
+						onChange={(e) => setPriceInput(e.target.value)}
+						onMidClick={setPriceInput}
+						placeholder="0.00"
+						maxAllowedDecimals={priceDecimals}
+						midPrice={liveMarkPx}
+						szDecimals={position.szDecimals}
+						className="w-full"
+					/>
 					<NumberInput
-						label={t`Size`}
-						labelValue={
-							<>
-								{t`Available`}:{" "}
-								<span className="underline decoration-dashed underline-offset-2 decoration-stroke-weak">
-									{formatToken(position.size, position.szDecimals)} {position.coin}
-								</span>
-							</>
-						}
-						onLabelValueClick={handleMaxSize}
+						inlineLabel={t`Size`}
+						suffix={position.coin}
+						maxLabel={t`Max`}
+						onMaxClick={handleMaxSize}
 						value={sizeInput}
 						onChange={(e) => setSizeInput(e.target.value)}
 						placeholder="0.00"
 						maxAllowedDecimals={position.szDecimals}
-						inputSize="sm"
+						error={sizeExceeds ? t`Size exceeds position` : undefined}
 						className="w-full"
 					/>
-					{sizeNum !== null && sizeNum > position.size && (
-						<p className="text-xs text-error mt-1">{t`Size exceeds position`}</p>
-					)}
 				</div>
 
-				{estimatedPnl !== null && (
-					<InfoRow
-						className="p-0 text-xs"
-						label={t`Est. P&L at Limit`}
-						value={formatUSD(estimatedPnl, { signDisplay: "exceptZero" })}
-						valueClassName={cn("font-semibold tabular-nums", getValueColorClass(estimatedPnl))}
-					/>
-				)}
+				<InfoRowGroup>
+					<InfoRow label={t`Available`} value={`${formatToken(position.size, position.szDecimals)} ${position.coin}`} />
+					{estimatedPnl !== null && (
+						<InfoRow
+							label={t`Est. P&L at Limit`}
+							value={formatUSD(estimatedPnl, { signDisplay: "exceptZero" })}
+							valueClassName={getMarketValueClass(estimatedPnl)}
+						/>
+					)}
+				</InfoRowGroup>
 
-				{visibleError && (
-					<div className="mt-3 px-2 py-1.5 rounded-8 bg-error-soft border border-stroke-error-weak text-xs text-error">
-						{visibleError}
-					</div>
+				{submitError && (
+					<p role="alert" className="text-xs text-market-down">
+						{submitError}
+					</p>
 				)}
-			</div>
+			</ModalContent>
 
-			<ModalFooter>
-				<Button size="sm" variant="ghost" intent="neutral" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
+			<ModalFooter className="grid grid-cols-2 pt-0">
+				<Button
+					variant="secondary"
+					intent="neutral"
+					size="md"
+					className="w-full"
+					onClick={() => onOpenChange(false)}
+					disabled={isSubmitting}
+				>
 					{t`Cancel`}
 				</Button>
-				<TradingActionButton onClick={handleSubmit} disabled={!canSubmit} className="min-w-24">
+				<TradingActionButton
+					onClick={handleSubmit}
+					disabled={!canSubmit}
+					size="md"
+					intent={position.isLong ? "down" : "up"}
+					className="w-full"
+				>
 					{isSubmitting ? (
 						<>
 							<SpinnerGapIcon className="size-3.5 animate-spin" />

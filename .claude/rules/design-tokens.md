@@ -1,7 +1,7 @@
 ## Design Tokens
 
 - **No hardcoded colors** - Never use hex values like `text-[#2b2e48]` or `bg-[#f1f3f4]`. Always use token utilities from `packages/ui/src/globals.css` + `apps/terminal/src/styles.css`.
-- **No arbitrary font sizes** - Never use `text-[10px]` etc. Use the named scale: `text-3xs` (10px), `text-2xs` (11px), `text-xs` (12px), `text-sm` (14px), `text-base` (16px)+.
+- **No arbitrary font sizes** - Never use `text-[10px]` etc. Use the named scale from `docs/design-system.md` §2: `text-2xs` (11/16, uppercase micro-labels only, with `tracking-micro` = 0.04em), `text-xs` (12/16, default), `text-sm` (14/20, nav links and primary CTAs), `text-base` (16/24, symbol, price, modal titles, mobile inputs), `text-lg` (20/28, empty-state titles only). 10px is removed: `text-3xs` is a deprecated alias of `text-2xs` (11px). Do not use it in new code.
 
 ### Naming rule for NEW tokens
 
@@ -25,20 +25,29 @@ Never cause **literal doubling** of the Tailwind property prefix. If a token is 
 4. If it's used across multiple properties (bg/text), use a single semantic token and let Tailwind generate all three utilities.
 5. Update this doc.
 
-### Surfaces — elevation (sunken → background → surface → overlay)
-- `bg-sunken` page/recessed background (light: `#f5f6fa`, dark: `#000000`)
-- `bg-background` default page background (light: `#ffffff`, dark: `#12131a`)
-- `bg-surface` elevated surfaces, cards (light: `#ffffff`, dark: `#1d1e26`)
-- `bg-overlay` overlays, modals (light: `#ffffff`, dark: `#292b33`)
-- `bg-alternate` alternating rows (light: `#f5f6fa`, dark: `#1d1e26`)
-- `bg-inverse-surface` inverse background
+### Surfaces — elevation (background → surface → control → overlay)
+| Utility | Dark | Light | Use |
+|---|---|---|---|
+| `bg-background` | `#07070a` | `#eef0f4` | Page ground. It shows in the 4px gaps between panels. |
+| `bg-surface` | `#121217` | `#ffffff` | Every panel and card. |
+| `bg-control` | `#22222a` | `#eceef3` | Inputs, buttons, toggles, tab pills, segmented tracks. |
+| `bg-control-hover` | `#2c2c36` | `#e1e4eb` | Hover, and the active segment inside a track. |
+| `bg-overlay` | `#1b1b22` | `#ffffff` | Menus, popovers, tooltips, modals, sheets. |
+| `bg-band` | white / 0.04 | `#0009330a` | Spread row and the table header band. |
+| `bg-sunken` | `#000000` | `#f5f6fa` | Legacy recessed background. |
+| `bg-alternate` | `#121217` | `#f5f6fa` | Legacy alternating rows. |
+| `bg-inverse-surface` | `#ffffff` | `#12131a` | Inverse background. |
 
-> **Light mode gotcha**: `bg-background` and `bg-surface` are both `#ffffff` in light mode — they only differ in dark. Use `bg-sunken` as the container whenever you need a visually distinct inset (e.g. tab switchers, pill groups) so that `bg-surface` children appear elevated in both modes.
+- Elevation: `shadow-menu` (`--elevation-menu`) on menus, popovers, tooltips, modals and sheets. Panels have no shadow.
+- Scrim: `bg-scrim` = rgba(0,0,0,0.6) in dark.
 
 ### Foreground — text intensity
-- `text-fg` primary text (max contrast)
-- `text-fg-muted` secondary/muted text
-- `text-fg-disabled` disabled state
+| Utility | Dark | Light | Use |
+|---|---|---|---|
+| `text-fg` | white / 0.95 | `#000626e5` | Primary values, active tabs, titles. |
+| `text-fg-secondary` | white / 0.72 | `#000933b8` | Secondary values, book size and total, list values. |
+| `text-fg-muted` | white / 0.56 | `#0009338f` | Labels, inactive tabs, table headers, units. |
+| `text-fg-disabled` | white / 0.32 | `#00093352` | Disabled. |
 - `text-fg-inverse` / `text-fg-inverse-muted` / `text-fg-inverse-disabled` inverted text on dark/brand surfaces
 
 ### Semantic — shared bg/text
@@ -62,7 +71,10 @@ For **borders / rings / outlines / dividers** using these semantic colors, use t
 ### Strokes — borders, rings, outlines, dividers
 Use these with `border-*`, `ring-*`, `outline-*`, `divide-*` prefixes. The stroke tokens carry alpha variants (e.g. brand borders are 80% alpha; semantic soft borders are 20% alpha). Collapsing them into flat semantic tokens would lose those alphas, so they stay as `stroke-*`.
 
-- `border-stroke-weak` default structural border (also applied globally via `*`)
+- `border-stroke-weak` (dark white / 0.08, light `#0011661a`) tab baselines and region separators inside a panel (also applied globally via `*`)
+- `border-stroke-faint` (dark white / 0.05, light `#0011660f`) table rows and list rows
+- `ring-stroke-control-focus` (dark white / 0.24, light `#0011663d`) inset 1px focus ring on filled inputs
+- No other hairline alpha in new UI (see `docs/design-system.md` §1).
 - `border-stroke-strong` prominent border
 - `border-stroke-selected` selected/active border (brand)
 - `border-stroke-focus` focus ring / border

@@ -1,3 +1,4 @@
+import { t } from "@lingui/core/macro";
 import { ClientOnly } from "@tanstack/react-router";
 import { Suspense, useState } from "react";
 import { getPositionDex } from "@/domain/market";
@@ -7,6 +8,7 @@ import { useSelectedMarketInfo } from "@/lib/hyperliquid";
 import { createLazyComponent } from "@/lib/lazy";
 import { useRenderCommitTrack } from "@/lib/performance/render-profile";
 import { useTheme } from "@/stores/use-global-settings-store";
+import { ChartStatus } from "./chart-status";
 
 const TradingViewChart = createLazyComponent(() => import("./tradingview-chart"), "TradingViewChart");
 const KlineChart = createLazyComponent(() => import("./kline-chart"), "KlineChart");
@@ -44,7 +46,7 @@ export function ChartPanel() {
 				<ClientOnly>
 					<Suspense fallback={<ChartLoadingFallback />}>
 						<TradingViewChart
-       positionDex={getPositionDex(selectedMarket)}
+							positionDex={getPositionDex(selectedMarket)}
 							symbol={selectedMarket.name}
 							theme={chartTheme}
 							onSwitchToDefault={() => setChartType("default")}
@@ -57,5 +59,9 @@ export function ChartPanel() {
 }
 
 function ChartLoadingFallback() {
-	return <div className="h-full w-full animate-pulse bg-surface" />;
+	return (
+		<div className="relative h-full w-full">
+			<ChartStatus label={t`Loading`} pulse />
+		</div>
+	);
 }

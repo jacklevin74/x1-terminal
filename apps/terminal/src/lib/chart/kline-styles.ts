@@ -1,15 +1,6 @@
 import type { CandleTooltipCustomCallbackData, DeepPartial, Styles } from "klinecharts";
 import { type CandleType, LineType, TooltipShowRule, TooltipShowType, YAxisPosition } from "klinecharts";
-import {
-	chartCrosshairAlpha,
-	chartGridAlpha,
-	chartPaneSeparatorAlpha,
-	chartScaleLineAlpha,
-	colorToHex,
-	colorToRgba,
-	getChartColors,
-	strokeWeakLayerRgba,
-} from "./theme-colors";
+import { colorToCss, colorToHex, colorToRgba, getChartColors } from "./theme-colors";
 
 function formatTooltipTs(ts: number): string {
 	const d = new Date(ts);
@@ -44,6 +35,8 @@ interface KlineStyleOptions {
 	theme?: "light" | "dark";
 }
 
+const CHART_TEXT_SIZE = 12;
+
 export const TRANSPARENT_OVERLAY_STYLES = {
 	rect: { color: "transparent", borderColor: "transparent", borderSize: 0 },
 	polygon: { color: "transparent", borderColor: "transparent", borderSize: 0 },
@@ -52,16 +45,19 @@ export const TRANSPARENT_OVERLAY_STYLES = {
 export function buildKlineStyles(candleType: CandleType, options?: KlineStyleOptions): DeepPartial<Styles> {
 	const colors = getChartColors();
 
-	const textSecondary = colorToHex(colors.textSecondary);
-	const textTertiary = colorToHex(colors.textTertiary);
+	const textSecondary = colorToCss(colors.textSecondary);
+	const textMuted = colorToCss(colors.textMuted);
 	const green = colorToHex(colors.green);
 	const red = colorToHex(colors.red);
-	const gridColor = strokeWeakLayerRgba(colors.border, chartGridAlpha);
-	const scaleLineColor = strokeWeakLayerRgba(colors.border, chartScaleLineAlpha);
-	const overlayTextColor = colorToHex(colors.foreground);
+	const gridColor = colorToCss(colors.borderFaint);
+	const scaleLineColor = colorToCss(colors.border);
+	const textOnMarket = colorToHex(colors.page);
+	const family = colors.fontFamily || undefined;
+	const compact = options?.yAxisInside ?? false;
 
 	const tooltipText = {
-		size: 10,
+		size: CHART_TEXT_SIZE,
+		family,
 		color: textSecondary,
 		marginLeft: 8,
 		marginTop: 4,
@@ -74,28 +70,29 @@ export function buildKlineStyles(candleType: CandleType, options?: KlineStyleOpt
 		line: {
 			show: true,
 			style: LineType.Dashed,
-			dashedValue: [4, 2],
+			dashedValue: [4, 4],
 			size: 1,
-			color: strokeWeakLayerRgba(colors.border, chartCrosshairAlpha),
+			color: textMuted,
 		},
 		text: {
 			show: true,
-			color: colorToHex(colors.background),
-			size: 10,
+			color: colorToCss(colors.foreground),
+			size: CHART_TEXT_SIZE,
+			family,
 			paddingLeft: 4,
 			paddingRight: 4,
-			paddingTop: 2,
-			paddingBottom: 2,
-			borderRadius: 2,
-			backgroundColor: overlayTextColor,
+			paddingTop: 4,
+			paddingBottom: 4,
+			borderRadius: 4,
+			backgroundColor: colorToHex(colors.controlHover),
 			borderSize: 0,
 			borderColor: "transparent",
 		},
 	};
 
 	const axisLine = { show: true, color: scaleLineColor, size: 1 };
-	const tickLine = { show: true, color: scaleLineColor, size: 1, length: 3 };
-	const tickText = { show: true, color: textSecondary, size: 10, marginStart: 4, marginEnd: 4 };
+	const tickLine = { show: true, color: scaleLineColor, size: 1, length: 4 };
+	const tickText = { show: true, color: textMuted, size: CHART_TEXT_SIZE, family, marginStart: 4, marginEnd: 4 };
 
 	return {
 		grid: {
@@ -123,23 +120,24 @@ export function buildKlineStyles(candleType: CandleType, options?: KlineStyleOpt
 			},
 			priceMark: {
 				show: true,
-				high: { show: true, color: textSecondary, textSize: 10 },
-				low: { show: true, color: textSecondary, textSize: 10 },
+				high: { show: true, color: textMuted, textSize: CHART_TEXT_SIZE, textFamily: family },
+				low: { show: true, color: textMuted, textSize: CHART_TEXT_SIZE, textFamily: family },
 				last: {
 					show: true,
-					upColor: overlayTextColor,
-					downColor: overlayTextColor,
-					noChangeColor: overlayTextColor,
+					upColor: green,
+					downColor: red,
+					noChangeColor: textSecondary,
 					line: { show: true, style: LineType.Dashed, size: 1, dashedValue: [4, 4] },
 					text: {
 						show: true,
-						size: 10,
+						size: CHART_TEXT_SIZE,
+						family,
 						paddingLeft: 4,
 						paddingRight: 4,
-						paddingTop: 2,
-						paddingBottom: 2,
-						borderRadius: 2,
-						color: colorToHex(colors.background),
+						paddingTop: 4,
+						paddingBottom: 4,
+						borderRadius: 4,
+						color: textOnMarket,
 					},
 				},
 			},
@@ -150,31 +148,41 @@ export function buildKlineStyles(candleType: CandleType, options?: KlineStyleOpt
 					const { current } = data;
 					const isUp = current.close >= current.open;
 					const candleColor = isUp ? green : red;
+					// Compact (mobile) legend drops the timestamp and Vol so it fits one line.
+					// The crosshair x-axis label shows the time; the volume pane legend shows Vol.
 					return [
+						...(compact
+							? []
+							: [
+									{
+										title: { text: "", color: "transparent" },
+										value: { text: formatTooltipTs(current.timestamp), color: textMuted },
+									},
+								]),
 						{
-							title: { text: "", color: "transparent" },
-							value: { text: formatTooltipTs(current.timestamp), color: textTertiary },
-						},
-						{
-							title: { text: "O ", color: textTertiary },
+							title: { text: "O ", color: textMuted },
 							value: { text: formatPrice(current.open), color: candleColor },
 						},
 						{
-							title: { text: "H ", color: textTertiary },
+							title: { text: "H ", color: textMuted },
 							value: { text: formatPrice(current.high), color: candleColor },
 						},
 						{
-							title: { text: "L ", color: textTertiary },
+							title: { text: "L ", color: textMuted },
 							value: { text: formatPrice(current.low), color: candleColor },
 						},
 						{
-							title: { text: "C ", color: textTertiary },
+							title: { text: "C ", color: textMuted },
 							value: { text: formatPrice(current.close), color: candleColor },
 						},
-						{
-							title: { text: "Vol ", color: textTertiary },
-							value: { text: formatVolume(current.volume ?? 0), color: textSecondary },
-						},
+						...(compact
+							? []
+							: [
+									{
+										title: { text: "Vol ", color: textMuted },
+										value: { text: formatVolume(current.volume ?? 0), color: textSecondary },
+									},
+								]),
 					];
 				},
 				text: tooltipText,
@@ -188,6 +196,11 @@ export function buildKlineStyles(candleType: CandleType, options?: KlineStyleOpt
 					downColor: colorToRgba(colors.red, 0.5),
 					noChangeColor: textSecondary,
 				},
+			],
+			lines: [
+				{ color: colorToHex(colors.accent), size: 1 },
+				{ color: textSecondary, size: 1 },
+				{ color: textMuted, size: 1 },
 			],
 			tooltip: {
 				showRule: TooltipShowRule.Always,
@@ -204,7 +217,7 @@ export function buildKlineStyles(candleType: CandleType, options?: KlineStyleOpt
 			tickLine: options?.yAxisInside ? { show: false } : tickLine,
 			tickText: options?.yAxisInside ? { ...tickText, marginStart: 2, marginEnd: 2 } : tickText,
 		},
-		separator: { color: strokeWeakLayerRgba(colors.border, chartPaneSeparatorAlpha), size: 1 },
+		separator: { color: scaleLineColor, size: 1 },
 		crosshair: {
 			show: true,
 			horizontal: crosshairAxis,

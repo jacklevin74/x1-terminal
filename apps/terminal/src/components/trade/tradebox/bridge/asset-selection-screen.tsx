@@ -5,7 +5,7 @@ import { formatTokenBalance } from "@/lib/bridge/format";
 import { cn } from "@/lib/cn";
 import { formatUSD } from "@/lib/format";
 import { type BridgeToken, useBridgeBalances } from "@/lib/lifi/use-balances";
-import { PoweredByLiFi, TokenIcon } from "./shared-ui";
+import { PoweredByLiFi, StatusBadgeIcon, TokenIcon } from "./shared-ui";
 
 const BRIDGE_ASSET_LIST_MAX_HEIGHT = "max-h-72";
 
@@ -15,8 +15,8 @@ interface TokenRowProps {
 }
 
 function tokenRowStyle(isDust: boolean): string {
-	if (isDust) return "opacity-50 cursor-not-allowed border-transparent";
-	return "border-transparent hover:bg-fill-hover active:bg-fill-weak cursor-pointer";
+	if (isDust) return "cursor-not-allowed";
+	return "cursor-pointer hover:bg-control active:bg-control-hover";
 }
 
 function TokenRow({ token, onSelect }: TokenRowProps) {
@@ -26,27 +26,35 @@ function TokenRow({ token, onSelect }: TokenRowProps) {
 			disabled={token.isDust}
 			onClick={() => onSelect(token)}
 			className={cn(
-				"flex items-center gap-3 px-3 py-2.5 text-left transition-colors rounded-8 w-full border",
+				"flex min-h-12 w-full items-center gap-3 rounded-8 px-3 py-2 text-left transition-colors",
 				tokenRowStyle(token.isDust),
 			)}
 		>
 			<TokenIcon token={token} />
 			<div className="flex-1 min-w-0">
 				<div className="flex items-center gap-1.5">
-					<span className="text-xs font-medium text-fg truncate">{token.symbol}</span>
-					<span className="text-xs text-fg-muted truncate">{token.chainName}</span>
+					<span className={cn("truncate text-xs font-medium", token.isDust ? "text-fg-disabled" : "text-fg")}>
+						{token.symbol}
+					</span>
+					<span className={cn("truncate text-xs", token.isDust ? "text-fg-disabled" : "text-fg-muted")}>
+						{token.chainName}
+					</span>
 				</div>
 				{token.isDust ? (
-					<span className="text-2xs text-fg-disabled truncate block">
+					<span className="block truncate text-xs text-fg-disabled">
 						<Trans>Low balance</Trans>
 					</span>
 				) : (
-					<span className="text-xs text-fg-muted truncate block">{token.name}</span>
+					<span className="block truncate text-xs text-fg-muted">{token.name}</span>
 				)}
 			</div>
 			<div className="text-right shrink-0">
-				<div className="text-xs tabular-nums text-fg">{formatTokenBalance(token.amount, token.decimals)}</div>
-				<div className="text-xs tabular-nums text-fg-muted">{formatUSD(token.amountUSD, 2)}</div>
+				<div className={cn("text-xs tabular-nums", token.isDust ? "text-fg-disabled" : "text-fg")}>
+					{formatTokenBalance(token.amount, token.decimals)}
+				</div>
+				<div className={cn("text-xs tabular-nums", token.isDust ? "text-fg-disabled" : "text-fg-muted")}>
+					{formatUSD(token.amountUSD, 2)}
+				</div>
 			</div>
 		</button>
 	);
@@ -66,18 +74,18 @@ function AssetSelectionLoading() {
 function AssetSelectionError({ onRetry }: { onRetry: () => void }) {
 	return (
 		<div className="flex flex-col items-center gap-4 py-8">
-			<div className="flex size-12 items-center justify-center rounded-full bg-error-soft border border-stroke-error-strong/30">
-				<WarningCircleIcon className="size-6 text-error" />
-			</div>
-			<div className="text-center space-y-1">
-				<p className="text-sm font-medium">
+			<StatusBadgeIcon>
+				<WarningCircleIcon className="size-6 text-market-down" />
+			</StatusBadgeIcon>
+			<div className="space-y-1 text-center">
+				<p className="text-lg font-medium text-fg">
 					<Trans>Failed to load balances</Trans>
 				</p>
 				<p className="text-xs text-fg-muted">
 					<Trans>Could not fetch your token balances</Trans>
 				</p>
 			</div>
-			<Button variant="outline" intent="neutral" size="sm" onClick={onRetry}>
+			<Button variant="secondary" intent="neutral" size="xs" onClick={onRetry}>
 				<Trans>Try Again</Trans>
 			</Button>
 		</div>
@@ -87,11 +95,11 @@ function AssetSelectionError({ onRetry }: { onRetry: () => void }) {
 function AssetSelectionEmpty() {
 	return (
 		<div className="flex flex-col items-center gap-4 py-8">
-			<div className="flex size-12 items-center justify-center rounded-full bg-surface border border-stroke-weak/40">
+			<StatusBadgeIcon>
 				<WalletIcon className="size-6 text-fg-muted" />
-			</div>
-			<div className="text-center space-y-1">
-				<p className="text-sm font-medium">
+			</StatusBadgeIcon>
+			<div className="space-y-1 text-center">
+				<p className="text-lg font-medium text-fg">
 					<Trans>No balances found</Trans>
 				</p>
 				<p className="text-xs text-fg-muted">
@@ -119,7 +127,7 @@ export function AssetSelectionScreen({ address, onSelect }: Props) {
 			<div
 				className={cn(
 					BRIDGE_ASSET_LIST_MAX_HEIGHT,
-					"overflow-y-auto -mx-1 [mask-image:linear-gradient(to_bottom,black_88%,transparent_100%)]",
+					"-mx-1 overflow-y-auto [mask-image:linear-gradient(to_bottom,black_88%,transparent_100%)]",
 				)}
 			>
 				{tokens.map((token) => (

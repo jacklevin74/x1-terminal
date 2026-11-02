@@ -1,4 +1,5 @@
 import { t } from "@lingui/core/macro";
+import { InfoRow, InfoRowGroup } from "@/components/ui/info-row";
 import { FALLBACK_VALUE_PLACEHOLDER } from "@/config/app";
 import { DEFAULT_BUILDER_CONFIG } from "@/config/hyperliquid";
 import { bpsToPercentage, formatPrice, formatUSD } from "@/lib/format";
@@ -17,12 +18,7 @@ interface Props {
 }
 
 function SummaryRow({ label, children }: { label: string; children: React.ReactNode }) {
-	return (
-		<div className="flex items-center justify-between py-1.5">
-			<span className="text-xs tracking-[0.5px] text-fg-muted">{label}</span>
-			<span className="text-xs tabular-nums text-fg">{children}</span>
-		</div>
-	);
+	return <InfoRow label={label} value={children} />;
 }
 
 export function ScaleOrderSummary({
@@ -39,7 +35,7 @@ export function ScaleOrderSummary({
 	const isLeveraged = marketKind !== "spot";
 
 	return (
-		<div className="flex flex-col">
+		<InfoRowGroup>
 			<SummaryRow label={t`Start Price`}>
 				<span className={scaleStart !== null && scaleStart > 0 ? "text-fg" : "text-fg-muted"}>
 					{scaleStart !== null && scaleStart > 0 ? formatPrice(scaleStart, { szDecimals }) : FALLBACK_VALUE_PLACEHOLDER}
@@ -77,6 +73,6 @@ export function ScaleOrderSummary({
 					<span className="text-fg-muted">{`${bpsToPercentage(DEFAULT_BUILDER_CONFIG?.f)}%`}</span>
 				</SummaryRow>
 			)}
-		</div>
+		</InfoRowGroup>
 	);
 }

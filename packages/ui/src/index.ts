@@ -82,6 +82,10 @@ export {
 	dropdownItemVariants,
 	dropdownMinimalTriggerVariants,
 	dropdownTriggerVariants,
+	menuGroupLabelClass,
+	menuItemClass,
+	menuPopupClass,
+	menuSeparatorClass,
 } from "./dropdown";
 export {
 	AdaptiveModal,
@@ -119,11 +123,12 @@ export {
 	type SegmentedControlItemProps,
 	SegmentedControls,
 	type SegmentedControlsProps,
+	type SegmentedControlTone,
 	segmentedControlItemVariants,
 	segmentedControlsVariants,
 } from "./segmented-controls";
 export { Select, type SelectGroupOption, type SelectOption, type SelectProps, selectTriggerVariants } from "./select";
-export { Slider, type SliderProps, type SliderThumbSize, sliderVariants } from "./slider";
+export { Slider, type SliderProps, type SliderThumbSize, type SliderTone, sliderVariants } from "./slider";
 export { Slot, type SlotProps, slotVariants } from "./slot";
 export {
 	Table,
@@ -161,10 +166,25 @@ export {
 } from "./tabs";
 export { Tag, type TagProps, tagVariants } from "./tag";
 export { Text, type TextProps, textVariants } from "./text";
-export { TextInput, type TextInputProps, textInputVariants } from "./text-input";
+export {
+	fieldErrorClass,
+	fieldInlineLabelClass,
+	fieldLabelClass,
+	fieldSuffixClass,
+	TextInput,
+	type TextInputProps,
+	textInputVariants,
+} from "./text-input";
 export { TextLink, type TextLinkProps, textLinkVariants } from "./text-link";
 export { Textarea, type TextareaProps, textareaVariants } from "./textarea";
 export { TextBlock, type TextBlockProps, textBlockVariants } from "./textblock";
 export { Toggle, type ToggleProps, thumbVariants, toggleVariants } from "./toggle";
-export { Tooltip, type TooltipProps, TooltipProvider, tooltipArrowVariants, tooltipPopupVariants } from "./tooltip";
+export {
+	Tooltip,
+	type TooltipProps,
+	TooltipProvider,
+	tooltipArrowVariants,
+	tooltipPopupVariants,
+	tooltipUnderlineClass,
+} from "./tooltip";
 export type { BrandConfig, Size } from "./types";

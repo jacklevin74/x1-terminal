@@ -242,7 +242,7 @@ export function MobileAgentSyncModal({ open, onOpenChange }: MobileAgentSyncModa
 			</ModalHeader>
 
 			<ModalContent className="space-y-4">
-				<div className="flex items-center justify-between gap-3 rounded-8 border border-stroke-weak bg-fill-weak px-3 py-2 text-xs">
+				<div className="flex items-center justify-between gap-3 rounded-8 bg-control px-3 py-2 text-xs">
 					<span className="text-fg-muted">
 						<Trans>Using</Trans>
 					</span>
@@ -269,7 +269,7 @@ export function MobileAgentSyncModal({ open, onOpenChange }: MobileAgentSyncModa
 				)}
 
 				{!isReady && !isLinkExpired && (
-					<div className="rounded-8 border border-stroke-weak bg-fill-weak p-3">
+					<div className="rounded-8 bg-control p-3">
 						<div className="flex items-start gap-3">
 							<ShieldCheckIcon className="mt-0.5 size-5 shrink-0 text-brand" weight="duotone" aria-hidden />
 							<div className="min-w-0 space-y-1">
@@ -373,7 +373,7 @@ function ReadySyncPanel({
 
 	return (
 		<div className="space-y-3">
-			<div className="flex items-start gap-2 rounded-8 border border-stroke-brand-strong/25 bg-fill-weak p-3">
+			<div className="flex items-start gap-2 rounded-8 bg-control p-3">
 				<CheckIcon className="mt-0.5 size-4 shrink-0 text-success" weight="bold" aria-hidden />
 				<div className="min-w-0">
 					<p className="text-sm font-semibold text-fg">
@@ -385,7 +385,7 @@ function ReadySyncPanel({
 				</div>
 			</div>
 
-			<div className="rounded-8 border border-stroke-weak bg-fill-weak p-3">
+			<div className="rounded-8 bg-control p-3">
 				<div className="flex items-center justify-between gap-3">
 					<div className="flex min-w-0 items-center gap-2">
 						<KeyIcon className="size-4 shrink-0 text-icon" aria-hidden />
@@ -410,7 +410,7 @@ function ReadySyncPanel({
 				</p>
 			</div>
 
-			<div className="rounded-8 border border-stroke-weak bg-fill-weak p-3">
+			<div className="rounded-8 bg-control p-3">
 				<div className="flex items-center justify-between gap-3">
 					<div className="min-w-0">
 						<p className="text-sm font-semibold text-fg">
@@ -530,7 +530,7 @@ function ResetMobileAccessPanel({
 			: null;
 
 	return (
-		<div className="rounded-8 border border-stroke-weak bg-fill-weak p-3">
+		<div className="rounded-8 bg-control p-3">
 			<div className="flex items-start justify-between gap-3">
 				<div className="min-w-0 space-y-1">
 					<p className="text-sm font-semibold text-fg">

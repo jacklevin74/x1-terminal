@@ -6,7 +6,7 @@ const tableVariants = cva(["w-full caption-bottom border-collapse"], {
 	variants: {
 		variant: {
 			default: "",
-			striped: "[&_tbody>tr:nth-child(odd)]:bg-fill-weaker",
+			striped: "[&_tbody>tr:nth-child(odd)]:bg-band",
 		},
 	},
 	defaultVariants: {
@@ -14,23 +14,31 @@ const tableVariants = cva(["w-full caption-bottom border-collapse"], {
 	},
 });
 
-const tableHeadVariants = cva(["text-left align-middle font-semibold text-fg-muted whitespace-nowrap"], {
-	variants: {
-		size: {
-			default: "h-12 px-6 text-xs",
-			dense: "h-8 px-2.5 py-2 text-2xs",
+const tableHeadVariants = cva(
+	[
+		"text-left align-middle text-2xs font-normal uppercase tracking-micro text-fg-muted whitespace-nowrap",
+		"first:pl-3 last:pr-3",
+	],
+	{
+		variants: {
+			size: {
+				default: "h-6 px-2",
+				dense: "h-6 px-2",
+				picker: "h-6 px-2",
+			},
+		},
+		defaultVariants: {
+			size: "default",
 		},
 	},
-	defaultVariants: {
-		size: "default",
-	},
-});
+);
 
-const tableCellVariants = cva(["align-middle text-fg-muted"], {
+const tableCellVariants = cva(["align-middle text-xs font-normal text-fg tabular-nums first:pl-3 last:pr-3"], {
 	variants: {
 		size: {
-			default: "h-20 px-6 text-sm",
-			dense: "h-auto px-2.5 py-2 text-2xs leading-normal",
+			default: "h-7 px-2",
+			dense: "h-7 px-2",
+			picker: "h-10 px-2",
 		},
 	},
 	defaultVariants: {
@@ -47,24 +55,35 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(({ className, varia
 ));
 Table.displayName = "Table";
 
-interface TableHeaderProps extends React.HTMLAttributes<HTMLTableSectionElement> {}
+interface TableHeaderProps extends React.HTMLAttributes<HTMLTableSectionElement> {
+	band?: boolean;
+}
 
-const TableHeader = React.forwardRef<HTMLTableSectionElement, TableHeaderProps>(({ className, ...props }, ref) => (
-	<thead className={cn("[&_tr]:border-y [&_tr]:border-stroke-weak", className)} ref={ref} {...props} />
-));
+const TableHeader = React.forwardRef<HTMLTableSectionElement, TableHeaderProps>(
+	({ className, band = false, ...props }, ref) => (
+		<thead className={cn(band && "bg-band", className)} ref={ref} {...props} />
+	),
+);
 TableHeader.displayName = "TableHeader";
 
 interface TableBodyProps extends React.HTMLAttributes<HTMLTableSectionElement> {}
 
 const TableBody = React.forwardRef<HTMLTableSectionElement, TableBodyProps>(({ className, ...props }, ref) => (
-	<tbody className={cn("[&_tr]:border-b [&_tr]:border-stroke-weak", className)} ref={ref} {...props} />
+	<tbody
+		className={cn(
+			"[&_tr]:border-t [&_tr]:border-stroke-faint [&_tr]:transition-colors [&_tr:hover]:bg-control/50",
+			className,
+		)}
+		ref={ref}
+		{...props}
+	/>
 ));
 TableBody.displayName = "TableBody";
 
 interface TableFooterProps extends React.HTMLAttributes<HTMLTableSectionElement> {}
 
 const TableFooter = React.forwardRef<HTMLTableSectionElement, TableFooterProps>(({ className, ...props }, ref) => (
-	<tfoot className={cn("border-t border-stroke-weak font-semibold text-fg", className)} ref={ref} {...props} />
+	<tfoot className={cn("border-t border-stroke-weak font-medium text-fg", className)} ref={ref} {...props} />
 ));
 TableFooter.displayName = "TableFooter";
 

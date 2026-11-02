@@ -10,7 +10,7 @@ html, body,
 [class*="legend-"],
 [class*="value-"],
 .apply-common-tooltip {
-	font-family: 'IBM Plex Sans Variable', ui-sans-serif, system-ui, sans-serif !important;
+	font-family: var(--tv-font, ui-sans-serif, system-ui, sans-serif) !important;
 	font-size: 12px !important;
 	font-weight: 400 !important;
 	-webkit-font-smoothing: antialiased;
@@ -29,7 +29,7 @@ html, body,
 
 ::-webkit-scrollbar-thumb {
 	background: var(--tv-border);
-	border-radius: 3px;
+	border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -52,15 +52,16 @@ body,
 /* ========== TOP TOOLBAR & CHROME ========== */
 .layout__area--top {
 	border-bottom: 1px solid var(--tv-toolbar-border, var(--tv-border)) !important;
-	height: 36px !important;
-	min-height: 36px !important;
+	box-sizing: border-box !important;
+	height: 32px !important;
+	min-height: 32px !important;
 }
 
 /* Compact buttons to reduce hover area */
 .layout__area--top button {
 	min-width: unset !important;
-	padding-left: 5px !important;
-	padding-right: 5px !important;
+	padding-left: 4px !important;
+	padding-right: 4px !important;
 	border-radius: 4px !important;
 }
 
@@ -68,10 +69,6 @@ body,
 .layout__area--top svg {
 	width: 14px !important;
 	height: 14px !important;
-}
-
-[data-ht-active="true"] {
-	font-weight: 600 !important;
 }
 
 .layout__area--left {

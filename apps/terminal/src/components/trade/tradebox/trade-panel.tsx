@@ -10,7 +10,6 @@ import { getOrderPrice } from "@/domain/trade/order/price";
 import { useFeeRates } from "@/hooks/trade/use-fee-rates";
 import { useOrderEntryData } from "@/hooks/trade/use-order-entry-data";
 import { useOrderSubmit } from "@/hooks/trade/use-order-submit";
-import { cn } from "@/lib/cn";
 import { useAgentRegistration, useAgentStatus, useSelectedMarketInfo, useUserPositions } from "@/lib/hyperliquid";
 import type { MarginMode } from "@/lib/trade/margin-mode";
 import { toNumber, toNumberOrZero } from "@/lib/trade/numbers";
@@ -353,7 +352,7 @@ export function TradePanel() {
 	}
 
 	return (
-		<div className="flex flex-col bg-surface">
+		<div className="flex flex-col">
 			<MarginModeModal
 				open={activeModal === "marginMode"}
 				onOpenChange={(open) => {
@@ -373,20 +372,21 @@ export function TradePanel() {
 				onApply={handleMarginApply}
 			/>
 
-			<div className="flex flex-col gap-5 px-3 py-3">
-				<TradeHeader
-					orderType={orderType}
-					side={side}
-					sideLabels={sideLabels}
-					marketKind={market?.kind}
-					onOrderTypeChange={setOrderType}
-					onSideChange={setSide}
-					marginMode={marginMode}
-					leverage={leverage}
-					onMarginLeverageClick={() => setActiveModal("marginMode")}
-					isLeveraged={capabilities.isLeveraged}
-				/>
+			<TradeHeader
+				orderType={orderType}
+				side={side}
+				sideLabels={sideLabels}
+				marketKind={market?.kind}
+				onOrderTypeChange={setOrderType}
+				onSideChange={setSide}
+				marginMode={marginMode}
+				leverage={leverage}
+				onMarginLeverageClick={() => setActiveModal("marginMode")}
+				isLeveraged={capabilities.isLeveraged}
+				insetClassName="px-3"
+			/>
 
+			<div className="flex flex-col gap-4 px-3 pt-3 pb-3">
 				<TradeFormFields
 					price={price}
 					positionSize={positionSize}
@@ -397,26 +397,22 @@ export function TradePanel() {
 					onSwapClick={() => swapTargetToken && openSwapModal(DEFAULT_QUOTE_TOKEN, swapTargetToken)}
 				/>
 
-				<div className="flex flex-col gap-3 pt-5 pb-1">
+				<div className="flex flex-col gap-2">
 					{validation.errors.length > 0 && isConnected && availableBalance > 0 && (
-						<div className="text-xs text-error">{validation.errors.join(" • ")}</div>
+						<div className="text-xs text-market-down">{validation.errors.join(" • ")}</div>
 					)}
 
-					{approvalError && <div className="text-xs text-error">{approvalError}</div>}
+					{approvalError && <div className="text-xs text-market-down">{approvalError}</div>}
 
 					<Button
 						variant="filled"
-						size="xs"
-						intent={buttonContent.variant === "buy" ? "brand" : buttonContent.variant === "sell" ? "error" : "brand"}
+						size="md"
+						intent={getCtaIntent(buttonContent.variant)}
 						onClick={buttonContent.action}
 						disabled={buttonContent.disabled}
-						className={cn(
-							"h-10 w-full px-3 text-sm font-semibold focus-visible:outline-offset-1",
-							buttonContent.variant === "buy" && "bg-market-up text-background",
-							buttonContent.variant === "sell" && "bg-market-down text-background",
-						)}
+						className="w-full"
 						aria-label={buttonContent.text}
-						iconLeft={isSubmitting || isRegistering ? <SpinnerGapIcon className="size-3 animate-spin" /> : undefined}
+						iconLeft={isSubmitting || isRegistering ? <SpinnerGapIcon className="size-4 animate-spin" /> : undefined}
 					>
 						{buttonContent.text}
 					</Button>
@@ -439,4 +435,10 @@ function getSwapTargetToken(market: NonNullable<ReturnType<typeof useSelectedMar
 	if (quoteToken === DEFAULT_QUOTE_TOKEN) return null;
 
 	return quoteToken;
+}
+
+function getCtaIntent(variant: string | undefined): "up" | "down" | "brand" {
+	if (variant === "buy") return "up";
+	if (variant === "sell") return "down";
+	return "brand";
 }

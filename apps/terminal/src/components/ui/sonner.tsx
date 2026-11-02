@@ -22,17 +22,17 @@ function Toaster(props: ToasterProps) {
 				loading: <SpinnerGapIcon className="size-4 animate-spin" />,
 			}}
 			toastOptions={{
-				className: "text-xs font-sans",
+				className: "text-xs font-sans shadow-menu",
 			}}
 			style={
 				{
 					"--normal-bg": "var(--bg-overlay)",
 					"--normal-text": "var(--text-strong)",
-					"--normal-border": "var(--stroke-weak)",
+					"--normal-border": "var(--bg-overlay)",
 					"--border-radius": "var(--radius-8)",
 					"--success-bg": "var(--bg-overlay)",
 					"--success-text": "var(--text-success)",
-					"--success-border": "var(--text-success)",
+					"--success-border": "var(--bg-overlay)",
 					"--error-bg": "var(--bg-overlay)",
 					"--error-text": "var(--text-error)",
 					"--error-border": "var(--text-error)",

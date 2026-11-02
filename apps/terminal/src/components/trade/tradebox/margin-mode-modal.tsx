@@ -1,11 +1,22 @@
-import { Button, Modal, ModalContent, ModalFooter, ModalHeader, ModalPopup, ModalTitle } from "@hypeterminal/ui";
+import {
+	Badge,
+	Button,
+	Modal,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+	ModalPopup,
+	ModalTitle,
+	SegmentedControlItem,
+	SegmentedControls,
+} from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { CaretDownIcon, CheckIcon, ShieldIcon, SpinnerGapIcon, StackIcon, WarningIcon } from "@phosphor-icons/react";
 import { useState } from "react";
+import { FieldLabel } from "@/components/ui/field-label";
 import { MARGIN_MODE_SUCCESS_DURATION_MS } from "@/config/time";
 import { useAutoCloseSuccess } from "@/hooks/ui/use-auto-close-success";
-import { cn } from "@/lib/cn";
 import type { MarginMode } from "@/lib/trade/margin-mode";
 import { TradingActionButton } from "../components/trading-action-button";
 import { LeverageSlider } from "./leverage-slider";
@@ -24,7 +35,7 @@ export function MarginModeToggle({ mode, disabled, onClick }: MarginModeTogglePr
 
 	return (
 		<Button
-			variant="outline"
+			variant="secondary"
 			intent="neutral"
 			size="sm"
 			onClick={onClick}
@@ -78,41 +89,6 @@ const MODE_OPTIONS: Array<{
 	},
 ];
 
-interface ModeOptionProps {
-	option: (typeof MODE_OPTIONS)[number];
-	isSelected: boolean;
-	isCurrent: boolean;
-	isDisabled: boolean;
-	isUpdating: boolean;
-	onSelect: () => void;
-}
-
-function ModeOption({ option, isSelected, isCurrent, isDisabled, isUpdating, onSelect }: ModeOptionProps) {
-	const Icon = option.icon;
-
-	return (
-		<button
-			type="button"
-			onClick={onSelect}
-			disabled={isUpdating || isDisabled}
-			className={cn(
-				"flex w-full items-center gap-2 rounded-xs px-3 py-2.5 text-left transition-colors",
-				isSelected ? "bg-surface text-fg" : "text-fg-muted hover:text-fg",
-				isDisabled && "opacity-40 cursor-not-allowed",
-			)}
-		>
-			<Icon className={cn("size-3.5 shrink-0", isSelected ? "text-brand" : "text-fg-muted")} />
-			<span className="text-xs font-semibold">{option.label()}</span>
-			{isCurrent && (
-				<span className="ml-auto text-2xs font-medium uppercase text-fg-muted">
-					<Trans>Current</Trans>
-				</span>
-			)}
-			{isSelected && !isCurrent && <CheckIcon className="ml-auto size-3 text-brand" />}
-		</button>
-	);
-}
-
 export function MarginModeModal({ open, onOpenChange, ...rest }: Props) {
 	return (
 		<Modal open={open} onOpenChange={onOpenChange}>
@@ -165,6 +141,10 @@ function MarginModeModalBody({
 
 	const selectedModeDescription = MODE_OPTIONS.find((o) => o.id === selectedMode)?.description();
 
+	function handleModeChange(value: string) {
+		if (value === "cross" || value === "isolated") setSelectedMode(value);
+	}
+
 	return (
 		<>
 			<ModalHeader>
@@ -173,43 +153,43 @@ function MarginModeModalBody({
 				</ModalTitle>
 			</ModalHeader>
 
-			<ModalContent className="space-y-5">
-				<div className="space-y-2.5">
-					<p className="text-2xs font-semibold uppercase text-fg-muted">
+			<ModalContent className="flex flex-col gap-4">
+				<div className="flex flex-col gap-2">
+					<FieldLabel>
 						<Trans>Margin mode</Trans>
-					</p>
-					<div className="grid grid-cols-2 gap-0.5 rounded-xs bg-sunken p-1">
-						{MODE_OPTIONS.map((option) => (
-							<ModeOption
-								key={option.id}
-								option={option}
-								isSelected={selectedMode === option.id}
-								isCurrent={currentMode === option.id}
-								isDisabled={isOnlyIsolated && option.id === "cross"}
-								isUpdating={isUpdating}
-								onSelect={() => setSelectedMode(option.id)}
-							/>
-						))}
-					</div>
-					{selectedModeDescription && (
-						<p className="text-2xs leading-relaxed text-pretty text-fg-muted">{selectedModeDescription}</p>
-					)}
+					</FieldLabel>
+					<SegmentedControls value={selectedMode} onValueChange={handleModeChange} fullWidth disabled={isUpdating}>
+						{MODE_OPTIONS.map((option) => {
+							const Icon = option.icon;
+							return (
+								<SegmentedControlItem
+									key={option.id}
+									value={option.id}
+									disabled={isOnlyIsolated && option.id === "cross"}
+									icon={<Icon className="size-3.5" />}
+								>
+									{option.label()}
+									{currentMode === option.id && (
+										<Badge tone="neutral" size="sm" className="ml-1 text-2xs uppercase tracking-micro">
+											<Trans>Current</Trans>
+										</Badge>
+									)}
+								</SegmentedControlItem>
+							);
+						})}
+					</SegmentedControls>
+					{selectedModeDescription && <p className="text-xs text-pretty text-fg-muted">{selectedModeDescription}</p>}
 				</div>
 
 				{showLeverage && maxLeverage > 1 && (
-					<div className="space-y-3 border-t border-stroke-weak/60 pt-4">
-						<div className="flex items-center justify-between">
-							<p className="text-2xs font-semibold uppercase text-fg-muted">
+					<div className="flex flex-col gap-2 border-t border-stroke-weak pt-4">
+						<div className="flex min-h-6 items-center justify-between">
+							<FieldLabel>
 								<Trans>Leverage</Trans>
-							</p>
-							<div className="flex items-center gap-1.5 tabular-nums">
-								{leverageDirty && (
-									<>
-										<span className="text-xs text-fg-muted">{currentLeverage}×</span>
-										<span className="text-xs text-fg-muted">→</span>
-									</>
-								)}
-								<span className="text-sm font-semibold text-fg">{displayLeverage}×</span>
+							</FieldLabel>
+							<div className="flex items-center gap-1 tabular-nums">
+								{leverageDirty && <span className="text-xs text-fg-muted">{currentLeverage}× →</span>}
+								<span className="text-base font-medium text-fg">{displayLeverage}×</span>
 							</div>
 						</div>
 						<LeverageSlider
@@ -222,17 +202,17 @@ function MarginModeModalBody({
 				)}
 
 				{cannotSwitch && (
-					<div className="flex items-start gap-2 rounded-xs border border-stroke-warning-strong/20 bg-warning-soft/10 p-2.5">
+					<div className="flex items-start gap-2 rounded-8 bg-warning-soft p-3">
 						<WarningIcon className="mt-0.5 size-3.5 shrink-0 text-warning" />
-						<p className="text-xs leading-relaxed text-warning">
+						<p className="text-xs text-warning">
 							<Trans>Cannot switch to Isolated mode with an open position. Close your position first.</Trans>
 						</p>
 					</div>
 				)}
 
 				{updateError && (
-					<div className="flex items-center gap-2 rounded-xs border border-stroke-error-strong/20 bg-error-soft p-2.5 text-xs text-error">
-						<WarningIcon className="size-3.5 shrink-0" />
+					<div className="flex items-start gap-2 rounded-8 bg-error-soft p-3 text-xs text-market-down">
+						<WarningIcon className="mt-0.5 size-3.5 shrink-0" />
 						<span className="min-w-0 flex-1">{updateError.message || t`Update failed`}</span>
 					</div>
 				)}
@@ -240,28 +220,22 @@ function MarginModeModalBody({
 
 			<ModalFooter>
 				{!showSuccess && (
-					<Button variant="ghost" intent="neutral" size="sm" onClick={handleCancel} disabled={isUpdating}>
+					<Button variant="secondary" intent="neutral" size="md" onClick={handleCancel} disabled={isUpdating}>
 						<Trans>Cancel</Trans>
 					</Button>
 				)}
 				{showSuccess ? (
-					<Button
-						variant="filled"
-						intent="neutral"
-						size="sm"
-						disabled
-						className="gap-1.5 border-stroke-success-strong/30 bg-success-soft text-success disabled:opacity-100"
-						iconLeft={<CheckIcon className="size-3.5" weight="bold" />}
-					>
+					<output className="inline-flex h-9 items-center gap-1.5 px-4 text-sm font-medium text-market-up">
+						<CheckIcon className="size-4" weight="bold" />
 						<Trans>Updated</Trans>
-					</Button>
+					</output>
 				) : (
 					<TradingActionButton
 						onClick={handleConfirm}
 						disabled={!isDirty || isUpdating || cannotSwitch}
-						className="gap-1.5"
+						size="md"
+						iconLeft={isUpdating ? <SpinnerGapIcon className="size-4 animate-spin" /> : undefined}
 					>
-						{isUpdating && <SpinnerGapIcon className="size-3.5 animate-spin" />}
 						<Trans>Confirm</Trans>
 					</TradingActionButton>
 				)}

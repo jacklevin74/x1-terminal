@@ -1,5 +1,5 @@
 import { t } from "@lingui/core/macro";
-import { ArrowSquareOutIcon, ClockCounterClockwiseIcon } from "@phosphor-icons/react";
+import { ArrowSquareOutIcon } from "@phosphor-icons/react";
 import { Skeleton } from "boneyard-js/react";
 import { useConnection } from "wagmi";
 import { FALLBACK_VALUE_PLACEHOLDER } from "@/config/app";
@@ -39,7 +39,7 @@ export function MobileHistoryTab({ className }: Props) {
 
 	if (!isConnected) {
 		return (
-			<div className="flex-1 flex items-center justify-center p-6 text-sm text-fg-muted">
+			<div className="flex-1 flex items-center justify-center px-3 py-6 text-center text-xs text-fg-muted">
 				{t`Connect your wallet to view trade history.`}
 			</div>
 		);
@@ -47,7 +47,7 @@ export function MobileHistoryTab({ className }: Props) {
 
 	if (status === "error") {
 		return (
-			<div className="flex-1 flex items-center justify-center p-6 text-sm text-error">
+			<div className="flex-1 flex flex-col items-center justify-center px-3 py-6 text-center text-xs text-market-down">
 				<span>{t`Failed to load trade history.`}</span>
 				{error instanceof Error && <span className="mt-1 text-xs text-fg-muted">{error.message}</span>}
 			</div>
@@ -56,19 +56,18 @@ export function MobileHistoryTab({ className }: Props) {
 
 	if (status === "active" && fills.length === 0) {
 		return (
-			<div className="flex-1 flex items-center justify-center p-6 text-sm text-fg-muted">{t`No fills found.`}</div>
+			<div className="flex-1 flex items-center justify-center px-3 py-6 text-center text-xs text-fg-muted">{t`No fills found.`}</div>
 		);
 	}
 
 	return (
 		<Skeleton name="history-tab" loading={status === "subscribing" || status === "idle"}>
 			<div className={cn("flex-1 min-h-0 flex flex-col", className)}>
-				<div className="px-3 py-2 flex items-center gap-2 text-xs uppercase tracking-wider text-fg-muted">
-					<ClockCounterClockwiseIcon className="size-3" />
-					{t`Trade History`}
-					<span className="font-semibold text-brand ml-auto tabular-nums">{headerCount}</span>
+				<div className="shrink-0 h-10 px-3 flex items-center justify-between gap-2">
+					<span className="text-2xs uppercase tracking-micro text-fg-muted">{t`Trade History`}</span>
+					<span className="text-xs tabular-nums text-fg">{headerCount}</span>
 				</div>
-				<div className="flex-1 min-h-0 overflow-y-auto px-3 pb-3 space-y-2">
+				<div className="flex-1 min-h-0 overflow-y-auto divide-y divide-stroke-faint border-t border-stroke-faint">
 					{fills.map((fill) => {
 						const fee = toNumber(fill.fee);
 						const closedPnl = toNumber(fill.closedPnl);
@@ -78,24 +77,18 @@ export function MobileHistoryTab({ className }: Props) {
 						const explorerUrl = getExplorerTxUrl(fill.hash);
 
 						return (
-							<div
-								key={`${fill.hash}-${fill.tid}`}
-								className="rounded-xs border border-stroke-weak bg-surface overflow-hidden"
-							>
-								<div className="flex items-center justify-between px-3 py-1.5 border-b border-stroke-weak">
+							<div key={`${fill.hash}-${fill.tid}`} className="flex flex-col gap-3 px-3 py-3">
+								<div className="flex items-center justify-between gap-2">
 									<div className="flex items-center gap-2">
 										<AssetBadge
 											coin={fill.coin}
 											side={isBuy ? "buy" : "sell"}
 											onClick={() => setSelectedMarket(scope, fill.coin)}
-											nameClassName="text-sm"
+											appearance="plain"
+											className="min-h-8"
+											nameClassName="text-base font-medium text-fg"
 										/>
-										<span
-											className={cn(
-												"text-2xs font-medium uppercase",
-												isLiquidation ? "text-error" : isBuy ? "text-success" : "text-error",
-											)}
-										>
+										<span className={cn("text-xs font-medium", getFillDirectionClass(isLiquidation, isBuy))}>
 											{isLiquidation ? t`Liquidated` : fill.dir}
 										</span>
 									</div>
@@ -106,24 +99,25 @@ export function MobileHistoryTab({ className }: Props) {
 									)}
 								</div>
 
-								<div className="grid grid-cols-3 divide-x divide-stroke-weak">
+								<div className="grid grid-cols-3 gap-3">
 									<MetricCell label={t`Price`} value={formatUSD(fill.px)} />
 									<MetricCell label={t`Size`} value={formatNumber(fill.sz, markets.getSzDecimals(fill.coin))} />
 									<MetricCell
 										label={t`Fee`}
+										align="end"
 										value={formatToken(fill.fee, { symbol: fill.feeToken })}
 										valueClass={fee !== null ? getValueColorClass(fee) : undefined}
 									/>
 								</div>
 
-								<div className="flex items-center justify-between px-3 py-1.5">
+								<div className="flex items-center justify-between gap-2">
 									<span className="text-xs text-fg-muted tabular-nums">{formatDateTimeShort(fill.time)}</span>
 									{explorerUrl && (
 										<a
 											href={explorerUrl}
 											target="_blank"
 											rel="noopener noreferrer"
-											className="flex items-center gap-1 text-xs text-fg-muted hover:text-fg active:text-fg touch-manipulation"
+											className="-mr-1 inline-flex min-h-8 items-center gap-1 rounded-8 px-1 text-xs text-fg-muted transition-colors duration-150 hover:text-fg active:text-fg touch-manipulation motion-reduce:transition-none"
 										>
 											{t`Explorer`}
 											<ArrowSquareOutIcon className="size-3" aria-hidden="true" />
@@ -137,4 +131,9 @@ export function MobileHistoryTab({ className }: Props) {
 			</div>
 		</Skeleton>
 	);
+}
+
+function getFillDirectionClass(isLiquidation: boolean, isBuy: boolean): string {
+	if (isLiquidation || !isBuy) return "text-market-down";
+	return "text-market-up";
 }

@@ -5,22 +5,22 @@ import { cn } from "./utils";
 
 type BadgeTone = "error" | "warning" | "success" | "information" | "neutral" | "brand";
 
-const badgeVariants = cva(["inline-flex items-center font-semibold rounded-full border"], {
+const badgeVariants = cva(["inline-flex shrink-0 items-center whitespace-nowrap font-medium rounded-4 tabular-nums"], {
 	variants: {
 		tone: {
-			error: "bg-error-soft border-stroke-error-weak text-error",
-			warning: "bg-warning-soft border-stroke-warning-weak text-warning",
-			success: "bg-success-soft border-stroke-success-weak text-success",
-			information: "bg-info-soft border-stroke-info-weak text-info",
-			neutral: "bg-fill-weak border-stroke-weak text-fg",
-			brand: "bg-brand-soft border-stroke-brand-weak text-brand",
+			error: "bg-error-soft text-error",
+			warning: "bg-warning-soft text-warning",
+			success: "bg-success-soft text-success",
+			information: "bg-info-soft text-info",
+			neutral: "bg-control text-fg-secondary",
+			brand: "bg-brand-soft text-brand",
 		},
 		size: {
-			xxs: "px-1 py-0 text-2xs gap-0.5",
-			xs: "px-1.5 py-px text-xs gap-0.5",
-			sm: "px-2 py-0.5 text-xs gap-1",
-			md: "px-3 py-1 text-xs gap-1.5",
-			lg: "px-4 py-1.5 text-sm gap-2",
+			xxs: "h-4 px-1 text-2xs gap-0.5",
+			xs: "h-4 px-1 text-xs gap-0.5",
+			sm: "h-5 px-1.5 text-xs gap-1",
+			md: "h-6 px-2 text-xs gap-1",
+			lg: "h-7 px-2 text-sm gap-1.5",
 		},
 	},
 	defaultVariants: {

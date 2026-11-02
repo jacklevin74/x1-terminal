@@ -1,7 +1,7 @@
+import { Badge } from "@hypeterminal/ui";
 import { useEffect, useMemo, useState } from "react";
 import { CommandDialog, CommandEmpty, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { KIND_LABELS, marketSearchConfig } from "@/config/search";
-import { cn } from "@/lib/cn";
 import { formatPrice } from "@/lib/format";
 import { type UnifiedMarketInfo, useMarketsInfo } from "@/lib/hyperliquid";
 import { createSearcher } from "@/lib/search";
@@ -10,8 +10,7 @@ import { useCommandMenuActions, useCommandMenuOpen } from "@/stores/use-global-m
 import { useMarketActions } from "@/stores/use-market-store";
 import { AssetDisplay } from "./asset-display";
 
-const COMMAND_DIALOG_MAX_WIDTH_CLASS = "sm:max-w-[30rem]";
-const COMMAND_LIST_HEIGHT_CLASS = "h-[22.5rem] max-h-[22.5rem]";
+const COMMAND_DIALOG_MAX_WIDTH_CLASS = "sm:max-w-120";
 
 export function CommandMenu() {
 	const open = useCommandMenuOpen();
@@ -66,7 +65,7 @@ export function CommandMenu() {
 			className={COMMAND_DIALOG_MAX_WIDTH_CLASS}
 		>
 			<CommandInput placeholder="Search markets..." value={query} onValueChange={setQuery} />
-			<CommandList className={COMMAND_LIST_HEIGHT_CLASS}>
+			<CommandList className="p-1">
 				<CommandEmpty>No markets found.</CommandEmpty>
 				{displayItems.map((market) => (
 					<CommandItem
@@ -75,21 +74,14 @@ export function CommandMenu() {
 						onSelect={() => handleSelect(market)}
 						className="flex items-center justify-between"
 					>
-						<AssetDisplay coin={market.name} iconClassName="size-5" />
+						<AssetDisplay coin={market.name} iconClassName="size-5" className="gap-2" />
 						<div className="ml-auto flex items-center gap-2">
-							<span className="text-fg-muted text-xs">
+							<span className="tabular-nums text-fg-secondary">
 								{formatPrice(market.markPx, { szDecimals: market.szDecimals })}
 							</span>
-							<span
-								className={cn(
-									"rounded-8 px-1.5 py-0.5 text-xs",
-									market.kind === "perp" && "bg-brand-soft text-brand",
-									market.kind === "spot" && "bg-success-soft text-success",
-									market.kind === "builderPerp" && "bg-warning-soft text-warning",
-								)}
-							>
+							<Badge tone="neutral" size="xs">
 								{KIND_LABELS[market.kind]}
-							</span>
+							</Badge>
 						</div>
 					</CommandItem>
 				))}

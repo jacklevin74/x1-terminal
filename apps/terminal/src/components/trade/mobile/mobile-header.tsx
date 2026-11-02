@@ -19,37 +19,28 @@ export function MobileHeader({ className }: Props) {
 	const { open: openSettingsDialog } = useSettingsDialogActions();
 
 	return (
-		<header
-			className={cn(
-				"pt-[env(safe-area-inset-top)]",
-				"sticky top-0 z-40 bg-surface/95 backdrop-blur-sm",
-				"border-b border-stroke-weak/60",
-				className,
-			)}
-		>
-			<div className={cn(APP_HEADER_HEIGHT_CLASS, "px-2 flex items-center justify-between")}>
-				<div className="flex items-center gap-1">
+		<header className={cn("pt-[env(safe-area-inset-top)]", "sticky top-0 z-40 bg-surface", className)}>
+			<div
+				className={cn(
+					APP_HEADER_HEIGHT_CLASS,
+					"box-border px-3 flex items-center justify-between gap-2 border-b border-stroke-weak",
+				)}
+			>
+				<div className="flex items-center gap-2">
 					<MobileNavDrawer />
 					<X1Tile />
 				</div>
 
-				<div className="flex items-center gap-0.5">
+				<div className="flex items-center gap-1">
 					<UserMenu />
-					<ButtonIcon
-						variant="ghost"
-						intent="neutral"
-						size="md"
-						className="touch-target"
-						aria-label={TOP_NAV_TEXT.NOTIFICATIONS_ARIA}
-					>
+					<ButtonIcon variant="ghost" intent="neutral" size="sm" aria-label={TOP_NAV_TEXT.NOTIFICATIONS_ARIA}>
 						<BellIcon className="size-4" />
 					</ButtonIcon>
 					<ThemeToggle />
 					<ButtonIcon
 						variant="ghost"
 						intent="neutral"
-						size="md"
-						className="touch-target"
+						size="sm"
 						aria-label={TOP_NAV_TEXT.SETTINGS_ARIA}
 						onClick={openSettingsDialog}
 					>

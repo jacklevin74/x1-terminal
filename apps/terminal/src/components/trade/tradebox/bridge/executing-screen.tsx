@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { InfoRow, InfoRowGroup } from "@/components/ui/info-row";
 import { BRIDGE_TIMEOUT_MS, LIFI_EXPLORER_URL } from "@/config/bridge";
 import { shortenAddress } from "@/lib/format";
-import { ExplorerLink, HyperCoreUsdcIcon } from "./shared-ui";
+import { ExplorerLink, HyperCoreUsdcIcon, StatusBadgeIcon } from "./shared-ui";
 
 const BRIDGE_MESSAGE_MAX_WIDTH = "max-w-70";
 
@@ -34,11 +34,11 @@ export function ExecutingScreen({ address, statusText, txHash, onDone }: Props) 
 		return (
 			<div className="flex flex-1 flex-col">
 				<div className="flex flex-1 flex-col items-center justify-center gap-4">
-					<div className="flex size-12 items-center justify-center rounded-full bg-warning-soft border border-stroke-warning-strong/30">
+					<StatusBadgeIcon>
 						<ClockIcon className="size-6 text-warning" />
-					</div>
-					<div className="text-center space-y-1">
-						<p className="text-sm font-medium text-fg">
+					</StatusBadgeIcon>
+					<div className="space-y-1 text-center">
+						<p className="text-base font-medium text-fg">
 							<Trans>Taking longer than expected</Trans>
 						</p>
 						<p className={`text-xs text-fg-muted ${BRIDGE_MESSAGE_MAX_WIDTH}`}>
@@ -51,7 +51,7 @@ export function ExecutingScreen({ address, statusText, txHash, onDone }: Props) 
 						</ExplorerLink>
 					) : null}
 				</div>
-				<Button variant="outline" intent="neutral" size="lg" className="w-full mt-auto" onClick={onDone}>
+				<Button variant="secondary" intent="neutral" size="md" className="mt-auto w-full" onClick={onDone}>
 					<Trans>Close</Trans>
 				</Button>
 			</div>
@@ -61,11 +61,11 @@ export function ExecutingScreen({ address, statusText, txHash, onDone }: Props) 
 	return (
 		<div className="flex flex-1 flex-col gap-4">
 			<div className="flex flex-1 flex-col items-center justify-center gap-4">
-				<div className="flex size-12 items-center justify-center rounded-full bg-brand/10 border border-stroke-brand-strong/30">
-					<SpinnerGapIcon className="size-6 animate-spin text-brand" />
-				</div>
-				<div className="text-center space-y-1">
-					<p className="text-sm font-medium text-fg">{statusText}</p>
+				<StatusBadgeIcon>
+					<SpinnerGapIcon className="size-6 animate-spin text-fg-muted" />
+				</StatusBadgeIcon>
+				<div className="space-y-1 text-center">
+					<p className="text-base font-medium text-fg">{statusText}</p>
 					<p className="text-xs text-fg-muted">
 						{txHash ? (
 							<Trans>Your transaction is being processed</Trans>
@@ -78,7 +78,7 @@ export function ExecutingScreen({ address, statusText, txHash, onDone }: Props) 
 
 			{txHash ? (
 				<div className="space-y-3">
-					<InfoRowGroup className="text-xs">
+					<InfoRowGroup>
 						<InfoRow
 							label={<Trans>Fill status</Trans>}
 							value={
@@ -99,7 +99,7 @@ export function ExecutingScreen({ address, statusText, txHash, onDone }: Props) 
 						<InfoRow label={<Trans>Destination</Trans>} value="Hyperliquid" />
 					</InfoRowGroup>
 
-					<InfoRowGroup className="text-xs">
+					<InfoRowGroup className="border-t border-stroke-faint pt-3">
 						<InfoRow
 							label={<Trans>You receive</Trans>}
 							value={
@@ -113,7 +113,7 @@ export function ExecutingScreen({ address, statusText, txHash, onDone }: Props) 
 				</div>
 			) : null}
 
-			<Button variant="outline" intent="neutral" size="lg" className="w-full mt-auto" onClick={onDone}>
+			<Button variant="secondary" intent="neutral" size="md" className="mt-auto w-full" onClick={onDone}>
 				<Trans>Close</Trans>
 			</Button>
 		</div>

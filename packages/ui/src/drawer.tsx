@@ -52,7 +52,7 @@ const DrawerOverlay = React.forwardRef<HTMLDivElement, DrawerOverlayProps>(({ cl
 	<BaseDrawer.Backdrop
 		ref={ref}
 		className={cn(
-			"fixed inset-0 z-50 bg-scrim transition-opacity duration-200 motion-reduce:transition-none",
+			"fixed inset-0 z-[var(--z-overlay)] bg-scrim transition-opacity duration-200 motion-reduce:transition-none",
 			"data-starting-style:opacity-0 data-ending-style:opacity-0",
 			className,
 		)}
@@ -63,7 +63,7 @@ DrawerOverlay.displayName = "DrawerOverlay";
 
 const drawerContentVariants = cva(
 	[
-		"fixed z-50 flex flex-col bg-overlay border border-stroke-weak shadow-overlay",
+		"fixed z-[var(--z-overlay)] flex flex-col bg-overlay text-fg shadow-menu outline-none",
 		"transition-transform duration-200 ease-out motion-reduce:transition-none",
 	],
 	{
@@ -78,11 +78,11 @@ const drawerContentVariants = cva(
 					"data-starting-style:-translate-x-full data-ending-style:-translate-x-full",
 				],
 				top: [
-					"inset-x-0 top-0 max-h-[85dvh] overflow-y-auto",
+					"inset-x-0 top-0 max-h-[85dvh] overflow-y-auto rounded-b-16",
 					"data-starting-style:-translate-y-full data-ending-style:-translate-y-full",
 				],
 				bottom: [
-					"inset-x-0 bottom-0 max-h-[85dvh] overflow-y-auto rounded-t-12",
+					"inset-x-0 bottom-0 max-h-[90dvh] overflow-y-auto rounded-t-16 pb-[env(safe-area-inset-bottom)]",
 					"data-starting-style:translate-y-full data-ending-style:translate-y-full",
 				],
 			},
@@ -129,11 +129,7 @@ DrawerContent.displayName = "DrawerContent";
 interface DrawerHeaderProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const DrawerHeader = React.forwardRef<HTMLDivElement, DrawerHeaderProps>(({ className, ...props }, ref) => (
-	<div
-		ref={ref}
-		className={cn("flex items-center gap-4 px-8 py-6 border-b border-stroke-weak", className)}
-		{...props}
-	/>
+	<div ref={ref} className={cn("flex items-center gap-4 p-4 border-b border-stroke-weak", className)} {...props} />
 ));
 DrawerHeader.displayName = "DrawerHeader";
 
@@ -142,7 +138,7 @@ type DrawerTitleProps = React.ComponentPropsWithoutRef<typeof BaseDrawer.Title>;
 const DrawerTitle = React.forwardRef<HTMLHeadingElement, DrawerTitleProps>(({ className, ...props }, ref) => (
 	<BaseDrawer.Title
 		ref={ref}
-		className={cn("flex-1 text-lg font-semibold text-fg text-balance", className)}
+		className={cn("flex-1 text-base font-medium text-fg text-balance", className)}
 		{...props}
 	/>
 ));
@@ -152,7 +148,7 @@ type DrawerDescriptionProps = React.ComponentPropsWithoutRef<typeof BaseDrawer.D
 
 const DrawerDescription = React.forwardRef<HTMLParagraphElement, DrawerDescriptionProps>(
 	({ className, ...props }, ref) => (
-		<BaseDrawer.Description ref={ref} className={cn("text-sm text-fg-muted text-pretty", className)} {...props} />
+		<BaseDrawer.Description ref={ref} className={cn("text-xs text-fg-muted text-pretty", className)} {...props} />
 	),
 );
 DrawerDescription.displayName = "DrawerDescription";
@@ -160,18 +156,14 @@ DrawerDescription.displayName = "DrawerDescription";
 interface DrawerBodyProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const DrawerBody = React.forwardRef<HTMLDivElement, DrawerBodyProps>(({ className, ...props }, ref) => (
-	<div ref={ref} className={cn("flex-1 flex flex-col overflow-y-auto px-8 py-12", className)} {...props} />
+	<div ref={ref} className={cn("flex-1 flex flex-col overflow-y-auto p-4", className)} {...props} />
 ));
 DrawerBody.displayName = "DrawerBody";
 
 interface DrawerFooterProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const DrawerFooter = React.forwardRef<HTMLDivElement, DrawerFooterProps>(({ className, ...props }, ref) => (
-	<div
-		ref={ref}
-		className={cn("flex items-center gap-4 px-8 py-6 border-t border-stroke-weak", className)}
-		{...props}
-	/>
+	<div ref={ref} className={cn("flex items-center gap-2 p-4 border-t border-stroke-weak", className)} {...props} />
 ));
 DrawerFooter.displayName = "DrawerFooter";
 

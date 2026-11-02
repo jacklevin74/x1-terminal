@@ -11,11 +11,11 @@ interface InfoRowProps {
 
 export function InfoRow({ label, value, valueClassName, labelClassName, className }: InfoRowProps) {
 	return (
-		<div className={cn("flex items-center justify-between px-2 py-1.5", className)} data-slot="info-row">
-			<span className={cn("text-fg-muted", labelClassName)} data-slot="info-row-label">
+		<div className={cn("flex min-h-6 items-center justify-between gap-3 text-xs", className)} data-slot="info-row">
+			<span className={cn("min-w-0 text-fg-muted", labelClassName)} data-slot="info-row-label">
 				{label}
 			</span>
-			<span className={cn("text-fg tabular-nums", valueClassName)} data-slot="info-row-value">
+			<span className={cn("min-w-0 text-right text-fg tabular-nums", valueClassName)} data-slot="info-row-value">
 				{value}
 			</span>
 		</div>
@@ -29,7 +29,7 @@ interface InfoRowGroupProps {
 
 export function InfoRowGroup({ children, className }: InfoRowGroupProps) {
 	return (
-		<div className={cn("divide-y divide-stroke-weak text-xs tracking-[0.5px]", className)} data-slot="info-row-group">
+		<div className={cn("flex flex-col text-xs", className)} data-slot="info-row-group">
 			{children}
 		</div>
 	);

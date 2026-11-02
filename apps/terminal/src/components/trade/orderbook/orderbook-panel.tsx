@@ -1,24 +1,35 @@
 import { useOrderbookSubscription } from "@hypeterminal/hl-react";
-import { Dropdown, Tabs, TabsContent, TabsList, TabsTrigger } from "@hypeterminal/ui";
+import { Dropdown, Tabs, TabsContent, TabsList, TabsTrigger, Tooltip, tooltipUnderlineClass } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
-import { BookBookmarkIcon, ListDashesIcon } from "@phosphor-icons/react";
 import { useMemo, useState } from "react";
 import { getBaseQuoteFromPairName, getPercent } from "@/domain/market";
 import { formatNumber, szDecimalsToPriceDecimals } from "@/lib/format";
 import { useSelectedMarketInfo } from "@/lib/hyperliquid";
 import { useRenderCommitTrack } from "@/lib/performance/render-profile";
 import { toNumber } from "@/lib/trade/numbers";
-import { getMaxTotal, getPriceGroupingKey, getPriceGroupingOptions, processLevels } from "@/lib/trade/orderbook";
+import {
+	getMaxTotal,
+	getPriceGroupingKey,
+	getPriceGroupingOptions,
+	ORDERBOOK_DEPTH_OPTIONS,
+	type OrderbookDepth,
+	processLevels,
+} from "@/lib/trade/orderbook";
 import { useGlobalSettings, useGlobalSettingsActions } from "@/stores/use-global-settings-store";
 import { OrderbookRow } from "./orderbook-row";
 import { TradesPanel } from "./trades-panel";
 
+const HEADER_ROW_CLASS =
+	"grid h-6 shrink-0 grid-cols-3 items-center gap-2 px-3 text-2xs uppercase tracking-micro text-fg-muted";
+const HEADER_TOGGLE_CLASS =
+	"min-w-0 cursor-pointer truncate text-right uppercase tracking-micro transition-colors duration-150 hover:text-fg focus-visible:text-fg focus-visible:outline-none motion-reduce:transition-none";
+const STATE_CLASS = "flex flex-1 items-center justify-center px-3 py-6 text-xs text-fg-muted";
 
 export function OrderbookPanel() {
 	useRenderCommitTrack("orderbook");
-	const [depth, setDepth] = useState<5 | 10 | 15 | 20>(15);
- const fast = depth === 5;
- const [selectedOptionKey, setSelectedOptionKey] = useState<string | null>(null);
+	const [depth, setDepth] = useState<OrderbookDepth>(15);
+	const fast = depth === 5;
+	const [selectedOptionKey, setSelectedOptionKey] = useState<string | null>(null);
 	const { showOrderbookInQuote } = useGlobalSettings();
 	const { setShowOrderbookInQuote } = useGlobalSettingsActions();
 
@@ -34,28 +45,25 @@ export function OrderbookPanel() {
 	const subscriptionParams = useMemo(
 		() => ({
 			coin: selectedMarket?.name ?? "",
-   fast,
+			fast,
 			nSigFigs: selectedOption?.nSigFigs ?? 5,
 			mantissa: selectedOption?.mantissa,
 		}),
 		[selectedMarket?.name, selectedOption?.mantissa, selectedOption?.nSigFigs, fast],
 	);
 
- const { data: orderbook, status: orderbookStatus } = useOrderbookSubscription(subscriptionParams, !!selectedMarket?.name);
+	const { data: orderbook, status: orderbookStatus } = useOrderbookSubscription(
+		subscriptionParams,
+		!!selectedMarket?.name,
+	);
 
 	const { baseToken, quoteToken } = useMemo(() => {
 		if (!selectedMarket) return { baseToken: "", quoteToken: "" };
 		return getBaseQuoteFromPairName(selectedMarket.pairName, selectedMarket.kind);
 	}, [selectedMarket]);
 
-	const bids = useMemo(
-		() => processLevels(orderbook?.levels[0], depth),
-		[orderbook?.levels, depth],
-	);
-	const asks = useMemo(
-		() => processLevels(orderbook?.levels[1], depth),
-		[orderbook?.levels, depth],
-	);
+	const bids = useMemo(() => processLevels(orderbook?.levels[0], depth), [orderbook?.levels, depth]);
+	const asks = useMemo(() => processLevels(orderbook?.levels[1], depth), [orderbook?.levels, depth]);
 	const asksReversed = useMemo(() => {
 		const reversed = new Array(asks.length);
 		for (let i = 0; i < asks.length; i += 1) {
@@ -75,107 +83,97 @@ export function OrderbookPanel() {
 
 	const hasData = orderbookStatus !== "error";
 
-	const dropdownItems = priceGroupingOptions.map((option) => ({
+	const groupingItems = priceGroupingOptions.map((option) => ({
 		label: option.label,
 		active: option.key === selectedOption?.key,
 		onSelect: () => setSelectedOptionKey(getPriceGroupingKey(option)),
 	}));
 
-	return (
-		<Tabs
-			value={tab}
-			onValueChange={setTab}
-			className="h-full min-h-0 flex flex-col overflow-hidden bg-surface"
-			size="sm"
-			variant="underline"
-		>
-			<div className="flex items-center justify-between">
-    <label className="order-last shrink-0 px-2 text-2xs text-brand whitespace-nowrap" title="5 levels uses the fast feed; 10, 15, and 20 use the depth feed.">
-     <span className="sr-only">Order book depth per side</span>
-     <select aria-label="Order book depth per side" value={depth} onChange={event => setDepth(Number(event.target.value) as 5 | 10 | 15 | 20)} className="bg-surface cursor-pointer py-1 outline-none focus-visible:ring-1 focus-visible:ring-brand">
-      <option value={5}>Fast · 5</option><option value={10}>Depth · 10</option><option value={15}>Depth · 15</option><option value={20}>Depth · 20</option>
-     </select>
-    </label>
-				<TabsList className="w-full min-w-0">
-					<TabsTrigger value="book" aria-label={t`Order Book`} icon={<BookBookmarkIcon className="size-3.5" />}>
-						{t`Order Book`}
-					</TabsTrigger>
-					<TabsTrigger value="trades" aria-label={t`Recent Trades`} icon={<ListDashesIcon className="size-3.5" />}>
-						{t`Trades`}
-					</TabsTrigger>
-				</TabsList>
-			</div>
+	const depthItems = ORDERBOOK_DEPTH_OPTIONS.map((option) => ({
+		label: option.label,
+		active: option.value === depth,
+		onSelect: () => setDepth(option.value),
+	}));
+	const depthLabel = ORDERBOOK_DEPTH_OPTIONS.find((option) => option.value === depth)?.label;
 
-			<TabsContent value="book" className="flex-1 min-h-0 mt-0 pt-0 flex flex-col">
-				<div className="grid grid-cols-3 gap-1 px-2 py-1.5 items-center text-2xs text-fg-muted uppercase tracking-wider border-b border-stroke-weak shrink-0">
-					<div className="min-w-0 flex items-center gap-1">
-						{t`Price`}
-						<Dropdown
-							trigger={
-								<span className="text-2xs tabular-nums uppercase tracking-wider">
-									{selectedOption?.label ?? priceGroupingOptions[0]?.label ?? "—"}
-								</span>
-							}
-							items={dropdownItems}
-							size="xxs"
-							align="start"
-							triggerVariant="minimal"
-							triggerAriaLabel={t`Price grouping`}
-							popupClassName="min-w-0 w-max"
-						/>
-					</div>
-					<button
-						className="min-w-0 inline-flex items-center justify-end gap-0.5 hover:text-fg truncate"
-						type="button"
-						onClick={toggleAssetDisplay}
-					>
-						{t`Size`}
-						<span className="text-fg truncate">({displayAsset})</span>
+	return (
+		<Tabs value={tab} onValueChange={setTab} className="flex h-full min-h-0 flex-col overflow-hidden">
+			<TabsList className="shrink-0 px-3">
+				<TabsTrigger value="book">{t`Order Book`}</TabsTrigger>
+				<TabsTrigger value="trades">{t`Trades`}</TabsTrigger>
+			</TabsList>
+
+			<TabsContent value="book" className="flex min-h-0 flex-1 flex-col pt-0">
+				<div className="flex h-6 shrink-0 items-center justify-between gap-2 px-3">
+					<Dropdown
+						triggerVariant="minimal"
+						triggerAriaLabel={t`Price grouping`}
+						trigger={<span className="tabular-nums">{selectedOption?.label ?? "—"}</span>}
+						items={groupingItems}
+						disabled={groupingItems.length === 0}
+						align="start"
+						triggerClassName="-ml-1 text-fg"
+						popupClassName="min-w-28"
+					/>
+					<Tooltip content={t`5 levels uses the fast feed. 10, 15 and 20 use the depth feed.`} side="bottom">
+						<span className="inline-flex">
+							<Dropdown
+								triggerVariant="minimal"
+								triggerAriaLabel={t`Order book depth per side`}
+								trigger={<span className={`tabular-nums ${tooltipUnderlineClass}`}>{depthLabel}</span>}
+								items={depthItems}
+								align="end"
+								triggerClassName="-mr-1 text-fg"
+								popupClassName="min-w-28"
+							/>
+						</span>
+					</Tooltip>
+				</div>
+
+				<div className={HEADER_ROW_CLASS}>
+					<span className="min-w-0 truncate">{t`Price`}</span>
+					<button type="button" className={HEADER_TOGGLE_CLASS} onClick={toggleAssetDisplay}>
+						{t`Size`} ({displayAsset})
 					</button>
-					<button
-						className="min-w-0 inline-flex items-center justify-end gap-0.5 hover:text-fg truncate"
-						type="button"
-						onClick={toggleAssetDisplay}
-					>
-						{t`Total`}
-						<span className="text-fg truncate">({displayAsset})</span>
+					<button type="button" className={HEADER_TOGGLE_CLASS} onClick={toggleAssetDisplay}>
+						{t`Total`} ({displayAsset})
 					</button>
 				</div>
 
-				<div className="flex-1 min-h-0 flex flex-col overflow-hidden">
-					<div className="flex-1 min-h-0 flex flex-col-reverse overflow-y-auto" aria-label="Ask levels">
-      <div className="flex flex-col shrink-0">
-						{hasData && asks.length > 0 ? (
-							asksReversed.map((level) => (
-								<OrderbookRow
-									key={`ask-${level.price}`}
-									level={level}
-									side="ask"
-									maxTotal={maxTotal}
-									priceDecimals={priceDecimals}
-									showInQuote={showOrderbookInQuote}
-									szDecimals={szDecimals}
-								/>
-							))
-						) : (
-							<div className="flex items-center justify-center px-2 py-6 text-xs text-fg">
-								{orderbookStatus === "error" ? t`Failed to load order book.` : t`Waiting for order book...`}
-							</div>
-						)}
-      </div>
-					</div>
+				<div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+					<section className="flex min-h-0 flex-1 flex-col-reverse overflow-y-auto" aria-label={t`Ask levels`}>
+						<div className="flex shrink-0 flex-col">
+							{hasData && asks.length > 0 ? (
+								asksReversed.map((level) => (
+									<OrderbookRow
+										key={`ask-${level.price}`}
+										level={level}
+										side="ask"
+										maxTotal={maxTotal}
+										priceDecimals={priceDecimals}
+										showInQuote={showOrderbookInQuote}
+										szDecimals={szDecimals}
+									/>
+								))
+							) : (
+								<div className={STATE_CLASS}>
+									{orderbookStatus === "error" ? t`Failed to load order book.` : t`Waiting for order book...`}
+								</div>
+							)}
+						</div>
+					</section>
 
 					<div
 						data-slot="orderbook-spread"
-						className="shrink-0 px-2 py-1.5 border-y border-stroke-weak flex items-center justify-between text-xs text-fg"
+						className="flex h-6 shrink-0 items-center justify-between gap-2 bg-band px-3 text-xs"
 					>
-						<span>{t`Spread`}</span>
-						<span className="tabular-nums font-medium text-fg-muted">
+						<span className="text-fg-muted">{t`Spread`}</span>
+						<span className="tabular-nums text-fg-secondary">
 							{`${formatNumber(spread, 2)} (${formatNumber(spreadPct, 3)}%)`}
 						</span>
 					</div>
 
-					<div className="flex-1 min-h-0 flex flex-col overflow-y-auto" aria-label="Bid levels">
+					<section className="flex min-h-0 flex-1 flex-col overflow-y-auto" aria-label={t`Bid levels`}>
 						{hasData &&
 							bids.map((level) => (
 								<OrderbookRow
@@ -188,12 +186,12 @@ export function OrderbookPanel() {
 									szDecimals={szDecimals}
 								/>
 							))}
-					</div>
+					</section>
 				</div>
 			</TabsContent>
 
-			<TabsContent value="trades" className="flex-1 min-h-0 mt-0 pt-0 flex flex-col">
-				<TradesPanel key={selectedMarket?.name} />
+			<TabsContent value="trades" className="flex min-h-0 flex-1 flex-col pt-0">
+				<TradesPanel key={selectedMarket?.name} priceDecimals={priceDecimals} />
 			</TabsContent>
 		</Tabs>
 	);

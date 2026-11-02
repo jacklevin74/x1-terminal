@@ -1,9 +1,14 @@
-import { Dropdown } from "@hypeterminal/ui";
+import { Button, Dropdown } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { CHART_TYPES, type ChartTypeConfig } from "@/config/chart";
 import { FAVORITE_SET, type IntervalConfig, MORE_INTERVALS, STARRED_INTERVALS } from "@/lib/chart/kline-config";
 import { cn } from "@/lib/cn";
 import { type ChartSource, ChartSourceToggle, type ChartSourceToggleIntentHandlers } from "./chart-source-toggle";
+import {
+	chartToolbarChipClass,
+	chartToolbarDividerClass,
+	getChartToolbarChipStateClass,
+} from "./chart-toolbar-classes";
 
 interface Props {
 	activeInterval: IntervalConfig;
@@ -14,6 +19,8 @@ interface Props {
 	tradingViewIntentHandlers?: ChartSourceToggleIntentHandlers;
 }
 
+const textTriggerClass = "max-md:h-8 text-fg-muted";
+
 export function KlineToolbar({
 	activeInterval,
 	onIntervalChange,
@@ -23,37 +30,32 @@ export function KlineToolbar({
 	tradingViewIntentHandlers,
 }: Props) {
 	const isNonFavoriteActive = !FAVORITE_SET.has(activeInterval.resolution);
-	const showChartSourceToggle = Boolean(onChartSourceChange && tradingViewIntentHandlers);
 
 	return (
-		<div className="flex min-w-0 items-center justify-between gap-2 border-b border-stroke-weak/60 bg-surface">
-			<div className="flex min-w-0 flex-1 flex-wrap items-center gap-0.5 p-2 py-1.5">
-				{STARRED_INTERVALS.map((interval) => (
-					<button
-						key={interval.resolution}
-						type="button"
-						onClick={() => onIntervalChange(interval)}
-						className={cn(
-							"px-1.5 py-0.5 text-xs rounded-8 transition-colors",
-							activeInterval.resolution === interval.resolution
-								? "text-fg font-semibold"
-								: "text-fg-muted hover:text-fg",
-						)}
-					>
-						{interval.label}
-					</button>
-				))}
-				<Dropdown
-					trigger={
-						<span
-							className={cn(
-								"flex items-center gap-0.5",
-								isNonFavoriteActive ? "text-fg font-semibold" : "text-fg-muted font-normal",
-							)}
+		<div
+			data-chart-toolbar
+			className="flex h-8 min-w-0 shrink-0 items-center justify-between gap-2 border-b border-stroke-weak px-3"
+		>
+			<div className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
+				{STARRED_INTERVALS.map((interval) => {
+					const isActive = activeInterval.resolution === interval.resolution;
+					return (
+						<Button
+							key={interval.resolution}
+							type="button"
+							aria-pressed={isActive}
+							onClick={() => onIntervalChange(interval)}
+							variant="ghost"
+							intent="neutral"
+							size="xxs"
+							className={cn(chartToolbarChipClass, getChartToolbarChipStateClass(isActive))}
 						>
-							{isNonFavoriteActive ? activeInterval.label : null}
-						</span>
-					}
+							{interval.label}
+						</Button>
+					);
+				})}
+				<Dropdown
+					trigger={<span className="text-fg">{isNonFavoriteActive ? activeInterval.label : null}</span>}
 					items={MORE_INTERVALS.map((interval) => ({
 						label: interval.label,
 						active: activeInterval.resolution === interval.resolution,
@@ -63,12 +65,13 @@ export function KlineToolbar({
 					size="sm"
 					triggerVariant="minimal"
 					triggerAriaLabel={t`More intervals`}
-					className="inline-flex"
+					triggerClassName={textTriggerClass}
+					className="inline-flex shrink-0"
 					popupClassName="min-w-0 w-max"
 				/>
-				<div className="h-3 w-px shrink-0 self-center bg-stroke-weak/50" aria-hidden />
+				<span className={chartToolbarDividerClass} aria-hidden />
 				<Dropdown
-					trigger={<span className="flex items-center gap-0.5 font-semibold text-fg">{activeChartType.label}</span>}
+					trigger={<span className="text-fg">{activeChartType.label}</span>}
 					items={CHART_TYPES.map((ct) => ({
 						label: ct.label,
 						active: activeChartType.type === ct.type,
@@ -78,18 +81,17 @@ export function KlineToolbar({
 					size="sm"
 					triggerVariant="minimal"
 					triggerAriaLabel={t`Chart type`}
-					className="inline-flex"
+					triggerClassName={textTriggerClass}
+					className="inline-flex shrink-0"
 					popupClassName="min-w-0 w-max"
 				/>
 			</div>
-			{showChartSourceToggle && onChartSourceChange && tradingViewIntentHandlers ? (
-				<div className="shrink-0 pr-2">
-					<ChartSourceToggle
-						value="default"
-						onValueChange={onChartSourceChange}
-						tradingViewIntentHandlers={tradingViewIntentHandlers}
-					/>
-				</div>
+			{onChartSourceChange && tradingViewIntentHandlers ? (
+				<ChartSourceToggle
+					value="default"
+					onValueChange={onChartSourceChange}
+					tradingViewIntentHandlers={tradingViewIntentHandlers}
+				/>
 			) : null}
 		</div>
 	);

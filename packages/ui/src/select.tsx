@@ -1,33 +1,47 @@
 import { Field } from "@base-ui/react/field";
 import { Select as BaseSelect } from "@base-ui/react/select";
-import { CaretDownIcon, CheckIcon, WarningCircleIcon } from "@phosphor-icons/react";
+import { CaretDownIcon, CheckIcon } from "@phosphor-icons/react";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { DEFAULT_SIZE } from "./config";
+import { menuItemClass, menuPopupClass } from "./dropdown";
+import { fieldErrorClass, fieldInlineLabelClass, fieldLabelClass } from "./text-input";
 import { cn } from "./utils";
 
 const selectTriggerVariants = cva(
 	[
-		"group/trigger flex items-center w-full rounded-8 border transition-colors duration-150 motion-reduce:transition-none",
-		"cursor-pointer select-none",
-		"focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus",
-		"data-popup-open:border-stroke-focus",
+		"group/trigger flex items-center rounded-8 transition-colors duration-150 motion-reduce:transition-none",
+		"cursor-pointer select-none outline-none",
+		"focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-stroke-focus",
 	],
 	{
 		variants: {
+			variant: {
+				filled: "w-full bg-control hover:bg-control-hover data-popup-open:bg-control-hover",
+				text: "w-auto bg-transparent text-fg hover:text-fg",
+			},
 			size: {
-				xxs: "py-0.5 px-1.5 gap-1",
-				xs: "py-1 px-2 gap-1",
-				sm: "py-1.5 px-3 gap-1.5",
-				md: "py-2 px-3 gap-2",
-				lg: "py-3 px-4 gap-2",
+				xxs: "",
+				xs: "",
+				sm: "",
+				md: "",
+				lg: "",
 			},
 			error: {
-				true: "border-stroke-error-strong bg-error-soft",
-				false: "border-stroke-strong bg-background",
+				true: "ring-1 ring-inset ring-market-down",
+				false: "",
 			},
 		},
+		compoundVariants: [
+			{ variant: "filled", size: "xxs", className: "h-6 px-2 gap-1" },
+			{ variant: "filled", size: "xs", className: "h-7 px-2 gap-1" },
+			{ variant: "filled", size: "sm", className: "h-8 max-md:h-10 px-3 gap-2" },
+			{ variant: "filled", size: "md", className: "h-9 px-3 gap-2" },
+			{ variant: "filled", size: "lg", className: "h-10 px-3 gap-2" },
+			{ variant: "text", className: "h-6 px-1 gap-1" },
+		],
 		defaultVariants: {
+			variant: "filled",
 			size: "sm",
 			error: false,
 		},
@@ -47,6 +61,7 @@ interface SelectGroupOption {
 
 interface SelectProps extends VariantProps<typeof selectTriggerVariants> {
 	label?: string;
+	inlineLabel?: React.ReactNode;
 	helperText?: string;
 	placeholder?: string;
 	options: (SelectOption | SelectGroupOption)[];
@@ -59,6 +74,7 @@ interface SelectProps extends VariantProps<typeof selectTriggerVariants> {
 	value?: string | null;
 	defaultValue?: string | null;
 	onValueChange?: (value: string | null) => void;
+	"aria-label"?: string;
 }
 
 function isGroupOption(option: SelectOption | SelectGroupOption): option is SelectGroupOption {
@@ -88,8 +104,10 @@ const Select = React.forwardRef<HTMLDivElement, SelectProps>(
 			className,
 			triggerClassName,
 			size: sizeProp,
+			variant,
 			error,
 			label,
+			inlineLabel,
 			helperText,
 			placeholder = "Select an option",
 			options,
@@ -100,6 +118,7 @@ const Select = React.forwardRef<HTMLDivElement, SelectProps>(
 			value,
 			defaultValue,
 			onValueChange,
+			"aria-label": ariaLabel,
 		},
 		ref,
 	) => {
@@ -110,17 +129,11 @@ const Select = React.forwardRef<HTMLDivElement, SelectProps>(
 				key={option.value}
 				value={option.value}
 				disabled={option.disabled}
-				className={cn(
-					"flex items-center justify-between gap-2 px-3 py-2 rounded-8 cursor-pointer select-none",
-					size === "lg" ? "text-sm" : "text-xs",
-					"text-fg",
-					"data-highlighted:bg-fill-hover",
-					"data-disabled:text-fg-disabled data-disabled:cursor-not-allowed",
-				)}
+				className={cn(menuItemClass, "justify-between data-selected:font-medium")}
 			>
 				<BaseSelect.ItemText>{option.label}</BaseSelect.ItemText>
-				<BaseSelect.ItemIndicator className="text-icon-brand">
-					<CheckIcon size={16} weight="bold" />
+				<BaseSelect.ItemIndicator className="shrink-0 text-fg">
+					<CheckIcon size={12} weight="bold" />
 				</BaseSelect.ItemIndicator>
 			</BaseSelect.Item>
 		);
@@ -128,9 +141,9 @@ const Select = React.forwardRef<HTMLDivElement, SelectProps>(
 		return (
 			<Field.Root className={cn("flex flex-col gap-1", className)} disabled={disabled} name={name} ref={ref}>
 				{label && (
-					<Field.Label className="text-xs font-semibold text-fg data-disabled:text-fg-disabled">
+					<Field.Label className={cn(fieldLabelClass, "data-disabled:text-fg-disabled")}>
 						{label}
-						{required && <span className="text-error"> *</span>}
+						{required && <span> *</span>}
 					</Field.Label>
 				)}
 				{helperText && (
@@ -148,37 +161,38 @@ const Select = React.forwardRef<HTMLDivElement, SelectProps>(
 					name={name}
 				>
 					<BaseSelect.Trigger
+						aria-label={ariaLabel}
 						className={cn(
-							selectTriggerVariants({ size, error }),
-							"data-disabled:border-stroke-disabled data-disabled:cursor-not-allowed data-disabled:text-fg-disabled",
+							selectTriggerVariants({ variant, size, error }),
+							"data-disabled:cursor-not-allowed data-disabled:text-fg-disabled",
 							triggerClassName,
 						)}
 					>
+						{inlineLabel && <span className={fieldInlineLabelClass}>{inlineLabel}</span>}
 						<BaseSelect.Value
 							placeholder={placeholder}
 							className={cn(
-								"flex-1 text-left truncate",
-								size === "lg" ? "text-sm" : "text-xs",
+								"truncate text-xs font-normal",
+								variant === "text" ? "text-left" : "flex-1",
+								inlineLabel ? "text-right" : "text-left",
 								selectedLabel ? "text-fg" : "text-fg-muted",
+								"group-data-disabled/trigger:text-fg-disabled",
 							)}
 						>
 							{selectedLabel}
 						</BaseSelect.Value>
-						<BaseSelect.Icon className="shrink-0 text-icon">
-							<CaretDownIcon
-								size={size === "lg" ? 20 : size === "md" ? 18 : size === "sm" ? 16 : size === "xs" ? 14 : 12}
-								weight={size === "xxs" || size === "xs" ? "regular" : "bold"}
-							/>
+						<BaseSelect.Icon className="shrink-0 text-fg-muted transition-transform duration-150 group-data-popup-open/trigger:rotate-180 motion-reduce:transition-none">
+							<CaretDownIcon size={12} weight="bold" />
 						</BaseSelect.Icon>
 					</BaseSelect.Trigger>
 
 					<BaseSelect.Portal>
-						<BaseSelect.Positioner sideOffset={4} className="z-[var(--z-dropdown)]">
-							<BaseSelect.Popup className="max-h-64 overflow-auto bg-surface p-1 shadow-overlay rounded-12 border border-stroke-weak transition-[opacity,transform] duration-150 ease-out motion-reduce:transition-none origin-(--transform-origin) data-starting-style:opacity-0 data-starting-style:scale-95 data-ending-style:opacity-0 data-ending-style:scale-95">
+						<BaseSelect.Positioner sideOffset={4} alignItemWithTrigger={false} className="z-[var(--z-dropdown)]">
+							<BaseSelect.Popup className={cn(menuPopupClass, "min-w-(--anchor-width)")}>
 								{options.map((option) =>
 									isGroupOption(option) ? (
 										<BaseSelect.Group key={option.label}>
-											<BaseSelect.GroupLabel className="px-3 py-1.5 text-xs font-semibold text-fg-muted select-none">
+											<BaseSelect.GroupLabel className="flex h-6 items-center px-2 text-2xs font-normal uppercase tracking-micro text-fg-muted select-none">
 												{option.label}
 											</BaseSelect.GroupLabel>
 											{option.options.map(renderItem)}
@@ -192,12 +206,7 @@ const Select = React.forwardRef<HTMLDivElement, SelectProps>(
 					</BaseSelect.Portal>
 				</BaseSelect.Root>
 
-				{error && errorMessage && (
-					<div className="flex items-center gap-1">
-						<WarningCircleIcon size={16} weight="fill" className="shrink-0 text-icon-error" />
-						<span className="text-xs text-error">{errorMessage}</span>
-					</div>
-				)}
+				{error && errorMessage && <span className={fieldErrorClass}>{errorMessage}</span>}
 			</Field.Root>
 		);
 	},

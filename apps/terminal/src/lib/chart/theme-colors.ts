@@ -7,14 +7,23 @@ import type { ColorGradient, CustomThemeColors } from "@/types/charting_library"
 
 type ChartColors = {
 	background: string;
+	page: string;
 	foreground: string;
 	textSecondary: string;
-	textTertiary: string;
+	textMuted: string;
+	textDisabled: string;
 	border: string;
+	borderFaint: string;
 	green: string;
 	red: string;
+	warning: string;
 	accent: string;
 	surface: string;
+	overlay: string;
+	control: string;
+	controlHover: string;
+	scrim: string;
+	fontFamily: string;
 };
 
 function getCssVar(name: string): string {
@@ -22,90 +31,63 @@ function getCssVar(name: string): string {
 	return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
-function parseHexColor(cssColor: string): { r: number; g: number; b: number; a: number } | null {
-	const raw = cssColor.trim();
-	if (!raw.startsWith("#")) return null;
-	const hex = raw.slice(1);
-	if (hex.length === 6) {
-		return {
-			r: Number.parseInt(hex.slice(0, 2), 16),
-			g: Number.parseInt(hex.slice(2, 4), 16),
-			b: Number.parseInt(hex.slice(4, 6), 16),
-			a: 1,
-		};
-	}
-	if (hex.length === 8) {
-		return {
-			r: Number.parseInt(hex.slice(0, 2), 16),
-			g: Number.parseInt(hex.slice(2, 4), 16),
-			b: Number.parseInt(hex.slice(4, 6), 16),
-			a: Number.parseInt(hex.slice(6, 8), 16) / 255,
-		};
-	}
-	return null;
-}
-
-export function strokeWeakBorderRgba(cssColor: string, opacityFactor: number): string {
-	const parsed = parseHexColor(cssColor);
-	if (!parsed) return colorToRgba(cssColor, opacityFactor);
-	const a = Math.min(1, parsed.a * opacityFactor);
-	return `rgba(${parsed.r}, ${parsed.g}, ${parsed.b}, ${a})`;
-}
-
-export function strokeWeakLayerRgba(cssColor: string, alpha: number): string {
-	const parsed = parseHexColor(cssColor);
-	if (!parsed) return colorToRgba(cssColor, alpha);
-	return `rgba(${parsed.r}, ${parsed.g}, ${parsed.b}, ${alpha})`;
-}
-
-export const chartGridAlpha = 0.1;
-export const chartCrosshairAlpha = 0.35;
-export const chartScaleLineAlpha = 0.2;
-export const chartPaneSeparatorAlpha = 0.14;
-
-export function colorToHex(cssColor: string): string {
-	if (!cssColor || typeof document === "undefined") return "#000000";
+function readCanvasColor(cssColor: string): [number, number, number, number] | null {
+	if (!cssColor || typeof document === "undefined") return null;
 
 	const canvas = document.createElement("canvas");
 	canvas.width = 1;
 	canvas.height = 1;
-	const ctx = canvas.getContext("2d");
-	if (!ctx) return "#000000";
+	const ctx = canvas.getContext("2d", { willReadFrequently: true });
+	if (!ctx) return null;
 
 	ctx.fillStyle = cssColor;
 	ctx.fillRect(0, 0, 1, 1);
 
-	const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+	const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data;
+	return [r, g, b, a];
+}
+
+export function colorToHex(cssColor: string): string {
+	const rgba = readCanvasColor(cssColor);
+	if (!rgba) return "#000000";
+	const [r, g, b] = rgba;
 	return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 }
 
 export function colorToRgba(cssColor: string, alpha: number): string {
-	if (!cssColor || typeof document === "undefined") return `rgba(0, 0, 0, ${alpha})`;
-
-	const canvas = document.createElement("canvas");
-	canvas.width = 1;
-	canvas.height = 1;
-	const ctx = canvas.getContext("2d");
-	if (!ctx) return `rgba(0, 0, 0, ${alpha})`;
-
-	ctx.fillStyle = cssColor;
-	ctx.fillRect(0, 0, 1, 1);
-
-	const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+	const rgba = readCanvasColor(cssColor);
+	if (!rgba) return `rgba(0, 0, 0, ${alpha})`;
+	const [r, g, b] = rgba;
 	return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+export function colorToCss(cssColor: string): string {
+	const rgba = readCanvasColor(cssColor);
+	if (!rgba) return "rgba(0, 0, 0, 1)";
+	const [r, g, b, a] = rgba;
+	return `rgba(${r}, ${g}, ${b}, ${Math.round((a / 255) * 100) / 100})`;
 }
 
 export function getChartColors(): ChartColors {
 	return {
 		background: getCssVar("--bg-raised"),
+		page: getCssVar("--bg-base"),
 		foreground: getCssVar("--text-strong"),
-		textSecondary: getCssVar("--text-weak"),
-		textTertiary: getCssVar("--text-weak"),
+		textSecondary: getCssVar("--text-secondary"),
+		textMuted: getCssVar("--text-weak"),
+		textDisabled: getCssVar("--text-disabled"),
 		border: getCssVar("--stroke-weak"),
+		borderFaint: getCssVar("--stroke-faint"),
 		green: getCssVar("--market-up"),
 		red: getCssVar("--market-down"),
+		warning: getCssVar("--text-warning"),
 		accent: getCssVar("--fill-brand-strong"),
 		surface: getCssVar("--bg-raised"),
+		overlay: getCssVar("--bg-overlay"),
+		control: getCssVar("--fill-control"),
+		controlHover: getCssVar("--fill-control-hover"),
+		scrim: getCssVar("--fill-overlay"),
+		fontFamily: getCssVar("--font-sans"),
 	};
 }
 
@@ -113,12 +95,13 @@ export function buildChartOverrides(): Record<string, string | number | boolean>
 	const colors = getChartColors();
 
 	const bg = colorToHex(colors.background);
-	const textSecondary = colorToHex(colors.textSecondary);
+	const textSecondary = colorToCss(colors.textSecondary);
+	const textMuted = colorToCss(colors.textMuted);
 	const green = colorToHex(colors.green);
 	const red = colorToHex(colors.red);
 
-	const gridColor = strokeWeakLayerRgba(colors.border, chartGridAlpha);
-	const crosshairColor = strokeWeakLayerRgba(colors.border, chartCrosshairAlpha);
+	const gridColor = colorToCss(colors.borderFaint);
+	const crosshairColor = textMuted;
 
 	return {
 		"paneProperties.background": bg,
@@ -141,9 +124,9 @@ export function buildChartOverrides(): Record<string, string | number | boolean>
 		"paneProperties.legendProperties.showVolume": false,
 
 		"scalesProperties.backgroundColor": bg,
-		"scalesProperties.lineColor": strokeWeakLayerRgba(colors.border, chartScaleLineAlpha),
-		"scalesProperties.textColor": textSecondary,
-		"scalesProperties.fontSize": 10,
+		"scalesProperties.lineColor": colorToCss(colors.border),
+		"scalesProperties.textColor": textMuted,
+		"scalesProperties.fontSize": 12,
 		"scalesProperties.scaleSeriesOnly": false,
 
 		"mainSeriesProperties.candleStyle.upColor": green,
@@ -192,7 +175,7 @@ export function buildChartOverrides(): Record<string, string | number | boolean>
 		"mainSeriesProperties.showPriceLine": true,
 		"mainSeriesProperties.showCountdown": true,
 
-		"mainSeriesProperties.statusViewStyle.fontSize": 10,
+		"mainSeriesProperties.statusViewStyle.fontSize": 12,
 		"mainSeriesProperties.statusViewStyle.showExchange": false,
 		"mainSeriesProperties.statusViewStyle.showInterval": true,
 		"mainSeriesProperties.statusViewStyle.symbolTextSource": "description",
@@ -208,7 +191,7 @@ export function getLoadingScreenColors(): { backgroundColor: string; foregroundC
 	const colors = getChartColors();
 	return {
 		backgroundColor: colorToHex(colors.background),
-		foregroundColor: colorToHex(colors.background),
+		foregroundColor: colorToCss(colors.textMuted),
 	};
 }
 
@@ -256,17 +239,17 @@ export function getCustomThemeColors(): CustomThemeColors {
 	const colors = getChartColors();
 
 	const accent = colorToHex(colors.accent);
-	const textTertiary = colorToHex(colors.textTertiary);
+	const textMuted = colorToHex(colors.textMuted);
 	const red = colorToHex(colors.red);
 	const green = colorToHex(colors.green);
-	const amber = colorToHex(getCssVar("--text-warning") || colors.accent);
+	const amber = colorToHex(colors.warning || colors.accent);
 	const purple = colorToHex(getCssVar("--fill-brand-strong") || colors.accent);
 	const bg = colorToHex(colors.background);
 	const fg = colorToHex(colors.foreground);
 
 	return {
 		color1: generateColorGradient(accent),
-		color2: generateColorGradient(textTertiary),
+		color2: generateColorGradient(textMuted),
 		color3: generateColorGradient(red),
 		color4: generateColorGradient(green),
 		color5: generateColorGradient(amber),
@@ -278,6 +261,35 @@ export function getCustomThemeColors(): CustomThemeColors {
 }
 
 let staticCssCache: string | null = null;
+
+// The TradingView iframe loads CSS from a blob URL, so font URLs must be absolute.
+function collectFontFaceCss(family: string): string {
+	if (typeof document === "undefined") return "";
+	const rules: string[] = [];
+	for (const sheet of Array.from(document.styleSheets)) {
+		let cssRules: CSSRuleList;
+		try {
+			cssRules = sheet.cssRules;
+		} catch {
+			continue;
+		}
+		const base = sheet.href ?? document.baseURI;
+		for (const rule of Array.from(cssRules)) {
+			if (!(rule instanceof CSSFontFaceRule)) continue;
+			if (rule.style.getPropertyValue("font-family").replace(/["']/g, "").trim() !== family) continue;
+			rules.push(
+				rule.cssText.replace(/url\((["']?)([^"')]+)\1\)/g, (_, quote: string, url: string) => {
+					try {
+						return `url(${quote}${new URL(url, base).href}${quote})`;
+					} catch {
+						return `url(${quote}${url}${quote})`;
+					}
+				}),
+			);
+		}
+	}
+	return rules.join("\n");
+}
 
 async function fetchStaticCss(): Promise<string> {
 	if (staticCssCache) return staticCssCache;
@@ -296,32 +308,35 @@ export async function generateChartCssUrl(): Promise<string> {
 	const colors = getChartColors();
 
 	const bg = colorToHex(colors.background);
-	const fg = colorToHex(colors.foreground);
-	const surface = colorToHex(colors.surface);
-	const textSecondary = colorToHex(colors.textSecondary);
-	const strokeWeak = colors.border;
-	const border =
-		strokeWeak.length > 0
-			? `color-mix(in srgb, ${strokeWeak} 60%, transparent)`
-			: strokeWeakBorderRgba(colors.border, 0.6);
+	const fg = colorToCss(colors.foreground);
+	const surface = colorToHex(colors.overlay);
+	const textSecondary = colorToCss(colors.textMuted);
+	const textDisabled = colorToCss(colors.textDisabled);
+	const border = colorToCss(colors.border);
 	const toolbarBorder = border;
-	const toolbarDivider =
-		strokeWeak.length > 0
-			? `color-mix(in srgb, ${strokeWeak} 50%, transparent)`
-			: strokeWeakBorderRgba(colors.border, 0.5);
+	const toolbarDivider = border;
 	const accent = colorToHex(colors.accent);
+	const control = colorToHex(colors.control);
+	const controlHover = colorToHex(colors.controlHover);
+	const scrim = colorToCss(colors.scrim);
 
-	const hoverBg = colorToRgba(colors.foreground, 0.06);
-	const activeBg = colorToRgba(colors.foreground, 0.1);
-	const accentSoft = colorToRgba(colors.accent, 0.15);
+	const hoverBg = control;
+	const activeBg = controlHover;
+	const accentSoft = controlHover;
 
 	const staticCss = await fetchStaticCss();
+	const fontFaceCss = collectFontFaceCss("Inter Variable");
 
 	const css = `
+${fontFaceCss}
 ${staticCss}
 
 :root {
 	--tv-bg: ${bg};
+	--tv-surface: ${surface};
+	--tv-control: ${control};
+	--tv-control-hover: ${controlHover};
+	--tv-font: ${colors.fontFamily || "sans-serif"};
 	--tv-fg: ${fg};
 	--tv-muted-fg: ${textSecondary};
 	--tv-border: ${border};
@@ -332,19 +347,19 @@ ${staticCss}
 	--tv-color-pane-background: ${bg};
 
 	--tv-color-toolbar-button-background-hover: ${hoverBg};
-	--tv-color-toolbar-button-background-expanded: ${colorToRgba(colors.foreground, 0.08)};
+	--tv-color-toolbar-button-background-expanded: ${control};
 	--tv-color-toolbar-button-background-active: ${accentSoft};
-	--tv-color-toolbar-button-background-active-hover: ${colorToRgba(colors.accent, 0.4)};
+	--tv-color-toolbar-button-background-active-hover: ${controlHover};
 	--tv-color-toolbar-button-background-clicked: ${activeBg};
 	--tv-color-toolbar-button-text: ${textSecondary};
 	--tv-color-toolbar-button-text-hover: ${fg};
-	--tv-color-toolbar-button-text-active: ${accent};
-	--tv-color-toolbar-button-text-active-hover: ${accent};
+	--tv-color-toolbar-button-text-active: ${fg};
+	--tv-color-toolbar-button-text-active-hover: ${fg};
 	--tv-color-toolbar-button-text-clicked: ${fg};
 
-	--tv-color-item-active-text: ${accent};
+	--tv-color-item-active-text: ${fg};
 	--tv-color-toolbar-toggle-button-background-active: ${accentSoft};
-	--tv-color-toolbar-toggle-button-background-active-hover: ${colorToRgba(colors.accent, 0.2)};
+	--tv-color-toolbar-toggle-button-background-active-hover: ${controlHover};
 
 	--tv-color-toolbar-divider-background: ${toolbarDivider};
 	--tv-color-toolbar-save-layout-loader: ${accent};
@@ -356,12 +371,12 @@ ${staticCss}
 	--tv-color-popup-element-background-hover: ${hoverBg};
 	--tv-color-popup-element-divider-background: ${border};
 	--tv-color-popup-element-secondary-text: ${textSecondary};
-	--tv-color-popup-element-hint-text: ${colorToRgba(colors.textSecondary, 0.7)};
-	--tv-color-popup-element-text-active: ${accent};
+	--tv-color-popup-element-hint-text: ${textSecondary};
+	--tv-color-popup-element-text-active: ${fg};
 	--tv-color-popup-element-background-active: ${accentSoft};
 	--tv-color-popup-element-toolbox-text: ${textSecondary};
 	--tv-color-popup-element-toolbox-text-hover: ${fg};
-	--tv-color-popup-element-toolbox-text-active-hover: ${accent};
+	--tv-color-popup-element-toolbox-text-active-hover: ${fg};
 	--tv-color-popup-element-toolbox-background-hover: ${hoverBg};
 	--tv-color-popup-element-toolbox-background-active-hover: ${accentSoft};
 
@@ -407,7 +422,7 @@ ${staticCss}
 	--themed-color-primary-icon: ${textSecondary};
 	--themed-color-sort-button: ${textSecondary};
 	--themed-color-drag-icon: ${textSecondary};
-	--themed-color-disabled-title: ${colorToRgba(colors.textSecondary, 0.5)};
+	--themed-color-disabled-title: ${textDisabled};
 
 	--themed-color-border: ${border};
 	--themed-color-separator: ${border};
@@ -424,35 +439,35 @@ ${staticCss}
 	--themed-color-item-row-border: ${border};
 	--themed-color-white-border: ${border};
 
-	--themed-color-input-bg: ${surface};
-	--themed-color-input-border: ${border};
+	--themed-color-input-bg: ${control};
+	--themed-color-input-border: ${control};
 	--themed-color-input-text: ${fg};
 	--themed-color-input-placeholder-text: ${textSecondary};
-	--themed-color-input-border-hover: ${textSecondary};
-	--themed-color-input-disabled-bg: ${bg};
-	--themed-color-input-disabled-border: ${strokeWeakBorderRgba(colors.border, 0.5)};
-	--themed-color-input-disabled-text: ${textSecondary};
+	--themed-color-input-border-hover: ${controlHover};
+	--themed-color-input-disabled-bg: ${control};
+	--themed-color-input-disabled-border: ${control};
+	--themed-color-input-disabled-text: ${textDisabled};
 
 	--themed-color-hovered-background: ${hoverBg};
 	--themed-color-background-hover: ${hoverBg};
 	--themed-color-hovered-button-background: ${hoverBg};
 	--themed-color-item-row-bg-hover: ${hoverBg};
 	--themed-color-container-hover-bg: ${hoverBg};
-	--themed-color-button-bg: ${surface};
+	--themed-color-button-bg: ${control};
 	--themed-color-button-bg-hover: ${hoverBg};
 	--themed-color-button-hover-bg: ${hoverBg};
 	--themed-color-button-hover: ${hoverBg};
 	--themed-color-button-bg-selected: ${activeBg};
 	--themed-color-edit-button-background-hover: ${hoverBg};
 
-	--themed-color-item-active-text: ${accent};
+	--themed-color-item-active-text: ${fg};
 	--themed-color-item-active-bg: ${accentSoft};
 	--themed-color-item-selected: ${accentSoft};
 	--themed-color-item-selected-blue: ${accentSoft};
 	--themed-color-item-bg-selected: ${accentSoft};
 	--themed-color-list-item-bg-selected: ${accentSoft};
 	--themed-color-selection-bg: ${accentSoft};
-	--themed-color-selected-border: ${accent};
+	--themed-color-selected-border: ${controlHover};
 	--themed-color-background-selected: ${accentSoft};
 	--themed-color-active-tab-text-color: ${fg};
 
@@ -490,12 +505,12 @@ ${staticCss}
 	--themed-color-link-primary-default: ${accent};
 	--themed-color-link-primary-hover: ${accent};
 	--themed-color-link-primary-active: ${accent};
-	--themed-color-highlight-search: ${colorToRgba(colors.accent, 0.3)};
+	--themed-color-highlight-search: ${controlHover};
 
 	--themed-color-icon-hover: ${fg};
 	--themed-color-icon-hover-color: ${fg};
-	--themed-color-icon-selected: ${accent};
-	--themed-color-icon-selected-hover: ${accent};
+	--themed-color-icon-selected: ${fg};
+	--themed-color-icon-selected-hover: ${fg};
 	--themed-color-arrow-text-hover: ${fg};
 	--themed-color-arrow-stroke: ${textSecondary};
 	--themed-color-caret-hover: ${fg};
@@ -504,30 +519,30 @@ ${staticCss}
 	--themed-color-close-button-active-bg: ${activeBg};
 	--themed-color-close-button-active-text: ${fg};
 
-	--themed-color-modal-backdrop: rgba(0, 0, 0, 0.5);
-	--themed-color-drawer-backdrop: rgba(0, 0, 0, 0.5);
-	--themed-color-floating-toolbar-shadow: rgba(0, 0, 0, 0.2);
+	--themed-color-modal-backdrop: ${scrim};
+	--themed-color-drawer-backdrop: ${scrim};
+	--themed-color-floating-toolbar-shadow: ${scrim};
 
 	--themed-color-content-primary-neutral: ${fg};
 	--themed-color-content-primary-neutral-bold: ${fg};
 	--themed-color-content-primary-neutral-semi-bold: ${fg};
 	--themed-color-content-primary-neutral-normal: ${fg};
 	--themed-color-content-primary-neutral-light: ${textSecondary};
-	--themed-color-content-primary-neutral-extra-light: ${colorToRgba(colors.textSecondary, 0.6)};
+	--themed-color-content-primary-neutral-extra-light: ${textDisabled};
 	--themed-color-content-secondary-neutral: ${textSecondary};
 	--themed-color-content-secondary-neutral-medium: ${textSecondary};
 	--themed-color-content-secondary-neutral-semi-bold: ${textSecondary};
-	--themed-color-content-disabled: ${colorToRgba(colors.textSecondary, 0.5)};
+	--themed-color-content-disabled: ${textDisabled};
 
 	--themed-color-container-fill-primary-neutral: ${bg};
-	--themed-color-container-fill-primary-neutral-light: ${surface};
-	--themed-color-container-fill-primary-neutral-extra-light: ${surface};
-	--themed-color-container-fill-secondary-neutral: ${surface};
-	--themed-color-container-fill-secondary-neutral-normal: ${surface};
-	--themed-color-container-fill-secondary-neutral-semi-bold: ${border};
+	--themed-color-container-fill-primary-neutral-light: ${control};
+	--themed-color-container-fill-primary-neutral-extra-light: ${control};
+	--themed-color-container-fill-secondary-neutral: ${control};
+	--themed-color-container-fill-secondary-neutral-normal: ${control};
+	--themed-color-container-fill-secondary-neutral-semi-bold: ${controlHover};
 	--themed-color-container-fill-primary-accent: ${accentSoft};
 	--themed-color-container-fill-primary-accent-bold: ${accent};
-	--themed-color-container-fill-primary-accent-semi-bold: ${colorToRgba(colors.accent, 0.3)};
+	--themed-color-container-fill-primary-accent-semi-bold: ${controlHover};
 }
 `;
 

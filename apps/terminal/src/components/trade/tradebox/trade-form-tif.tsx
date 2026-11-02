@@ -16,16 +16,15 @@ export function TradeFormTif({ orderType, disabled }: Props) {
 	const availableTifOptions = orderType === "limit" ? (["Gtc", "Ioc", "Alo"] as const) : (["Gtc", "Alo"] as const);
 
 	return (
-		<div className="ml-auto flex items-center gap-1.5">
+		<div className="ml-auto flex items-center gap-1">
 			<DefinitionTooltip topic="tif" only={availableTifOptions}>
-				<span className="text-3xs font-medium text-fg-muted/60 uppercase tracking-wide select-none cursor-default">{t`TIF`}</span>
+				<span className="select-none text-xs text-fg-muted">{t`TIF`}</span>
 			</DefinitionTooltip>
 			<Select
-				size="xs"
+				variant="text"
 				value={tif}
 				onValueChange={(value) => value && setTif(value as LimitTif)}
 				disabled={disabled}
-				triggerClassName="border-transparent bg-transparent hover:bg-fill-hover/40 px-1.5 gap-1"
 				options={availableTifOptions.map((opt) => ({
 					value: opt,
 					label: TIF_OPTIONS[opt].label,

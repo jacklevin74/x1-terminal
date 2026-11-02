@@ -98,7 +98,7 @@ export function TokenSelectorPopup({
 	return (
 		<PopoverContent
 			id={contentId}
-			className={cn(MARKET_SELECTOR_POPOVER_WIDTH, "p-0 border-stroke-weak bg-surface")}
+			className={cn(MARKET_SELECTOR_POPOVER_WIDTH, "overflow-hidden p-0")}
 			align="start"
 			sideOffset={4}
 			alignOffset={-2}

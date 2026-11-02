@@ -8,7 +8,6 @@ import {
 	WarningCircleIcon,
 } from "@phosphor-icons/react";
 import { NETWORKS, type NetworkId } from "@/config/networks";
-import { cn } from "@/lib/cn";
 import { getExplorerTxUrl } from "@/lib/explorer";
 
 interface NetworkSelectProps {
@@ -21,7 +20,7 @@ interface NetworkSelectProps {
 export function NetworkSelect({ label, value, onChange, disabled }: NetworkSelectProps) {
 	return (
 		<Select
-			label={label as string}
+			inlineLabel={label}
 			value={value}
 			onValueChange={(v) => v && onChange(v as NetworkId)}
 			disabled={disabled}
@@ -30,15 +29,41 @@ export function NetworkSelect({ label, value, onChange, disabled }: NetworkSelec
 	);
 }
 
+type StatusIconKind = "success" | "error" | "loading";
+
 interface StatusScreenProps {
 	title: React.ReactNode;
-	icon: "success" | "error" | "loading";
+	icon: StatusIconKind;
 	heading: React.ReactNode;
 	description?: React.ReactNode;
 	txHash?: string;
 	children?: React.ReactNode;
 	onClose?: () => void;
 	closable?: boolean;
+}
+
+export const explorerLinkClass =
+	"inline-flex items-center gap-1 text-xs text-fg-secondary underline decoration-dashed underline-offset-4 transition-colors hover:text-fg";
+
+export const readOnlyFieldClass =
+	"flex h-8 items-center justify-between gap-3 rounded-8 bg-control px-3 text-xs max-md:h-10";
+
+export const fieldChipClass =
+	"bg-control-hover text-fg-muted hover:text-fg data-disabled:bg-control-hover data-disabled:text-fg-disabled";
+
+export const inlineLinkButtonClass =
+	"inline h-auto align-baseline font-normal text-fg tabular-nums decoration-dashed decoration-fg-muted hover:text-fg-secondary hover:brightness-100";
+
+export const warningNoticeClass = "rounded-8 bg-control p-3 text-xs text-market-down";
+
+export function StatusIcon({ icon }: { icon: StatusIconKind }) {
+	return (
+		<div className="flex size-12 items-center justify-center rounded-8 bg-control">
+			{icon === "loading" && <SpinnerGapIcon className="size-6 animate-spin text-fg-muted" />}
+			{icon === "success" && <CheckCircleIcon className="size-6 text-market-up" />}
+			{icon === "error" && <WarningCircleIcon className="size-6 text-market-down" />}
+		</div>
+	);
 }
 
 export function StatusScreen({
@@ -61,40 +86,13 @@ export function StatusScreen({
 				</ModalHeader>
 				<ModalContent>
 					<div className="flex flex-col items-center gap-4 py-6">
-						{icon === "loading" ? (
-							<div className="relative">
-								<div className="absolute inset-0 animate-ping rounded-full bg-brand-soft/20" />
-								<div className="relative flex size-14 items-center justify-center rounded-full bg-brand-soft/10 border border-stroke-brand-strong/30">
-									<SpinnerGapIcon className="size-7 animate-spin text-brand" />
-								</div>
-							</div>
-						) : (
-							<div
-								className={cn(
-									"flex size-14 items-center justify-center rounded-full border",
-									icon === "success"
-										? "bg-success-soft border-stroke-success-strong/30"
-										: "bg-error-soft border-stroke-error-strong/30",
-								)}
-							>
-								{icon === "success" ? (
-									<CheckCircleIcon className="size-7 text-success" />
-								) : (
-									<WarningCircleIcon className="size-7 text-error" />
-								)}
-							</div>
-						)}
-						<div className="text-center space-y-1.5">
-							<p className="text-sm font-medium">{heading}</p>
+						<StatusIcon icon={icon} />
+						<div className="space-y-1 text-center">
+							<p className="text-base font-medium text-fg">{heading}</p>
 							{description && <p className="text-xs text-fg-muted">{description}</p>}
 						</div>
 						{explorerUrl && (
-							<a
-								href={explorerUrl}
-								target="_blank"
-								rel="noopener noreferrer"
-								className="inline-flex items-center gap-1.5 text-xs text-brand hover:underline"
-							>
+							<a href={explorerUrl} target="_blank" rel="noopener noreferrer" className={explorerLinkClass}>
 								<Trans>View on explorer</Trans>
 								<ArrowSquareOutIcon className="size-3" aria-hidden="true" />
 							</a>
@@ -110,14 +108,14 @@ export function StatusScreen({
 export function WalletNotConnected() {
 	return (
 		<div className="flex flex-col items-center gap-4 py-8">
-			<div className="flex size-12 items-center justify-center rounded-full bg-surface border border-stroke-weak/40">
-				<WalletIcon className="size-6 text-fg" />
+			<div className="flex size-12 items-center justify-center rounded-8 bg-control">
+				<WalletIcon className="size-6 text-fg-muted" />
 			</div>
-			<div className="text-center space-y-1">
-				<p className="text-sm font-medium">
+			<div className="space-y-1 text-center">
+				<p className="text-lg font-medium text-fg">
 					<Trans>Wallet not connected</Trans>
 				</p>
-				<p className="text-xs text-fg">
+				<p className="text-xs text-fg-muted">
 					<Trans>Connect your wallet to withdraw funds</Trans>
 				</p>
 			</div>

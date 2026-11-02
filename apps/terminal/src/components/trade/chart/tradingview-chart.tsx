@@ -1,5 +1,4 @@
-import { useTradingViewLines } from "./use-tradingview-lines";
-import { useExecutionFills } from "./use-execution-fills";
+import { t } from "@lingui/core/macro";
 import { useEffect, useRef, useState } from "react";
 import { CHART_MIN_HEIGHT_PX } from "@/config/chart";
 import { loadTradingViewScript } from "@/lib/chart/load-tradingview";
@@ -25,9 +24,11 @@ import {
 	TIMEZONE,
 } from "./constants";
 import { createDatafeed } from "./datafeed";
+import { useExecutionFills } from "./use-execution-fills";
+import { useTradingViewLines } from "./use-tradingview-lines";
 
 interface Props {
- positionDex?: string;
+	positionDex?: string;
 	symbol?: string;
 	interval?: string;
 	theme?: "light" | "dark";
@@ -35,20 +36,26 @@ interface Props {
 }
 
 export function TradingViewChart({
- positionDex,
+	positionDex,
 	symbol = DEFAULT_CHART_SYMBOL,
 	interval = DEFAULT_CHART_INTERVAL,
 	theme = DEFAULT_CHART_THEME,
 	onSwitchToDefault,
 }: Props) {
 	const chartKey = `${symbol}:${interval}:${theme}`;
- const [readyWidget, setReadyWidget] = useState<{ widget: IChartingLibraryWidget; key: string } | null>(null);
- useTradingViewLines(readyWidget?.key === chartKey ? readyWidget.widget : null, symbol, positionDex);
- const fills = useExecutionFills();
- const fillsRef = useRef(fills);
- fillsRef.current = fills;
- useEffect(() => { if (chartReadyRef.current && widgetRef.current) { const chart = widgetRef.current.activeChart(); chart.clearMarks(); chart.refreshMarks(); } }, [fills]);
- const containerRef = useRef<HTMLDivElement>(null);
+	const [readyWidget, setReadyWidget] = useState<{ widget: IChartingLibraryWidget; key: string } | null>(null);
+	useTradingViewLines(readyWidget?.key === chartKey ? readyWidget.widget : null, symbol, positionDex);
+	const fills = useExecutionFills();
+	const fillsRef = useRef(fills);
+	fillsRef.current = fills;
+	useEffect(() => {
+		if (chartReadyRef.current && widgetRef.current) {
+			const chart = widgetRef.current.activeChart();
+			chart.clearMarks();
+			chart.refreshMarks();
+		}
+	}, [fills]);
+	const containerRef = useRef<HTMLDivElement>(null);
 	const widgetRef = useRef<IChartingLibraryWidget | null>(null);
 	const cssUrlRef = useRef<string | null>(null);
 	const chartReadyRef = useRef(false);
@@ -116,7 +123,7 @@ export function TradingViewChart({
 				widget.onChartReady(() => {
 					if (disposed || widgetRef.current !== widget) return;
 					chartReadyRef.current = true;
-     setReadyWidget({ widget, key: `${symbol}:${interval}:${theme}` });
+					setReadyWidget({ widget, key: `${symbol}:${interval}:${theme}` });
 				});
 
 				if (onSwitchToDefaultRef.current) {
@@ -125,26 +132,27 @@ export function TradingViewChart({
 
 						const btn = widget.createButton({ align: "right", useTradingViewStyle: false });
 						btn.style.cssText =
-							"display:inline-flex;align-items:center;gap:6px;padding:0 4px;cursor:default;height:100%;";
+							"display:inline-flex;align-items:center;gap:4px;padding:0 4px;cursor:default;height:100%;";
 
 						const tvLabel = document.createElement("span");
-						tvLabel.textContent = "TradingView";
+						tvLabel.textContent = t`TradingView`;
 						tvLabel.dataset.htActive = "true";
-						tvLabel.style.cssText = "font-size:12px;color:var(--tv-fg,inherit);";
+						tvLabel.style.cssText =
+							"display:inline-flex;align-items:center;height:20px;padding:0 4px;font-size:12px;font-weight:400;color:var(--tv-fg);";
 
 						const sep = document.createElement("span");
 						sep.style.cssText =
-							"display:inline-block;width:1px;height:12px;background:var(--tv-color-toolbar-divider-background,rgba(128,128,128,0.3));align-self:center;flex-shrink:0;";
+							"display:inline-block;width:1px;height:12px;background:var(--tv-border);align-self:center;flex-shrink:0;";
 
 						const defaultLabel = document.createElement("span");
-						defaultLabel.textContent = "Default";
+						defaultLabel.textContent = t`Default`;
 						defaultLabel.style.cssText =
-							"font-size:12px;font-weight:400;color:var(--tv-muted-fg,rgba(128,128,128,0.8));cursor:pointer;";
+							"display:inline-flex;align-items:center;height:20px;padding:0 4px;font-size:12px;font-weight:400;color:var(--tv-muted-fg);border-radius:4px;cursor:pointer;";
 						defaultLabel.onpointerover = () => {
-							defaultLabel.style.color = "var(--tv-fg,inherit)";
+							defaultLabel.style.color = "var(--tv-fg)";
 						};
 						defaultLabel.onpointerout = () => {
-							defaultLabel.style.color = "var(--tv-muted-fg,rgba(128,128,128,0.8))";
+							defaultLabel.style.color = "var(--tv-muted-fg)";
 						};
 						defaultLabel.onclick = () => {
 							onSwitchToDefaultRef.current?.();
@@ -164,7 +172,7 @@ export function TradingViewChart({
 
 		return () => {
 			disposed = true;
-   setReadyWidget(null);
+			setReadyWidget(null);
 			if (widgetRef.current) {
 				widgetRef.current.remove();
 				widgetRef.current = null;

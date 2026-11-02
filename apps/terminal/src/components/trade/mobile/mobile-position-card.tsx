@@ -1,7 +1,6 @@
-import { PositionPnlShare } from "../positions/position-pnl-share";
 import { Button } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
-import { CrosshairIcon, PencilIcon, PlusIcon, XIcon } from "@phosphor-icons/react";
+import { PencilIcon, PlusIcon, XIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { LIQ_WARNING_PROXIMITY } from "@/config/trade";
@@ -15,6 +14,7 @@ import type { Side } from "@/lib/trade/types";
 import { getValueColorClass } from "@/lib/ui/value-color";
 import { AssetBadge } from "../components/asset-badge";
 import type { ClosePositionData, LimitClosePositionData, TpSlPositionData } from "../positions/position-dialog-types";
+import { PositionPnlShare } from "../positions/position-pnl-share";
 import { MetricCell } from "./metric-cell";
 
 interface Props {
@@ -118,13 +118,16 @@ export function MobilePositionCard({
 		});
 	}
 
+	const sideClass = isLong ? "text-market-up" : "text-market-down";
+
 	return (
-		<div className="rounded-xs border border-stroke-weak bg-surface overflow-hidden">
-			<div className="flex items-center justify-between px-3 py-1.5 border-b border-stroke-weak">
-				<div className="flex items-center gap-2">
+		<div className="flex flex-col gap-3 px-3 py-3">
+			<div className="flex items-center justify-between gap-2">
+				<div className="flex min-w-0 items-center gap-2">
 					<AssetBadge
+						appearance="plain"
 						coin={p.coin}
- leverage={p.leverage.value}
+						leverage={p.leverage.value}
 						side={isLong ? "buy" : "sell"}
 						onClick={() => onSelectMarket(p.coin, isLong ? "buy" : "sell")}
 						aria-label={
@@ -132,37 +135,39 @@ export function MobilePositionCard({
 								? t`Switch to ${displayName} market, long position`
 								: t`Switch to ${displayName} market, short position`
 						}
-						nameClassName="text-sm"
+						className="min-h-8"
+						nameClassName="text-base font-medium text-fg"
 					/>
-					<span className={cn("text-2xs font-medium uppercase", isLong ? "text-success" : "text-error")}>
-						{isLong ? t`Long` : t`Short`}
-					</span>
+					<span className={cn("text-xs font-medium", sideClass)}>{isLong ? t`Long` : t`Short`}</span>
 				</div>
-				<div className={cn("flex items-center gap-1 text-xs tabular-nums font-medium", pnlClass)}>
-					{formatUSD(unrealizedPnl, { signDisplay: "exceptZero" })}
-					<span className="text-2xs ml-1 font-normal text-fg-muted">{formatPercent(p.returnOnEquity, 1)}</span>
-<PositionPnlShare position={p} markPx={markPxRaw} symbol={market?.shortName ?? p.coin.split(":").pop() ?? p.coin} szDecimals={szDecimals} />
+				<div className="flex items-center gap-1">
+					<span className={cn("text-xs font-medium tabular-nums", pnlClass)}>
+						{formatUSD(unrealizedPnl, { signDisplay: "exceptZero" })}
+					</span>
+					<span className="text-xs tabular-nums text-fg-muted">{formatPercent(p.returnOnEquity, 1)}</span>
+					<PositionPnlShare
+						position={p}
+						markPx={markPxRaw}
+						symbol={market?.shortName ?? p.coin.split(":").pop() ?? p.coin}
+						szDecimals={szDecimals}
+					/>
 				</div>
 			</div>
 
-			<div className="grid grid-cols-3 divide-x divide-stroke-weak">
+			<div className="grid grid-cols-3 gap-x-3 gap-y-3">
 				<MetricCell
 					label={t`Size`}
 					value={
 						<>
-							<span className="whitespace-nowrap">
+							<span className="block truncate whitespace-nowrap">
 								{formatToken(absSize, { decimals: szDecimals, symbol: p.coin })}
 							</span>
-							<div className="text-2xs text-fg-muted font-normal tabular-nums mt-0.5">
-								{formatUSD(p.positionValue, { compact: true })}
-							</div>
+							<span className="block text-fg-muted">{formatUSD(p.positionValue, { compact: true })}</span>
 						</>
 					}
 				/>
 				<MetricCell label={t`Entry`} value={formatPrice(entryPx, { szDecimals })} />
-				<MetricCell label={t`Mark`} value={formatPrice(markPx, { szDecimals })} />
-			</div>
-			<div className="grid grid-cols-3 divide-x divide-stroke-weak border-t border-stroke-weak">
+				<MetricCell label={t`Mark`} value={formatPrice(markPx, { szDecimals })} align="end" />
 				<MetricCell
 					label={p.leverage.type === "isolated" ? t`Margin · Iso` : t`Margin`}
 					value={formatUSD(p.marginUsed)}
@@ -170,28 +175,28 @@ export function MobilePositionCard({
 				<MetricCell
 					label={t`Liq`}
 					value={formatPrice(p.liquidationPx, { szDecimals })}
-					valueClass={liqIsNear ? "text-error" : undefined}
+					valueClass={liqIsNear ? "text-market-down" : undefined}
 				/>
-				<MetricCell label={t`Funding`} value={fundingValue} valueClass={fundingClass} />
+				<MetricCell label={t`Funding`} value={fundingValue} valueClass={fundingClass} align="end" />
 			</div>
 
-			<div className="flex gap-1.5 px-2.5 py-1.5 border-t border-stroke-weak">
+			<div className="flex gap-2">
 				{confirmingClose ? (
 					<>
 						<Button
-							variant="outline"
+							variant="secondary"
 							intent="neutral"
-							size="xs"
-							className="flex-1 justify-center"
+							size="sm"
+							className="flex-1"
 							onClick={() => setConfirmingClose(false)}
 						>
 							{t`Cancel`}
 						</Button>
 						<Button
-							variant="outline"
-							intent="error"
-							size="xs"
-							className="flex-1 justify-center"
+							variant="filled"
+							intent="down"
+							size="sm"
+							className="flex-1"
 							onClick={handleClose}
 							disabled={!canClose || isRowClosing}
 							iconLeft={isRowClosing ? <Spinner className="size-3" /> : <XIcon className="size-3.5" />}
@@ -202,44 +207,44 @@ export function MobilePositionCard({
 				) : (
 					<>
 						<Button
-							variant="outline"
+							variant="secondary"
 							intent="neutral"
-							size="xs"
-							className="flex-1 justify-center touch-target"
+							size="sm"
+							className={cn("min-w-0", hasTpSl ? "flex-2" : "flex-1")}
 							onClick={handleOpenTpSl}
 							disabled={typeof assetId !== "number"}
-							iconLeft={hasTpSl ? <CrosshairIcon className="size-3.5" /> : <PlusIcon className="size-3.5" />}
+							iconLeft={hasTpSl ? undefined : <PlusIcon className="size-3.5" />}
+							iconRight={hasTpSl ? <PencilIcon className="size-3 shrink-0 text-fg-muted" /> : undefined}
 						>
 							{hasTpSl ? (
-								<span className="inline-flex items-center gap-1 tabular-nums truncate">
+								<span className="min-w-0 truncate tabular-nums">
 									{tpSlInfo?.tpPrice && (
-										<span className="text-success">{formatPrice(tpSlInfo.tpPrice, { szDecimals })}</span>
+										<span className="text-market-up">{formatPrice(tpSlInfo.tpPrice, { szDecimals })}</span>
 									)}
 									{tpSlInfo?.tpPrice && tpSlInfo?.slPrice && <span className="text-fg-muted"> / </span>}
 									{tpSlInfo?.slPrice && (
-										<span className="text-error">{formatPrice(tpSlInfo.slPrice, { szDecimals })}</span>
+										<span className="text-market-down">{formatPrice(tpSlInfo.slPrice, { szDecimals })}</span>
 									)}
-									<PencilIcon className="size-3 text-fg-disabled" />
 								</span>
 							) : (
 								t`TP/SL`
 							)}
 						</Button>
 						<Button
-							variant="outline"
+							variant="secondary"
 							intent="neutral"
-							size="xs"
-							className="flex-1 justify-center touch-target"
+							size="sm"
+							className="flex-1"
 							onClick={handleLimitClose}
 							disabled={!canClose || isRowClosing}
 						>
 							{t`Limit Close`}
 						</Button>
 						<Button
-							variant="outline"
-							intent="error"
-							size="xs"
-							className="flex-1 justify-center touch-target"
+							variant="secondary"
+							intent="down"
+							size="sm"
+							className="flex-1"
 							onClick={() => setConfirmingClose(true)}
 							disabled={!canClose || isRowClosing}
 							iconLeft={<XIcon className="size-3.5" />}
@@ -249,9 +254,7 @@ export function MobilePositionCard({
 					</>
 				)}
 			</div>
-			{closeErrorMessage && (
-				<div className="px-3 py-1.5 text-xs text-error border-t border-stroke-weak">{closeErrorMessage}</div>
-			)}
+			{closeErrorMessage && <p className="text-xs text-market-down">{closeErrorMessage}</p>}
 		</div>
 	);
 }

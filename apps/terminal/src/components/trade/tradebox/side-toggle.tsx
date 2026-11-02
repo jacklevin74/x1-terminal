@@ -1,5 +1,4 @@
 import { SegmentedControlItem, SegmentedControls } from "@hypeterminal/ui";
-import { cn } from "@/lib/cn";
 import type { Side } from "@/lib/trade/types";
 
 interface SideLabels {
@@ -16,30 +15,16 @@ interface Props {
 }
 
 export function SideToggle({ side, onSideChange, labels }: Props) {
-	const indicatorClassName = cn(
-		side === "buy" ? "bg-market-up" : "bg-market-down",
-	);
+	function handleValueChange(value: string) {
+		if (value === "buy" || value === "sell") onSideChange(value);
+	}
 
 	return (
-		<SegmentedControls
-			value={side}
-			onValueChange={(v) => onSideChange(v as Side)}
-			fullWidth
-			className="mb-2"
-			indicatorClassName={indicatorClassName}
-		>
-			<SegmentedControlItem
-				value="buy"
-				aria-label={labels.buyAria}
-				className="flex-1 py-2 text-sm font-semibold data-[active]:text-background"
-			>
+		<SegmentedControls value={side} onValueChange={handleValueChange} fullWidth tone={side === "buy" ? "up" : "down"}>
+			<SegmentedControlItem value="buy" aria-label={labels.buyAria}>
 				{labels.buy}
 			</SegmentedControlItem>
-			<SegmentedControlItem
-				value="sell"
-				aria-label={labels.sellAria}
-				className="flex-1 py-2 text-sm font-semibold data-[active]:text-background"
-			>
+			<SegmentedControlItem value="sell" aria-label={labels.sellAria}>
 				{labels.sell}
 			</SegmentedControlItem>
 		</SegmentedControls>

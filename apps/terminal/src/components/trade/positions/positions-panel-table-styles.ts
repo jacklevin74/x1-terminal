@@ -1,30 +1,41 @@
-export const positionsPanelTableHeadClass = "font-medium uppercase tracking-wide text-fg-muted";
+export const accountTabRootClass = "flex min-h-0 min-w-0 flex-1 flex-col";
 
-export const positionsPanelTableCellClass = "h-6 py-0.5 leading-4 whitespace-nowrap";
+export const accountTableShellClass = "flex min-h-0 flex-1 flex-col overflow-hidden";
 
-export const positionsPanelTableLayoutClass = "table-auto w-max min-w-0 [&_th]:whitespace-nowrap [&_td]:whitespace-nowrap";
+export const accountTableClass = "w-full min-w-max";
 
-export const positionsPanelTableHeaderClass = "[&_tr]:border-stroke-weak [&_tr]:border-t-0 bg-fill-weaker";
+export const accountHeadClass = "h-6 whitespace-nowrap text-2xs font-normal uppercase tracking-micro text-fg-muted";
 
-export const positionsPanelTableBodyClass = "[&_tr]:border-stroke-weak";
+export const accountNumHeadClass = "text-right";
 
-export const positionsPanelTableHeaderRowClass = "border-0 hover:bg-transparent";
+export const accountCellClass = "h-7 whitespace-nowrap text-xs tabular-nums text-fg";
 
-export const positionsPanelTableShellClass = "min-h-0 flex-1 flex flex-col overflow-hidden";
+export const accountNumCellClass = "text-right";
 
-export const positionsPanelTabRootClass = "flex min-h-0 min-w-0 flex-1 flex-col gap-0 pb-1 pt-0";
+export const accountRowClass = "group";
 
-export const positionsPanelTableCaptionRowClass =
-	"flex shrink-0 items-center justify-end gap-3 border-b border-stroke-weak px-2.5 py-1";
+export const accountSortButtonClass =
+	"inline-flex items-center gap-1 uppercase transition-colors hover:text-fg focus-visible:outline-2 focus-visible:outline-stroke-focus";
 
-export const positionsPanelRowHoverClass =
-	"border-stroke-weak transition-colors [&:hover:not(:has(button:hover,a:hover))]:bg-fill-hover";
+export const accountHeadActionClass =
+	"uppercase text-fg transition-colors hover:text-fg-secondary disabled:cursor-not-allowed disabled:text-fg-disabled focus-visible:outline-2 focus-visible:outline-stroke-focus";
 
-export const positionsPanelRowStripeClass = "bg-alternate";
+export const accountTextLinkClass =
+	"inline-flex items-center gap-1 text-fg transition-colors hover:text-fg-secondary focus-visible:outline-2 focus-visible:outline-stroke-focus";
 
-// The compact Positions view is the visual reference for account tables.
-export const positionViewHeadClass = "h-7 px-1.5 py-0.5 text-left text-[11px] font-medium normal-case tracking-normal text-[#8e9c9f]";
-export const positionViewCellClass = "h-6 px-1.5 py-0.5 text-left text-xs leading-4 tabular-nums whitespace-nowrap text-[#e4f0ef]";
-export const positionViewHeaderClass = "[&_tr]:border-0 bg-transparent";
-export const positionViewBodyClass = "[&_tr]:border-0";
-export const positionViewRowClass = "group border-0 bg-transparent transition-colors hover:bg-fill-hover";
+export const accountFooterClass =
+	"flex h-7 shrink-0 items-center gap-3 border-t border-stroke-faint px-3 text-xs tabular-nums";
+
+export const accountInlineErrorClass = "px-3 py-1 text-xs text-market-down";
+
+export function getMarketValueClass(value: number | null | undefined): string {
+	if (value == null || !Number.isFinite(value) || value === 0) return "";
+	return value > 0 ? "text-market-up" : "text-market-down";
+}
+
+export const accountFilteredEmptyClass = "shrink-0 px-3 py-6 text-center text-xs text-fg-muted";
+
+export function getAriaSort(active: boolean, descending: boolean): "ascending" | "descending" | undefined {
+	if (!active) return undefined;
+	return descending ? "descending" : "ascending";
+}

@@ -28,27 +28,26 @@
 	--font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
 	--font-mono: ui-monospace, "SF Mono", monospace;
 
-	/* ---- Typography Scale (Desktop) ----
-     Figma name      → Tailwind class
-     Micro    12/16  → text-2xs
-     Tiny     14/20  → text-xs
-     Small    16/24  → text-sm
-     Heading4 20/28  → text-base
-     Heading3 24/32  → text-lg
-     Heading2 32/40  → text-xl
-     Heading1 40/48  → text-2xl
-     Display  56/64  → text-3xl
+	/* ---- Typography Scale (docs/design-system.md §2) ----
+     11/16 → text-2xs  (uppercase micro-labels only, with tracking-micro)
+     12/16 → text-xs   (default UI text and data)
+     14/20 → text-sm   (nav links, primary CTAs)
+     16/24 → text-base (symbol, price, modal titles, mobile inputs)
+     20/28 → text-lg   (empty-state titles only)
+     text-3xs is a deprecated alias of text-2xs: 10px is removed.
   */
-	--text-2xs: 12px;
+	--text-3xs: 11px;
+	--text-3xs--line-height: 16px;
+	--text-2xs: 11px;
 	--text-2xs--line-height: 16px;
-	--text-xs: 14px;
-	--text-xs--line-height: 20px;
-	--text-sm: 16px;
-	--text-sm--line-height: 24px;
-	--text-base: 20px;
-	--text-base--line-height: 28px;
-	--text-lg: 24px;
-	--text-lg--line-height: 32px;
+	--text-xs: 12px;
+	--text-xs--line-height: 16px;
+	--text-sm: 14px;
+	--text-sm--line-height: 20px;
+	--text-base: 16px;
+	--text-base--line-height: 24px;
+	--text-lg: 20px;
+	--text-lg--line-height: 28px;
 	--text-xl: 32px;
 	--text-xl--line-height: 40px;
 	--text-2xl: 40px;
@@ -98,6 +97,7 @@
 	/* ---- Letter Spacing ---- */
 	--tracking-uppercase: 2px;
 	--tracking-heading-1: -0.5px;
+	--tracking-micro: 0.04em;
 
 	/* ---- Z-Index Scale ---- */
 	--z-sticky: 40;
@@ -117,19 +117,21 @@
 		color-scheme: light;
 
 		/* Background */
-		--bg-base: #ffffff;
+		--bg-base: #eef0f4;
 		--bg-raised: #ffffff;
 		--bg-overlay: #ffffff;
 		--bg-sunken: #f5f6fa;
 		--bg-alternate: #f5f6fa;
+		--bg-band: #0009330a;
 		--bg-brand: #4c64d9;
 		--bg-inverse: #12131a;
 
 		/* Text */
 		--text-strong: #000626e5;
-		--text-weak: #000933a6;
+		--text-secondary: #000933b8;
+		--text-weak: #0009338f;
 		--text-brand: #4c64d9;
-		--text-disabled: #0011661a;
+		--text-disabled: #00093352;
 		--text-error: #c73a3a;
 		--text-warning: #8f6c1a;
 		--text-success: #067a57;
@@ -142,6 +144,8 @@
 		--fill-strong: #000626e5;
 		--fill-weak: #0015800a;
 		--fill-weaker: #00158005;
+		--fill-control: #eceef3;
+		--fill-control-hover: #e1e4eb;
 		--fill-hover: #0015800a;
 		--fill-press: #0011661a;
 		--fill-selected: #4c64d9;
@@ -168,6 +172,8 @@
 		/* Stroke */
 		--stroke-strong: #000d4d73;
 		--stroke-weak: #0011661a;
+		--stroke-faint: #0011660f;
+		--stroke-control-focus: #0011663d;
 		--stroke-selected: #4c64d9;
 		--stroke-focus: #4c64d9;
 		--stroke-disabled: #0011661a;
@@ -196,6 +202,10 @@
 		--icon-inverse: #ffffff99;
 		--icon-inverse-strong: #ffffff;
 		--icon-inverse-disabled: #ffffff1f;
+
+		/* Elevation */
+		--elevation-menu:
+			0 4px 8px rgba(0, 0, 0, 0.06), 0 16px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 	}
 
 	/* ==================== DARK MODE ==================== */
@@ -203,19 +213,21 @@
 		color-scheme: dark;
 
 		/* Background */
-		--bg-base: #12131a;
-		--bg-raised: #1d1e26;
-		--bg-overlay: #292b33;
-		--bg-sunken: #0a0a0a;
-		--bg-alternate: #1d1e26;
+		--bg-base: #07070a;
+		--bg-raised: #121217;
+		--bg-overlay: #1b1b22;
+		--bg-sunken: #000000;
+		--bg-alternate: #121217;
+		--bg-band: #ffffff0a;
 		--bg-brand: #b2bcf1;
 		--bg-inverse: #ffffff;
 
 		/* Text */
-		--text-strong: #ffffff;
-		--text-weak: #ffffffc7;
+		--text-strong: #fffffff2;
+		--text-secondary: #ffffffb8;
+		--text-weak: #ffffff8f;
 		--text-brand: #b2bcf1;
-		--text-disabled: #ffffff1f;
+		--text-disabled: #ffffff52;
 		--text-error: #ff9c9c;
 		--text-warning: #e0be70;
 		--text-success: #77c7af;
@@ -228,11 +240,13 @@
 		--fill-strong: #ffffff;
 		--fill-weak: #ffffff0f;
 		--fill-weaker: #ffffff08;
+		--fill-control: #22222a;
+		--fill-control-hover: #2c2c36;
 		--fill-hover: #ffffff0f;
 		--fill-press: #ffffff1f;
 		--fill-selected: #b2bcf1;
 		--fill-disabled: #ffffff1f;
-		--fill-overlay: #000626a8;
+		--fill-overlay: #00000099;
 		--fill-brand-strong: #b2bcf1;
 		--fill-brand-weak: #b2bcf10f;
 		--fill-error-strong: #ff9c9c;
@@ -243,7 +257,7 @@
 		--fill-success-weak: #77c7af14;
 		--fill-info-strong: #7ec0e5;
 		--fill-info-weak: #7ec0e514;
-		--fill-inverse-strong: #12131a;
+		--fill-inverse-strong: #07070a;
 		--fill-inverse-weak: #0015800a;
 		--fill-inverse-hover: #0015800a;
 		--fill-inverse-press: #0011661a;
@@ -253,7 +267,9 @@
 
 		/* Stroke */
 		--stroke-strong: #ffffff99;
-		--stroke-weak: #ffffff1f;
+		--stroke-weak: #ffffff14;
+		--stroke-faint: #ffffff0d;
+		--stroke-control-focus: #ffffff3d;
 		--stroke-selected: #b2bcf1;
 		--stroke-focus: #b2bcf1;
 		--stroke-disabled: #ffffff1f;
@@ -282,6 +298,10 @@
 		--icon-inverse: #000d4d73;
 		--icon-inverse-strong: #000626e5;
 		--icon-inverse-disabled: #0011661a;
+
+		/* Elevation */
+		--elevation-menu:
+			0 4px 8px rgba(0, 0, 0, 0.45), 0 16px 32px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 	}
 }
 
@@ -308,10 +328,12 @@
 	--color-overlay: var(--bg-overlay);
 	--color-sunken: var(--bg-sunken);
 	--color-alternate: var(--bg-alternate);
+	--color-band: var(--bg-band);
 	--color-inverse-surface: var(--bg-inverse);
 
 	/* Foregrounds */
 	--color-fg: var(--text-strong);
+	--color-fg-secondary: var(--text-secondary);
 	--color-fg-muted: var(--text-weak);
 	--color-fg-disabled: var(--text-disabled);
 	--color-fg-inverse: var(--text-inverse-strong);
@@ -334,6 +356,8 @@
 	--color-fill: var(--fill-strong);
 	--color-fill-weak: var(--fill-weak);
 	--color-fill-weaker: var(--fill-weaker);
+	--color-control: var(--fill-control);
+	--color-control-hover: var(--fill-control-hover);
 	--color-fill-hover: var(--fill-hover);
 	--color-fill-press: var(--fill-press);
 	--color-fill-selected: var(--fill-selected);
@@ -351,6 +375,8 @@
 	   Kept as `stroke-` rather than `border-` so class names never stutter
 	   (e.g. `border-stroke-weak` vs `border-border-weak`). */
 	--color-stroke-weak: var(--stroke-weak);
+	--color-stroke-faint: var(--stroke-faint);
+	--color-stroke-control-focus: var(--stroke-control-focus);
 	--color-stroke-strong: var(--stroke-strong);
 	--color-stroke-selected: var(--stroke-selected);
 	--color-stroke-focus: var(--stroke-focus);
@@ -380,6 +406,9 @@
 	--color-icon-inverse: var(--icon-inverse);
 	--color-icon-inverse-strong: var(--icon-inverse-strong);
 	--color-icon-inverse-disabled: var(--icon-inverse-disabled);
+
+	/* Elevation */
+	--shadow-menu: var(--elevation-menu);
 }
 
 /* =============================================

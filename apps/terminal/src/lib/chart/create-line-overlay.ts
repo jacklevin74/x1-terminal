@@ -1,6 +1,7 @@
 import Big from "big.js";
 import { registerOverlay } from "klinecharts";
 import { colorToHex, colorToRgba, getChartColors } from "./theme-colors";
+import { getTradingLineColor, type TradingLineTone } from "./trading-lines";
 
 interface LineOverlayStyle {
 	lineAlpha: number;
@@ -12,7 +13,7 @@ interface ResolveInput {
 
 interface Resolved {
 	label: string;
-	isBuy: boolean;
+	tone: TradingLineTone;
 }
 
 interface Config {
@@ -40,12 +41,11 @@ export function createLineOverlay({ name, style, resolve }: Config): () => void 
 				const y = coordinates[0]?.y;
 				if (y === undefined) return [];
 
-				const { label, isBuy } = resolve({ extendData: overlay.extendData });
+				const { label, tone } = resolve({ extendData: overlay.extendData });
 
 				const colors = getChartColors();
-				const marketColor = isBuy ? colors.green : colors.red;
-				const color = colorToHex(marketColor);
-				const lineColor = colorToRgba(marketColor, style.lineAlpha);
+				const color = getTradingLineColor(tone);
+				const lineColor = colorToRgba(color, style.lineAlpha);
 				const bgColor = colorToHex(colors.background);
 
 				const rawPrice = overlay.points[0]?.value;
@@ -71,7 +71,9 @@ export function createLineOverlay({ name, style, resolve }: Config): () => void 
 						attrs: { x: badgeX, y, text: label, align: "center", baseline: "middle" },
 						styles: {
 							color,
-							size: 10,
+							size: 12,
+							weight: "normal",
+							family: colors.fontFamily,
 							paddingLeft: 4,
 							paddingRight: 4,
 							paddingTop: 2,
@@ -88,7 +90,9 @@ export function createLineOverlay({ name, style, resolve }: Config): () => void 
 						attrs: { x: priceX, y, text: priceText, align: "right", baseline: "middle" },
 						styles: {
 							color,
-							size: 10,
+							size: 12,
+							weight: "normal",
+							family: colors.fontFamily,
 							paddingLeft: 4,
 							paddingRight: 4,
 							paddingTop: 2,

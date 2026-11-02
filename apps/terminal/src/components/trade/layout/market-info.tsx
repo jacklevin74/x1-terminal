@@ -1,6 +1,7 @@
 import { useDefaultLayout } from "react-resizable-panels";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { PANEL_LAYOUT } from "@/config/layout";
+import { APP_PANEL_CLASS, PANEL_LAYOUT } from "@/config/layout";
+import { cn } from "@/lib/cn";
 import { useSelectedMarketInfo } from "@/lib/hyperliquid";
 import { ChartPanel } from "../chart/chart-panel";
 import { OrderbookPanel } from "../orderbook/orderbook-panel";
@@ -21,11 +22,15 @@ export function MarketInfo() {
 				onLayoutChanged={onLayoutChanged}
 			>
 				<ResizablePanel defaultSize={chart.defaultSize} minSize={chart.minSize}>
-					<ChartPanel />
+					<div className={cn(APP_PANEL_CLASS, "h-full")}>
+						<ChartPanel />
+					</div>
 				</ResizablePanel>
 				<ResizableHandle />
 				<ResizablePanel defaultSize={orderbook.defaultSize} minSize={orderbook.minSize}>
-					<OrderbookPanel key={orderbookKey} />
+					<div className={cn(APP_PANEL_CLASS, "h-full")}>
+						<OrderbookPanel key={orderbookKey} />
+					</div>
 				</ResizablePanel>
 			</ResizablePanelGroup>
 		</div>

@@ -18,19 +18,19 @@ type InputProps = Omit<React.ComponentProps<typeof BaseInput>, "className"> & {
 };
 
 const inputBaseStyles = [
-	"placeholder:text-fg-muted selection:bg-brand selection:text-white",
-	"border-stroke-weak min-w-0 rounded-8 border bg-transparent px-2 py-1",
-	"transition-[color,box-shadow,border-color] outline-none",
-	"disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
-	"focus-visible:border-stroke-focus focus-visible:ring-stroke-focus/20 focus-visible:ring-[2px]",
-	"aria-invalid:ring-stroke-error-strong/20 dark:aria-invalid:ring-stroke-error-strong/40 aria-invalid:border-stroke-error-strong",
+	"text-fg placeholder:text-fg-muted selection:bg-sel",
+	"min-w-0 rounded-8 bg-control px-3 tabular-nums",
+	"transition-[color,background-color,box-shadow] outline-none",
+	"disabled:cursor-not-allowed disabled:text-fg-disabled disabled:placeholder:text-fg-disabled",
+	"focus-visible:bg-control-hover focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-stroke-control-focus",
+	"aria-invalid:ring-1 aria-invalid:ring-inset aria-invalid:ring-market-down",
 ].join(" ");
 
 const inputSizeStyles: Record<InputSize, string> = {
-	sm: "h-6 text-xs px-1.5",
-	default: "h-7 text-xs",
-	lg: "h-9 text-sm px-3",
-	xl: "h-12 text-base px-3",
+	sm: "h-6 px-2 text-xs",
+	default: "h-8 max-md:h-10 text-xs max-md:text-base",
+	lg: "h-9 text-sm max-md:text-base",
+	xl: "h-11 text-base",
 };
 
 function getInputClassName(inputSize: InputSize, className?: string) {

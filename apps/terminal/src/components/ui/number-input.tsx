@@ -14,11 +14,35 @@
  * without rewriting every caller's `onChange(e)` handler.
  */
 import { Input as BaseInput } from "@base-ui/react/input";
+import { CaretDownIcon } from "@phosphor-icons/react";
 import type * as React from "react";
-import { useCallback } from "react";
+import { useCallback, useId } from "react";
 import { cn } from "@/lib/cn";
-import { labelTypographyClass } from "./field-label";
-import { getInputClassName, type InputSize } from "./input";
+import { inlineLabelTypographyClass, labelTypographyClass } from "./field-label";
+import type { InputSize } from "./input";
+
+const fieldBaseStyles =
+	"flex w-full min-w-0 items-center gap-2 rounded-8 bg-control tabular-nums transition-[background-color,box-shadow] duration-150 motion-reduce:transition-none";
+const fieldFocusStyles =
+	"focus-within:bg-control-hover focus-within:ring-1 focus-within:ring-inset focus-within:ring-stroke-control-focus";
+const fieldInvalidStyles = "ring-1 ring-inset ring-market-down";
+
+const fieldSizeStyles: Record<InputSize, string> = {
+	sm: "h-6 px-2 text-xs",
+	default: "h-8 max-md:h-10 px-3 text-xs max-md:text-base",
+	lg: "h-9 px-3 text-sm max-md:text-base",
+	xl: "h-11 px-3 text-base",
+};
+
+const chipStyles =
+	"inline-flex h-5 shrink-0 items-center gap-1 rounded-4 bg-control-hover px-1.5 text-xs font-normal text-fg-muted transition-colors hover:text-fg disabled:cursor-not-allowed disabled:text-fg-disabled";
+
+export interface NumberInputChip {
+	label: React.ReactNode;
+	onClick: () => void;
+	ariaLabel?: string;
+	active?: boolean;
+}
 
 /**
  * Validates numeric input string format.
@@ -62,6 +86,12 @@ interface Props extends Omit<React.ComponentProps<"input">, "type" | "onChange" 
 	label?: string;
 	labelValue?: React.ReactNode;
 	onLabelValueClick?: () => void;
+	inlineLabel?: React.ReactNode;
+	chips?: readonly NumberInputChip[];
+	onSuffixClick?: () => void;
+	suffixAriaLabel?: string;
+	invalid?: boolean;
+	error?: React.ReactNode;
 }
 
 export function NumberInput({
@@ -83,11 +113,21 @@ export function NumberInput({
 	label,
 	labelValue,
 	onLabelValueClick,
+	inlineLabel,
+	chips,
+	onSuffixClick,
+	suffixAriaLabel,
+	invalid,
+	error,
+	id,
 	...props
 }: Props) {
+	const generatedId = useId();
+	const inputId = id ?? generatedId;
+	const ariaInvalid = props["aria-invalid"];
+	const isInvalid = invalid === true || error != null || ariaInvalid === true || ariaInvalid === "true";
 	const effectiveAllowDecimals = allowDecimals && (maxAllowedDecimals === undefined || maxAllowedDecimals > 0);
 	const hasMax = maxLabel != null && onMaxClick != null;
-	const hasSuffix = !hasMax && suffix != null;
 
 	const createSyntheticEvent = useCallback(
 		(input: HTMLInputElement, newValue: string): React.ChangeEvent<HTMLInputElement> => {
@@ -187,72 +227,113 @@ export function NumberInput({
 		[effectiveAllowDecimals, allowNegative, maxAllowedDecimals, onChange],
 	);
 
-	const inputEl = (
-		<BaseInput
-			type="text"
-			inputMode={effectiveAllowDecimals ? "decimal" : "numeric"}
-			data-slot="input"
-			data-size={inputSize}
-			value={value}
-			disabled={disabled}
-			className={getInputClassName(inputSize, cn(hasMax && "pr-20", hasSuffix && "pr-7", className))}
-			onKeyDown={handleKeyDown}
-			onChange={validateInputValue}
-			{...props}
-		/>
+	const field = (
+		<div
+			data-slot="number-input-field"
+			data-disabled={disabled || undefined}
+			className={cn(
+				fieldBaseStyles,
+				fieldSizeStyles[inputSize],
+				isInvalid ? fieldInvalidStyles : fieldFocusStyles,
+				disabled && "cursor-not-allowed text-fg-disabled",
+				className,
+			)}
+		>
+			{inlineLabel != null && (
+				<label
+					htmlFor={inputId}
+					className={cn(inlineLabelTypographyClass, "shrink-0 whitespace-nowrap", disabled && "text-fg-disabled")}
+				>
+					{inlineLabel}
+				</label>
+			)}
+			<BaseInput
+				type="text"
+				inputMode={effectiveAllowDecimals ? "decimal" : "numeric"}
+				data-slot="input"
+				data-size={inputSize}
+				id={inputId}
+				value={value}
+				disabled={disabled}
+				aria-invalid={isInvalid || undefined}
+				className={cn(
+					"h-full w-full min-w-0 flex-1 bg-transparent text-fg outline-none placeholder:text-fg-muted",
+					"disabled:cursor-not-allowed disabled:text-fg-disabled disabled:placeholder:text-fg-disabled",
+					inlineLabel != null && "text-right",
+				)}
+				onKeyDown={handleKeyDown}
+				onChange={validateInputValue}
+				{...props}
+			/>
+			{chips?.map((chip, index) => (
+				<button
+					// biome-ignore lint/suspicious/noArrayIndexKey: chips are a static, ordered list
+					key={index}
+					type="button"
+					onClick={chip.onClick}
+					disabled={disabled}
+					aria-label={chip.ariaLabel}
+					className={cn(chipStyles, chip.active && "text-fg")}
+				>
+					{chip.label}
+				</button>
+			))}
+			{hasMax && (
+				<button type="button" onClick={onMaxClick} disabled={disabled} className={chipStyles}>
+					{maxLabel}
+				</button>
+			)}
+			{suffix != null && onSuffixClick != null && (
+				<button
+					type="button"
+					onClick={onSuffixClick}
+					disabled={disabled}
+					aria-label={suffixAriaLabel}
+					className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-xs font-medium text-fg transition-colors hover:text-fg-secondary disabled:cursor-not-allowed disabled:text-fg-disabled"
+				>
+					{suffix}
+					<CaretDownIcon className="size-3 text-fg-muted" weight="bold" />
+				</button>
+			)}
+			{suffix != null && onSuffixClick == null && (
+				<span className="shrink-0 whitespace-nowrap text-xs font-medium text-fg">{suffix}</span>
+			)}
+		</div>
 	);
 
-	function renderInputWithAction() {
-		if (hasMax) {
-			return (
-				<div className="relative">
-					{inputEl}
-					<button
-						type="button"
-						onClick={onMaxClick}
-						disabled={disabled}
-						className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-brand hover:text-brand/80 active:scale-90 active:opacity-70 transition-[color,opacity,transform] whitespace-nowrap tabular-nums disabled:opacity-50 disabled:pointer-events-none"
-					>
-						{maxLabel}
-					</button>
-				</div>
-			);
-		}
-		if (hasSuffix) {
-			return (
-				<div className="relative">
-					{inputEl}
-					<span className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-xs text-fg-muted whitespace-nowrap tabular-nums">
-						{suffix}
-					</span>
-				</div>
-			);
-		}
-		return inputEl;
+	const errorText = error != null && error !== false && <p className="mt-1 text-xs text-market-down">{error}</p>;
+
+	if (!label) {
+		if (!errorText) return field;
+		return (
+			<div className="w-full">
+				{field}
+				{errorText}
+			</div>
+		);
 	}
-
-	const inputWithAction = renderInputWithAction();
-
-	if (!label) return inputWithAction;
 
 	return (
 		<div>
 			<div className="mb-1.5 flex items-center justify-between">
-				<span className={labelTypographyClass}>{label}</span>
+				<label htmlFor={inputId} className={labelTypographyClass}>
+					{label}
+				</label>
 				{labelValue != null && onLabelValueClick ? (
 					<button
 						type="button"
 						onClick={onLabelValueClick}
 						disabled={disabled}
-						className="text-3xs text-fg-muted tabular-nums leading-none hover:text-fg transition-colors cursor-pointer disabled:pointer-events-none"
+						className="text-xs text-fg-muted tabular-nums hover:text-fg transition-colors cursor-pointer disabled:pointer-events-none"
 					>
 						{labelValue}
 					</button>
 				) : labelValue != null ? (
-					<span className="text-3xs text-fg-muted tabular-nums leading-none">{labelValue}</span>
+					<span className="text-xs text-fg-muted tabular-nums">{labelValue}</span>
 				) : null}
 			</div>
-			{inputWithAction}
+			{field}
+			{errorText}
 		</div>
 	);
 }

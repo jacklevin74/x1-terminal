@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 
-const ROW_HEIGHT = 19;
+const ROW_HEIGHT = 20;
 const MIN_ROWS_PER_SIDE = 3;
 const MAX_ROWS_PER_SIDE = 20;
 const SPREAD_SELECTOR = "[data-slot='orderbook-spread']";

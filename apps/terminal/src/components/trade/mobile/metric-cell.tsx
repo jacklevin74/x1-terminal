@@ -5,13 +5,14 @@ interface Props {
 	label: ReactNode;
 	value: ReactNode;
 	valueClass?: string;
+	align?: "start" | "end";
 }
 
-export function MetricCell({ label, value, valueClass }: Props) {
+export function MetricCell({ label, value, valueClass, align = "start" }: Props) {
 	return (
-		<div className="px-2.5 py-1.5">
-			<div className="text-xs text-fg-muted">{label}</div>
-			<div className={cn("text-xs tabular-nums font-medium", valueClass)}>{value}</div>
+		<div className={cn("flex min-w-0 flex-col gap-1", align === "end" && "items-end text-right")}>
+			<div className="truncate text-2xs uppercase tracking-micro text-fg-muted">{label}</div>
+			<div className={cn("min-w-0 text-xs tabular-nums text-fg", valueClass)}>{value}</div>
 		</div>
 	);
 }

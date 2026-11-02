@@ -1,5 +1,4 @@
 import { t } from "@lingui/core/macro";
-import { PercentIcon } from "@phosphor-icons/react";
 import { Skeleton } from "boneyard-js/react";
 import { useConnection } from "wagmi";
 import { FALLBACK_VALUE_PLACEHOLDER } from "@/config/app";
@@ -39,7 +38,7 @@ export function MobileFundingTab({ className }: Props) {
 
 	if (!isConnected) {
 		return (
-			<div className="flex-1 flex items-center justify-center p-6 text-sm text-fg-muted">
+			<div className="flex-1 flex items-center justify-center px-3 py-6 text-center text-xs text-fg-muted">
 				{t`Connect your wallet to view funding payments.`}
 			</div>
 		);
@@ -47,7 +46,7 @@ export function MobileFundingTab({ className }: Props) {
 
 	if (status === "error") {
 		return (
-			<div className="flex-1 flex items-center justify-center p-6 text-sm text-error">
+			<div className="flex-1 flex flex-col items-center justify-center px-3 py-6 text-center text-xs text-market-down">
 				<span>{t`Failed to load funding history.`}</span>
 				{error instanceof Error && <span className="mt-1 text-xs text-fg-muted">{error.message}</span>}
 			</div>
@@ -56,7 +55,7 @@ export function MobileFundingTab({ className }: Props) {
 
 	if (status === "active" && updates.length === 0) {
 		return (
-			<div className="flex-1 flex items-center justify-center p-6 text-sm text-fg-muted">
+			<div className="flex-1 flex items-center justify-center px-3 py-6 text-center text-xs text-fg-muted">
 				{t`No funding payments found.`}
 			</div>
 		);
@@ -65,12 +64,11 @@ export function MobileFundingTab({ className }: Props) {
 	return (
 		<Skeleton name="funding-tab" loading={status === "subscribing" || status === "idle"}>
 			<div className={cn("flex-1 min-h-0 flex flex-col", className)}>
-				<div className="px-3 py-2 flex items-center gap-2 text-xs uppercase tracking-wider text-fg-muted">
-					<PercentIcon className="size-3" />
-					{t`Funding History`}
-					<span className={cn("font-semibold ml-auto tabular-nums", headerClass)}>{headerTotal}</span>
+				<div className="shrink-0 h-10 px-3 flex items-center justify-between gap-2">
+					<span className="text-2xs uppercase tracking-micro text-fg-muted">{t`Funding History`}</span>
+					<span className={cn("text-xs tabular-nums", headerClass)}>{headerTotal}</span>
 				</div>
-				<div className="flex-1 min-h-0 overflow-y-auto px-3 pb-3 space-y-2">
+				<div className="flex-1 min-h-0 overflow-y-auto divide-y divide-stroke-faint border-t border-stroke-faint">
 					{updates.map((update) => {
 						const market = markets.getMarket(update.coin);
 						const szi = toNumber(update.szi);
@@ -79,23 +77,22 @@ export function MobileFundingTab({ className }: Props) {
 						const positionSize = szi !== null ? Math.abs(szi) : null;
 
 						return (
-							<div
-								key={`${update.coin}-${update.time}-${update.usdc}`}
-								className="rounded-xs border border-stroke-weak bg-surface overflow-hidden"
-							>
-								<div className="flex items-center justify-between px-3 py-1.5 border-b border-stroke-weak">
+							<div key={`${update.coin}-${update.time}-${update.usdc}`} className="flex flex-col gap-3 px-3 py-3">
+								<div className="flex items-center justify-between gap-2">
 									<AssetBadge
 										coin={update.coin}
 										onClick={() => setSelectedMarket(scope, update.coin)}
 										aria-label={t`Switch to ${update.coin} market`}
-										nameClassName="text-sm"
+										appearance="plain"
+										className="min-h-8"
+										nameClassName="text-base font-medium text-fg"
 									/>
 									<div className={cn("text-xs font-medium tabular-nums", getValueColorClass(usdc))}>
 										{formatToken(usdc, { symbol: "USDC" })}
 									</div>
 								</div>
 
-								<div className="grid grid-cols-3 divide-x divide-stroke-weak">
+								<div className="grid grid-cols-3 gap-3">
 									<MetricCell
 										label={t`Position`}
 										value={formatToken(positionSize, { decimals: market?.szDecimals, symbol: market?.shortName })}
@@ -105,7 +102,7 @@ export function MobileFundingTab({ className }: Props) {
 										value={formatPercent(rate, { minimumFractionDigits: 4, maximumFractionDigits: 4 })}
 										valueClass={rate !== null ? getValueColorClass(rate) : undefined}
 									/>
-									<MetricCell label={t`Time`} value={formatDateTimeShort(update.time)} />
+									<MetricCell label={t`Time`} value={formatDateTimeShort(update.time)} align="end" />
 								</div>
 							</div>
 						);

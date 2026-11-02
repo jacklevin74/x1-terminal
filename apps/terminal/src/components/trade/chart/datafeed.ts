@@ -1,10 +1,11 @@
-import { buildExecutionMarkers, type ExecutionFill } from "@/lib/chart/execution-markers";
 import { t } from "@lingui/core/macro";
 import type { AllMidsResponse, MetaResponse } from "@nktkas/hyperliquid";
 import { candleSnapshotToBar, filterAndSortBars } from "@/lib/chart/candle";
+import { buildExecutionMarkers, type ExecutionFill } from "@/lib/chart/execution-markers";
 import { RESOLUTIONS, resolutionToInterval } from "@/lib/chart/resolution";
 import { getCandleStore, streamKey } from "@/lib/chart/store";
 import { coinFromSymbolName, inferPriceScaleFromMids, symbolFromCoin } from "@/lib/chart/symbol";
+import { colorToHex, getChartColors } from "@/lib/chart/theme-colors";
 import { getDexFromName, getInfoClient, getMarketKindFromName } from "@/lib/hyperliquid";
 import type {
 	Bar,
@@ -126,15 +127,35 @@ export function createDatafeed(getFills: () => readonly ExecutionFill[] = () => 
 	const listenerToStream = new Map<string, string>();
 
 	return {
-  getMarks: (info, from, to, callback, resolution) => {
-   const interval = RESOLUTIONS[resolution];
-   if (!interval) { callback([]); return; }
-   const markers = buildExecutionMarkers(getFills(), coinFromSymbolName(info.ticker ?? info.name), interval.barMs);
-   callback(markers.filter(m => m.time / 1000 >= from && m.time / 1000 <= to).map(m => ({
-    id: m.id, time: m.time / 1000, color: { background: m.color, border: m.color }, label: m.label,
-    text: `${m.label === "B" ? "Buy" : "Sell"} ${m.size} @ ${m.price}`, labelFontColor: "#ffffff", minSize: 18, borderWidth: 0,
-   })));
-  },
+		getMarks: (info, from, to, callback, resolution) => {
+			const interval = RESOLUTIONS[resolution];
+			if (!interval) {
+				callback([]);
+				return;
+			}
+			const markers = buildExecutionMarkers(getFills(), coinFromSymbolName(info.ticker ?? info.name), interval.barMs);
+			const colors = getChartColors();
+			const buyColor = colorToHex(colors.green);
+			const sellColor = colorToHex(colors.red);
+			const labelColor = colorToHex(colors.page);
+			callback(
+				markers
+					.filter((m) => m.time / 1000 >= from && m.time / 1000 <= to)
+					.map((m) => {
+						const color = m.label === "B" ? buyColor : sellColor;
+						return {
+							id: m.id,
+							time: m.time / 1000,
+							color: { background: color, border: color },
+							label: m.label,
+							text: `${m.label === "B" ? "Buy" : "Sell"} ${m.size} @ ${m.price}`,
+							labelFontColor: labelColor,
+							minSize: 18,
+							borderWidth: 0,
+						};
+					}),
+			);
+		},
 		onReady: (callback: OnReadyCallback) => {
 			setTimeout(() => callback(configuration), 0);
 		},

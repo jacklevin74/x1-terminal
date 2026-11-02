@@ -6,7 +6,7 @@ interface Props {
 	open: boolean;
 	onClose: () => void;
 	onSwitch: () => void;
- onEthDeposit?: () => void;
+	onEthDeposit?: () => void;
 	isSwitching: boolean;
 	error?: Error | null;
 }
@@ -20,32 +20,52 @@ export function WrongNetworkScreen({ open, onClose, onSwitch, isSwitching, error
 						<Trans>Transfer</Trans>
 					</ModalTitle>
 				</ModalHeader>
-				<ModalContent className="space-y-4">
-					<div className="flex items-start gap-3 rounded-8 border border-stroke-warning-strong/20 bg-warning-soft/10 p-4">
-						<div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-warning-soft/20">
-							<WarningCircleIcon className="size-4 text-warning" />
-						</div>
+				<ModalContent className="space-y-3">
+					<div className="flex items-start gap-3 rounded-8 bg-control p-3">
+						<WarningCircleIcon className="mt-0.5 size-4 shrink-0 text-warning" />
 						<div className="space-y-1">
-							<p className="text-sm font-medium">
+							<p className="text-xs font-medium text-fg">
 								<Trans>Choose a deposit route</Trans>
 							</p>
-							<p className="text-xs text-fg">
-								<Trans>Direct USDC deposits use Arbitrum. To deposit native ETH from Ethereum, choose the ETH deposit route.</Trans>
+							<p className="text-xs text-fg-secondary">
+								<Trans>
+									Direct USDC deposits use Arbitrum. To deposit native ETH from Ethereum, choose the ETH deposit route.
+								</Trans>
 							</p>
 						</div>
 					</div>
-					{onEthDeposit && <Button variant="filled" intent="brand" onClick={onEthDeposit} disabled={isSwitching} className="w-full">Deposit native ETH</Button>}
-                    {error && <p className="text-xs text-error px-1">{error.message}</p>}
-					<Button variant="filled" intent="neutral" onClick={onSwitch} disabled={isSwitching} className="w-full">
-						{isSwitching ? (
-							<>
-								<SpinnerGapIcon className="size-4 animate-spin" />
-								<Trans>Switching...</Trans>
-							</>
-						) : (
-							<Trans>Switch to Arbitrum</Trans>
+					{error && <p className="text-xs text-market-down">{error.message}</p>}
+					<div className="flex flex-col gap-2">
+						{onEthDeposit && (
+							<Button
+								variant="filled"
+								intent="neutral"
+								size="md"
+								onClick={onEthDeposit}
+								disabled={isSwitching}
+								className="w-full"
+							>
+								Deposit native ETH
+							</Button>
 						)}
-					</Button>
+						<Button
+							variant="secondary"
+							intent="neutral"
+							size="md"
+							onClick={onSwitch}
+							disabled={isSwitching}
+							className="w-full"
+						>
+							{isSwitching ? (
+								<>
+									<SpinnerGapIcon className="size-4 animate-spin" />
+									<Trans>Switching...</Trans>
+								</>
+							) : (
+								<Trans>Switch to Arbitrum</Trans>
+							)}
+						</Button>
+					</div>
 				</ModalContent>
 			</ModalPopup>
 		</Modal>

@@ -1,8 +1,8 @@
-import { Dropdown } from "@hypeterminal/ui";
+import { Button, Dropdown, Tabs, TabsList, TabsTrigger } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
-import { PencilSimpleIcon } from "@phosphor-icons/react";
 import type { OrderType } from "@/config/trade";
 import type { SideLabels } from "@/config/ui-text";
+import { cn } from "@/lib/cn";
 import type { MarketKind } from "@/lib/hyperliquid";
 import type { MarginMode } from "@/lib/trade/margin-mode";
 import { getAdvancedOrderLabel, getTabsOrderType } from "@/lib/trade/order-types";
@@ -20,7 +20,11 @@ interface Props {
 	leverage?: number;
 	onMarginLeverageClick?: () => void;
 	isLeveraged?: boolean;
+	insetClassName?: string;
 }
+
+const moreTriggerClass =
+	"h-7 max-md:h-8 gap-1 px-3 text-fg-muted hover:text-fg data-[popup-open]:text-fg focus-visible:outline-offset-2";
 
 export function TradeHeader({
 	orderType,
@@ -33,68 +37,84 @@ export function TradeHeader({
 	leverage,
 	onMarginLeverageClick,
 	isLeveraged,
+	insetClassName,
 }: Props) {
 	const tabsOrderType = getTabsOrderType(orderType);
-
-	const orderTypeLabel =
-		tabsOrderType === "advanced"
-			? getAdvancedOrderLabel(orderType, t`Other`)
-			: tabsOrderType === "market"
-				? t`Market`
-				: t`Limit`;
+	const isAdvanced = tabsOrderType === "advanced";
+	const moreLabel = getAdvancedOrderLabel(orderType, t`More`);
 
 	const isSpot = marketKind === "spot";
-	const orderTypeItems = [
-		{ label: t`Market`, active: orderType === "market", onSelect: () => onOrderTypeChange("market") },
-		{ label: t`Limit`, active: orderType === "limit", onSelect: () => onOrderTypeChange("limit") },
+	const advancedItems = [
 		...(!isSpot
 			? [
 					{
 						label: t`Stop Market`,
 						active: orderType === "stopMarket",
-						onSelect: () => onOrderTypeChange("stopMarket" as OrderType),
+						onSelect: () => onOrderTypeChange("stopMarket"),
 					},
 					{
 						label: t`Stop Limit`,
 						active: orderType === "stopLimit",
-						onSelect: () => onOrderTypeChange("stopLimit" as OrderType),
+						onSelect: () => onOrderTypeChange("stopLimit"),
 					},
 				]
 			: []),
-		{ label: t`TWAP`, active: orderType === "twap", onSelect: () => onOrderTypeChange("twap" as OrderType) },
-		{ label: t`Scale`, active: orderType === "scale", onSelect: () => onOrderTypeChange("scale" as OrderType) },
+		{ label: t`TWAP`, active: orderType === "twap", onSelect: () => onOrderTypeChange("twap") },
+		{ label: t`Scale`, active: orderType === "scale", onSelect: () => onOrderTypeChange("scale") },
 	];
 
 	const marginLabel = marginMode === "isolated" ? t`Isolated` : t`Cross`;
 
+	function handleTabChange(value: unknown) {
+		if (value === "market" || value === "limit") onOrderTypeChange(value);
+	}
+
 	return (
-		<div className="min-w-0 space-y-4">
-			<div className="flex items-center gap-2">
+		<div className="flex min-w-0 flex-col">
+			<div className={cn("flex h-9 items-center gap-1 border-b border-stroke-weak max-md:h-10", insetClassName)}>
+				<Tabs value={tabsOrderType} onValueChange={handleTabChange} className="h-full">
+					<TabsList className="h-full max-md:h-full border-b-0">
+						<TabsTrigger value="market">{t`Market`}</TabsTrigger>
+						<TabsTrigger value="limit">{t`Limit`}</TabsTrigger>
+					</TabsList>
+				</Tabs>
 				<Dropdown
-					trigger={<span className="flex items-center gap-0.5 font-semibold text-fg">{orderTypeLabel}</span>}
-					items={orderTypeItems}
-					size="sm"
+					trigger={
+						<span className="inline-grid">
+							<span aria-hidden="true" className="invisible col-start-1 row-start-1 font-medium">
+								{moreLabel}
+							</span>
+							<span className="col-start-1 row-start-1">{moreLabel}</span>
+						</span>
+					}
+					items={advancedItems}
 					align="start"
 					triggerVariant="minimal"
 					triggerAriaLabel={t`Order type`}
-					className="flex-1"
-					triggerClassName="h-8 w-full justify-between rounded-8 bg-control px-3 text-sm hover:bg-control-hover"
+					triggerClassName={cn(moreTriggerClass, isAdvanced && "bg-control font-medium text-fg")}
 				/>
-				{isLeveraged && (
-					<button
-						type="button"
-						onClick={onMarginLeverageClick}
-						className="inline-flex h-8 flex-1 items-center justify-between gap-1 rounded-8 bg-control px-3 text-sm font-semibold text-fg transition-colors hover:bg-control-hover cursor-pointer"
-					>
-						<span>
-							{marginLabel} · {leverage ?? 1}x
-						</span>
-						<PencilSimpleIcon className="size-3.5 text-fg-muted" />
-					</button>
-				)}
 			</div>
 
-			<SideToggle side={side} onSideChange={onSideChange} labels={sideLabels} />
+			<div className={cn("flex min-w-0 flex-col gap-2 pt-3", insetClassName)}>
+				{isLeveraged && (
+					<div className="grid grid-cols-2 gap-2">
+						<Button variant="secondary" intent="neutral" size="sm" onClick={onMarginLeverageClick}>
+							{marginLabel}
+						</Button>
+						<Button
+							variant="secondary"
+							intent="neutral"
+							size="sm"
+							onClick={onMarginLeverageClick}
+							className="tabular-nums"
+						>
+							{leverage ?? 1}x
+						</Button>
+					</div>
+				)}
+
+				<SideToggle side={side} onSideChange={onSideChange} labels={sideLabels} />
+			</div>
 		</div>
 	);
 }

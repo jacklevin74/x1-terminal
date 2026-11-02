@@ -1,10 +1,10 @@
-import { useIsTestnet } from "@/stores/use-global-settings-store";
 import { useEffect, useRef, useState } from "react";
 import { useConnection } from "wagmi";
 import { initLiFi } from "@/lib/lifi/config";
 import type { BridgeToken } from "@/lib/lifi/use-balances";
 import { useBridgeExecutor } from "@/lib/lifi/use-bridge";
 import type { BridgeQuote } from "@/lib/lifi/use-quote";
+import { useIsTestnet } from "@/stores/use-global-settings-store";
 import { AmountEntryScreen } from "./amount-entry-screen";
 import { AssetSelectionScreen } from "./asset-selection-screen";
 import { BridgeErrorScreen } from "./bridge-error-screen";
@@ -16,7 +16,7 @@ import type { BridgeScreen } from "./types";
 
 export function BridgeTab() {
 	const { address, connector } = useConnection();
- const isTestnet = useIsTestnet();
+	const isTestnet = useIsTestnet();
 	const [screen, setScreen] = useState<BridgeScreen>("select");
 	const [selectedToken, setSelectedToken] = useState<BridgeToken | null>(null);
 	const [usdInput, setUsdInput] = useState("");
@@ -28,9 +28,18 @@ export function BridgeTab() {
 		initLiFi();
 	}, []);
 
-	if (isTestnet) return <p className="p-4 text-sm">Ethereum bridge deposits are available on mainnet only.</p>;
- if (connector?.id === "x1") return <p className="p-4 text-sm">Connect Phantom to deposit from Ethereum. X1’s derived account supports Hyperliquid signatures, but cannot send Ethereum transactions.</p>;
- if (!address) {
+	if (isTestnet)
+		return (
+			<p className="py-4 text-center text-xs text-fg-muted">Ethereum bridge deposits are available on mainnet only.</p>
+		);
+	if (connector?.id === "x1")
+		return (
+			<p className="py-4 text-center text-xs text-fg-muted">
+				Connect Phantom to deposit from Ethereum. X1’s derived account supports Hyperliquid signatures, but cannot send
+				Ethereum transactions.
+			</p>
+		);
+	if (!address) {
 		return <BridgeWalletNotConnected />;
 	}
 

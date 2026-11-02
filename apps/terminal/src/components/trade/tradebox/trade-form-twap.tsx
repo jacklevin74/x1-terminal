@@ -1,5 +1,6 @@
 import { Checkbox } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
+import { FieldLabel } from "@/components/ui/field-label";
 import { NumberInput } from "@/components/ui/number-input";
 import { TWAP_MINUTES_MAX, TWAP_MINUTES_MIN } from "@/config/trade";
 import { useOrderEntryActions, useTwapMinutes, useTwapRandomize } from "@/stores/use-order-entry-store";
@@ -8,7 +9,6 @@ interface Props {
 	disabled: boolean;
 }
 
-const labelClass = "text-3xs font-medium uppercase tracking-wide text-fg-muted leading-none";
 const HOURS_MAX = Math.floor(TWAP_MINUTES_MAX / 60);
 const MINUTES_PER_INPUT_MAX = 59;
 
@@ -43,9 +43,9 @@ export function TradeFormTwap({ disabled }: Props) {
 	}
 
 	return (
-		<>
-			<div className="flex flex-col gap-1.5">
-				<span className={labelClass}>{t`Running Time (${TWAP_MINUTES_MIN}m - ${TWAP_MINUTES_MAX / 60}h)`}</span>
+		<div className="flex min-w-0 flex-col gap-3">
+			<div className="flex flex-col gap-2">
+				<FieldLabel>{t`Running Time (${TWAP_MINUTES_MIN}m - ${TWAP_MINUTES_MAX / 60}h)`}</FieldLabel>
 				<div className="grid grid-cols-2 gap-2">
 					<NumberInput
 						placeholder={t`Hour(s)`}
@@ -55,7 +55,6 @@ export function TradeFormTwap({ disabled }: Props) {
 						min={0}
 						max={HOURS_MAX}
 						suffix={t`H`}
-						className="w-full text-xs tabular-nums"
 						disabled={disabled}
 					/>
 					<NumberInput
@@ -66,13 +65,12 @@ export function TradeFormTwap({ disabled }: Props) {
 						min={0}
 						max={MINUTES_PER_INPUT_MAX}
 						suffix={t`M`}
-						className="w-full text-xs tabular-nums"
 						disabled={disabled || hours >= HOURS_MAX}
 						readOnly={hours >= HOURS_MAX}
 					/>
 				</div>
 			</div>
-			<div className="flex items-center text-xs">
+			<div className="flex min-h-6 items-center">
 				<Checkbox
 					checked={twapRandomize}
 					onCheckedChange={(checked) => setTwapRandomize(checked === true)}
@@ -80,6 +78,6 @@ export function TradeFormTwap({ disabled }: Props) {
 					label={t`Randomize timing`}
 				/>
 			</div>
-		</>
+		</div>
 	);
 }

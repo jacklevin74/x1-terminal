@@ -69,7 +69,7 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
 					{showInitials && (
 						<div
 							className={cn(
-								"size-full flex items-center justify-center bg-fill-weak font-semibold text-fg",
+								"size-full flex items-center justify-center bg-control font-medium text-fg",
 								size === "lg" ? "text-sm" : "text-xs",
 							)}
 						>
@@ -77,7 +77,7 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
 						</div>
 					)}
 					{showIcon && (
-						<div className="size-full flex items-center justify-center bg-fill-weak text-icon">
+						<div className="size-full flex items-center justify-center bg-control text-icon">
 							<UserIcon size={iconSizes[size ?? "md"]} weight="bold" />
 						</div>
 					)}
@@ -130,7 +130,7 @@ const AvatarGroup = React.forwardRef<HTMLDivElement, AvatarGroupProps>(
 				{overflow > 0 && (
 					<div
 						className={cn(
-							"flex items-center justify-center rounded-full bg-fill-weak font-semibold text-fg ring-2 ring-background",
+							"flex items-center justify-center rounded-full bg-control font-medium text-fg ring-2 ring-background",
 							overflowSizes[size],
 						)}
 					>

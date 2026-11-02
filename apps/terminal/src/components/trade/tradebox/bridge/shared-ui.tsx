@@ -1,5 +1,6 @@
+import { Button } from "@hypeterminal/ui";
 import { Trans } from "@lingui/react/macro";
-import { ArrowSquareOutIcon, CoinIcon, WalletIcon } from "@phosphor-icons/react";
+import { ArrowLeftIcon, ArrowSquareOutIcon, CoinIcon, WalletIcon } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import { HL_ICON_URL, USDC_ICON_URL } from "@/config/bridge";
 import { cn } from "@/lib/cn";
@@ -40,10 +41,10 @@ export function PoweredByLiFi() {
 			href="https://li.fi"
 			target="_blank"
 			rel="noopener noreferrer"
-			className="flex items-center justify-center gap-1.5 text-fg-disabled opacity-70 hover:opacity-100 transition-opacity"
+			className="flex min-h-6 items-center justify-center gap-1 text-fg-muted transition-colors hover:text-fg"
 		>
-			<span className="text-3xs">Powered by</span>
-			<LiFiLogo className="h-2.5" />
+			<span className="text-2xs uppercase tracking-micro">Powered by</span>
+			<LiFiLogo className="h-3" />
 		</a>
 	);
 }
@@ -66,14 +67,14 @@ export function HyperCoreUsdcIcon({ size = "md" }: { size?: "sm" | "md" }) {
 export function BridgeWalletNotConnected() {
 	return (
 		<div className="flex flex-col items-center gap-4 py-8">
-			<div className="flex size-12 items-center justify-center rounded-full bg-surface border border-stroke-weak/40">
-				<WalletIcon className="size-6 text-fg" />
+			<div className="flex size-12 items-center justify-center rounded-8 bg-control">
+				<WalletIcon className="size-6 text-fg-muted" />
 			</div>
-			<div className="text-center space-y-1">
-				<p className="text-sm font-medium">
+			<div className="space-y-1 text-center">
+				<p className="text-lg font-medium text-fg">
 					<Trans>Wallet not connected</Trans>
 				</p>
-				<p className="text-xs text-fg">
+				<p className="text-xs text-fg-muted">
 					<Trans>Connect your wallet to bridge funds</Trans>
 				</p>
 			</div>
@@ -99,7 +100,7 @@ export function TokenIcon({ token, size = "md" }: { token: BridgeToken; size?: "
 				/>
 			) : null}
 			<div
-				className={cn("rounded-full bg-surface flex items-center justify-center", iconSize, token.logoURI && "hidden")}
+				className={cn("flex items-center justify-center rounded-full bg-control", iconSize, token.logoURI && "hidden")}
 			>
 				<CoinIcon className={cn(fallbackIconSize, "text-fg-muted")} />
 			</div>
@@ -128,7 +129,7 @@ export function ExplorerLink({ href, children }: { href: string; children: React
 			href={href}
 			target="_blank"
 			rel="noopener noreferrer"
-			className="inline-flex items-center gap-1 text-brand hover:opacity-80"
+			className="inline-flex items-center gap-1 text-fg underline decoration-dashed decoration-fg-muted underline-offset-4 transition-colors hover:text-fg-secondary"
 		>
 			{children}
 			<ArrowSquareOutIcon className="size-3" aria-hidden="true" />
@@ -165,7 +166,7 @@ export function QuoteCountdown({ dataUpdatedAt }: { dataUpdatedAt: number }) {
 					fill="none"
 					stroke="currentColor"
 					strokeWidth="2"
-					className="text-stroke-weak"
+					className="text-control-hover"
 				/>
 				<circle
 					cx="12"
@@ -174,7 +175,7 @@ export function QuoteCountdown({ dataUpdatedAt }: { dataUpdatedAt: number }) {
 					fill="none"
 					stroke="currentColor"
 					strokeWidth="2"
-					className="text-brand transition-[stroke-dashoffset] duration-1000 ease-linear"
+					className="text-fg-secondary transition-[stroke-dashoffset] duration-1000 ease-linear motion-reduce:transition-none"
 					strokeDasharray={circumference}
 					strokeDashoffset={offset}
 					strokeLinecap="round"
@@ -184,3 +185,25 @@ export function QuoteCountdown({ dataUpdatedAt }: { dataUpdatedAt: number }) {
 		</div>
 	);
 }
+
+export function BackButton({ onClick }: { onClick: () => void }) {
+	return (
+		<Button
+			variant="ghost"
+			intent="neutral"
+			size="xs"
+			onClick={onClick}
+			iconLeft={<ArrowLeftIcon className="size-3" />}
+			className="self-start text-fg-muted hover:text-fg"
+		>
+			<Trans>Back</Trans>
+		</Button>
+	);
+}
+
+export function StatusBadgeIcon({ children }: { children: React.ReactNode }) {
+	return <div className="flex size-12 items-center justify-center rounded-8 bg-control">{children}</div>;
+}
+
+export const disclosureTriggerClass =
+	"group flex h-7 w-full items-center justify-between rounded-8 px-2 text-xs text-fg-muted transition-colors hover:bg-control hover:text-fg";

@@ -1,5 +1,7 @@
+import { Button } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
-import { PencilIcon } from "@phosphor-icons/react";
+import { PencilSimpleIcon } from "@phosphor-icons/react";
+import { InfoRow, InfoRowGroup } from "@/components/ui/info-row";
 import { FALLBACK_VALUE_PLACEHOLDER } from "@/config/app";
 import { DEFAULT_BUILDER_CONFIG } from "@/config/hyperliquid";
 import type { OrderType } from "@/config/trade";
@@ -23,12 +25,7 @@ interface Props {
 }
 
 function SummaryRow({ label, children }: { label: string; children: React.ReactNode }) {
-	return (
-		<div className="flex items-center justify-between py-1.5">
-			<span className="text-xs tracking-[0.5px] text-fg-muted">{label}</span>
-			<span className="text-xs tabular-nums text-fg">{children}</span>
-		</div>
-	);
+	return <InfoRow label={label} value={children} />;
 }
 
 export function OrderSummary({
@@ -48,10 +45,10 @@ export function OrderSummary({
 	const showSlippage = isMarketExecutionOrderType(orderType);
 
 	return (
-		<div className="flex flex-col">
+		<InfoRowGroup>
 			{isLeveraged && (
 				<SummaryRow label={t`Liq. Price`}>
-					<span className={cn(liqPrice ? (liqWarning ? "text-error" : "text-fg") : "text-fg-muted")}>
+					<span className={cn(liqPrice ? (liqWarning ? "text-market-down" : "text-fg") : "text-fg-muted")}>
 						{liqPrice ? formatPrice(liqPrice, { szDecimals }) : FALLBACK_VALUE_PLACEHOLDER}
 					</span>
 				</SummaryRow>
@@ -70,14 +67,17 @@ export function OrderSummary({
 			)}
 			{showSlippage && (
 				<SummaryRow label={t`Slippage`}>
-					<button
-						type="button"
+					<Button
+						variant="ghost"
+						intent="neutral"
+						size="xxs"
 						onClick={onSlippageClick}
-						className="inline-flex cursor-pointer items-center gap-1 hover:opacity-80"
+						aria-label={t`Slippage`}
+						iconRight={<PencilSimpleIcon className="size-3 text-fg-muted" />}
+						className="-mr-1 tabular-nums"
 					>
-						<span className="tabular-nums text-error">{slippagePercent}%</span>
-						<PencilIcon className="size-2.5 text-fg-muted" />
-					</button>
+						{slippagePercent}%
+					</Button>
 				</SummaryRow>
 			)}
 			<SummaryRow label={t`Est. Fee`}>
@@ -90,6 +90,6 @@ export function OrderSummary({
 					<span className="text-fg-muted">{`${bpsToPercentage(DEFAULT_BUILDER_CONFIG?.f)}%`}</span>
 				</SummaryRow>
 			)}
-		</div>
+		</InfoRowGroup>
 	);
 }

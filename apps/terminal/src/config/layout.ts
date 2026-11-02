@@ -26,15 +26,21 @@ export const SIDEBAR_LAYOUT = {
 	KEYBOARD_SHORTCUT: "b",
 } as const;
 
-export const TOKEN_SELECTOR_ROW_HEIGHT_PX = 48;
+export const TOKEN_SELECTOR_ROW_HEIGHT_PX = 40;
 export const TOKEN_SELECTOR_OVERSCAN = 10;
 
 export const MOBILE_BOTTOM_NAV_HEIGHT_PX = 56;
 
-export const APP_HEADER_HEIGHT_CLASS = "h-11";
-export const APP_FOOTER_HEIGHT_CLASS = "h-8";
+export const APP_HEADER_HEIGHT_CLASS = "h-12";
+export const APP_FOOTER_HEIGHT_CLASS = "h-6";
 export const APP_BANNER_HEIGHT_CLASS = "h-8";
-export const APP_HEADER_OFFSET_CLASS = "pt-11";
-// = header + banner stack height (h-11 + h-8 = 2.75rem + 2rem)
-export const APP_HEADER_PLUS_BANNER_OFFSET_CLASS = "pt-[4.75rem]";
+export const APP_HEADER_OFFSET_CLASS = "pt-12";
+// = header + banner stack height (h-12 + h-8 = 3rem + 2rem)
+export const APP_HEADER_PLUS_BANNER_OFFSET_CLASS = "pt-20";
+export const APP_FOOTER_OFFSET_CLASS = "pb-6";
 export const APP_BAR_BUTTON_HEIGHT_CLASS = "h-8 min-h-8";
+
+export const APP_PANEL_CLASS = "min-h-0 min-w-0 overflow-hidden rounded-8 bg-surface";
+export const APP_PANEL_GAP_CLASS = "gap-1";
+export const APP_PANEL_INSET_CLASS = "p-1";
+export const APP_PANEL_PADDING_X_CLASS = "px-3";

@@ -4,14 +4,13 @@ import { Command as CommandPrimitive } from "cmdk";
 import type * as React from "react";
 import { cn } from "@/lib/cn";
 
-const COMMAND_LIST_MAX_HEIGHT = "max-h-[300px]";
-const COMMAND_INPUT_WRAPPER_HEIGHT = "**:data-[slot=command-input-wrapper]:h-12";
+const COMMAND_LIST_MAX_HEIGHT = "max-h-80";
 
 function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
 	return (
 		<CommandPrimitive
 			data-slot="command"
-			className={cn("bg-surface text-fg flex h-full w-full flex-col overflow-hidden rounded-12", className)}
+			className={cn("bg-overlay text-fg flex h-full w-full flex-col overflow-hidden rounded-12", className)}
 			{...props}
 		/>
 	);
@@ -43,8 +42,7 @@ function CommandDialog({
 				<Command
 					shouldFilter={shouldFilter}
 					className={cn(
-						"**:[[cmdk-group-heading]]:text-fg-muted **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 **:[[cmdk-input]]:h-12 **:[[cmdk-item]]:px-2 **:[[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5",
-						COMMAND_INPUT_WRAPPER_HEIGHT,
+						"**:[[cmdk-group-heading]]:text-fg-muted **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group]]:px-1 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0",
 					)}
 				>
 					{children}
@@ -56,12 +54,15 @@ function CommandDialog({
 
 function CommandInput({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Input>) {
 	return (
-		<div data-slot="command-input-wrapper" className="flex h-9 items-center gap-2 border-b px-3">
-			<MagnifyingGlassIcon className="size-4 shrink-0 opacity-50" />
+		<div
+			data-slot="command-input-wrapper"
+			className="flex h-9 max-md:h-10 items-center gap-2 border-b border-stroke-weak px-3"
+		>
+			<MagnifyingGlassIcon className="size-4 shrink-0 text-fg-muted" />
 			<CommandPrimitive.Input
 				data-slot="command-input"
 				className={cn(
-					"placeholder:text-fg-disabled flex h-10 w-full rounded-12 bg-transparent py-3 text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
+					"placeholder:text-fg-muted flex h-full w-full bg-transparent text-xs max-md:text-base text-fg outline-hidden disabled:cursor-not-allowed disabled:text-fg-disabled",
 					className,
 				)}
 				{...props}
@@ -81,7 +82,9 @@ function CommandList({ className, ...props }: React.ComponentProps<typeof Comman
 }
 
 function CommandEmpty({ ...props }: React.ComponentProps<typeof CommandPrimitive.Empty>) {
-	return <CommandPrimitive.Empty data-slot="command-empty" className="py-6 text-center text-sm" {...props} />;
+	return (
+		<CommandPrimitive.Empty data-slot="command-empty" className="py-6 text-center text-xs text-fg-muted" {...props} />
+	);
 }
 
 function CommandGroup({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Group>) {
@@ -89,7 +92,7 @@ function CommandGroup({ className, ...props }: React.ComponentProps<typeof Comma
 		<CommandPrimitive.Group
 			data-slot="command-group"
 			className={cn(
-				"text-fg **:[[cmdk-group-heading]]:text-fg-muted overflow-hidden p-1 **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:py-1.5 **:[[cmdk-group-heading]]:text-xs **:[[cmdk-group-heading]]:font-medium",
+				"text-fg **:[[cmdk-group-heading]]:text-fg-muted overflow-hidden p-1 **:[[cmdk-group-heading]]:flex **:[[cmdk-group-heading]]:h-6 **:[[cmdk-group-heading]]:items-center **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:text-2xs **:[[cmdk-group-heading]]:font-normal **:[[cmdk-group-heading]]:uppercase **:[[cmdk-group-heading]]:tracking-micro",
 				className,
 			)}
 			{...props}
@@ -112,7 +115,7 @@ function CommandItem({ className, ...props }: React.ComponentProps<typeof Comman
 		<CommandPrimitive.Item
 			data-slot="command-item"
 			className={cn(
-				"data-[selected=true]:bg-surface data-[selected=true]:text-fg [&_svg:not([class*='text-'])]:text-fg-muted relative flex cursor-default items-center gap-2 rounded-8 px-2 py-1.5 text-sm outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+				"data-[selected=true]:bg-control data-[selected=true]:text-fg [&_svg:not([class*='text-'])]:text-fg-muted relative flex h-7 max-md:h-8 cursor-default items-center gap-2 rounded-8 px-2 text-xs text-fg outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:text-fg-disabled [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
 				className,
 			)}
 			{...props}
@@ -121,13 +124,7 @@ function CommandItem({ className, ...props }: React.ComponentProps<typeof Comman
 }
 
 function CommandShortcut({ className, ...props }: React.ComponentProps<"span">) {
-	return (
-		<span
-			data-slot="command-shortcut"
-			className={cn("text-fg-muted ml-auto text-xs tracking-widest", className)}
-			{...props}
-		/>
-	);
+	return <span data-slot="command-shortcut" className={cn("text-fg-muted ml-auto text-xs", className)} {...props} />;
 }
 
 export {
