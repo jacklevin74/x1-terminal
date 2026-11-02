@@ -1,0 +1,1 @@
+- 2026-11-02 logo-lockup — real X1 mark + "terminal" in 8 monospace treatments (lowercase, tracked caps, divider, caret, path, chip, stacked, brackets) — route /dev/variants/logo-lockup — winner: TBD

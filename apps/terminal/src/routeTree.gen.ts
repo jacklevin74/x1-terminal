@@ -17,6 +17,7 @@ import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BuildersPerpIndexRouteImport } from './routes/builders-perp.index'
 import { Route as BuildersPerpDexRouteImport } from './routes/builders-perp.$dex'
+import { Route as DevVariantsLogoLockupRouteImport } from './routes/dev.variants.logo-lockup'
 
 const SpotRoute = SpotRouteImport.update({
   id: '/spot',
@@ -58,6 +59,11 @@ const BuildersPerpDexRoute = BuildersPerpDexRouteImport.update({
   path: '/$dex',
   getParentRoute: () => BuildersPerpRoute,
 } as any)
+const DevVariantsLogoLockupRoute = DevVariantsLogoLockupRouteImport.update({
+  id: '/dev/variants/logo-lockup',
+  path: '/dev/variants/logo-lockup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/spot': typeof SpotRoute
   '/builders-perp/$dex': typeof BuildersPerpDexRoute
   '/builders-perp/': typeof BuildersPerpIndexRoute
+  '/dev/variants/logo-lockup': typeof DevVariantsLogoLockupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -77,6 +84,7 @@ export interface FileRoutesByTo {
   '/spot': typeof SpotRoute
   '/builders-perp/$dex': typeof BuildersPerpDexRoute
   '/builders-perp': typeof BuildersPerpIndexRoute
+  '/dev/variants/logo-lockup': typeof DevVariantsLogoLockupRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -88,6 +96,7 @@ export interface FileRoutesById {
   '/spot': typeof SpotRoute
   '/builders-perp/$dex': typeof BuildersPerpDexRoute
   '/builders-perp/': typeof BuildersPerpIndexRoute
+  '/dev/variants/logo-lockup': typeof DevVariantsLogoLockupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -100,6 +109,7 @@ export interface FileRouteTypes {
     | '/spot'
     | '/builders-perp/$dex'
     | '/builders-perp/'
+    | '/dev/variants/logo-lockup'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -109,6 +119,7 @@ export interface FileRouteTypes {
     | '/spot'
     | '/builders-perp/$dex'
     | '/builders-perp'
+    | '/dev/variants/logo-lockup'
   id:
     | '__root__'
     | '/'
@@ -119,6 +130,7 @@ export interface FileRouteTypes {
     | '/spot'
     | '/builders-perp/$dex'
     | '/builders-perp/'
+    | '/dev/variants/logo-lockup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -128,6 +140,7 @@ export interface RootRouteChildren {
   MobileAgentSyncRoute: typeof MobileAgentSyncRoute
   PerpRoute: typeof PerpRoute
   SpotRoute: typeof SpotRoute
+  DevVariantsLogoLockupRoute: typeof DevVariantsLogoLockupRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -188,6 +201,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuildersPerpDexRouteImport
       parentRoute: typeof BuildersPerpRoute
     }
+    '/dev/variants/logo-lockup': {
+      id: '/dev/variants/logo-lockup'
+      path: '/dev/variants/logo-lockup'
+      fullPath: '/dev/variants/logo-lockup'
+      preLoaderRoute: typeof DevVariantsLogoLockupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -212,6 +232,7 @@ const rootRouteChildren: RootRouteChildren = {
   MobileAgentSyncRoute: MobileAgentSyncRoute,
   PerpRoute: PerpRoute,
   SpotRoute: SpotRoute,
+  DevVariantsLogoLockupRoute: DevVariantsLogoLockupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
