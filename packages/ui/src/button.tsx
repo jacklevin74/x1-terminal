@@ -16,8 +16,8 @@ const buttonVariants = cva(
 	{
 		variants: {
 			variant: {
-				filled: "shadow-raised active:not-data-disabled:scale-[0.97]",
-				outline: "border bg-transparent shadow-raised active:not-data-disabled:scale-[0.97]",
+				filled: "active:not-data-disabled:scale-[0.97]",
+				outline: "border border-transparent bg-control active:not-data-disabled:scale-[0.97]",
 				ghost: "bg-transparent active:not-data-disabled:scale-[0.97]",
 				link: "bg-transparent underline underline-offset-4",
 			},
@@ -40,44 +40,44 @@ const buttonVariants = cva(
 				variant: "filled",
 				intent: "brand",
 				className:
-					"bg-brand text-fg-inverse hover:opacity-90 active:opacity-80 data-disabled:text-fg-disabled data-disabled:bg-fill-disabled",
+					"bg-brand text-fg-inverse hover:brightness-110 active:brightness-95 data-disabled:text-fg-disabled data-disabled:bg-fill-disabled",
 			},
 			{
 				variant: "filled",
 				intent: "neutral",
 				className:
-					"bg-fill text-fg-inverse hover:opacity-90 active:opacity-80 data-disabled:text-fg-disabled data-disabled:bg-fill-disabled",
+					"bg-fill text-fg-inverse hover:brightness-110 active:brightness-95 data-disabled:text-fg-disabled data-disabled:bg-fill-disabled",
 			},
 			{
 				variant: "filled",
 				intent: "error",
 				className:
-					"bg-error text-fg-inverse hover:opacity-90 active:opacity-80 data-disabled:text-fg-disabled data-disabled:bg-fill-disabled",
+					"bg-error text-fg-inverse hover:brightness-110 active:brightness-95 data-disabled:text-fg-disabled data-disabled:bg-fill-disabled",
 			},
 			{
 				variant: "filled",
 				intent: "inverse",
 				className:
-					"bg-fill-inverse text-fg hover:opacity-90 active:opacity-80 data-disabled:text-fg-disabled data-disabled:bg-fill-disabled",
+					"bg-fill-inverse text-fg hover:brightness-110 active:brightness-95 data-disabled:text-fg-disabled data-disabled:bg-fill-disabled",
 			},
 
 			{
 				variant: "outline",
 				intent: "brand",
 				className:
-					"border-stroke-brand-strong text-brand hover:bg-fill-hover active:bg-fill-press data-disabled:text-fg-disabled data-disabled:border-stroke-disabled",
+					"text-brand hover:bg-control-hover active:bg-control-hover data-disabled:text-fg-disabled data-disabled:bg-fill-disabled",
 			},
 			{
 				variant: "outline",
 				intent: "neutral",
 				className:
-					"border-stroke-weak text-fg hover:bg-fill-hover active:bg-fill-press data-disabled:text-fg-disabled data-disabled:border-stroke-disabled",
+					"text-fg hover:bg-control-hover active:bg-control-hover data-disabled:text-fg-disabled data-disabled:bg-fill-disabled",
 			},
 			{
 				variant: "outline",
 				intent: "error",
 				className:
-					"border-stroke-error-strong text-error hover:bg-fill-hover active:bg-fill-press data-disabled:text-fg-disabled data-disabled:border-stroke-disabled",
+					"text-error hover:bg-control-hover active:bg-control-hover data-disabled:text-fg-disabled data-disabled:bg-fill-disabled",
 			},
 			{
 				variant: "outline",

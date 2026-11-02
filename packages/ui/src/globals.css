@@ -77,9 +77,10 @@
 	/* Global radius control: set --radius-factor on :root
        none = 0, sm = 0.5, md = 1 (default), lg = 1.5
        For "full", set pill-able radii to 9999px directly */
-	--radius-factor: 0.5;
+	--radius-factor: 1;
 	--radius-none: 0px;
 	--radius-4: calc(4px * var(--radius-factor));
+	--radius-6: calc(6px * var(--radius-factor));
 	--radius-8: calc(8px * var(--radius-factor));
 	--radius-12: calc(12px * var(--radius-factor));
 	--radius-16: calc(16px * var(--radius-factor));

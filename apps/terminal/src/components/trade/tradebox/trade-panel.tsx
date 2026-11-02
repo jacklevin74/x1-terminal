@@ -411,9 +411,9 @@ export function TradePanel() {
 						onClick={buttonContent.action}
 						disabled={buttonContent.disabled}
 						className={cn(
-							"w-full px-3 py-2 text-sm font-semibold focus-visible:outline-offset-1",
-							buttonContent.variant === "buy" && "bg-success text-background hover:opacity-90",
-							buttonContent.variant === "sell" && "text-background",
+							"h-10 w-full px-3 text-sm font-semibold focus-visible:outline-offset-1",
+							buttonContent.variant === "buy" && "bg-market-up text-background",
+							buttonContent.variant === "sell" && "bg-market-down text-background",
 						)}
 						aria-label={buttonContent.text}
 						iconLeft={isSubmitting || isRegistering ? <SpinnerGapIcon className="size-3 animate-spin" /> : undefined}

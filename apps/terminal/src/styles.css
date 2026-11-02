@@ -127,6 +127,8 @@
     --fill-strong: #000626e5;
     --fill-weak: #0015800a;
     --fill-weaker: #00158005;
+    --fill-control: #eceef3;
+    --fill-control-hover: #e1e4eb;
     --fill-hover: #0015800a;
     --fill-press: #0011661a;
     --fill-selected: #4c64d9;
@@ -222,6 +224,8 @@
     --fill-strong: #ffffff;
     --fill-weak: #ffffff0f;
     --fill-weaker: #ffffff08;
+    --fill-control: #22222a;
+    --fill-control-hover: #2c2c36;
     --fill-hover: #ffffff0f;
     --fill-press: #ffffff1f;
     --fill-selected: #b2bcf1;
@@ -326,6 +330,8 @@
   --color-fill: var(--fill-strong);
   --color-fill-weak: var(--fill-weak);
   --color-fill-weaker: var(--fill-weaker);
+  --color-control: var(--fill-control);
+  --color-control-hover: var(--fill-control-hover);
   --color-fill-hover: var(--fill-hover);
   --color-fill-press: var(--fill-press);
   --color-fill-selected: var(--fill-selected);

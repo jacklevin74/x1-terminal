@@ -17,8 +17,7 @@ interface Props {
 
 export function SideToggle({ side, onSideChange, labels }: Props) {
 	const indicatorClassName = cn(
-		"shadow-none",
-		side === "buy" ? "border-stroke-success-strong bg-success-soft" : "border-stroke-error-strong bg-error-soft",
+		side === "buy" ? "bg-market-up" : "bg-market-down",
 	);
 
 	return (
@@ -32,14 +31,14 @@ export function SideToggle({ side, onSideChange, labels }: Props) {
 			<SegmentedControlItem
 				value="buy"
 				aria-label={labels.buyAria}
-				className="flex-1 py-2 text-sm data-[active]:text-success"
+				className="flex-1 py-2 text-sm font-semibold data-[active]:text-background"
 			>
 				{labels.buy}
 			</SegmentedControlItem>
 			<SegmentedControlItem
 				value="sell"
 				aria-label={labels.sellAria}
-				className="flex-1 py-2 text-sm data-[active]:text-error"
+				className="flex-1 py-2 text-sm font-semibold data-[active]:text-background"
 			>
 				{labels.sell}
 			</SegmentedControlItem>
