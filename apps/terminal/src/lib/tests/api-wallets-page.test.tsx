@@ -33,3 +33,11 @@ it("approves the fee independently without creating or changing an API wallet",a
 it("allows reapproval even when the stored cap already covers the fee",async()=>{
  state.fee=50;const node=document.createElement("div"),root=createRoot(node);await act(async()=>root.render(createElement(ApiWalletsPage)));await act(async()=>button(node,"Reapprove 0.05% fee").click());expect(state.approve).toHaveBeenCalledWith({builder:`0x${"ef".repeat(20)}`,maxFeeRate:"0.05%"});expect(node.textContent).toContain("Verified: this account");await act(async()=>root.unmount());
 });
+it("offers approval on each row while sharing the correct owner-account fee status",async()=>{
+ state.fee=0;state.agents=[{name:"Bot One",address:`0x${"cd".repeat(20)}`,validUntil:Date.now()+60000},{name:"Bot Two",address:`0x${"12".repeat(20)}`,validUntil:Date.now()+60000}];const node=document.createElement("div"),root=createRoot(node);await act(async()=>root.render(createElement(ApiWalletsPage)));
+ const rows=[...node.querySelectorAll("tbody tr")];expect(rows).toHaveLength(2);expect(rows.every(row=>row.textContent?.includes("Approval required"))).toBe(true);
+ expect(rows[0].querySelector('td[title]')?.getAttribute("title")).toBe(`0x${"ab".repeat(20)}`);
+ await act(async()=>node.querySelector<HTMLButtonElement>('[aria-label="Approve account fee for Bot One"]')!.click());expect(state.approve).toHaveBeenCalledWith({builder:`0x${"ef".repeat(20)}`,maxFeeRate:"0.05%"});expect(state.approve).toHaveBeenCalledTimes(1);
+ state.fee=50;await act(async()=>button(node,"Refresh fee status").click());expect([...node.querySelectorAll("tbody tr")].every(row=>row.textContent?.includes("Account approved · 0.05%"))).toBe(true);expect(state.approve).toHaveBeenCalledTimes(1);
+ await act(async()=>root.unmount());state.fee=50;
+});

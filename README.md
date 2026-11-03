@@ -224,3 +224,11 @@ with a fresh account-specific `maxBuilderFee` request. Refresh fee status is
 read-only. Approval is verified only when the returned cap is at least `50`:
 Hyperliquid fee units are tenths of a basis point, so `50` means `0.05%`, not
 `0.5%`. This does not modify the builder wallet's account mode or balance.
+
+Each API-wallet row shows its owner account and that owner's builder-fee status,
+with an approval/reapproval action. These controls always sign with the connected
+owner wallet and refresh the shared account cap. They do not attempt to approve
+fees using an API key or treat each agent as a separate funded account. A valid
+agent of the approved owner uses that owner's fee approval; a key registered to
+another owner cannot inherit it. The local script verifies the configured key is
+listed in the configured owner's current `extraAgents` before sending orders.
