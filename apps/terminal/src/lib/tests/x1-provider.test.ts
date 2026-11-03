@@ -64,3 +64,20 @@ describe("X1 derived account", () => {
   expect(getPhantomProvider()).toBe(ethereum);
  });
 });
+
+it("signs the real builder-fee SDK approval with the X1-derived owner account",async()=>{
+ install();const provider=getX1Provider()!;const [address]=await provider.request({method:"eth_requestAccounts"});
+ const {createWalletClient,custom,serializeSignature,zeroAddress}=await import("viem");
+ const {ExchangeClient}=await import("@nktkas/hyperliquid");
+ const {toHyperliquidWallet}=await import("../../../../../packages/hl-react/src/wallet");
+ const {ApproveBuilderFeeTypes}=await import("@nktkas/hyperliquid/api/exchange");
+ type Payload={action:{hyperliquidChain:"Mainnet";signatureChainId:`0x${string}`;maxFeeRate:string;builder:`0x${string}`;nonce:number};signature:{r:`0x${string}`;s:`0x${string}`;v:number}};
+ const request=vi.fn(async(_endpoint:string,_payload:Payload)=>({status:"ok",response:{type:"default"}}));
+ const wallet=createWalletClient({account:address,transport:custom(provider)});
+ const exchange=new ExchangeClient({wallet:toHyperliquidWallet(wallet,address)!,transport:{isTestnet:false,request} as unknown as import("@nktkas/hyperliquid").HttpTransport});
+ const builder="0x95e1642b6c06e06e6ad9412a90e908dcb09f6c1a";
+ await exchange.approveBuilderFee({builder,maxFeeRate:"0.05%"});
+ expect(request).toHaveBeenCalledTimes(1);const payload=request.mock.calls[0][1];expect(payload.action).toMatchObject({type:"approveBuilderFee",builder,maxFeeRate:"0.05%",hyperliquidChain:"Mainnet"});
+ const signature=serializeSignature({...payload.signature,v:BigInt(payload.signature.v)});
+ expect(await verifyTypedData({address,domain:{name:"HyperliquidSignTransaction",version:"1",chainId:parseInt(payload.action.signatureChainId),verifyingContract:zeroAddress},types:ApproveBuilderFeeTypes,primaryType:"HyperliquidTransaction:ApproveBuilderFee",message:payload.action,signature})).toBe(true);
+});

@@ -1,0 +1,6 @@
+{
+  "orders": [
+    { "a": 0, "b": true, "p": "60000", "s": "0.0002", "r": false, "t": { "limit": { "tif": "Alo" } } }
+  ],
+  "grouping": "na"
+}

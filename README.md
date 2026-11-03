@@ -171,3 +171,56 @@ The collector remains local; no QuickNode credentials are needed in Vercel.
 To refresh the deployed bundled analytics without remote storage, run `npm run analytics:deploy`. This collects new fills first, then packages and deploys the snapshot. A Git push updates code but does not collect trades or upload ignored local analytics files. The page Refresh button reloads the deployed snapshot; it does not run the collector.
 
 Trading approval now persists per account and network on this device. Expired or revoked agents require approval again; explicit Disconnect removes saved trading keys. Missing trading signers open the approval modal rather than leaving an unexplained wallet-required error. Mobile users can reconnect/unlock their wallet from that modal.
+
+### API wallets and agent trading
+
+Open `/API` (also available in the connected account menu). Enter a unique name
+and an API wallet address, or Generate a new agent key. Save the generated
+`.env.agent` file before authorizing. Keys are generated locally, are not sent to
+the terminal server, and are not recoverable after leaving the page. A trading
+key can cause trading losses even though it cannot withdraw funds. Authorizing
+uses the connected owner wallet, with a separate 0.05% builder-fee approval when
+needed. Expiry can be 7, 30, 90 or 180 days. Remove revokes the selected named
+agent after wallet confirmation; the terminal's own trading key is separate.
+
+Keep `.env.agent` private (it is ignored by Git). Set local file permissions with
+`chmod 600 .env.agent`. Never use the owner's private key in the agent script.
+
+```sh
+node --env-file=.env.agent apps/terminal/scripts/x1-agent.mjs status
+node --env-file=.env.agent apps/terminal/scripts/x1-agent.mjs order --file examples/api-order.json
+# Only after reviewing/editing the sample order:
+node --env-file=.env.agent apps/terminal/scripts/x1-agent.mjs order --file examples/api-order.json --execute
+node --env-file=.env.agent apps/terminal/scripts/x1-agent.mjs cancel --file examples/api-cancel.json
+```
+
+Order and cancel commands preview by default. `--execute` submits the request.
+The order example is a BTC post-only limit buy; edit price, size, side and asset
+ID for your intended trade. Cancel example IDs are placeholders. Account queries
+use `X1_ACCOUNT_ADDRESS`, never the agent address. Each order attaches the X1
+builder address with fee `f: 50` (0.05%), on top of exchange fees. The script
+checks agent expiry and fee approval before submitting. It does not automatically
+retry a trade after an error or ambiguous response. Use a separate agent per
+trading process to avoid nonce collisions. Both mainnet and testnet are supported
+via `X1_NETWORK`. The provided client targets the configured owner, not vaults or
+subaccounts. No HTTP service accepting private keys is exposed.
+
+For bots, import `createX1AgentClient` from
+`apps/terminal/scripts/x1-agent-client.mjs`; its `order` and `cancel` methods
+require `{execute:true}` to submit. The client exposes no withdrawal methods.
+
+On `/API`, use **Export private key** for a newly generated key, or **Export key**
+next to an authorized wallet when its secret is available on this device. The
+export dialog requires acknowledging the trading risk before revealing, copying,
+or downloading `.env.agent`. Revealed keys hide on blur, when the tab is hidden,
+or after 60 seconds. Public API-wallet entries whose secrets are not held locally
+cannot be exported; use their original backup or authorize a fresh key.
+
+The `/API` page also has a separate **X1 trading fee** panel. Connect the owner
+account used by the bot, check its network and the displayed builder address,
+then **Approve 0.05% fee** (or Reapprove). The panel signs only
+`approveBuilderFee`, does not create or replace an agent, and verifies the cap
+with a fresh account-specific `maxBuilderFee` request. Refresh fee status is
+read-only. Approval is verified only when the returned cap is at least `50`:
+Hyperliquid fee units are tenths of a basis point, so `50` means `0.05%`, not
+`0.5%`. This does not modify the builder wallet's account mode or balance.

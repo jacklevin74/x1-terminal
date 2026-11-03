@@ -22,6 +22,7 @@ export function UserMenu() {
   items={[
    { label: derived ? "Derived from your X1 signature" : "Phantom Ethereum account", onSelect: () => {} },
    { label: `Copy ${address}`, onSelect: () => { void navigator.clipboard.writeText(address); } },
+   { label: "API wallets", onSelect: () => { window.location.assign("/API"); } },
    { label: "Trading setup · 0.05% fee", onSelect: () => window.dispatchEvent(new Event("x1:setup")) },
    ...(derived ? [{ label: "Export derived private key", onSelect: () => setExportOpen(true) }] : []),
    { label: "Disconnect", onSelect: () => {

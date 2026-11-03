@@ -18,6 +18,7 @@ export function isBuilderFeeApproved(
 
 export function convertFeeToPercentageString(fee: number | string): string {
 	const feeNum = typeof fee === "string" ? Number(fee) : fee;
-	const percentage = (feeNum / 10000) * 100;
+	// Builder fees use tenths of a basis point: 1 = 0.001%.
+	const percentage = feeNum / 1000;
 	return `${percentage}%`;
 }

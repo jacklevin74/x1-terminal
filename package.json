@@ -38,7 +38,9 @@
     "analytics:collect": "node --env-file-if-exists=.env scripts/collect-analytics.js",
     "analytics:import": "node --env-file-if-exists=.env scripts/import-analytics.js",
     "test:analytics": "node --test scripts/builder-analytics.test.js scripts/analytics-remote.test.js",
-    "analytics:deploy": "npm run analytics:collect && npm run deploy:vercel"
+    "analytics:deploy": "npm run analytics:collect && npm run deploy:vercel",
+    "api:agent": "node --env-file-if-exists=.env.agent apps/terminal/scripts/x1-agent.mjs",
+    "test:api-agent": "node --test scripts/x1-agent-client.test.js"
   },
   "devDependencies": {
     "@ai-hero/sandcastle": "0.5.6",
