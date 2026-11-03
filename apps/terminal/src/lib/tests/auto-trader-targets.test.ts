@@ -1,0 +1,42 @@
+import {it,expect} from "vitest";
+import {accountEquity,targetRows,validateSettings} from "@/lib/auto-trader/targets";
+import {AUTO_TRADER_DEFAULTS} from "@/config/auto-trader";
+import {executionLabel} from "@/components/auto-trader/status-card";
+const markets=["BTC","ETH","SOL","HYPE","ZEC","NEAR","xyz:GOOGL","xyz:SOXL","xyz:NVDA"];
+const settings={...AUTO_TRADER_DEFAULTS,leverage:5};
+it("matches the executor's nine-market equity allocation and deadband boundaries",()=>{
+ const signal={coins:[{coin:"BTC",score:14},{coin:"ETH",score:15},{coin:"SOL",score:-14},{coin:"HYPE",score:-15},{coin:"xyz:NVDA",score:100},...markets.slice(4,8).map(coin=>({coin,score:0}))],timestamp:null};
+ const rows=targetRows({equity:228.63,settings,signal,current:{}});
+ expect(rows.find(r=>r.coin==="xyz:NVDA")?.target).toBeCloseTo(127.0166666667);expect(rows[0].target).toBe(0);expect(rows[1].target).toBeCloseTo(19.0525);expect(rows[2].target).toBe(0);expect(rows[3].target).toBeCloseTo(-19.0525);
+});
+it("closes small positions, separates flips, respects minimum orders and the daily loss stop",()=>{
+ const one={...settings,include:["BTC"]};
+ expect(targetRows({equity:100,settings:one,signal:{coins:[{coin:"BTC",score:0}],timestamp:null},current:{BTC:1}})[0].actions).toEqual(["CLOSE"]);
+ expect(targetRows({equity:100,settings:one,signal:{coins:[{coin:"BTC",score:-100}],timestamp:null},current:{BTC:100}})[0].actions).toEqual(["FLIP-CLOSE","FLIP-OPEN"]);
+ expect(targetRows({equity:100,settings:one,signal:{coins:[{coin:"BTC",score:-100}],timestamp:null},current:{BTC:100},killed:true})[0].actions).toEqual(["FLIP-CLOSE"]);
+ expect(targetRows({equity:100,settings:one,signal:{coins:[{coin:"BTC",score:100}],timestamp:null},current:{BTC:499}})[0].actions).toEqual(["SKIP"]);
+ expect(targetRows({equity:100,settings:one,signal:{coins:[{coin:"BTC",score:100}],timestamp:null},current:{BTC:0},killed:true})[0].actions).toEqual(["LOSS STOP"]);
+});
+it("honors selected markets and excludes without changing the per-market cap",()=>{
+ const rows=targetRows({equity:100,settings:{...settings,include:["BTC","ETH","xyz:NVDA"],exclude:["ETH"]},signal:{coins:[{coin:"BTC",score:100},{coin:"ETH",score:100},{coin:"xyz:NVDA",score:100}],timestamp:null},current:{}});expect(rows).toHaveLength(2);expect(rows[0].target).toBe(250);
+ expect(()=>validateSettings({...settings,leverage:6},markets)).toThrow();expect(()=>validateSettings({...settings,killPct:0},markets)).toThrow();expect(()=>validateSettings({...settings,minOrderUsd:9},markets)).toThrow();expect(()=>validateSettings({...settings,include:[]},markets)).toThrow();
+});
+it("uses spot USDC plus all included unrealized PNL for unified equity without double counting margin",()=>{
+ const main={marginSummary:{accountValue:"500"},assetPositions:[{position:{unrealizedPnl:"5"}}]},xyz={marginSummary:{accountValue:"200"},assetPositions:[{position:{unrealizedPnl:"-2"}}]},spot={balances:[{coin:"USDC",total:"100"}]};
+ expect(accountEquity("unifiedAccount",main,xyz,spot)).toBe(103);expect(accountEquity("disabled",main,xyz,spot)).toBe(700);expect(accountEquity("unifiedAccount",main,xyz,undefined)).toBeNull();expect(accountEquity("portfolioMargin",main,xyz,spot)).toBeNull();
+});
+it("never calls a resumed or active account live without a live executor cycle",()=>{
+ expect(executionLabel({registered:true,state:"active",dryRun:false})).toBe("WAITING FOR CYCLE");
+ expect(executionLabel({registered:true,state:"paused",lastCycle:Date.now(),plan:{ts:Date.now(),state:"active",live:true}})).toBe("PAUSED");
+ expect(executionLabel({registered:true,state:"active",lastCycle:Date.now(),plan:{ts:Date.now(),state:"active",live:false,dryRun:true}})).toBe("DRY-RUN");
+});
+
+it("uses new API markets for allocation and validates selections against that list",()=>{
+ const coins=["BTC","xyz:BRENTOIL","xyz:GOLD","xyz:MU","xyz:INTC"];
+ const signal={coins:coins.map(coin=>({coin,score:100})),timestamp:null};
+ expect(targetRows({equity:100,settings,signal,current:{}}).map(r=>r.coin)).toEqual(coins);
+ expect(targetRows({equity:100,settings,signal,current:{}})[0].target).toBe(100);
+ expect(()=>validateSettings({...settings,include:["xyz:MU"]},coins)).not.toThrow();
+ expect(()=>validateSettings({...settings,include:["xyz:REMOVED"]},coins)).toThrow("supported");
+ expect(()=>validateSettings(settings,[])).toThrow("at least one");
+});

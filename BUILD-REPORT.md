@@ -306,3 +306,23 @@ Analytics user portfolios: leaderboard address links now open `/analytics?addres
 API wallet management: added `/API` with owner-wallet authorization, locally generated/exported agent keys, explicit expiry (up to 180 days), existing-agent listing and confirmed removal. Named approvals are checked for collisions before signing; generation never replaces the terminal's stored trading key. Optional builder fee approval is disclosed at 0.05%. No secrets are stored on a server. Account/network changes abort the remaining approval steps. Added an agent-only SDK client and CLI with owner-based Info requests, expiry/fee preflight, order/cancel previews by default and explicit `--execute`. Requests always attach the terminal builder to orders and never automatically retry ambiguous results. Tests mock exchange writes; no live authorization, revocation, orders or cancellations were performed.
 
 Independent API-page builder approval: added current account/network/builder display, approved cap, explicit approve/reapprove and read-only refresh. The approval signs only `approveBuilderFee` and checks the refreshed cap before reporting verification; existing API wallets are left intact. Corrected the shared fee converter from f/100 to f/1000: f=50 is 0.05%. Agent CLI status now includes the exact configured builder and raw approved fee units for diagnostics. No builder-account configuration or live approvals were changed during implementation.
+
+Auto Trader integration: implemented the provided ~/Downloads/copybot-spec.md
+contract against the existing hosted control API, with no executor/database
+replacement. Added `/API#auto-trader`, a standalone `/auto-trader` page, navigation,
+readiness checks, settings, dedicated in-memory agent approval and NaCl sealing,
+owner-signed exact-body requests, paused registration and explicit enable,
+pause/flatten/remove/renewal controls. Added last-cycle/guard/order/fill status,
+expiry notices, target previews, risk and account-wide-position disclosures.
+NaCl dependency is pinned to 1.0.3 with its registry integrity; frozen offline
+lockfile validation passes. Cryptographic tests use generated DEV-ONLY keys and
+mocked API responses; browser tests send no real approvals or control requests.
+Live read-only verification confirmed the hosted status and signal APIs. Added
+same-origin Vite dev/preview proxies and Vercel rewrites for browser access.
+Market selection, validation and previews use the signal API market list.
+Existing API wallets can be selected for registration and controlled from rows.
+Close & pause now verifies pause and submits immediate browser-signed reduce-only
+IOC orders through the regular Hyperliquid API across discovered perpetual venues.
+QuickNode close routing was removed after provider jurisdiction denials.
+Control acknowledgements are verified without assuming a full status response.
+No live orders were submitted by the agent during validation.

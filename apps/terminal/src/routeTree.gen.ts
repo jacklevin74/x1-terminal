@@ -13,6 +13,7 @@ import { Route as SpotRouteImport } from './routes/spot'
 import { Route as PerpRouteImport } from './routes/perp'
 import { Route as MobileAgentSyncRouteImport } from './routes/mobile-agent-sync'
 import { Route as BuildersPerpRouteImport } from './routes/builders-perp'
+import { Route as AutoTraderRouteImport } from './routes/auto-trader'
 import { Route as APIRouteImport } from './routes/API'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
@@ -37,6 +38,11 @@ const MobileAgentSyncRoute = MobileAgentSyncRouteImport.update({
 const BuildersPerpRoute = BuildersPerpRouteImport.update({
   id: '/builders-perp',
   path: '/builders-perp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AutoTraderRoute = AutoTraderRouteImport.update({
+  id: '/auto-trader',
+  path: '/auto-trader',
   getParentRoute: () => rootRouteImport,
 } as any)
 const APIRoute = APIRouteImport.update({
@@ -69,6 +75,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/API': typeof APIRoute
+  '/auto-trader': typeof AutoTraderRoute
   '/builders-perp': typeof BuildersPerpRouteWithChildren
   '/mobile-agent-sync': typeof MobileAgentSyncRoute
   '/perp': typeof PerpRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/API': typeof APIRoute
+  '/auto-trader': typeof AutoTraderRoute
   '/mobile-agent-sync': typeof MobileAgentSyncRoute
   '/perp': typeof PerpRoute
   '/spot': typeof SpotRoute
@@ -91,6 +99,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/API': typeof APIRoute
+  '/auto-trader': typeof AutoTraderRoute
   '/builders-perp': typeof BuildersPerpRouteWithChildren
   '/mobile-agent-sync': typeof MobileAgentSyncRoute
   '/perp': typeof PerpRoute
@@ -104,6 +113,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/API'
+    | '/auto-trader'
     | '/builders-perp'
     | '/mobile-agent-sync'
     | '/perp'
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/API'
+    | '/auto-trader'
     | '/mobile-agent-sync'
     | '/perp'
     | '/spot'
@@ -125,6 +136,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/API'
+    | '/auto-trader'
     | '/builders-perp'
     | '/mobile-agent-sync'
     | '/perp'
@@ -137,6 +149,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
   APIRoute: typeof APIRoute
+  AutoTraderRoute: typeof AutoTraderRoute
   BuildersPerpRoute: typeof BuildersPerpRouteWithChildren
   MobileAgentSyncRoute: typeof MobileAgentSyncRoute
   PerpRoute: typeof PerpRoute
@@ -171,6 +184,13 @@ declare module '@tanstack/react-router' {
       path: '/builders-perp'
       fullPath: '/builders-perp'
       preLoaderRoute: typeof BuildersPerpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auto-trader': {
+      id: '/auto-trader'
+      path: '/auto-trader'
+      fullPath: '/auto-trader'
+      preLoaderRoute: typeof AutoTraderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/API': {
@@ -229,6 +249,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   APIRoute: APIRoute,
+  AutoTraderRoute: AutoTraderRoute,
   BuildersPerpRoute: BuildersPerpRouteWithChildren,
   MobileAgentSyncRoute: MobileAgentSyncRoute,
   PerpRoute: PerpRoute,

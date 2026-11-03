@@ -232,3 +232,71 @@ fees using an API key or treat each agent as a separate funded account. A valid
 agent of the approved owner uses that owner's fee approval; a key registered to
 another owner cannot inherit it. The local script verifies the configured key is
 listed in the configured owner's current `extraAgents` before sending orders.
+
+### Auto Trader
+
+Open **API → Auto Trader** (`/API#auto-trader`) or `/auto-trader`. The UI connects
+to the existing hosted control API at
+`https://wxnt-sale-sim.vercel.app/api/copybot`; its Neon database and scheduled
+executor remain unchanged. Browser requests use `/api/copybot` and
+`/api/auto-trader-signal` through fixed same-origin proxies in Vite dev/preview
+and Vercel rewrites, because the upstream does not provide CORS headers.
+Restart local preview after changing proxy configuration. `VITE_COPYBOT_API`
+can point to a compatible HTTPS instance if that instance supports browser CORS.
+The current integration supports **Mainnet** with X1 Wallet's derived owner
+account and Phantom Ethereum. It blocks the Mainnet service when the terminal is
+on Testnet. Portfolio-margin equity is deliberately unavailable until supported;
+manual and unified equity calculations follow the supplied implementation spec.
+
+1. Connect the owner wallet and fund its account (at least $15 verified equity).
+2. Review leverage (1–5x), daily loss stop (above 0%, at most 50%), minimum order
+   (at least $10), and the markets returned by the signal API.
+3. Select an existing API wallet in the dropdown or create a dedicated
+   **X1 AutoTrader** wallet valid for 90 days. Approve the 0.05% X1 builder fee.
+4. Register the key. The browser seals it with NaCl box to the server's public key.
+   Only ciphertext is uploaded; the service encrypts its stored key. No owner key
+   is exported, and this dedicated agent is never saved in localStorage,
+   sessionStorage, IndexedDB, or the manual-agent store. Key references are cleared
+   after registration, on account changes, and on leaving the component.
+5. Registration starts **paused**. Save settings, then explicitly confirm
+   **Start Auto Trader**. Active does not mean LIVE: the executor's account allowlist and
+   live gate still control whether real orders are sent. The UI shows paused,
+   waiting, dry-run, live, flatten-requested, and stale-cycle states separately.
+
+Stop leaves positions open. **Close & pause** confirms the service is paused,
+then submits immediate reduce-only IOC orders through the browser trading client
+for **all perpetual positions, including manual positions**. It discovers all
+perpetual venues and verifies remaining positions; partial fills or errors may
+leave positions open. Terminal trading approval is required. Remove deletes the service registration/key but
+does not close positions or revoke the API wallet on-chain. API wallet **Remove**
+on `/API` revokes that permission. Pending exchange orders can still fill.
+Renewal approves a fresh dedicated agent; re-register it, then enable again.
+
+All control mutations use a fresh single-use nonce and owner-signed EIP-712
+`X1CopyBot` / `Request` messages, without chainId or verifyingContract. The hash
+covers the exact JSON body sent. Account/network changes abort further writes;
+mutations are not automatically retried. Status and signals refresh every 30s.
+Plans, IOC orders, results, guard states, equity, daily PNL and expiry are shown.
+Preview targets use the specified ±15 deadband and allocation formula; the
+executor's authenticated signal and cycle data are authoritative. Loss stops do
+not guarantee a loss limit, and returns are not promised.
+
+The terminal contains no replacement executor and needs no Neon or execution
+secrets for this integration. Keep `COPYBOT_X25519_PRIV`, `COPYBOT_EXEC_KEK`,
+`SIGNAL_HMAC_KEY`, database credentials and live gates on the existing service.
+Changing its key-encryption server requires re-registration or server-side key
+migration. Do not run a second executor for the same followers.
+
+Validation: unit tests cover target math and risk boundaries; a mocked control
+API checks exact signing bytes, encryption round-trips, replay/timestamp/wrong
+signer rejection, and no automatic write retry. UI tests cover paused onboarding,
+explicit start/close/remove, shared owner approval, account changes, and no
+browser key persistence. X1's provider is tested with the chain-independent auth
+domain. No live registration, state toggle, order, flatten, or removal is performed
+by these checks. Live end-to-end acceptance still requires access to the hosted
+API and an explicitly configured test follower/operator live gate.
+
+Immediate Auto Trader Close pauses the service, then uses the terminal's browser
+trading client and Hyperliquid's standard public Info/Exchange API directly.
+The approved terminal agent signs locally. Close submits reduce-only IOC orders
+immediately and verifies remaining positions; no order retries are automatic.

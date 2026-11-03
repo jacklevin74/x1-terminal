@@ -72,7 +72,7 @@ export function TopNav() {
 						</Link>
 					))}
 					<Divider orientation="vertical" className="my-2 mx-1" />
-					{STATIC_NAV_ITEMS.map((item) => (
+					{STATIC_NAV_ITEMS.map((item) => item.key === "auto-trader" ? <a key={item.key} href="/API#auto-trader" className="px-2.5 py-1.5 text-fg-muted hover:text-fg">{item.label}</a> : (
 						<button
 							key={item.key}
 							type="button"

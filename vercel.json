@@ -25,6 +25,14 @@
   ],
   "rewrites": [
     {
+      "source": "/api/copybot",
+      "destination": "https://wxnt-sale-sim.vercel.app/api/copybot"
+    },
+    {
+      "source": "/api/auto-trader-signal",
+      "destination": "https://wxnt-sale-sim.vercel.app/api/daytraders"
+    },
+    {
       "source": "/analytics",
       "destination": "/analytics/index.html"
     },

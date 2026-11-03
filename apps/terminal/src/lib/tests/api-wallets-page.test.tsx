@@ -4,6 +4,8 @@ import {createRoot} from "react-dom/client";
 import {afterEach,expect,it,vi} from "vitest";
 import {ApiWalletsPage} from "@/components/api-wallets/api-wallets-page";
 const state=vi.hoisted(()=>({agents:[] as {name:string;address:string;validUntil:number}[],approve:vi.fn().mockResolvedValue({status:"ok"}),fee:50}));
+vi.mock("@/components/api-wallets/auto-trader-controls",()=>({AutoTraderControls:()=>createElement("span",null,"Start Auto Trader · Stop Auto Trader")}));
+vi.mock("@/components/auto-trader/auto-trader-panel",()=>({AutoTraderPanel:()=>null}));
 vi.mock("wagmi",()=>({useConnection:()=>({address:`0x${"ab".repeat(20)}`}),useWalletClient:()=>({data:{}})}));
 vi.mock("@/config/hyperliquid",()=>({BUILDER_CONFIGURED:true,DEFAULT_BUILDER_CONFIG:{b:`0x${"ef".repeat(20)}`,f:50}}));
 vi.mock("@/components/trade/header/user-menu",()=>({UserMenu:()=>null}));

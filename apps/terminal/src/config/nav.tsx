@@ -65,4 +65,5 @@ export const STATIC_NAV_ITEMS: readonly StaticNavItem[] = [
 	{ key: "portfolio", label: <Trans>Portfolio</Trans> },
 	{ key: "staking", label: <Trans>Staking</Trans> },
 	{ key: "leaderboard", label: <Trans>Leaderboard</Trans> },
+ { key: "auto-trader", label: <Trans>Auto Trader</Trans> },
 ] as const;

@@ -81,3 +81,12 @@ it("signs the real builder-fee SDK approval with the X1-derived owner account",a
  const signature=serializeSignature({...payload.signature,v:BigInt(payload.signature.v)});
  expect(await verifyTypedData({address,domain:{name:"HyperliquidSignTransaction",version:"1",chainId:parseInt(payload.action.signatureChainId),verifyingContract:zeroAddress},types:ApproveBuilderFeeTypes,primaryType:"HyperliquidTransaction:ApproveBuilderFee",message:payload.action,signature})).toBe(true);
 });
+
+it("signs Auto Trader requests with the X1-derived owner and no chain-specific domain",async()=>{
+ install();const provider=getX1Provider()!;const [address]=await provider.request({method:"eth_requestAccounts"});
+ const {createWalletClient,custom,toBytes}=await import("viem");const {AUTH_DOMAIN,AUTH_TYPES}=await import("@/lib/auto-trader/api");
+ const wallet=createWalletClient({account:address,transport:custom(provider)});
+ const message={action:"pause" as const,target:address,nonce:"00".repeat(16),timestamp:BigInt(Date.now()),bodyHash:keccak256(toBytes("{}"))};
+ const signed=await wallet.signTypedData({account:address,domain:AUTH_DOMAIN,types:AUTH_TYPES,primaryType:"Request",message});
+ expect(AUTH_DOMAIN).not.toHaveProperty("chainId");expect(await verifyTypedData({address,domain:AUTH_DOMAIN,types:AUTH_TYPES,primaryType:"Request",message,signature:signed})).toBe(true);
+});

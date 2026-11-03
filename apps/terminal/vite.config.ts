@@ -7,6 +7,13 @@ import { lingui } from '@lingui/vite-plugin'
 import { visualizer } from 'rollup-plugin-visualizer'
 
 const isAnalyze = process.env.ANALYZE === 'true'
+const autoTraderProxy = {
+  '/api/copybot': { target: 'https://wxnt-sale-sim.vercel.app', changeOrigin: true },
+  '/api/auto-trader-signal': {
+    target: 'https://wxnt-sale-sim.vercel.app', changeOrigin: true,
+    rewrite: (path: string) => path.replace(/^\/api\/auto-trader-signal/, '/api/daytraders'),
+  },
+}
 
 function createManualChunks(id: string) {
   if (id.includes('node_modules')) {
@@ -27,9 +34,11 @@ const config = defineConfig({
   server: {
     strictPort: false,
     proxy: {
+      ...autoTraderProxy,
       "/api/builder-users": "http://127.0.0.1:8788",
     },
   },
+  preview: { proxy: autoTraderProxy },
   resolve: {
     dedupe: ['react', 'react-dom', '@tanstack/react-query', 'wagmi'],
   },
