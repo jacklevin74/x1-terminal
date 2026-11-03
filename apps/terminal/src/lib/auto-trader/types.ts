@@ -7,4 +7,4 @@ export interface AutoTraderPlan {ts:number;live?:boolean;dryRun?:boolean;state?:
 export interface AutoTraderStatus {registered:boolean;master?:Address;agent?:Address;validUntil?:number;renewSoon?:boolean;settings?:AutoTraderSettings;state?:"paused"|"active"|"flatten-requested";hasKey?:boolean;created?:number;updated?:number;lastCycle?:number;source?:string;plan?:AutoTraderPlan|null;dryRun?:boolean}
 export interface SealedAgentKey {epk:string;nonce:string;ct:string}
 export type AutoTraderAction="register"|"settings"|"pause"|"resume"|"flatten"|"remove";
-export interface Signal {coins:{coin:string;score:number|null}[];timestamp:number|null}
+export interface Signal {coins:{coin:string;score:number|null;label?:string}[];timestamp:number|null}

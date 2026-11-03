@@ -25,7 +25,7 @@ export function MainWorkspace() {
 	const [marketBodyMinHeightPx, setMarketBodyMinHeightPx] = useState<number>(PANEL_LAYOUT.ANALYSIS.minHeightPx);
 	const [sidebarMinHeightPx, setSidebarMinHeightPx] = useState(0);
  const sharedMinHeightPx = Math.max(marketBodyMinHeightPx, sidebarMinHeightPx);
- const marketBodyHeight = `max(calc(100dvh - 9.375rem), ${sharedMinHeightPx}px)`;
+ const marketBodyHeight = `max(calc(100dvh - 11.375rem), ${sharedMinHeightPx}px)`;
 
 	const handleAnalysisHeightChange = useCallback((heightPx: number) => {
 		setMarketBodyMinHeightPx(Math.max(PANEL_LAYOUT.ANALYSIS.minHeightPx, Math.ceil(heightPx)));

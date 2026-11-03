@@ -556,3 +556,18 @@
 [data-slot="scroll-area-scrollbar"] {
   display: none !important;
 }
+
+/* Continuous sentiment tape. Each identical group occupies half the track. */
+.sentiment-tape-viewport { scrollbar-width: none; }
+.sentiment-tape-viewport::-webkit-scrollbar { display: none; }
+.sentiment-tape-track { display: flex; width: max-content; animation: sentiment-tape-scroll var(--tape-duration, 78s) linear infinite; }
+.sentiment-tape-group { display: flex; flex: none; width: max-content; margin: 0; padding: 0; list-style: none; white-space: nowrap; }
+.sentiment-tape:hover .sentiment-tape-track,
+.sentiment-tape:focus-within .sentiment-tape-track,
+.sentiment-tape[data-paused="true"] .sentiment-tape-track { animation-play-state: paused; }
+@keyframes sentiment-tape-scroll { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+ .sentiment-tape-track { animation: none; }
+ .sentiment-tape-group[aria-hidden="true"] { display: none; }
+ .sentiment-tape-viewport { scrollbar-width: thin; }
+}

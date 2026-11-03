@@ -10,6 +10,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/cn";
 import { createLazyComponent } from "@/lib/lazy";
 import { useIsTestnet } from "@/stores/use-global-settings-store";
+import { SentimentTape } from "./header/sentiment-tape";
 import { TopNav } from "./header/top-nav";
 import { MainWorkspace } from "./layout/main-workspace";
 import { TestnetBanner } from "./testnet-banner";
@@ -44,6 +45,7 @@ export function TradeTerminalPage() {
 				>
 					<TestnetBanner />
 					<TopNav />
+                    <SentimentTape className={cn("fixed left-0 right-0 z-30",isTestnet?"top-[4.75rem]":"top-11")} />
 					<MainWorkspace />
 					<Suspense fallback={null}>
 						<FooterBar />

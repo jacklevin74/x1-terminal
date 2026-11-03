@@ -60,9 +60,9 @@ it("allows the fixed same-origin proxy on local HTTP without weakening remote HT
 });
 
 it("receives new markets and timestamp from the API and removes duplicate symbols",async()=>{
- const fetcher=vi.fn(async()=>Response.json({now:123,coins:[{coin:"BTC",score:10},{coin:"xyz:MU",score:20},{coin:"xyz:MU",score:30},{coin:"xyz:INTC",score:null},{coin:"bad symbol",score:20}]}));
+ const fetcher=vi.fn(async()=>Response.json({now:123,coins:[{coin:"BTC",score:10},{coin:"xyz:MU",score:20},{coin:"xyz:MU",score:30,label:"Bullish"},{coin:"xyz:INTC",score:null},{coin:"bad symbol",score:20}]}));
  const signal=await getSignal(undefined,fetcher);
- expect(signal.timestamp).toBe(123);expect(signal.coins.map(c=>c.coin)).toEqual(["BTC","xyz:MU","xyz:INTC"]);
+ expect(signal.coins[1].label).toBe("Bullish");expect(signal.timestamp).toBe(123);expect(signal.coins.map(c=>c.coin)).toEqual(["BTC","xyz:MU","xyz:INTC"]);
  await expect(getSignal(undefined,async()=>Response.json({coins:[]}))).rejects.toThrow("market list unavailable");
 });
 

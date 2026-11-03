@@ -1,3 +1,4 @@
+import { SentimentTape } from "../header/sentiment-tape";
 import { useConnection } from "wagmi";
 import { HL_ALL_DEXS } from "@/config/app";
 import { cn } from "@/lib/cn";
@@ -38,6 +39,7 @@ export function MobileTerminal({ className }: Props) {
 	return (
 		<div className={cn("h-dvh w-full flex flex-col bg-background text-fg font-sans", "overflow-hidden", className)}>
 			<MobileHeader />
+            <SentimentTape />
 			<OfflineBanner />
 			<main className="flex-1 min-h-0 flex flex-col overflow-hidden">
 				{activeTab === "chart" && <MobileChartView />}
