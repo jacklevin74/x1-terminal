@@ -1,3 +1,4 @@
+vi.mock("@/components/api-wallets/subaccounts-section",()=>({SubaccountsSection:()=>null}));
 // @vitest-environment jsdom
 import {act,createElement} from "react";
 import {createRoot} from "react-dom/client";

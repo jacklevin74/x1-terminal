@@ -1,3 +1,4 @@
+import {SubaccountsSection} from "./subaccounts-section";
 import { CopyIcon, CheckIcon } from "@phosphor-icons/react";
 import { useCopyToClipboard } from "@/hooks/ui/use-copy-to-clipboard";
 import { AutoTraderPanel } from "@/components/auto-trader/auto-trader-panel";
@@ -129,6 +130,7 @@ export function ApiWalletsPage(){
    {!agents.data?.length&&<p className="rounded-xl border border-stroke-weak bg-surface px-4 py-5 text-sm text-fg-muted">{!address?"Connect a wallet to manage API access.":agents.isError?"Could not load API wallets.":agents.isLoading?"Loading API wallets…":"No API wallets authorized."}</p>}
   </section>
   <p className="text-xs text-fg-muted">Key export is available only for keys held on this device. Hyperliquid cannot recover private keys.</p>
+  <SubaccountsSection key={`subaccounts:${address??"none"}:${env}`} />
   <AutoTraderPanel />
   <section className="space-y-2 text-sm"><h2 className="font-medium">Trade from a script</h2><p className="text-fg-muted">Save the generated file in your project folder. Check access, then preview an order before executing it.</p><pre className="overflow-x-auto rounded-lg bg-surface p-4 text-xs">{`node --env-file=.env.agent apps/terminal/scripts/x1-agent.mjs status\nnode --env-file=.env.agent apps/terminal/scripts/x1-agent.mjs order --file examples/api-order.json\n# Add --execute to submit the order`}</pre></section>
   {exportTarget&&address&&<ApiKeyExport key={`${address}:${env}:${exportTarget}`} owner={address} agent={exportTarget} network={env} resolveKey={()=>localKey(exportTarget)} onClose={()=>setExportTarget(null)} onSaved={()=>{if(exportTarget.toLowerCase()===agent.toLowerCase())setSaved(true);}} />}
