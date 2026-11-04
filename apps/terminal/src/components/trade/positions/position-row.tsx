@@ -85,7 +85,7 @@ export function PositionRow(props: PositionRowProps) {
 					</Tooltip>
 				</div>
 			</TableCell>
-			<TableCell className={num}>
+			<TableCell className={cn(num, "sticky right-0 z-10 bg-surface")}>
 				<PositionRowActions
 					disabled={m.actionsDisabled}
 					closing={props.isRowClosing}

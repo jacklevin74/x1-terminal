@@ -264,7 +264,15 @@ export function PositionsTab() {
 											)}
 										</TableHead>
 									))}
-									<TableHead scope="col" className={cn(accountHeadClass, headClassName, accountNumHeadClass)}>
+									<TableHead
+										scope="col"
+										className={cn(
+											accountHeadClass,
+											headClassName,
+											accountNumHeadClass,
+											"sticky right-0 z-10 bg-surface",
+										)}
+									>
 										<button
 											type="button"
 											className={accountHeadActionClass}
