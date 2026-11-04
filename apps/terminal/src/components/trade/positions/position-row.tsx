@@ -1,3 +1,4 @@
+import { getPositionMarkPrice } from "@/lib/positions/valuation";
 import { positionViewCellClass } from "./positions-panel-table-styles";
 import { PositionPnlShare } from "./position-pnl-share";
 import { TableCell, TableRow, Tooltip } from "@hypeterminal/ui";
@@ -47,6 +48,8 @@ export function PositionRow({
 	const assetId = market?.assetId;
 	const szDecimals = market?.szDecimals ?? 4;
 	const markPx = toBig(markPxRaw)?.toNumber() ?? Number.NaN;
+ const valuationMark = getPositionMarkPrice(p);
+ const valuationMarkNum = toBig(valuationMark)?.toNumber() ?? Number.NaN;
 	const displayName = market?.pairName ?? p.coin;
  const symbol = market?.shortName ?? p.coin.split(":").pop() ?? p.coin;
  const dex = p.coin.includes(":") ? p.coin.split(":")[0] : null;
@@ -56,9 +59,9 @@ export function PositionRow({
 	const liqPx = toBig(p.liquidationPx)?.toNumber();
 	const liqIsNear =
 		liqPx != null &&
-		Number.isFinite(markPx) &&
+		Number.isFinite(valuationMarkNum) &&
 		Number.isFinite(liqPx) &&
-		Math.abs(liqPx - markPx) / markPx <= LIQ_WARNING_PROXIMITY;
+		Math.abs(liqPx - valuationMarkNum) / valuationMarkNum <= LIQ_WARNING_PROXIMITY;
 
 	const entryPx = toBig(p.entryPx)?.toNumber() ?? Number.NaN;
 	const unrealizedPnl = toBig(p.unrealizedPnl)?.toNumber() ?? Number.NaN;
@@ -142,11 +145,11 @@ export function PositionRow({
    <TableCell size="dense" className={cn(cellClass, isLong ? "text-[#20b899]" : "text-[#ee6d88]")}>{formatToken(absSize, { decimals: szDecimals, minimumFractionDigits: 0, symbol })}</TableCell>
    <TableCell size="dense" className={cellClass}>{formatToken(p.positionValue, { decimals: 2, symbol: "USDC" })}</TableCell>
    <TableCell size="dense" className={cellClass}>{formatPrice(p.entryPx, { szDecimals, style: "decimal", compact: false })}</TableCell>
-   <TableCell size="dense" className={cellClass}>{formatPrice(markPx, { szDecimals, style: "decimal", compact: false })}</TableCell>
+   <TableCell size="dense" className={cellClass}>{formatPrice(valuationMark, { szDecimals, style: "decimal", compact: false })}</TableCell>
    <TableCell size="dense" className={cellClass}>
     <div className={cn("flex items-center gap-1", pnlClass)}>
      <span>{formatUSD(unrealizedPnl, { signDisplay: "always", compact: false })} ({formatPercent(p.returnOnEquity, { decimals: 1, signDisplay: "exceptZero" })})</span>
-     <PositionPnlShare position={p} markPx={markPxRaw} symbol={symbol} szDecimals={szDecimals} />
+     <PositionPnlShare position={p} markPx={valuationMark} symbol={symbol} szDecimals={szDecimals} />
     </div>
    </TableCell>
    <TableCell size="dense" className={cn(cellClass, liqIsNear && "text-error")}>

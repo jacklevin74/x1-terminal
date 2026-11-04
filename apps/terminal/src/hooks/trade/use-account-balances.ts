@@ -1,4 +1,5 @@
 import type { AllDexsClearinghouseStateWsEvent, SpotStateWsEvent, WebData3WsEvent } from "@nktkas/hyperliquid";
+import { getAccountUnrealizedPnl } from "@/lib/positions/valuation";
 import { useMemo } from "react";
 import { useConnection } from "wagmi";
 import { useSubscription } from "@/lib/hyperliquid";
@@ -112,3 +113,9 @@ export function useDefaultDexBalances(): AccountBalances {
 }
 
 export { useDefaultDexBalances as useAccountBalances };
+
+// Display-only aggregate: transfer and order-entry balances remain venue-specific.
+export function useAccountUnrealizedPnl(): number | null {
+ const { clearinghouseStates } = useAllDexsAccountState();
+ return useMemo(() => getAccountUnrealizedPnl(clearinghouseStates), [clearinghouseStates]);
+}

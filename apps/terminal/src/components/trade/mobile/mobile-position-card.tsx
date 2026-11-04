@@ -1,3 +1,4 @@
+import { getPositionMarkPrice } from "@/lib/positions/valuation";
 import { PositionPnlShare } from "../positions/position-pnl-share";
 import { Button } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
@@ -52,15 +53,17 @@ export function MobilePositionCard({
 	const assetId = market?.assetId;
 	const szDecimals = market?.szDecimals ?? 4;
 	const markPx = toBig(markPxRaw)?.toNumber() ?? Number.NaN;
+ const valuationMark = getPositionMarkPrice(p);
+ const valuationMarkNum = toBig(valuationMark)?.toNumber() ?? Number.NaN;
 	const entryPx = toBig(p.entryPx)?.toNumber() ?? Number.NaN;
 	const unrealizedPnl = toBig(p.unrealizedPnl)?.toNumber() ?? Number.NaN;
 	const roe = toBig(p.returnOnEquity)?.toNumber() ?? Number.NaN;
 	const liqPx = toBig(p.liquidationPx)?.toNumber();
 	const liqIsNear =
 		liqPx != null &&
-		Number.isFinite(markPx) &&
+		Number.isFinite(valuationMarkNum) &&
 		Number.isFinite(liqPx) &&
-		Math.abs(liqPx - markPx) / markPx <= LIQ_WARNING_PROXIMITY;
+		Math.abs(liqPx - valuationMarkNum) / valuationMarkNum <= LIQ_WARNING_PROXIMITY;
 
 	const fundingRaw = toBig(p.cumFunding.sinceOpen)?.toNumber();
 	const fundingValue = formatUSD(fundingRaw != null ? -fundingRaw : null, { signDisplay: "exceptZero" });
@@ -141,7 +144,7 @@ export function MobilePositionCard({
 				<div className={cn("flex items-center gap-1 text-xs tabular-nums font-medium", pnlClass)}>
 					{formatUSD(unrealizedPnl, { signDisplay: "exceptZero" })}
 					<span className="text-2xs ml-1 font-normal text-fg-muted">{formatPercent(p.returnOnEquity, 1)}</span>
-<PositionPnlShare position={p} markPx={markPxRaw} symbol={market?.shortName ?? p.coin.split(":").pop() ?? p.coin} szDecimals={szDecimals} />
+<PositionPnlShare position={p} markPx={valuationMark} symbol={market?.shortName ?? p.coin.split(":").pop() ?? p.coin} szDecimals={szDecimals} />
 				</div>
 			</div>
 
@@ -160,7 +163,7 @@ export function MobilePositionCard({
 					}
 				/>
 				<MetricCell label={t`Entry`} value={formatPrice(entryPx, { szDecimals })} />
-				<MetricCell label={t`Mark`} value={formatPrice(markPx, { szDecimals })} />
+				<MetricCell label={t`Mark`} value={formatPrice(valuationMark, { szDecimals })} />
 			</div>
 			<div className="grid grid-cols-3 divide-x divide-stroke-weak border-t border-stroke-weak">
 				<MetricCell

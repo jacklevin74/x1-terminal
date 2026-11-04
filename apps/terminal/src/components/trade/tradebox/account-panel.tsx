@@ -5,7 +5,7 @@ import { useConnection } from "wagmi";
 import { InfoRow, InfoRowGroup } from "@/components/ui/info-row";
 import { DEFAULT_QUOTE_TOKEN, FALLBACK_VALUE_PLACEHOLDER } from "@/config/app";
 import { getSpotAvailableValue } from "@/domain/trade/balances";
-import { useDefaultDexBalances } from "@/hooks/trade/use-account-balances";
+import { useAccountUnrealizedPnl, useDefaultDexBalances } from "@/hooks/trade/use-account-balances";
 import { cn } from "@/lib/cn";
 import { formatPercent, formatUSD } from "@/lib/format";
 import { toNumberOrZero } from "@/lib/trade/numbers";
@@ -30,25 +30,26 @@ export function AccountPanel() {
 		crossMaintenanceMarginUsed,
 	} = useDefaultDexBalances();
 
+	const accountUnrealizedPnl = useAccountUnrealizedPnl();
 	let perpMetrics = null;
 	if (marginSummary && perpSummary) {
 		const crossAccountValue = toNumberOrZero(perpSummary.accountValue);
 		const crossTotalNtlPos = toNumberOrZero(perpSummary.totalNtlPos);
 		const maintenanceMargin = toNumberOrZero(crossMaintenanceMarginUsed);
 
-		let unrealizedPnl = 0;
+		let nativeUnrealizedPnl = 0;
 		for (const pos of perpPositions) {
-			unrealizedPnl += toNumberOrZero(pos.position.unrealizedPnl);
+			nativeUnrealizedPnl += toNumberOrZero(pos.position.unrealizedPnl);
 		}
 
-		const balance = crossAccountValue - unrealizedPnl;
+		const balance = crossAccountValue - nativeUnrealizedPnl;
 		const marginRatio = crossAccountValue > 0 ? maintenanceMargin / crossAccountValue : 0;
 		const crossLeverage = crossAccountValue > 0 ? Math.abs(crossTotalNtlPos) / crossAccountValue : 0;
 
 		perpMetrics = {
 			accountValue: crossAccountValue,
 			balance,
-			unrealizedPnl,
+			unrealizedPnl: accountUnrealizedPnl,
 			marginRatio,
 			crossLeverage,
 			maintenanceMargin,
@@ -90,7 +91,7 @@ export function AccountPanel() {
 				{
 					label: t`Unrealized PNL`,
 					value: formatUSD(perpMetrics.unrealizedPnl, { signDisplay: "exceptZero" }),
-					valueClassName: cn("tabular-nums", getValueColorClass(perpMetrics.unrealizedPnl)),
+					valueClassName: cn("tabular-nums", perpMetrics.unrealizedPnl === null ? "text-fg-muted" : getValueColorClass(perpMetrics.unrealizedPnl)),
 				},
 				{
 					label: t`Cross Margin Ratio`,

@@ -12,7 +12,7 @@ import { Skeleton } from "boneyard-js/react";
 import { useState } from "react";
 import { useConnection, useDisconnect } from "wagmi";
 import { UI_TEXT } from "@/config/ui-text";
-import { useDefaultDexBalances } from "@/hooks/trade/use-account-balances";
+import { useAccountUnrealizedPnl, useDefaultDexBalances } from "@/hooks/trade/use-account-balances";
 import { useCopyToClipboard } from "@/hooks/ui/use-copy-to-clipboard";
 import { cn } from "@/lib/cn";
 import { formatPercent, formatUSD } from "@/lib/format";
@@ -31,7 +31,7 @@ export function MobileAccountView({ className }: MobileAccountViewProps) {
 	const { address, isConnected } = useConnection();
 	const disconnect = useDisconnect();
 
-	const { marginSummary, perpSummary, perpPositions, withdrawable, crossMaintenanceMarginUsed, isLoading } =
+	const { marginSummary, perpSummary, withdrawable, crossMaintenanceMarginUsed, isLoading } =
 		useDefaultDexBalances();
 
 	const [walletModalOpen, setWalletModalOpen] = useState(false);
@@ -53,10 +53,7 @@ export function MobileAccountView({ className }: MobileAccountViewProps) {
 	const marginRatio = crossAccountValue > 0 ? maintenanceMargin / crossAccountValue : 0;
 	const crossLeverage = crossAccountValue > 0 ? Math.abs(crossNtlPos) / crossAccountValue : 0;
 
-	let unrealizedPnl = 0;
-	for (const pos of perpPositions) {
-		unrealizedPnl += toNumberOrZero(pos.position.unrealizedPnl);
-	}
+	const unrealizedPnl = useAccountUnrealizedPnl();
 
 	if (!isConnected) {
 		return (
@@ -132,10 +129,10 @@ export function MobileAccountView({ className }: MobileAccountViewProps) {
 							<div
 								className={cn(
 									"text-sm tabular-nums mt-1.5 font-medium",
-									unrealizedPnl >= 0 ? "text-success" : "text-error",
+									unrealizedPnl === null ? "text-fg-muted" : unrealizedPnl >= 0 ? "text-success" : "text-error",
 								)}
 							>
-								{unrealizedPnl >= 0 ? "+" : ""}
+								{unrealizedPnl !== null && unrealizedPnl >= 0 ? "+" : ""}
 								{formatUSD(unrealizedPnl)} {ACCOUNT_TEXT.UNREALIZED_LABEL}
 							</div>
 						</Skeleton>
