@@ -34,7 +34,7 @@ export function TopNav() {
 				isTestnet ? "top-8" : "top-0",
 			)}
 		>
-			<div className="flex min-w-0 items-center gap-4">
+			<div className="flex min-w-0 items-center gap-8">
 				<X1TerminalLogo />
 				<nav className="hidden items-center gap-1 lg:flex">
 					{SCOPE_NAV_ITEMS.map((item) => {
