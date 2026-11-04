@@ -8,16 +8,12 @@ import { candleEventToKLineData, candlesToKLineData } from "@/lib/chart/candle";
 import { formatShortDate, formatTime, formatTooltipDate } from "@/lib/chart/format";
 import { DEFAULT_INTERVAL } from "@/lib/chart/kline-config";
 import { buildKlineStyles } from "@/lib/chart/kline-styles";
-import { registerLiquidationLineOverlay } from "@/lib/chart/liquidation-line-overlay";
-import { registerOrderLineOverlay } from "@/lib/chart/order-line-overlay";
-import { registerPositionLineOverlay } from "@/lib/chart/position-line-overlay";
 import { getInfoClient, useSubscription } from "@/lib/hyperliquid";
 import type { ChartSource, ChartSourceToggleIntentHandlers } from "./chart-source-toggle";
 import { ChartStatus } from "./chart-status";
 import { KlineToolbar } from "./kline-toolbar";
 import { useKlineExecutions } from "./use-kline-executions";
-import { useKlineOrderOverlays } from "./use-kline-order-overlays";
-import { useKlinePositionOverlays } from "./use-kline-position-overlays";
+import { useKlineTradingLines } from "./use-kline-trading-lines";
 
 interface Props {
 	symbol?: string;
@@ -88,10 +84,6 @@ export function KlineChart({
 		const container = containerRef.current;
 		if (!container || !symbol) return;
 		let disposed = false;
-
-		registerOrderLineOverlay();
-		registerPositionLineOverlay();
-		registerLiquidationLineOverlay();
 
 		const chart = init(container, {
 			customApi: {
@@ -259,12 +251,12 @@ export function KlineChart({
 		}
 	}, [candleData.data]);
 
-	useKlineExecutions(chartRef, symbol, activeInterval.barMs);
-	useKlineOrderOverlays({ chartRef, symbol });
-	useKlinePositionOverlays({ chartRef, symbol, dex: positionDex });
-
 	const isLoading = loadResult?.key !== loadKey;
 	const hasFailed = !isLoading && loadResult?.failed === true;
+	const dataKey = isLoading || hasFailed ? null : loadKey;
+
+	useKlineExecutions(chartRef, symbol, activeInterval.barMs, dataKey);
+	useKlineTradingLines({ chartRef, symbol, dex: positionDex, dataKey });
 
 	return (
 		<div className="flex flex-col h-full">
