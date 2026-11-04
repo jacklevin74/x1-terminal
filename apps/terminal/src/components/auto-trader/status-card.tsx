@@ -1,3 +1,4 @@
+import {CheckCircleIcon,WarningCircleIcon,QuestionIcon} from "@phosphor-icons/react";
 import {HelpTip} from "./help-tip";
 import {useEffect,useState} from "react";
 import {cycleTiming} from "@/lib/auto-trader/cycle-timing";
@@ -14,7 +15,12 @@ export function executionLabel(status:AutoTraderStatus){
  if(status.plan.live===true&&status.plan.dryRun!==true)return "LIVE";
  return "DRY-RUN";
 }
-function Guard({label,value}:{label:string;value:boolean|undefined}){return <span className="rounded border border-stroke-weak px-2 py-1 text-xs">{label}<HelpTip label={label} />: {value===undefined?"Unknown":value?"OK":"Blocked"}</span>;}
+function Guard({label,value}:{label:string;value:boolean|undefined}){
+ const passed=value===true,unknown=value===undefined;
+ const Icon=passed?CheckCircleIcon:unknown?QuestionIcon:WarningCircleIcon;
+ return <span className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs ${passed?"border-success/30 bg-success/5":unknown?"border-stroke-weak bg-background":"border-warning/30 bg-warning/5"}`}><Icon aria-hidden="true" weight={unknown?"regular":"fill"} className={`size-5 shrink-0 ${passed?"text-success":unknown?"text-fg-muted":"text-warning"}`} /><span className="font-medium">{label}</span><HelpTip label={label} /><strong className={passed?"text-success":unknown?"text-fg-muted":"text-warning"}>{unknown?"Unknown":passed?"OK":"Blocked"}</strong></span>;
+}
+
 export function StatusCard({status}:{status:AutoTraderStatus}){
  const p=status.plan;
  const [now,setNow]=useState(()=>Date.now());
