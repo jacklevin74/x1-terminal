@@ -9,7 +9,7 @@ interface Props {
 }
 
 const walletOptionClass =
-	"group flex w-full flex-col items-start gap-1 rounded-8 bg-control px-3 py-3 text-left transition-colors duration-150 hover:bg-control-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus disabled:cursor-not-allowed disabled:hover:bg-control motion-reduce:transition-none";
+	"group flex w-full items-center gap-3 rounded-8 bg-control px-3 py-3 text-left transition-colors duration-150 hover:bg-control-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus disabled:cursor-not-allowed disabled:hover:bg-control motion-reduce:transition-none";
 
 export function WalletModal({ open, onOpenChange, embedded = false }: Props) {
 	const connectors = useConnectors();
@@ -66,11 +66,21 @@ export function WalletModal({ open, onOpenChange, embedded = false }: Props) {
 						disabled={isPending}
 						onClick={() => handleSelect(c)}
 					>
-						<span className="text-xs font-medium text-fg group-disabled:text-fg-disabled">{c.name}</span>
-						<span className="text-xs text-fg-muted group-disabled:text-fg-disabled">
-							{c.id === "x1"
-								? "Derived from your X1 signature · session reconnect"
-								: "Ethereum provider · EIP-712 signing"}
+						<span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-[9px] border border-stroke-weak bg-surface group-disabled:opacity-50">
+							<img
+								src={c.id === "x1" ? "/wallets/x1-wallet.svg" : "/wallets/phantom.svg"}
+								alt=""
+								draggable={false}
+								className="size-[30px] object-contain"
+							/>
+						</span>
+						<span className="flex min-w-0 flex-col gap-0.5">
+							<span className="text-sm font-medium text-fg group-disabled:text-fg-disabled">{c.name}</span>
+							<span className="text-xs text-fg-muted group-disabled:text-fg-disabled">
+								{c.id === "x1"
+									? "Derived from your X1 signature · session reconnect"
+									: "Ethereum provider · EIP-712 signing"}
+							</span>
 						</span>
 					</button>
 				))}
