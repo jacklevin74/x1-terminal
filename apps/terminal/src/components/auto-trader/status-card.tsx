@@ -1,3 +1,5 @@
+import {useEffect,useState} from "react";
+import {cycleTiming} from "@/lib/auto-trader/cycle-timing";
 import { Trans } from "@lingui/react/macro";
 import type { AutoTraderStatus } from "@/lib/auto-trader/types";
 export function money(value:unknown){return typeof value==="number"&&Number.isFinite(value)?new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:2}).format(value):"—";}
@@ -14,9 +16,13 @@ export function executionLabel(status:AutoTraderStatus){
 function Guard({label,value}:{label:string;value:boolean|undefined}){return <span className="rounded border border-stroke-weak px-2 py-1 text-xs">{label}: {value===undefined?"Unknown":value?"OK":"Blocked"}</span>;}
 export function StatusCard({status}:{status:AutoTraderStatus}){
  const p=status.plan;
+ const [now,setNow]=useState(()=>Date.now());
+ useEffect(()=>{const timer=setInterval(()=>setNow(Date.now()),1000);return()=>clearInterval(timer);},[]);
+ const next=cycleTiming(status,now);
  return <section className="space-y-4 rounded-xl border border-stroke-weak bg-surface p-4" aria-label="Auto Trader status">
   <div className="flex flex-wrap items-center justify-between gap-3"><h3 className="text-sm font-semibold"><Trans>Executor status</Trans></h3><strong className={executionLabel(status)==="LIVE"?"text-success":"text-brand"}>{executionLabel(status)}</strong></div>
   <div className="grid grid-cols-2 gap-4 text-xs sm:grid-cols-4">{[["Last cycle",when(status.lastCycle??p?.ts)],["Equity",money(p?.equity)],["Day PNL",money(p?.dayPnl)],["Agent expires",when(status.validUntil)]].map(([label,value])=><div key={label}><span className="block text-fg-muted">{label}</span><span className="mt-1 block font-medium">{value}</span></div>)}</div>
+  <div aria-label="Next Auto Trader cycle" className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-stroke-weak bg-background px-3 py-2"><div><span className="block text-xs text-fg-muted">Next cycle · estimated</span><strong className="tabular-nums text-brand">{next.label}</strong>{next.at&&<span className="ml-2 text-xs text-fg-muted">around {new Date(next.at).toLocaleTimeString()}</span>}</div><p className="max-w-lg text-xs text-fg-muted">The executor waits five minutes after each cycle finishes. This estimate uses the last reported cycle timestamp; execution time can delay it. A cycle checks signals and may send no trades. Status refreshes every 30 seconds.</p></div>
   {status.state==="flatten-requested"&&<p role="status" className="rounded-lg bg-background p-3 text-sm text-warning">Close request accepted. Waiting for the executor’s next cycle (normally every five minutes). Positions are not confirmed closed yet. Check the next cycle’s orders and fills; do not resend the request while it is queued.</p>}
   {status.agent&&<p className="break-all font-mono text-xs text-fg-muted">Agent: {status.agent}</p>}
   {status.renewSoon&&<p role="status" className="text-sm text-warning"><Trans>Your agent expires within 14 days. Renew its API wallet, register the new key, then enable Auto Trader again.</Trans></p>}
