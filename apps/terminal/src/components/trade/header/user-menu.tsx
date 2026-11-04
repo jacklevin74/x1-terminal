@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useConnection, useDisconnect } from "wagmi";
 import { APP_BAR_BUTTON_HEIGHT_CLASS } from "@/config/layout";
 import { cn } from "@/lib/cn";
+import { exitDemoMode } from "@/lib/demo/demo-mode";
 import { removeAgentFromStorage } from "@/lib/hyperliquid";
 import { clearX1Session } from "@/lib/x1/provider";
 import { ExportKeyModal } from "../components/export-key-modal";
@@ -34,9 +35,15 @@ export function UserMenu() {
 	}
 
 	const derived = connector?.id === "x1";
+	const demo = connector?.type === "mock";
 
 	function handleDisconnect() {
 		if (!address) return;
+		if (demo) {
+			disconnect();
+			exitDemoMode();
+			return;
+		}
 		removeAgentFromStorage("Testnet", address);
 		removeAgentFromStorage("Mainnet", address);
 		clearX1Session();
@@ -76,7 +83,7 @@ export function UserMenu() {
 				triggerClassName="tabular-nums"
 				trigger={
 					<span className="inline-flex items-center gap-2">
-						{derived ? <X1Tile size={18} /> : <span className="text-fg-muted">Phantom</span>}
+						<WalletLabel derived={derived} demo={demo} />
 						<span>
 							{address.slice(0, 6)}…{address.slice(-4)}
 						</span>
@@ -85,13 +92,13 @@ export function UserMenu() {
 				popupClassName="max-h-none"
 				groups={[
 					{
-						label: derived ? "Derived from your X1 signature" : "Phantom Ethereum account",
+						label: getAccountLabel(derived, demo),
 						items: accountItems,
 					},
 					{
 						items: [
 							{
-								label: "Disconnect",
+								label: demo ? "Exit demo mode" : "Disconnect",
 								icon: <SignOutIcon className="size-4" />,
 								danger: true,
 								onSelect: handleDisconnect,
@@ -103,4 +110,16 @@ export function UserMenu() {
 			{derived && exportOpen && <ExportKeyModal key={address} address={address} onClose={() => setExportOpen(false)} />}
 		</>
 	);
+}
+
+function WalletLabel({ derived, demo }: { derived: boolean; demo: boolean }) {
+	if (demo) return <span className="text-warning">Demo</span>;
+	if (derived) return <X1Tile size={18} />;
+	return <span className="text-fg-muted">Phantom</span>;
+}
+
+function getAccountLabel(derived: boolean, demo: boolean) {
+	if (demo) return "Demo · read-only public account";
+	if (derived) return "Derived from your X1 signature";
+	return "Phantom Ethereum account";
 }

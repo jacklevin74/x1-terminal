@@ -21,9 +21,10 @@ import {
 	scroll,
 	zkSync,
 } from "wagmi/chains";
-import { injected } from "wagmi/connectors";
-import { getPhantomProvider, getX1Provider } from "@/lib/x1/provider";
+import { injected, mock } from "wagmi/connectors";
+import { getDemoAddress } from "@/lib/demo/demo-mode";
 import type { MockWalletConfig } from "@/lib/wallet-utils";
+import { getPhantomProvider, getX1Provider } from "@/lib/x1/provider";
 
 // All chains supported for LiFi bridging — wagmi requires these upfront
 const BRIDGE_CHAINS = [
@@ -62,17 +63,28 @@ const BRIDGE_TRANSPORTS = Object.fromEntries(
 	BRIDGE_CHAINS.map((chain) => [chain.id, http(getBridgeRpcUrl(chain))]),
 ) as Record<(typeof BRIDGE_CHAINS)[number]["id"], ReturnType<typeof http>>;
 
-export function createWagmiConfig(_options: { mockWallets?: MockWalletConfig[]; env?: Record<string, string | undefined> } = {}) {
- return createConfig({
-  chains: BRIDGE_CHAINS,
-  multiInjectedProviderDiscovery: false,
-  connectors: [
-   injected({ target: () => ({ id: "phantom", name: "Phantom", provider: () => getPhantomProvider() }), shimDisconnect: true }),
-   injected({ target: () => ({ id: "x1", name: "X1 Wallet", provider: () => getX1Provider() }), shimDisconnect: true }),
-  ],
-  transports: BRIDGE_TRANSPORTS,
-  ssr: true,
- });
+export const DEMO_ADDRESS = getDemoAddress();
+
+export function createWagmiConfig(
+	_options: { mockWallets?: MockWalletConfig[]; env?: Record<string, string | undefined> } = {},
+) {
+	return createConfig({
+		chains: BRIDGE_CHAINS,
+		multiInjectedProviderDiscovery: false,
+		connectors: [
+			injected({
+				target: () => ({ id: "phantom", name: "Phantom", provider: () => getPhantomProvider() }),
+				shimDisconnect: true,
+			}),
+			injected({
+				target: () => ({ id: "x1", name: "X1 Wallet", provider: () => getX1Provider() }),
+				shimDisconnect: true,
+			}),
+			...(DEMO_ADDRESS ? [mock({ accounts: [DEMO_ADDRESS], features: { reconnect: true } })] : []),
+		],
+		transports: BRIDGE_TRANSPORTS,
+		ssr: true,
+	});
 }
 export const MOCK_WALLETS: MockWalletConfig[] = [];
 export const config = createWagmiConfig();

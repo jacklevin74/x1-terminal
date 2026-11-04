@@ -10,7 +10,8 @@ import {
 	MARKET_ORDER_SLIPPAGE_MAX_PERCENT,
 	MARKET_ORDER_SLIPPAGE_MIN_PERCENT,
 } from "@/config/trade";
-import { getNetwork, type Network } from "@/lib/network";
+import { getDemoAddress } from "@/lib/demo/demo-mode";
+import { getNetwork, getStoredNetwork, type Network } from "@/lib/network";
 import { createValidatedStorage } from "@/lib/storage/validated-storage";
 import type { MarginMode } from "@/lib/trade/margin-mode";
 
@@ -112,7 +113,7 @@ const useGlobalSettingsStore = create<GlobalSettingsStore>()(
 				positionsActiveTab: state.positionsActiveTab,
 				mobileActiveTab: state.mobileActiveTab,
 				theme: state.theme,
-				network: state.network,
+				network: getDemoAddress() ? getStoredNetwork() : state.network,
 			}),
 			merge: (persisted, current) => {
 				const p = persisted as Partial<GlobalSettingsStore>;
@@ -135,7 +136,7 @@ const useGlobalSettingsStore = create<GlobalSettingsStore>()(
 					marketOrderSlippagePercent: slippagePercent,
 					marginMode: p?.marginMode === "isolated" ? "isolated" : "cross",
 					theme: "dark",
-					network: p?.network === "mainnet" || p?.network === "testnet" ? p.network : DEFAULT_GLOBAL_SETTINGS.network,
+					network: getNetwork(),
 				};
 			},
 		},
