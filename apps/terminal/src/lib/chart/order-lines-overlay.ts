@@ -74,10 +74,10 @@ export function registerOrderLinesOverlay() {
 				if (ly !== y) figures.push(lineFig(LEFT + total, ly, LEFT + total + 10, y, tone, false));
 				figures.push(rectFig(LEFT, top, total, H, p.page, tone, 2));
 				figures.push(rectFig(LEFT, top, textW, H, tone, undefined, 2));
-				figures.push(textFig(LEFT + textW / 2, ly, text, p.fg, { align: "center", size: FONT, weight: 500 }));
+				figures.push(textFig(LEFT + textW / 2, ly, text, p.page, { align: "center", size: FONT, weight: 600 }));
 				let x = LEFT + textW;
 				if (qty) {
-					figures.push(textFig(x + qtyW / 2, ly, qty, p.secondary, { align: "center", size: FONT, weight: 500 }));
+					figures.push(textFig(x + qtyW / 2, ly, qty, p.fg, { align: "center", size: FONT, weight: 500 }));
 					x += qtyW;
 					figures.push(lineFig(x, top + 1, x, top + H - 1, tone, false));
 				}
