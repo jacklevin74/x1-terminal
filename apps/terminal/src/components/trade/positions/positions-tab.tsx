@@ -22,7 +22,7 @@ import { HL_ALL_DEXS } from "@/config/app";
 import { buildOrderPlan } from "@/domain/trade/order-intent";
 import { useSubmitPlan } from "@/hooks/trade/use-submit-plan";
 import { cn } from "@/lib/cn";
-import { useMarkets, useSubscription, useUserPositions } from "@/lib/hyperliquid";
+import { type Position, useMarkets, useSubscription, useUserPositions } from "@/lib/hyperliquid";
 import { closePositionsInSequence } from "@/lib/positions/close-all";
 import { buildClosePositionDescription } from "@/lib/trade/close-toast";
 import { buildTpSlOrdersByCoin } from "@/lib/trade/open-orders";
@@ -36,7 +36,7 @@ import { LoadingRows } from "./loading-rows";
 import { Placeholder } from "./placeholder";
 import type { ClosePositionData, LimitClosePositionData, TpSlPositionData } from "./position-dialog-types";
 import { PositionLimitCloseModal } from "./position-limit-close-modal";
-import { PositionRow } from "./position-row";
+import { POSITION_HEADINGS, PositionRow } from "./position-row";
 import { PositionTpSlModal } from "./position-tpsl-modal";
 import {
 	accountHeadActionClass,
@@ -52,12 +52,17 @@ import { SortHeadButton } from "./sort-head-button";
 
 type CloseIntent = "close" | "reverse";
 
+const byValue = (p: Position) => Number(p.positionValue);
+const headClassName = "h-9 px-3";
+
 export function PositionsTab() {
 	const { address, isConnected } = useConnection();
 	const slippageBps = useMarketOrderSlippageBps();
 	const currentAddress = useRef(address);
 	currentAddress.current = address;
+	const headings = POSITION_HEADINGS;
 	const [sortDescending, setSortDescending] = useState(true);
+	const [sortLabel, setSortLabel] = useState(() => headings.find((h) => h.sort)?.label ?? "");
 	const [closeAllOpen, setCloseAllOpen] = useState(false);
 	const [closingAll, setClosingAll] = useState(false);
 	const closeAllBusy = useRef(false);
@@ -139,8 +144,12 @@ export function PositionsTab() {
 
 	const sortedPositions = useMemo(
 		() =>
-			[...positions].sort((a, b) => (Number(a.positionValue) - Number(b.positionValue)) * (sortDescending ? -1 : 1)),
-		[positions, sortDescending],
+			[...positions].sort((a, b) => {
+				const heading = headings.find((h) => h.label === sortLabel);
+				const key = heading?.sortBy ?? byValue;
+				return (key(a) - key(b)) * (sortDescending ? -1 : 1);
+			}),
+		[positions, sortDescending, sortLabel, headings],
 	);
 	const closeAllData = positions.map((p) => {
 		const market = markets.getMarket(p.coin);
@@ -213,19 +222,14 @@ export function PositionsTab() {
 	}
 
 	const placeholder = renderPlaceholder();
-	const headings = [
-		{ label: t`Market`, numeric: false },
-		{ label: t`Size`, numeric: true },
-		{ label: t`Position Value`, numeric: true },
-		{ label: t`Entry Price`, numeric: true },
-		{ label: t`Mark Price`, numeric: true },
-		{ label: t`PNL (ROE %)`, numeric: true },
-		{ label: t`Liq. Price`, numeric: true },
-		{ label: t`Margin`, numeric: true },
-		{ label: t`Funding`, numeric: true },
-		{ label: t`TP/SL`, numeric: true },
-	];
-	const positionValueLabel = headings[2].label;
+	function toggleSort(label: string) {
+		if (label === sortLabel) {
+			setSortDescending((value) => !value);
+			return;
+		}
+		setSortLabel(label);
+		setSortDescending(true);
+	}
 
 	return (
 		<div className={accountTabRootClass}>
@@ -240,21 +244,27 @@ export function PositionsTab() {
 										<TableHead
 											key={heading.label}
 											scope="col"
-											className={cn(accountHeadClass, heading.numeric && accountNumHeadClass)}
-											aria-sort={getAriaSort(heading.label === positionValueLabel, sortDescending)}
+											className={cn(
+												accountHeadClass,
+												headClassName,
+												heading.numeric && accountNumHeadClass,
+												heading.className,
+											)}
+											aria-sort={getAriaSort(heading.label === sortLabel, sortDescending)}
 										>
-											{heading.label === positionValueLabel ? (
+											{heading.sort || heading.sortBy ? (
 												<SortHeadButton
 													label={heading.label}
+													active={heading.label === sortLabel}
 													descending={sortDescending}
-													onToggle={() => setSortDescending((value) => !value)}
+													onToggle={() => toggleSort(heading.label)}
 												/>
 											) : (
 												heading.label
 											)}
 										</TableHead>
 									))}
-									<TableHead scope="col" className={cn(accountHeadClass, accountNumHeadClass)}>
+									<TableHead scope="col" className={cn(accountHeadClass, headClassName, accountNumHeadClass)}>
 										<button
 											type="button"
 											className={accountHeadActionClass}
