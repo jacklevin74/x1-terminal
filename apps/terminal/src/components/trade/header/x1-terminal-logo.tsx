@@ -1,7 +1,5 @@
 import { type CSSProperties, useId } from "react";
 
-const FONT = '"Geist Mono", ui-monospace, monospace';
-
 function X1Mark({ className, style }: { className?: string; style?: CSSProperties }) {
 	const gradientId = `x1-one-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
 	return (
@@ -46,18 +44,11 @@ export function X1Tile({ style, size = 26 }: { style?: CSSProperties; size?: num
 
 export default function X1TerminalLogo() {
 	return (
-		<span className="inline-flex items-center gap-[11px]" role="img" aria-label="X1 Terminal">
-			<X1Tile />
-			<span
-				data-part="word"
-				className="text-fg"
-				style={{ fontFamily: FONT, fontSize: 11, fontWeight: 700, letterSpacing: "0.16em" }}
-			>
-				TERMINAL
-			</span>
-		</span>
+		<img
+			src="/brand/x1-terminal-logo-dark.svg"
+			alt="X1 Terminal"
+			draggable={false}
+			className="block h-7 w-auto shrink-0 select-none"
+		/>
 	);
 }
-
-export const NAME = "Bold, 11px, white, wide";
-export const FONT_NAME = FONT.split(",")[0].replaceAll('"', "");
