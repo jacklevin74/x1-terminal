@@ -48,7 +48,7 @@ export default function X1TerminalLogo() {
 			src="/brand/x1-terminal-logo-dark.svg"
 			alt="X1 Terminal"
 			draggable={false}
-			className="block h-7 w-auto shrink-0 select-none"
+			className="block h-5 w-auto shrink-0 select-none"
 		/>
 	);
 }
