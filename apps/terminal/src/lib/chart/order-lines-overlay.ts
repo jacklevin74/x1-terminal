@@ -6,7 +6,6 @@ import {
 	lineFig,
 	palette,
 	rectFig,
-	resolveCollisions,
 	textFig,
 	textWidth,
 	toneColor,
@@ -18,6 +17,13 @@ const TAG_H = 18;
 const FONT = 11;
 const LEFT = 8;
 export const CANCEL_KEY = "cancel:";
+
+function mixHex(a: string, b: string, t: number): string {
+	const pa = Number.parseInt(a.slice(1, 7), 16);
+	const pb = Number.parseInt(b.slice(1, 7), 16);
+	const ch = (shift: number) => Math.round(((pa >> shift) & 255) * (1 - t) + ((pb >> shift) & 255) * t);
+	return `#${((ch(16) << 16) | (ch(8) << 8) | ch(0)).toString(16).padStart(6, "0")}`;
+}
 
 function mainText(line: ChartLine): string {
 	if (line.kind === "position") return `PNL ${line.pnlText ?? ""}`.trim();
@@ -62,27 +68,33 @@ export function registerOrderLinesOverlay() {
 					ignoreEvent: true,
 				});
 			}
-			for (const { line, y, ly } of resolveCollisions(items, H + 4, 0, bounding.height)) {
+			const placed: { y: number; x: number; w: number }[] = [];
+			for (const { line, y } of [...items].sort((a, b) => a.y - b.y)) {
 				const tone = toneColor(line.tone);
+				const fill = mixHex(tone, p.page, 0.28);
 				const text = mainText(line);
-				const textW = textWidth(text, FONT, 500) + 18;
+				const textW = textWidth(text, FONT, 500) + 16;
 				const qty = line.kind === "liquidation" ? null : line.sizeText;
-				const qtyW = qty ? textWidth(qty, FONT, 500) + 20 : 0;
-				const closeW = line.oid == null ? 0 : 20;
+				const qtyW = qty ? textWidth(qty, FONT, 500) + 16 : 0;
+				const closeW = line.oid == null ? 0 : 18;
 				const total = textW + qtyW + closeW;
-				const top = ly - H / 2;
-				if (ly !== y) figures.push(lineFig(LEFT + total, ly, LEFT + total + 10, y, tone, false));
-				figures.push(rectFig(LEFT, top, total, H, p.page, tone, 2));
-				figures.push(rectFig(LEFT, top, textW, H, tone, undefined, 2));
-				figures.push(textFig(LEFT + textW / 2, ly, text, p.page, { align: "center", size: FONT, weight: 600 }));
-				let x = LEFT + textW;
+				let left = LEFT;
+				for (const box of placed) {
+					if (Math.abs(box.y - y) < H + 2 && left < box.x + box.w + 6 && left + total > box.x) left = box.x + box.w + 6;
+				}
+				placed.push({ y, x: left, w: total });
+				const top = y - H / 2;
+				figures.push(rectFig(left, top, total, H, p.page, tone, 2));
+				figures.push(rectFig(left, top, textW, H, fill, undefined, 2));
+				figures.push(textFig(left + textW / 2, y, text, "#ffffff", { align: "center", size: FONT, weight: 500 }));
+				let x = left + textW;
 				if (qty) {
-					figures.push(textFig(x + qtyW / 2, ly, qty, p.fg, { align: "center", size: FONT, weight: 500 }));
+					figures.push(textFig(x + qtyW / 2, y, qty, p.fg, { align: "center", size: FONT, weight: 500 }));
 					x += qtyW;
-					figures.push(lineFig(x, top + 1, x, top + H - 1, tone, false));
 				}
 				if (closeW) {
-					figures.push(textFig(x + closeW / 2, ly, "×", p.fg, { align: "center", size: 14, weight: 400 }));
+					figures.push(lineFig(x, top + 1, x, top + H - 1, tone, false));
+					figures.push(textFig(x + closeW / 2, y, "×", p.secondary, { align: "center", size: 13, weight: 400 }));
 					figures.push({
 						key: `${CANCEL_KEY}${line.oid}`,
 						type: "rect",
