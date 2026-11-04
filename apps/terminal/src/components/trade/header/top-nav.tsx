@@ -30,7 +30,7 @@ export function TopNav() {
 		<header
 			className={cn(
 				APP_HEADER_HEIGHT_CLASS,
-				"fixed left-0 right-0 z-40 flex items-center justify-between border-b border-stroke-weak bg-background px-3",
+				"fixed left-0 right-0 z-40 flex items-center justify-between border-b border-stroke-weak bg-background px-4",
 				isTestnet ? "top-8" : "top-0",
 			)}
 		>

@@ -35,7 +35,7 @@ export function AppShellSkeleton() {
 				</div>
 			</div>
 			<div className="hidden md:flex h-screen w-full flex-col bg-background">
-				<div className="h-12 px-3 flex items-center gap-3 shrink-0">
+				<div className="h-12 px-4 flex items-center gap-3 shrink-0">
 					<div className="h-4 w-32 rounded-4 bg-surface animate-pulse" />
 					<div className="h-4 w-24 rounded-4 bg-surface animate-pulse ml-auto" />
 				</div>
