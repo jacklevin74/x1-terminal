@@ -84,7 +84,7 @@ msgstr "7 days"
 #~ msgid "About Builder Codes"
 #~ msgstr "About Builder Codes"
 
-#: src/components/trade/tradebox/account-panel.tsx:116
+#: src/components/trade/tradebox/account-panel.tsx:117
 msgid "Account"
 msgstr "Account"
 
@@ -96,11 +96,11 @@ msgstr "Account"
 msgid "Account Balances"
 msgstr "Account Balances"
 
-#: src/components/trade/tradebox/account-panel.tsx:123
+#: src/components/trade/tradebox/account-panel.tsx:124
 msgid "Account Equity"
 msgstr "Account Equity"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:116
+#: src/components/auto-trader/auto-trader-panel.tsx:133
 msgid "Account readiness"
 msgstr "Account readiness"
 
@@ -200,7 +200,7 @@ msgstr "Any portion that is not immediately filled will be canceled."
 #~ msgid "Appearance"
 #~ msgstr "Appearance"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:124
+#: src/components/auto-trader/auto-trader-panel.tsx:141
 msgid "Approve 0.05% fee"
 msgstr "Approve 0.05% fee"
 
@@ -220,7 +220,7 @@ msgstr "Asset"
 #~ msgid "Assets"
 #~ msgstr "Assets"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:22
+#: src/components/auto-trader/auto-trader-panel.tsx:25
 #: src/config/nav.tsx:68
 msgid "Auto Trader"
 msgstr "Auto Trader"
@@ -262,7 +262,7 @@ msgstr "Back online"
 #~ msgid "Back to asset selection"
 #~ msgstr "Back to asset selection"
 
-#: src/components/trade/tradebox/account-panel.tsx:86
+#: src/components/trade/tradebox/account-panel.tsx:87
 msgid "Balance"
 msgstr "Balance"
 
@@ -286,9 +286,9 @@ msgstr "Balance available to trade"
 #~ msgid "Breadcrumb"
 #~ msgstr "Breadcrumb"
 
-#: src/components/trade/mobile/mobile-account-view.tsx:188
-#: src/components/trade/tradebox/account-panel.tsx:172
-#: src/components/trade/tradebox/account-panel.tsx:175
+#: src/components/trade/mobile/mobile-account-view.tsx:185
+#: src/components/trade/tradebox/account-panel.tsx:173
+#: src/components/trade/tradebox/account-panel.tsx:176
 msgid "Bridge"
 msgstr "Bridge"
 
@@ -366,9 +366,9 @@ msgstr "Buy"
 #~ msgid "Camera permission was denied."
 #~ msgstr "Camera permission was denied."
 
-#: src/components/auto-trader/auto-trader-panel.tsx:165
+#: src/components/auto-trader/auto-trader-panel.tsx:182
 #: src/components/trade/mobile/mobile-orders-tab.tsx:256
-#: src/components/trade/mobile/mobile-position-card.tsx:188
+#: src/components/trade/mobile/mobile-position-card.tsx:191
 #: src/components/trade/mobile/mobile-twap-tab.tsx:110
 #: src/components/trade/positions/position-limit-close-modal.tsx:200
 #: src/components/trade/positions/position-tpsl-modal.tsx:183
@@ -447,7 +447,7 @@ msgstr "Choose a deposit route"
 #~ msgid "Clipboard paste was blocked. Paste from the keyboard menu or type the code manually."
 #~ msgstr "Clipboard paste was blocked. Paste from the keyboard menu or type the code manually."
 
-#: src/components/trade/mobile/mobile-position-card.tsx:247
+#: src/components/trade/mobile/mobile-position-card.tsx:250
 #: src/components/trade/positions/position-actions-dropdown.tsx:20
 #: src/components/trade/tradebox/bridge/executing-screen.tsx:55
 #: src/components/trade/tradebox/bridge/executing-screen.tsx:117
@@ -455,7 +455,7 @@ msgstr "Choose a deposit route"
 msgid "Close"
 msgstr "Close"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:149
+#: src/components/auto-trader/auto-trader-panel.tsx:166
 msgid "Close & pause"
 msgstr "Close & pause"
 
@@ -472,7 +472,7 @@ msgid "Closed PNL"
 msgstr "Closed PNL"
 
 #: src/components/trade/positions/position-actions-dropdown.tsx:20
-#: src/components/trade/positions/position-row.tsx:166
+#: src/components/trade/positions/position-row.tsx:169
 msgid "Closing..."
 msgstr "Closing..."
 
@@ -488,7 +488,7 @@ msgstr "Closing..."
 #~ msgid "completed"
 #~ msgstr "completed"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:165
+#: src/components/auto-trader/auto-trader-panel.tsx:182
 #: src/components/trade/positions/position-tpsl-modal.tsx:192
 #: src/components/trade/tradebox/bridge/confirmation-screen.tsx:162
 #: src/components/trade/tradebox/leverage-control.tsx:213
@@ -501,7 +501,7 @@ msgstr "Confirm"
 #~ msgid "Confirm Bridge"
 #~ msgstr "Confirm Bridge"
 
-#: src/components/trade/mobile/mobile-position-card.tsx:199
+#: src/components/trade/mobile/mobile-position-card.tsx:202
 msgid "Confirm Close"
 msgstr "Confirm Close"
 
@@ -550,18 +550,18 @@ msgstr "Confirm transaction in your wallet"
 #~ msgid "Connect wallet"
 #~ msgstr "Connect wallet"
 
-#: src/components/trade/mobile/mobile-account-view.tsx:69
-#: src/components/trade/mobile/mobile-account-view.tsx:75
+#: src/components/trade/mobile/mobile-account-view.tsx:66
+#: src/components/trade/mobile/mobile-account-view.tsx:72
 #: src/components/trade/mobile/mobile-nav-drawer.tsx:143
 #: src/lib/trade/use-button-content.ts:48
 msgid "Connect Wallet"
 msgstr "Connect Wallet"
 
-#: src/components/trade/tradebox/account-panel.tsx:120
+#: src/components/trade/tradebox/account-panel.tsx:121
 msgid "Connect wallet to view account"
 msgstr "Connect wallet to view account"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:24
+#: src/components/auto-trader/auto-trader-panel.tsx:27
 msgid "Connect X1 Wallet or Phantom above to configure Auto Trader."
 msgstr "Connect X1 Wallet or Phantom above to configure Auto Trader."
 
@@ -619,7 +619,7 @@ msgstr "Connect your wallet to view trade history."
 msgid "Connect your wallet to view TWAP orders."
 msgstr "Connect your wallet to view TWAP orders."
 
-#: src/components/trade/mobile/mobile-account-view.tsx:71
+#: src/components/trade/mobile/mobile-account-view.tsx:68
 msgid "Connect your wallet to view your account, positions, and start trading."
 msgstr "Connect your wallet to view your account, positions, and start trading."
 
@@ -664,7 +664,7 @@ msgstr "Copied to clipboard"
 #~ msgid "Copied!"
 #~ msgstr "Copied!"
 
-#: src/components/trade/mobile/mobile-account-view.tsx:103
+#: src/components/trade/mobile/mobile-account-view.tsx:100
 msgid "Copy address"
 msgstr "Copy address"
 
@@ -737,18 +737,18 @@ msgstr "Created"
 msgid "Creating link..."
 msgstr "Creating link..."
 
-#: src/components/auto-trader/auto-trader-panel.tsx:142
+#: src/components/auto-trader/auto-trader-panel.tsx:159
 msgid "Creating the dedicated API wallet does not start trading. Register, review your saved settings, then explicitly enable. Renewal replaces the previous Auto Trader key and registration pauses execution."
 msgstr "Creating the dedicated API wallet does not start trading. Register, review your saved settings, then explicitly enable. Renewal replaces the previous Auto Trader key and registration pauses execution."
 
-#: src/components/trade/positions/position-row.tsx:155
+#: src/components/trade/positions/position-row.tsx:158
 #: src/components/trade/tradebox/margin-mode-modal.tsx:22
 #: src/components/trade/tradebox/margin-mode-modal.tsx:67
 #: src/components/trade/tradebox/trade-header.tsx:68
 msgid "Cross"
 msgstr "Cross"
 
-#: src/components/trade/tradebox/account-panel.tsx:106
+#: src/components/trade/tradebox/account-panel.tsx:107
 msgid "Cross Account Leverage"
 msgstr "Cross Account Leverage"
 
@@ -756,11 +756,11 @@ msgstr "Cross Account Leverage"
 #~ msgid "Cross Leverage"
 #~ msgstr "Cross Leverage"
 
-#: src/components/trade/mobile/mobile-account-view.tsx:109
+#: src/components/trade/mobile/mobile-account-view.tsx:106
 msgid "Cross Margin"
 msgstr "Cross Margin"
 
-#: src/components/trade/tradebox/account-panel.tsx:96
+#: src/components/trade/tradebox/account-panel.tsx:97
 msgid "Cross Margin Ratio"
 msgstr "Cross Margin Ratio"
 
@@ -784,7 +784,7 @@ msgstr "Current"
 #~ msgid "Customize your trading experience."
 #~ msgstr "Customize your trading experience."
 
-#: src/components/auto-trader/status-card.tsx:27
+#: src/components/auto-trader/status-card.tsx:28
 msgid "Cycle orders and fills"
 msgstr "Cycle orders and fills"
 
@@ -792,7 +792,7 @@ msgstr "Cycle orders and fills"
 msgid "Daily loss stop (%)"
 msgstr "Daily loss stop (%)"
 
-#: src/components/auto-trader/status-card.tsx:24
+#: src/components/auto-trader/status-card.tsx:25
 msgid "Daily loss stop reached. Opens and adds are blocked; the executor can only reduce exposure until the UTC daily reset."
 msgstr "Daily loss stop reached. Opens and adds are blocked; the executor can only reduce exposure until the UTC daily reset."
 
@@ -806,8 +806,8 @@ msgstr "Default"
 
 #: src/components/trade/header/top-nav.tsx:100
 #: src/components/trade/mobile/mobile-nav-drawer.tsx:132
-#: src/components/trade/tradebox/account-panel.tsx:163
-#: src/components/trade/tradebox/account-panel.tsx:166
+#: src/components/trade/tradebox/account-panel.tsx:164
+#: src/components/trade/tradebox/account-panel.tsx:167
 #: src/components/trade/tradebox/deposit-modal.tsx:95
 #: src/components/trade/tradebox/deposit-modal.tsx:117
 #: src/components/trade/tradebox/deposit-modal.tsx:138
@@ -871,11 +871,19 @@ msgstr "Direct USDC deposits use Arbitrum. To deposit native ETH from Ethereum, 
 msgid "Direction"
 msgstr "Direction"
 
+#: src/components/auto-trader/auto-trader-panel.tsx:177
+#~ msgid "Directional target = equity × leverage ÷ selected markets × score/100. Neutral signals hold existing positions unchanged; their target equals current exposure and no order is sent. Flips close before reopening. Orders use IOC within 1% of mid; the minimum order applies except for full closes."
+#~ msgstr "Directional target = equity × leverage ÷ selected markets × score/100. Neutral signals hold existing positions unchanged; their target equals current exposure and no order is sent. Flips close before reopening. Orders use IOC within 1% of mid; the minimum order applies except for full closes."
+
+#: src/components/auto-trader/auto-trader-panel.tsx:177
+msgid "Directional target = equity × leverage ÷ selected markets × score/100. Neutral signals hold existing positions unchanged; their target equals current exposure and no order is sent. Only the executor’s 12 supported markets count toward allocation; SOXL is excluded. Resizes try post-only orders, then IOC fallback after 60 seconds. Close legs use IOC within 1% of mid and are submitted before flip opening legs. The minimum order applies except for full closes."
+msgstr "Directional target = equity × leverage ÷ selected markets × score/100. Neutral signals hold existing positions unchanged; their target equals current exposure and no order is sent. Only the executor’s 12 supported markets count toward allocation; SOXL is excluded. Resizes try post-only orders, then IOC fallback after 60 seconds. Close legs use IOC within 1% of mid and are submitted before flip opening legs. The minimum order applies except for full closes."
+
 #: src/components/trade/header/user-menu.tsx:140
 #~ msgid "Disconnect"
 #~ msgstr "Disconnect"
 
-#: src/components/trade/mobile/mobile-account-view.tsx:119
+#: src/components/trade/mobile/mobile-account-view.tsx:116
 msgid "Disconnect wallet"
 msgstr "Disconnect wallet"
 
@@ -979,7 +987,7 @@ msgstr "Enter TP or SL price"
 msgid "Enter trigger price"
 msgstr "Enter trigger price"
 
-#: src/components/trade/mobile/mobile-position-card.tsx:162
+#: src/components/trade/mobile/mobile-position-card.tsx:165
 msgid "Entry"
 msgstr "Entry"
 
@@ -1052,7 +1060,7 @@ msgstr "Executor status"
 msgid "Explorer"
 msgstr "Explorer"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:125
+#: src/components/auto-trader/auto-trader-panel.tsx:142
 msgid "Fail-safe guards block trading on stale signals, expired agents, missing approvals or low equity. The daily loss stop blocks increases in exposure; it cannot guarantee a loss limit."
 msgstr "Fail-safe guards block trading on stale signals, expired agents, missing approvals or low equity. The daily loss stop blocks increases in exposure; it cannot guarantee a loss limit."
 
@@ -1193,7 +1201,7 @@ msgstr "Filter by {0}"
 msgid "Flip transfer direction"
 msgstr "Flip transfer direction"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:22
+#: src/components/auto-trader/auto-trader-panel.tsx:25
 msgid "Follow the Mood Ring signal with a trading-only API wallet. You control leverage, markets, minimum order size and the daily loss stop. Loss controls do not guarantee a maximum loss. No returns are promised."
 msgstr "Follow the Mood Ring signal with a trading-only API wallet. You control leverage, markets, minimum order size and the daily loss stop. Loss controls do not guarantee a maximum loss. No returns are promised."
 
@@ -1215,7 +1223,7 @@ msgstr "From"
 
 #: src/components/trade/chart/token-selector-columns.ts:82
 #: src/components/trade/chart/token-selector-content.tsx:23
-#: src/components/trade/mobile/mobile-position-card.tsx:175
+#: src/components/trade/mobile/mobile-position-card.tsx:178
 msgid "Funding"
 msgstr "Funding"
 
@@ -1341,7 +1349,7 @@ msgstr "Invalid amount"
 msgid "IOC (Immediate Or Cancel)"
 msgstr "IOC (Immediate Or Cancel)"
 
-#: src/components/trade/positions/position-row.tsx:155
+#: src/components/trade/positions/position-row.tsx:158
 #: src/components/trade/tradebox/margin-mode-modal.tsx:22
 #: src/components/trade/tradebox/margin-mode-modal.tsx:74
 #: src/components/trade/tradebox/trade-header.tsx:68
@@ -1379,13 +1387,13 @@ msgstr "Leverage"
 #~ msgid "limit"
 #~ msgstr "limit"
 
-#: src/components/trade/positions/position-row.tsx:165
+#: src/components/trade/positions/position-row.tsx:168
 #: src/components/trade/tradebox/trade-header.tsx:44
 #: src/components/trade/tradebox/trade-header.tsx:49
 msgid "Limit"
 msgstr "Limit"
 
-#: src/components/trade/mobile/mobile-position-card.tsx:236
+#: src/components/trade/mobile/mobile-position-card.tsx:239
 #: src/components/trade/positions/position-actions-dropdown.tsx:32
 #: src/components/trade/positions/position-limit-close-modal.tsx:107
 msgid "Limit Close"
@@ -1416,7 +1424,7 @@ msgstr "Limit Price"
 msgid "Link mobile device"
 msgstr "Link mobile device"
 
-#: src/components/trade/mobile/mobile-position-card.tsx:171
+#: src/components/trade/mobile/mobile-position-card.tsx:174
 msgid "Liq"
 msgstr "Liq"
 
@@ -1433,7 +1441,7 @@ msgstr "Liquidated"
 msgid "Loading"
 msgstr "Loading"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:156
+#: src/components/auto-trader/auto-trader-panel.tsx:173
 msgid "Loading Auto Trader status…"
 msgstr "Loading Auto Trader status…"
 
@@ -1482,7 +1490,7 @@ msgstr "Loading wallet..."
 msgid "Loading..."
 msgstr "Loading..."
 
-#: src/components/trade/mobile/mobile-position-card.tsx:138
+#: src/components/trade/mobile/mobile-position-card.tsx:141
 msgid "Long"
 msgstr "Long"
 
@@ -1514,12 +1522,12 @@ msgstr "M"
 msgid "Mainnet"
 msgstr "Mainnet"
 
-#: src/components/trade/mobile/mobile-account-view.tsx:154
-#: src/components/trade/tradebox/account-panel.tsx:101
+#: src/components/trade/mobile/mobile-account-view.tsx:151
+#: src/components/trade/tradebox/account-panel.tsx:102
 msgid "Maintenance Margin"
 msgstr "Maintenance Margin"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:151
+#: src/components/auto-trader/auto-trader-panel.tsx:168
 msgid "Manage / revoke API wallets"
 msgstr "Manage / revoke API wallets"
 
@@ -1545,11 +1553,11 @@ msgstr "Manage TP/SL for {0} short position"
 #~ msgid "Manage your risk on individual positions by restricting the amount of margin allocated to each. If the margin ratio of an isolated position reaches 100%, the position will be liquidated. Margin can be added or removed to individual positions in this mode."
 #~ msgstr "Manage your risk on individual positions by restricting the amount of margin allocated to each. If the margin ratio of an isolated position reaches 100%, the position will be liquidated. Margin can be added or removed to individual positions in this mode."
 
-#: src/components/trade/mobile/mobile-position-card.tsx:167
+#: src/components/trade/mobile/mobile-position-card.tsx:170
 msgid "Margin"
 msgstr "Margin"
 
-#: src/components/trade/mobile/mobile-position-card.tsx:167
+#: src/components/trade/mobile/mobile-position-card.tsx:170
 msgid "Margin · Iso"
 msgstr "Margin · Iso"
 
@@ -1578,7 +1586,7 @@ msgstr "Margin Req."
 #~ msgid "Margin Used"
 #~ msgstr "Margin Used"
 
-#: src/components/trade/mobile/mobile-position-card.tsx:163
+#: src/components/trade/mobile/mobile-position-card.tsx:166
 msgid "Mark"
 msgstr "Mark"
 
@@ -1602,7 +1610,7 @@ msgstr "Mark Price"
 #: src/components/trade/chart/token-selector-content.tsx:179
 #: src/components/trade/mobile/mobile-orders-tab.tsx:230
 #: src/components/trade/positions/history-tab.tsx:39
-#: src/components/trade/positions/position-row.tsx:166
+#: src/components/trade/positions/position-row.tsx:169
 #: src/components/trade/tradebox/trade-header.tsx:43
 #: src/components/trade/tradebox/trade-header.tsx:48
 msgid "Market"
@@ -2116,7 +2124,7 @@ msgstr "Perp"
 msgid "Perpetuals"
 msgstr "Perpetuals"
 
-#: src/components/trade/tradebox/account-panel.tsx:131
+#: src/components/trade/tradebox/account-panel.tsx:132
 msgid "Perps"
 msgstr "Perps"
 
@@ -2124,7 +2132,7 @@ msgstr "Perps"
 msgid "Perps Account"
 msgstr "Perps Account"
 
-#: src/components/trade/tradebox/account-panel.tsx:139
+#: src/components/trade/tradebox/account-panel.tsx:140
 msgid "Perps Overview"
 msgstr "Perps Overview"
 
@@ -2177,7 +2185,7 @@ msgstr "Place Limit Close"
 msgid "Placed"
 msgstr "Placed"
 
-#: src/components/auto-trader/status-card.tsx:25
+#: src/components/auto-trader/status-card.tsx:26
 msgid "Plans run about every five minutes. Active does not guarantee live trading: execution also requires the operator's live gate. Paused and dry-run plans send no orders."
 msgstr "Plans run about every five minutes. Active does not guarantee live trading: execution also requires the operator's live gate. Paused and dry-run plans send no orders."
 
@@ -2246,7 +2254,7 @@ msgstr "Position reversed — {coin}"
 msgid "Preparing your quote..."
 msgstr "Preparing your quote..."
 
-#: src/components/auto-trader/auto-trader-panel.tsx:157
+#: src/components/auto-trader/auto-trader-panel.tsx:174
 msgid "Preview uses your current form settings and public scores. The executor's verified cycle above is authoritative; prices, rounding and signal timing can differ."
 msgstr "Preview uses your current form settings and public scores. The executor's verified cycle above is authoritative; prices, rounding and signal timing can differ."
 
@@ -2336,7 +2344,7 @@ msgstr "Recent Trades"
 msgid "Reduce Only"
 msgstr "Reduce Only"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:123
+#: src/components/auto-trader/auto-trader-panel.tsx:140
 msgid "Refresh checks"
 msgstr "Refresh checks"
 
@@ -2344,7 +2352,7 @@ msgstr "Refresh checks"
 #~ msgid "Register Another"
 #~ msgstr "Register Another"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:135
+#: src/components/auto-trader/auto-trader-panel.tsx:152
 msgid "Register Auto Trader"
 msgstr "Register Auto Trader"
 
@@ -2362,7 +2370,7 @@ msgstr "Remove {0} from favorites"
 msgid "Remove {displayName} from favorites"
 msgstr "Remove {displayName} from favorites"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:150
+#: src/components/auto-trader/auto-trader-panel.tsx:167
 msgid "Remove Auto Trader"
 msgstr "Remove Auto Trader"
 
@@ -2370,7 +2378,7 @@ msgstr "Remove Auto Trader"
 #~ msgid "Remove from favorites"
 #~ msgstr "Remove from favorites"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:136
+#: src/components/auto-trader/auto-trader-panel.tsx:153
 msgid "Renew API wallet"
 msgstr "Renew API wallet"
 
@@ -2390,7 +2398,7 @@ msgstr "Reset"
 msgid "Reset phone access"
 msgstr "Reset phone access"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:138
+#: src/components/auto-trader/auto-trader-panel.tsx:155
 msgid "Reset to saved"
 msgstr "Reset to saved"
 
@@ -2409,7 +2417,7 @@ msgid "Retry"
 msgstr "Retry"
 
 #: src/components/trade/positions/position-actions-dropdown.tsx:41
-#: src/components/trade/positions/position-row.tsx:168
+#: src/components/trade/positions/position-row.tsx:171
 msgid "Reverse"
 msgstr "Reverse"
 
@@ -2435,7 +2443,7 @@ msgstr "Running Time ({TWAP_MINUTES_MIN}m - {0}h)"
 msgid "Runtime"
 msgstr "Runtime"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:137
+#: src/components/auto-trader/auto-trader-panel.tsx:154
 msgid "Save settings"
 msgstr "Save settings"
 
@@ -2624,7 +2632,7 @@ msgstr "Set to {p}%"
 msgid "Settings"
 msgstr "Settings"
 
-#: src/components/trade/mobile/mobile-position-card.tsx:138
+#: src/components/trade/mobile/mobile-position-card.tsx:141
 msgid "Short"
 msgstr "Short"
 
@@ -2706,7 +2714,7 @@ msgstr "Signer not ready"
 
 #: src/components/trade/mobile/mobile-history-tab.tsx:114
 #: src/components/trade/mobile/mobile-orders-tab.tsx:233
-#: src/components/trade/mobile/mobile-position-card.tsx:150
+#: src/components/trade/mobile/mobile-position-card.tsx:153
 #: src/components/trade/mobile/mobile-twap-tab.tsx:116
 #: src/components/trade/orderbook/orderbook-panel.tsx:132
 #: src/components/trade/orderbook/trades-panel.tsx:77
@@ -2803,7 +2811,7 @@ msgstr "Source"
 #: src/components/trade/mobile/mobile-balances-tab.tsx:223
 #: src/components/trade/positions/transfer-modal.tsx:73
 #: src/components/trade/positions/transfer-modal.tsx:74
-#: src/components/trade/tradebox/account-panel.tsx:126
+#: src/components/trade/tradebox/account-panel.tsx:127
 #: src/config/nav.tsx:46
 msgid "Spot"
 msgstr "Spot"
@@ -2944,11 +2952,11 @@ msgstr "Switch to {0} market, sell TWAP"
 #~ msgid "Switch to {displayName} market"
 #~ msgstr "Switch to {displayName} market"
 
-#: src/components/trade/mobile/mobile-position-card.tsx:132
+#: src/components/trade/mobile/mobile-position-card.tsx:135
 msgid "Switch to {displayName} market, long position"
 msgstr "Switch to {displayName} market, long position"
 
-#: src/components/trade/mobile/mobile-position-card.tsx:133
+#: src/components/trade/mobile/mobile-position-card.tsx:136
 msgid "Switch to {displayName} market, short position"
 msgstr "Switch to {displayName} market, short position"
 
@@ -3020,14 +3028,14 @@ msgid "Taking longer than expected"
 msgstr "Taking longer than expected"
 
 #: src/components/auto-trader/auto-trader-panel.tsx:160
-msgid "Target = equity × leverage ÷ selected markets × score/100. Scores strictly between −15 and +15 target zero. Flips close before reopening. Orders use IOC within 1% of mid; the minimum order applies except for full closes."
-msgstr "Target = equity × leverage ÷ selected markets × score/100. Scores strictly between −15 and +15 target zero. Flips close before reopening. Orders use IOC within 1% of mid; the minimum order applies except for full closes."
+#~ msgid "Target = equity × leverage ÷ selected markets × score/100. Scores strictly between −15 and +15 target zero. Flips close before reopening. Orders use IOC within 1% of mid; the minimum order applies except for full closes."
+#~ msgstr "Target = equity × leverage ÷ selected markets × score/100. Scores strictly between −15 and +15 target zero. Flips close before reopening. Orders use IOC within 1% of mid; the minimum order applies except for full closes."
 
-#: src/components/auto-trader/auto-trader-panel.tsx:157
+#: src/components/auto-trader/auto-trader-panel.tsx:174
 msgid "Target preview"
 msgstr "Target preview"
 
-#: src/components/auto-trader/status-card.tsx:26
+#: src/components/auto-trader/status-card.tsx:27
 msgid "Targets from the last executor cycle"
 msgstr "Targets from the last executor cycle"
 
@@ -3039,7 +3047,7 @@ msgstr "Testnet"
 #~ msgid "The builder at {0}...{1} can now charge up to {maxFeeRate}% fee on orders placed on your behalf."
 #~ msgstr "The builder at {0}...{1} can now charge up to {maxFeeRate}% fee on orders placed on your behalf."
 
-#: src/components/auto-trader/auto-trader-panel.tsx:24
+#: src/components/auto-trader/auto-trader-panel.tsx:27
 msgid "The hosted Auto Trader service supports Mainnet only. Switch the terminal to Mainnet to configure it."
 msgstr "The hosted Auto Trader service supports Mainnet only. Switch the terminal to Mainnet to configure it."
 
@@ -3081,7 +3089,7 @@ msgstr "The page you are looking for does not exist."
 #~ msgid "This phone link is not approved on Hyperliquid."
 #~ msgstr "This phone link is not approved on Hyperliquid."
 
-#: src/components/auto-trader/auto-trader-panel.tsx:140
+#: src/components/auto-trader/auto-trader-panel.tsx:157
 msgid "This setup key exists only in this page's memory. Register it before leaving. It is encrypted for the service; it is not saved to browser storage."
 msgstr "This setup key exists only in this page's memory. Register it before leaving. It is encrypted for the service; it is not saved to browser storage."
 
@@ -3179,7 +3187,7 @@ msgstr "TP Price"
 #~ msgid "TP trigger price"
 #~ msgstr "TP trigger price"
 
-#: src/components/trade/mobile/mobile-position-card.tsx:225
+#: src/components/trade/mobile/mobile-position-card.tsx:228
 #: src/components/trade/tradebox/trade-form-fields.tsx:301
 msgid "TP/SL"
 msgstr "TP/SL"
@@ -3334,11 +3342,11 @@ msgstr "Unknown symbol: {symbolName}"
 msgid "Unrealized P&L"
 msgstr "Unrealized P&L"
 
-#: src/components/trade/tradebox/account-panel.tsx:91
+#: src/components/trade/tradebox/account-panel.tsx:92
 msgid "Unrealized PNL"
 msgstr "Unrealized PNL"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:141
+#: src/components/auto-trader/auto-trader-panel.tsx:158
 msgid "Unsaved settings. Save before enabling. Changes to an active trader apply on its next cycle."
 msgstr "Unsaved settings. Save before enabling. Changes to an active trader apply on its next cycle."
 
@@ -3418,7 +3426,7 @@ msgstr "Waiting for order book..."
 msgid "Waiting for trades..."
 msgstr "Waiting for trades..."
 
-#: src/components/auto-trader/auto-trader-panel.tsx:158
+#: src/components/auto-trader/auto-trader-panel.tsx:175
 msgid "Waiting for valid settings, account balances, prices and signal data. No target values are assumed."
 msgstr "Waiting for valid settings, account balances, prices and signal data. No target values are assumed."
 
@@ -3466,8 +3474,8 @@ msgstr "Wallet not connected"
 #~ msgid "will arrive in ~5 min"
 #~ msgstr "will arrive in ~5 min"
 
-#: src/components/trade/tradebox/account-panel.tsx:154
-#: src/components/trade/tradebox/account-panel.tsx:157
+#: src/components/trade/tradebox/account-panel.tsx:155
+#: src/components/trade/tradebox/account-panel.tsx:158
 msgid "Withdraw"
 msgstr "Withdraw"
 
@@ -3515,7 +3523,7 @@ msgstr "You send"
 msgid "You're offline"
 msgstr "You're offline"
 
-#: src/components/auto-trader/status-card.tsx:21
+#: src/components/auto-trader/status-card.tsx:22
 msgid "Your agent expires within 14 days. Renew its API wallet, register the new key, then enable Auto Trader again."
 msgstr "Your agent expires within 14 days. Renew its API wallet, register the new key, then enable Auto Trader again."
 
@@ -3531,7 +3539,7 @@ msgstr "Your bridge is still processing. Funds are safe."
 msgid "Your current open position on this market"
 msgstr "Your current open position on this market"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:23
+#: src/components/auto-trader/auto-trader-panel.tsx:26
 msgid "Your funds stay in your Hyperliquid account. A separate agent can trade but cannot withdraw. Its key is sealed in your browser and stored encrypted by the existing execution service. Your owner key stays in your wallet. Auto Trader manages account-wide positions, including markets you also trade manually."
 msgstr "Your funds stay in your Hyperliquid account. A separate agent can trade but cannot withdraw. Its key is sealed in your browser and stored encrypted by the existing execution service. Your owner key stays in your wallet. Auto Trader manages account-wide positions, including markets you also trade manually."
 

@@ -37,9 +37,28 @@ it("allows reapproval even when the stored cap already covers the fee",async()=>
 });
 it("offers approval on each row while sharing the correct owner-account fee status",async()=>{
  state.fee=0;state.agents=[{name:"Bot One",address:`0x${"cd".repeat(20)}`,validUntil:Date.now()+60000},{name:"Bot Two",address:`0x${"12".repeat(20)}`,validUntil:Date.now()+60000}];const node=document.createElement("div"),root=createRoot(node);await act(async()=>root.render(createElement(ApiWalletsPage)));
- const rows=[...node.querySelectorAll("tbody tr")];expect(rows).toHaveLength(2);expect(rows.every(row=>row.textContent?.includes("Approval required"))).toBe(true);
- expect(rows[0].querySelector('td[title]')?.getAttribute("title")).toBe(`0x${"ab".repeat(20)}`);
+ const rows=[...node.querySelectorAll("article[data-api-wallet]")];expect(rows).toHaveLength(2);expect(rows.every(row=>row.textContent?.includes("Fee approval required"))).toBe(true);
+ expect(rows[0].querySelector('[data-wallet-owner]')?.getAttribute("title")).toBe(`0x${"ab".repeat(20)}`);
  await act(async()=>node.querySelector<HTMLButtonElement>('[aria-label="Approve account fee for Bot One"]')!.click());expect(state.approve).toHaveBeenCalledWith({builder:`0x${"ef".repeat(20)}`,maxFeeRate:"0.05%"});expect(state.approve).toHaveBeenCalledTimes(1);
- state.fee=50;await act(async()=>button(node,"Refresh fee status").click());expect([...node.querySelectorAll("tbody tr")].every(row=>row.textContent?.includes("Account approved · 0.05%"))).toBe(true);expect(state.approve).toHaveBeenCalledTimes(1);
+ state.fee=50;await act(async()=>button(node,"Refresh fee status").click());expect([...node.querySelectorAll("article[data-api-wallet]")].every(row=>row.textContent?.includes("0.05% approved"))).toBe(true);expect(state.approve).toHaveBeenCalledTimes(1);
  await act(async()=>root.unmount());state.fee=50;
+});
+
+it("keeps Remove on every card even when private keys are unavailable or expired",async()=>{
+ state.agents=[{name:"X1 Terminal",address:`0x${"cd".repeat(20)}`,validUntil:Date.now()+60000},{name:"X1 Bot",address:`0x${"12".repeat(20)}`,validUntil:Date.now()-1000}];
+ const node=document.createElement("div"),root=createRoot(node);await act(async()=>root.render(createElement(ApiWalletsPage)));
+ const cards=[...node.querySelectorAll('article[data-api-wallet]')];expect(cards).toHaveLength(2);
+ for(const card of cards){const remove=card.querySelector<HTMLButtonElement>('button[aria-label^="Remove API wallet"]')!;expect(remove).not.toBeNull();expect(remove.disabled).toBe(false);expect([...card.querySelectorAll('button')].find(b=>b.textContent==="Export key")?.disabled).toBe(true);}
+ await act(async()=>cards[1].querySelector<HTMLButtonElement>('button[aria-label^="Remove API wallet"]')!.click());expect(button(node,"Remove")).toBeDefined();expect(cards[1].textContent).toContain("Confirm removal");expect(state.approve).not.toHaveBeenCalled();await act(async()=>root.unmount());
+});
+it("shows removal failures on the selected wallet card and does not claim unverified revocation",async()=>{
+ state.agents=[{name:"X1 Bot",address:`0x${"cd".repeat(20)}`,validUntil:Date.now()+60000}];
+ const node=document.createElement("div"),root=createRoot(node);await act(async()=>root.render(createElement(ApiWalletsPage)));
+ await act(async()=>button(node,"Remove").click());await act(async()=>button(node,"Confirm removal").click());const card=node.querySelector('article[data-api-wallet]')!;expect(card.querySelector('[role="alert"]')?.textContent).toContain("still listed");expect(node.textContent).not.toContain("API wallet removed.");await act(async()=>root.unmount());
+});
+it("reports removal only after the selected wallet disappears from Hyperliquid's list",async()=>{
+ state.agents=[{name:"X1 Bot",address:`0x${"cd".repeat(20)}`,validUntil:Date.now()+60000}];
+ state.approve.mockImplementationOnce(async()=>{state.agents=[];return {status:"ok"};});
+ const node=document.createElement("div"),root=createRoot(node);await act(async()=>root.render(createElement(ApiWalletsPage)));
+ await act(async()=>button(node,"Remove").click());await act(async()=>button(node,"Confirm removal").click());expect(node.querySelector('article[data-api-wallet]')).toBeNull();expect(node.textContent).toContain("API wallet removed.");await act(async()=>root.unmount());
 });

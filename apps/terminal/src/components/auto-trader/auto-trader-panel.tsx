@@ -11,8 +11,9 @@ import { BUILDER_CONFIGURED, DEFAULT_BUILDER_CONFIG } from "@/config/hyperliquid
 import { useExchange, useHyperliquid, useInfo, useAgentWallet, readAgentFromStorage } from "@/lib/hyperliquid";
 import { sealAgentKey } from "@/lib/auto-trader/api";
 import { useAutoTraderMutation, useAutoTraderSignal, useAutoTraderStatus } from "@/lib/auto-trader/hooks";
-import { accountEquity, allowedMarkets, targetRows, validateSettings } from "@/lib/auto-trader/targets";
+import { accountEquity, EXECUTOR_MARKETS, allowedMarkets, targetRows, validateSettings } from "@/lib/auto-trader/targets";
 import type { AutoTraderSettings } from "@/lib/auto-trader/types";
+import { TargetActionTooltip } from "./target-action-tooltip";
 import { SettingsCard, autoButton } from "./settings-card";
 import { StatusCard, money } from "./status-card";
 
@@ -125,6 +126,7 @@ function AutoTraderAccount({master}:{master:Address}){
  }
  const preview=funded&&equity!==null&&!validationError&&signal.data&&!signal.isError&&pricesKnown?targetRows({equity,settings,signal:signal.data,current,killed:status.data?.plan?.killed===true}):null;
  const registered=status.data?.registered===true;
+ const executionNote=!registered?"Register and start Auto Trader before live execution.":status.data?.state!=="active"?"Auto Trader is not active, so this preview does not submit orders.":"Live orders require the service’s live gate; dry-run cycles submit no orders.";
  return <>
   {!configured&&<p role="alert" className="text-sm text-error">The terminal builder must match {AUTO_TRADER_BUILDER} to use this service.</p>}
   <div className="grid gap-4 lg:grid-cols-[1fr_2fr]">
@@ -170,9 +172,9 @@ function AutoTraderAccount({master}:{master:Address}){
   {message&&<p role="status" className="rounded-lg border border-stroke-weak p-3 text-sm text-brand">{message}</p>}
   {status.data?<StatusCard status={status.data} />:status.isLoading?<p className="text-sm text-fg-muted"><Trans>Loading Auto Trader status…</Trans></p>:null}
   <section aria-label="Auto Trader preview" className="space-y-3 rounded-xl border border-stroke-weak bg-surface p-4"><h3 className="text-sm font-semibold"><Trans>Target preview</Trans></h3><p className="text-xs text-fg-muted"><Trans>Preview uses your current form settings and public scores. The executor's verified cycle above is authoritative; prices, rounding and signal timing can differ.</Trans></p>
-   {preview?<div className="overflow-x-auto"><table className="w-full whitespace-nowrap text-left text-xs"><thead><tr>{["Market","Score","Target","Current","Gap","Action"].map(h=><th className="pb-2 pr-4 font-normal text-fg-muted" key={h}>{h}</th>)}</tr></thead><tbody>{preview.map(row=><tr key={row.coin}><td className="py-1.5 pr-4">{row.coin}</td><td className="pr-4">{row.score??"—"}</td><td className="pr-4">{money(row.target)}</td><td className="pr-4">{money(row.current)}</td><td className="pr-4">{money(row.gap)}</td><td>{row.actions.join(" / ")}</td></tr>)}</tbody></table></div>:<p className="text-xs text-fg-muted"><Trans>Waiting for valid settings, account balances, prices and signal data. No target values are assumed.</Trans></p>}
-   <p className="text-xs text-fg-muted">{allowedMarkets(settings,markets).length} markets · {settings.leverage}x · allocation per market at score ±100: {money(equity===null?null:equity*settings.leverage/Math.max(allowedMarkets(settings,markets).length,1))}</p>
-   <p className="text-xs text-fg-muted"><Trans>Target = equity × leverage ÷ selected markets × score/100. Scores strictly between −15 and +15 target zero. Flips close before reopening. Orders use IOC within 1% of mid; the minimum order applies except for full closes.</Trans></p>
+   {preview?<div className="overflow-x-auto"><table className="w-full whitespace-nowrap text-left text-xs"><thead><tr>{["Market","Score","Target","Current","Gap","Action"].map(h=><th className="pb-2 pr-4 font-normal text-fg-muted" key={h}>{h}</th>)}</tr></thead><tbody>{preview.map(row=><tr key={row.coin}><td className="py-1.5 pr-4">{row.coin}</td><td className="pr-4">{row.score??"—"}</td><td className="pr-4">{money(row.target)}</td><td className="pr-4">{money(row.current)}</td><td className="pr-4">{money(row.gap)}</td><td><div className="flex items-center gap-1">{row.actions.map(action=><TargetActionTooltip key={action} row={row} action={action} minOrderUsd={settings.minOrderUsd} unsaved={hasChanges} executionNote={executionNote} />)}</div></td></tr>)}</tbody></table></div>:<p className="text-xs text-fg-muted"><Trans>Waiting for valid settings, account balances, prices and signal data. No target values are assumed.</Trans></p>}
+   <p className="text-xs text-fg-muted">{allowedMarkets(settings,EXECUTOR_MARKETS).length} markets · {settings.leverage}x · allocation per market at score ±100: {money(equity===null?null:equity*settings.leverage/Math.max(allowedMarkets(settings,EXECUTOR_MARKETS).length,1))}</p>
+   <p className="text-xs text-fg-muted"><Trans>Directional target = equity × leverage ÷ selected markets × score/100. Neutral signals hold existing positions unchanged; their target equals current exposure and no order is sent. Only the executor’s 12 supported markets count toward allocation; SOXL is excluded. Resizes try post-only orders, then IOC fallback after 60 seconds. Close legs use IOC within 1% of mid and are submitted before flip opening legs. The minimum order applies except for full closes.</Trans></p>
   </section>
   <Modal open={confirm!==null} onOpenChange={open=>{if(!open&&!busy)setConfirm(null);}}><ModalPopup size="md"><ModalHeader><ModalTitle>{confirm==="resume"?"Enable Auto Trader?":confirm==="flatten"?"Close all perpetual positions?":confirm==="renew"?"Renew Auto Trader API wallet?":"Remove Auto Trader?"}</ModalTitle></ModalHeader><ModalContent className="space-y-4">
    <p className="break-all font-mono text-xs">Owner: {master}</p>

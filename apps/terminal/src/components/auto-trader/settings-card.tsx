@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/react/macro";
-import { allowedMarkets } from "@/lib/auto-trader/targets";
+import { allowedMarkets, EXECUTOR_MARKETS } from "@/lib/auto-trader/targets";
 import type { AutoTraderSettings } from "@/lib/auto-trader/types";
 export const autoField="w-full rounded-lg border border-stroke-weak bg-background px-3 py-2 text-sm text-fg outline-none focus:border-brand";
 export const autoButton="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-fg-inverse disabled:opacity-40";
@@ -10,6 +10,6 @@ export function SettingsCard({value,onChange,disabled,markets}:{value:AutoTrader
    <label className="text-xs text-fg-muted"><Trans>Daily loss stop (%)</Trans><input aria-label="Daily loss stop percent" type="number" min={0.1} max={50} step={0.1} value={Number((value.killPct*100).toFixed(4))} onChange={e=>onChange({...value,killPct:Number(e.target.value)/100})} className={`mt-2 ${autoField}`} /></label>
    <label className="text-xs text-fg-muted"><Trans>Minimum order (USD)</Trans><input aria-label="Minimum Auto Trader order USD" type="number" min={10} step={1} value={value.minOrderUsd} onChange={e=>onChange({...value,minOrderUsd:Number(e.target.value)})} className={`mt-2 ${autoField}`} /></label>
   </div>
-  <div><p className="mb-2 text-xs text-fg-muted"><Trans>Markets</Trans></p><div className="flex flex-wrap gap-3">{markets.map(coin=><label key={coin} className="inline-flex items-center gap-2 rounded-lg border border-stroke-weak px-3 py-2 text-xs"><input type="checkbox" checked={selected.includes(coin)} onChange={e=>onChange({...value,include:e.target.checked?[...selected,coin]:selected.filter(c=>c!==coin),exclude:[]})} className="accent-brand" />{coin}</label>)}</div></div>
+  <div><p className="mb-2 text-xs text-fg-muted"><Trans>Markets</Trans></p><div className="flex flex-wrap gap-3">{markets.map(coin=><label key={coin} className="inline-flex items-center gap-2 rounded-lg border border-stroke-weak px-3 py-2 text-xs"><input type="checkbox" disabled={!(EXECUTOR_MARKETS as readonly string[]).includes(coin)} title={(EXECUTOR_MARKETS as readonly string[]).includes(coin)?undefined:"Tracked by the signal API; not traded by the current executor"} checked={selected.includes(coin)} onChange={e=>onChange({...value,include:e.target.checked?[...selected,coin]:selected.filter(c=>c!==coin),exclude:[]})} className="accent-brand" />{coin}</label>)}</div></div>
  </fieldset>;
 }

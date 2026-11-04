@@ -19,7 +19,7 @@ vi.mock("@/lib/auto-trader/hooks",()=>({useAutoTraderStatus:()=>({data:state.sta
  if(action==="register"){state.sealed=payload;state.status={registered:true,master:state.owner as `0x${string}`,agent:(payload as {agent:`0x${string}`}).agent,hasKey:true,state:"paused",settings:(payload as {settings:AutoTraderStatus["settings"]}).settings,validUntil:Date.now()+90*86400000};}
  else if(action==="resume")state.status={...state.status,state:"active"};else if(action==="pause")state.status={...state.status,state:"paused"};else if(action==="flatten")state.status={...state.status,state:"flatten-requested"};else if(action==="remove")state.status={registered:false};return state.status;
 }})}));
-vi.mock("@hypeterminal/ui",()=>{const tag=({children}:{children:ReactNode})=>createElement("div",null,children);return {Modal:({open,children}:{open:boolean;children:ReactNode})=>open?children:null,ModalPopup:tag,ModalHeader:tag,ModalTitle:tag,ModalContent:tag};});
+vi.mock("@hypeterminal/ui",()=>{const tag=({children}:{children:ReactNode})=>createElement("div",null,children);return {Tooltip:({children}:{children:ReactNode})=>children,Modal:({open,children}:{open:boolean;children:ReactNode})=>open?children:null,ModalPopup:tag,ModalHeader:tag,ModalTitle:tag,ModalContent:tag};});
 // These tests do not call the hosted service or sign any real on-chain action.
 beforeEach(()=>{state.owner=`0x${"ab".repeat(20)}`;state.env="Mainnet";state.status={registered:false};state.agents=[];state.fee=50;state.sealed=null;state.control.mockClear();state.approve.mockClear();state.pub=btoa(String.fromCharCode(...nacl.box.keyPair().publicKey));});
 afterEach(()=>vi.restoreAllMocks());
