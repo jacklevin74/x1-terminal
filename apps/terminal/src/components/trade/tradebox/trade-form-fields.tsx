@@ -243,7 +243,7 @@ export function TradeFormFields({
 					aria-label={t`Size percentage`}
 				/>
 				<NumberInput
-					className="w-16 shrink-0"
+					className="w-20 shrink-0"
 					placeholder="0"
 					value={percentDisplay}
 					onChange={(e) => handlePercentInputChange(e.target.value)}
