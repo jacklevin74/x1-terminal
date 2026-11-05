@@ -107,7 +107,7 @@ export function registerOrderLinesOverlay() {
 			const placed: { y: number; x: number; w: number }[] = [];
 			for (const { line, y } of [...items].sort((a, b) => a.y - b.y)) {
 				const tone = toneColor(line.tone);
-				const fill = tone;
+				const fill = mixHex(tone, p.page, 0.12);
 				const text = mainText(line);
 				const textW = textWidth(text, FONT, 500) + 16;
 				const qty = line.kind === "liquidation" ? null : line.sizeText;
