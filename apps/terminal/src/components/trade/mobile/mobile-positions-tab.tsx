@@ -1,10 +1,10 @@
+import {useTradingAccount} from "@/hooks/use-trading-account";
 import { Button } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { ChartLineIcon, ListChecksIcon, TrendUpIcon } from "@phosphor-icons/react";
 import { Skeleton } from "boneyard-js/react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { useConnection } from "wagmi";
 import { FALLBACK_VALUE_PLACEHOLDER, HL_ALL_DEXS } from "@/config/app";
 import { buildOrderPlan } from "@/domain/trade/order-intent";
 import { useSubmitPlan } from "@/hooks/trade/use-submit-plan";
@@ -22,7 +22,7 @@ import { PositionTpSlModal } from "../positions/position-tpsl-modal";
 import { MobilePositionCard } from "./mobile-position-card";
 
 export function MobilePositionsTab() {
-	const { address, isConnected } = useConnection();
+	const { address, isConnected } = useTradingAccount();
 	const slippageBps = useMarketOrderSlippageBps();
 	const { scope } = useExchangeScope();
 	const { setSelectedMarket } = useMarketActions();

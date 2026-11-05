@@ -1,8 +1,8 @@
+import {useTradingAccount} from "@/hooks/use-trading-account";
 import { AccountTableToolbar } from "./account-table-toolbar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { useState } from "react";
-import { useConnection } from "wagmi";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/cn";
 import { formatDateTime, formatPercent, formatToken } from "@/lib/format";
@@ -15,7 +15,7 @@ import { Placeholder } from "./placeholder";
 import { positionViewRowClass, positionViewBodyClass, positionViewCellClass, positionViewHeadClass, positionsPanelTableLayoutClass, positionViewHeaderClass, positionsPanelTableShellClass, positionsPanelTabRootClass } from "./positions-panel-table-styles";
 
 export function FundingTab() {
- const { address, isConnected } = useConnection(); const { scope } = useExchangeScope(); const { setSelectedMarket } = useMarketActions(); const markets = useMarkets();
+ const { address, isConnected } = useTradingAccount(); const { scope } = useExchangeScope(); const { setSelectedMarket } = useMarketActions(); const markets = useMarkets();
  const [side, setSide] = useState(""); const [coin, setCoin] = useState(""); const [descending, setDescending] = useState(true); const [viewAll, setViewAll] = useState(false); const [exportError, setExportError] = useState<string | null>(null);
  const { data, status, error } = useSubscription("userFundings", { user: address ?? "0x0" }, { enabled: isConnected && !!address });
  const all = data?.fundings ?? [];

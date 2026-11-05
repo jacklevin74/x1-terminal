@@ -10,7 +10,7 @@ export function NativeWithdrawModal({ onClose, initialAsset }: { onClose: () => 
  const busyRef = useRef(false);
  const [busy, setBusy] = useState(false);
  busyRef.current = busy;
- const [asset, setAsset] = useState<"SOL" | "ETH">(initialAsset ?? (connector?.id === "phantom" ? "ETH" : "SOL"));
+ const [asset, setAsset] = useState<"SOL" | "ETH">(initialAsset ?? (connector?.id === "phantom" || connector?.id === "rabby" ? "ETH" : "SOL"));
  useEffect(() => {
   let active = true;
   const detect = async () => {

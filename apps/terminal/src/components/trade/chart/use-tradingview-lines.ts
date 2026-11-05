@@ -1,6 +1,6 @@
+import {useTradingAccount} from "@/hooks/use-trading-account";
 import { useChartMarksStore } from "@/stores/use-chart-marks-store";
 import { useEffect, useMemo } from "react";
-import { useConnection } from "wagmi";
 import { HL_ALL_DEXS } from "@/config/app";
 import { buildTradingLines } from "@/lib/chart/trading-lines";
 import { useSubscription, useUserPositions } from "@/lib/hyperliquid";
@@ -9,7 +9,7 @@ import type { EntityId, IChartingLibraryWidget } from "@/types/charting_library"
 
 export function useTradingViewLines(widget: IChartingLibraryWidget | null, symbol: string, dex?: string) {
  const hidden = useChartMarksStore(state => state.hidden);
- const { address, isConnected } = useConnection();
+ const { address, isConnected } = useTradingAccount();
  const { getPosition } = useUserPositions();
  const position = isConnected ? getPosition(symbol, dex) ?? getPosition(symbol.split(":").at(-1)!, dex) : undefined;
  const { data } = useSubscription("openOrders", { user: address ?? "0x0", dex: HL_ALL_DEXS }, { enabled: isConnected && !!address });

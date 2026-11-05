@@ -1,7 +1,7 @@
+import {useTradingAccount} from "@/hooks/use-trading-account";
 import { Button, Tabs, TabsContent, TabsList, TabsTrigger } from "@hypeterminal/ui";
 import { WalletIcon } from "@phosphor-icons/react";
 import { useState, useTransition } from "react";
-import { useConnection } from "wagmi";
 import { Spinner } from "@/components/ui/spinner";
 import { HL_ALL_DEXS } from "@/config/app";
 import { MOBILE_POSITIONS_TABS, type MobilePositionsTabValue } from "@/config/trade";
@@ -29,7 +29,7 @@ export function MobilePositionsView({ className }: Props) {
 	const activeTab = usePositionsActiveTab() as TabValue;
 	const { setPositionsActiveTab } = useGlobalSettingsActions();
 	const [isPending, startTransition] = useTransition();
-	const { address, isConnected } = useConnection();
+	const { address, isConnected } = useTradingAccount();
 	const { positions, isLoading: isLoadingState } = useUserPositions();
 
 	const { data: ordersEvent, status: ordersStatus } = useSubscription(

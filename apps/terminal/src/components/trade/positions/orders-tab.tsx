@@ -1,3 +1,4 @@
+import {useTradingAccount} from "@/hooks/use-trading-account";
 import { AccountTableToolbar } from "./account-table-toolbar";
 import {
 	Checkbox,
@@ -10,7 +11,6 @@ import {
 } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { useState } from "react";
-import { useConnection } from "wagmi";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { HL_ALL_DEXS } from "@/config/app";
 import { cn } from "@/lib/cn";
@@ -33,7 +33,7 @@ import { orderHistoryDetails } from "@/lib/trade/order-history";
 type CancelScope = "row" | "selected" | "all";
 
 export function OrdersTab() {
-	const { address, isConnected } = useConnection();
+	const { address, isConnected } = useTradingAccount();
 	const { scope } = useExchangeScope();
 	const { setSelectedMarket } = useMarketActions();
 	const { setSide } = useOrderEntryActions();

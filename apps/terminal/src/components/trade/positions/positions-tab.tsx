@@ -1,9 +1,9 @@
+import {useTradingAccount} from "@/hooks/use-trading-account";
 import { closePositionsInSequence } from "@/lib/positions/close-all";
 import { Button, Modal, ModalContent, ModalHeader, ModalPopup, ModalTitle, Table, TableBody, TableHead, TableHeader, TableRow } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { useConnection } from "wagmi";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { HL_ALL_DEXS } from "@/config/app";
 import { buildOrderPlan } from "@/domain/trade/order-intent";
@@ -27,7 +27,7 @@ import { positionViewHeadClass, positionViewHeaderClass, positionViewBodyClass, 
 type CloseIntent = "close" | "reverse";
 
 export function PositionsTab() {
-	const { address, isConnected } = useConnection();
+	const { address, isConnected } = useTradingAccount();
 	const slippageBps = useMarketOrderSlippageBps();
  const currentAddress = useRef(address); currentAddress.current = address;
  const [sortDescending, setSortDescending] = useState(true);

@@ -1,3 +1,4 @@
+import {useTradingAccount} from "@/hooks/use-trading-account";
 import { NativeWithdrawModal } from "./deposit/native-withdraw-modal";
 import { NativeDepositModal } from "./deposit/native-deposit-modal";
 import { WalletDepositModal } from "./deposit/wallet-deposit-modal";
@@ -33,6 +34,7 @@ const LazyBridgeTab = createLazyComponent(() => import("./bridge/bridge-tab"), "
 const DEPOSIT_TAB_MIN_HEIGHT = "min-h-72";
 
 export function DepositModal() {
+ const {isSubaccount}=useTradingAccount();
 	const open = useDepositModalOpen();
 	const activeTab = useDepositModalTab();
 	const { close, setTab } = useDepositModalActions();
@@ -72,6 +74,7 @@ export function DepositModal() {
 	}
 
  if (!open) return null;
+ if (isSubaccount) return <Modal open onOpenChange={handleClose}><ModalPopup size="sm"><ModalHeader><ModalTitle>Subaccount funding</ModalTitle></ModalHeader><ModalContent><p className="text-sm">Select Main account in the top-right account menu for deposits and withdrawals. Funding transfers between the main account and subaccounts are not configured in this terminal yet.</p><Button onClick={handleClose}>Close</Button></ModalContent></ModalPopup></Modal>;
  if (activeTab === "withdraw") return <NativeWithdrawModal onClose={handleClose} />;
  if (activeTab === "deposit") return <NativeDepositModal open={open} onClose={handleClose} />;
  if (activeTab === "wallet") return <WalletDepositModal open={open} onClose={handleClose} />;

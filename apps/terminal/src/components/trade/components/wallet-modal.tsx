@@ -1,3 +1,4 @@
+import { RabbyIcon } from "@/components/icons/rabby-icon";
 import { Modal, ModalContent, ModalPopup } from "@hypeterminal/ui";
 import { useState } from "react";
 import { useConnect, useConnectors } from "wagmi";
@@ -15,14 +16,15 @@ export function WalletModal({ open, onOpenChange, embedded = false }: { open: bo
     For X1: I understand my account is derived from my X1 signature. Withdrawals are signed by this derived key. I must use the same wallet and signature to recover this account.
    </label>
    <div className="flex flex-col gap-3">
-    {connectors.filter(c => c.id === "phantom" || c.id === "x1").map(c => <button key={c.uid}
+    {connectors.filter(c => c.id === "rabby" || c.id === "phantom" || c.id === "x1").map(c => <button key={c.uid}
      className="rounded border border-stroke-weak p-4 text-left hover:bg-fill-hover disabled:opacity-40"
      disabled={isPending || (c.id === "x1" && !acknowledged)}
      onClick={async () => { setError(null); try { await connect({ connector: c }); onOpenChange(false); } catch (e) { setError(e instanceof Error ? e.message : "Connection failed"); } }}>
-     <span className="font-semibold">{c.name}</span>
-     <span className="block text-xs text-fg-muted mt-1">{c.id === "x1" ? "Derived from your X1 signature · session reconnect" : "Ethereum provider · EIP-712 signing"}</span>
+     <span className="inline-flex items-center gap-2 font-semibold">{c.id === "rabby" && <RabbyIcon className="size-6" />}{c.name}</span>
+     <span className="block text-xs text-fg-muted mt-1">{c.id === "rabby" ? "Ledger supported · select your Ledger account in Rabby" : c.id === "x1" ? "Derived from your X1 signature · session reconnect" : "Ethereum provider · EIP-712 signing"}</span>
     </button>)}
    </div>
+   <p className="mt-3 text-xs text-fg-muted">For Ledger: select your hardware account in Rabby, unlock your Ledger and open its Ethereum app. Review and approve signing requests on the device.</p>
    {error && <p role="alert" className="mt-3 text-sm text-error">{error}</p>}
   {embedded && <button type="button" onClick={() => onOpenChange(false)} className="mt-4 w-full text-xs text-fg-muted">Back to withdrawal</button>}
   </ModalContent>;

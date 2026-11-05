@@ -1,5 +1,5 @@
+import {useTradingAccount} from "@/hooks/use-trading-account";
 import { type MarketKind, useInfo } from "@hypeterminal/hl-react";
-import { useConnection } from "wagmi";
 import {
 	ORDER_FEE_RATE_MAKER,
 	ORDER_FEE_RATE_SPOT_MAKER,
@@ -22,7 +22,7 @@ function getDefaults(marketKind?: MarketKind): FeeRates {
 }
 
 export function useFeeRates(marketKind?: MarketKind): FeeRates {
-	const { address, isConnected } = useConnection();
+	const { address, isConnected } = useTradingAccount();
 	const defaults = getDefaults(marketKind);
 	const user = address ?? "";
 

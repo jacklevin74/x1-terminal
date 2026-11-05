@@ -1,9 +1,9 @@
+import {useTradingAccount} from "@/hooks/use-trading-account";
 import { Badge, Button } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { ListIcon, ListNumbersIcon, XIcon } from "@phosphor-icons/react";
 import { Skeleton } from "boneyard-js/react";
 import { useState } from "react";
-import { useConnection } from "wagmi";
 import { Spinner } from "@/components/ui/spinner";
 import { FALLBACK_VALUE_PLACEHOLDER, HL_ALL_DEXS } from "@/config/app";
 import { cn } from "@/lib/cn";
@@ -32,7 +32,7 @@ interface Props {
 type CancelScope = "row" | "all";
 
 export function MobileOrdersTab({ className }: Props) {
-	const { address, isConnected } = useConnection();
+	const { address, isConnected } = useTradingAccount();
 	const { scope } = useExchangeScope();
 	const { setSelectedMarket } = useMarketActions();
 	const { setMobileActiveTab } = useGlobalSettingsActions();

@@ -1,3 +1,4 @@
+import {useTradingAccount} from "@/hooks/use-trading-account";
 import { Badge, Button, ButtonIcon } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import {
@@ -10,7 +11,7 @@ import {
 } from "@phosphor-icons/react";
 import { Skeleton } from "boneyard-js/react";
 import { useState } from "react";
-import { useConnection, useDisconnect } from "wagmi";
+import { useDisconnect } from "wagmi";
 import { UI_TEXT } from "@/config/ui-text";
 import { useAccountUnrealizedPnl, useDefaultDexBalances } from "@/hooks/trade/use-account-balances";
 import { useCopyToClipboard } from "@/hooks/ui/use-copy-to-clipboard";
@@ -28,7 +29,7 @@ interface MobileAccountViewProps {
 }
 
 export function MobileAccountView({ className }: MobileAccountViewProps) {
-	const { address, isConnected } = useConnection();
+	const { address, isConnected } = useTradingAccount();
 	const disconnect = useDisconnect();
 
 	const { marginSummary, perpSummary, withdrawable, crossMaintenanceMarginUsed, isLoading } =

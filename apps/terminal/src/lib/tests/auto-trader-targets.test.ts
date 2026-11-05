@@ -48,3 +48,7 @@ it("uses numeric scores despite Neutral labels and holds missing-score positions
 });
 
 it("excludes SOXL and keeps neutral markets in allocation",()=>{const rows=targetRows({equity:120,settings,signal:{coins:[{coin:"BTC",score:100},{coin:"xyz:SOXL",score:100}],timestamp:null},current:{}});expect(rows).toHaveLength(12);expect(rows.some(r=>r.coin==="xyz:SOXL")).toBe(false);expect(rows[0].target).toBe(50);expect(rows[1].actions).toEqual(["SKIP"]);});
+
+it("does not label a subaccount live while the documented executor deployment is pending",()=>{
+ expect(executionLabel({registered:true,isSubaccount:true,state:"active",lastCycle:Date.now(),plan:{ts:Date.now(),state:"active",live:true}})).toBe("SUBACCOUNT EXECUTION PENDING");
+});

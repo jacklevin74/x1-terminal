@@ -11,7 +11,7 @@ import { useIsTestnet } from "@/stores/use-global-settings-store";
 export function EthDeposit() {
  const { address } = useConnection();
  const testnet = useIsTestnet();
- if (!address) return <p className="text-sm py-4">Connect Phantom or X1 Wallet to generate an ETH deposit address.</p>;
+ if (!address) return <p className="text-sm py-4">Connect Rabby, Phantom or X1 Wallet to generate an ETH deposit address.</p>;
  if (testnet) return <p className="text-sm py-4">Native ETH deposits are available on mainnet. Switch the terminal to mainnet to continue.</p>;
  // Remount on account change so address, amount, and transaction state cannot carry over.
  return <EthDepositAccount key={address} recipient={address} />;
@@ -22,6 +22,8 @@ function EthDepositAccount({ recipient }: { recipient: `0x${string}` }) {
  const { mutateAsync: switchChain, isPending: switching } = useSwitchChain();
  const { mutateAsync: send, data: hash, isPending: sending, error: sendError } = useSendTransaction();
  const receipt = useWaitForTransactionReceipt({ hash, chainId: mainnet.id, query: { enabled: !!hash } });
+ const supportsEth = connector?.id === "phantom" || connector?.id === "rabby";
+ const walletName = connector?.id === "rabby" ? "Rabby" : "Phantom";
  const [amount, setAmount] = useState("");
  const [error, setError] = useState<string | null>(null);
  const [copied, setCopied] = useState(false);
@@ -32,7 +34,7 @@ function EthDepositAccount({ recipient }: { recipient: `0x${string}` }) {
   setError(null);
   try {
    if (!depositAddress.data) throw new Error("Wait for a verified deposit address.");
-   if (connector?.id !== "phantom") throw new Error("Use an Ethereum wallet to send ETH to the displayed address.");
+   if (!supportsEth) throw new Error("Use an Ethereum wallet to send ETH to the displayed address.");
    const value = parseEthDepositAmount(amount);
    if (chainId !== mainnet.id) await switchChain({ chainId: mainnet.id });
    await send({ account: recipient, to: depositAddress.data, value, chainId: mainnet.id });
@@ -49,10 +51,10 @@ function EthDepositAccount({ recipient }: { recipient: `0x${string}` }) {
    <p className="text-xs text-fg-muted">You can send from another Ethereum wallet or exchange to this address. It credits the Hyperliquid account shown above.</p>
   </>}
 
-  {connector?.id === "phantom" && depositAddress.data && !hash && <>
+  {supportsEth && depositAddress.data && !hash && <>
    <label htmlFor="eth-deposit-amount" className="block text-xs">Amount (ETH)</label>
    <TextInput id="eth-deposit-amount" aria-label="ETH deposit amount" inputMode="decimal" value={amount} onChange={e => setAmount(e.target.value)} placeholder={`Minimum ${MIN_ETH_DEPOSIT}`} disabled={sending || switching} />
-   <Button variant="filled" intent="brand" className="h-11 w-full" onClick={() => void sendEth()} disabled={sending || switching || !amount}>{switching ? "Switching to Ethereum…" : sending ? "Confirm ETH transfer in Phantom…" : "Send ETH with Phantom"}</Button>
+   <Button variant="filled" intent="brand" className="h-11 w-full" onClick={() => void sendEth()} disabled={sending || switching || !amount}>{switching ? "Switching to Ethereum…" : sending ? `Confirm ETH transfer in ${walletName}…` : `Send ETH with ${walletName}`}</Button>
   </>}
   {(error || sendError || receipt.error) && <p role="alert" className="text-xs text-error">{formatDepositAddressError(error ?? sendError ?? receipt.error)}</p>}
   {hash && <p role="status" className="text-xs">{receipt.data?.status === "reverted" ? "Ethereum transfer reverted. No deposit was made." : receipt.isSuccess ? "Ethereum transfer confirmed. Unit is processing your deposit; check your ETH spot balance for arrival." : "Ethereum transfer submitted. Waiting for confirmation…"} <a href={`https://etherscan.io/tx/${hash}`} target="_blank" rel="noopener noreferrer" className="underline">View transaction</a></p>}

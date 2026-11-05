@@ -14,8 +14,9 @@ function server(){
   if(!issued.has(auth.nonce)||used.has(auth.nonce))return Response.json({error:"bad or replayed nonce"},{status:401});
   if(Math.abs(Date.now()-auth.timestamp)>120000)return Response.json({error:"timestamp skew"},{status:401});
   const request={domain:AUTH_DOMAIN,types:AUTH_TYPES,primaryType:"Request" as const,message:{action:new URL(String(url)).searchParams.get("op")!,target,nonce:auth.nonce,timestamp:BigInt(auth.timestamp),bodyHash:keccak256(toBytes(options.body as string))}};
-  if(!await verifyTypedData({...request,address:target,signature:auth.signature}))return Response.json({error:"signer is not the master account"},{status:403});used.add(auth.nonce);
-  return Response.json({registered:true,master:target,state:"paused"});
+  used.add(auth.nonce); // The live API consumes it before signature/ownership checks.
+  if(!await verifyTypedData({...request,address:target,signature:auth.signature}))return Response.json({error:"signer is not the master account"},{status:403});
+  return Response.json({registered:true,master:target,owner:target,agent:JSON.parse(options.body as string).agent,hasKey:true,state:"paused"});
  }) as unknown as typeof fetch;
  return {box,fetcher,posts,nonce};
 }
@@ -90,4 +91,53 @@ it("does not report an unverified close as accepted or automatically retry it",a
   return s.fetcher(url,options);
  };
  await expect(signedCall("flatten",{},{master:owner.address,assertAccount:()=>{},sign:r=>owner.signTypedData(r),fetcher,api:"https://example.com/api/copybot"})).rejects.toThrow("state could not be verified");expect(posts).toBe(1);
+});
+
+it("addresses subaccount controls to the selected target but signs with the owner",async()=>{
+ const s=server(),owner=privateKeyToAccount(generatePrivateKey()),sub=privateKeyToAccount(generatePrivateKey()).address;
+ const requests:{url:URL;options:RequestInit}[]=[];let signed:AuthRequest|undefined;
+ const fetcher=(async(url:string,options:RequestInit={})=>{const parsed=new URL(String(url));if(parsed.searchParams.get("op")==="nonce")return Response.json(s.nonce());requests.push({url:parsed,options});return Response.json({state:"paused"});}) as typeof fetch;
+ await signedCall("pause",{},{master:sub,owner:owner.address,sign:async request=>{signed=request;return owner.signTypedData(request);},assertAccount:()=>{},fetcher,api:"https://example.com/api/copybot"});
+ expect(requests).toHaveLength(1);expect(requests[0].url.searchParams.get("addr")).toBe(sub);expect(signed!.account).toBe(owner.address);expect(signed!.message.target).toBe(sub);
+ const auth=JSON.parse((requests[0].options.headers as Record<string,string>)["x-auth"]);
+ expect(await verifyTypedData({...signed!,address:owner.address,signature:auth.signature})).toBe(true);
+});
+it("puts the selected subaccount in the registration body instead of the signing owner",async()=>{
+ const s=server(),owner=privateKeyToAccount(generatePrivateKey()),sub=privateKeyToAccount(generatePrivateKey()).address;let posted:Record<string,unknown>|undefined;
+ const fetcher=(async(url:string,options:RequestInit={})=>{if(new URL(String(url)).searchParams.get("op")==="nonce")return Response.json(s.nonce());posted=JSON.parse(options.body as string);return Response.json({registered:true,master:sub,owner:owner.address,agent:owner.address,hasKey:true,state:"paused"});}) as typeof fetch;
+ await signedCall("register",{master:sub,agent:owner.address},{master:sub,owner:owner.address,sign:request=>owner.signTypedData(request),assertAccount:()=>{},fetcher,api:"https://example.com/api/copybot"});expect(posted?.master).toBe(sub);expect(posted?.master).not.toBe(owner.address);
+});
+
+it("explains a master-only API rejection without retrying or falling back to the main account",async()=>{
+ const s=server(),owner=privateKeyToAccount(generatePrivateKey()),sub=privateKeyToAccount(generatePrivateKey()).address;
+ await expect(signedCall("register",{master:sub},{master:sub,owner:owner.address,sign:request=>owner.signTypedData(request),assertAccount:()=>{},fetcher:s.fetcher,api:"https://example.com/api/copybot"})).rejects.toThrow("The API must verify that this subaccount belongs to the signing owner");
+ expect(s.posts).toHaveLength(1);expect(JSON.parse(s.posts[0].body as string).master).toBe(sub);
+});
+
+function registrationResponseFixture(overrides:Record<string,unknown>={},statusOverrides:Record<string,unknown>={},minimal=false){
+ const s=server(),owner=privateKeyToAccount(generatePrivateKey()),sub=privateKeyToAccount(generatePrivateKey()).address,agent=privateKeyToAccount(generatePrivateKey()).address;
+ const record={master:sub,owner:owner.address,isSubaccount:true,agent,state:"paused",hasKey:true};let posts=0,reads=0;
+ const fetcher=(async(url:string,options:RequestInit={})=>{
+  const op=new URL(String(url)).searchParams.get("op");
+  if(op==="nonce")return Response.json(s.nonce());
+  if(options.method){posts++;return Response.json(minimal?{registered:true,...overrides}:{...record,...overrides});}
+  reads++;return Response.json({registered:true,...record,...statusOverrides});
+ }) as typeof fetch;
+ const run=()=>signedCall("register",{master:sub,agent},{master:sub,owner:owner.address,sign:r=>owner.signTypedData(r),assertAccount:()=>{},fetcher,api:"https://example.com/api/copybot"});
+ return {run,owner,sub,agent,counts:()=>({posts,reads})};
+}
+it("accepts the documented full registration record without registered:true after matching target, owner and agent",async()=>{
+ const fixture=registrationResponseFixture();const result=await fixture.run();expect(result).toMatchObject({registered:true,master:fixture.sub,owner:fixture.owner.address,agent:fixture.agent,state:"paused",hasKey:true});expect(fixture.counts()).toEqual({posts:1,reads:0});
+});
+it.each(["master","owner","agent"])("rejects a registration response with mismatched %s instead of hiding it with a status fallback",async field=>{
+ const fixture=registrationResponseFixture({[field]:privateKeyToAccount(generatePrivateKey()).address});await expect(fixture.run()).rejects.toThrow("different registration account, owner or agent");expect(fixture.counts()).toEqual({posts:1,reads:0});
+});
+it("verifies a minimal legacy registration acknowledgement with one status read and no repeated mutation",async()=>{
+ const fixture=registrationResponseFixture({}, {}, true);expect((await fixture.run()).registered).toBe(true);expect(fixture.counts()).toEqual({posts:1,reads:1});
+});
+it.each([{hasKey:false},{state:"active"},{owner:undefined},{agent:undefined}])("does not accept an unverified registration record (%j)",async missing=>{
+ const fixture=registrationResponseFixture(missing,missing);await expect(fixture.run()).rejects.toThrow("could not be verified");expect(fixture.counts()).toEqual({posts:1,reads:1});
+});
+it("does not accept an explicit unregistered acknowledgement",async()=>{
+ const fixture=registrationResponseFixture({registered:false});await expect(fixture.run()).rejects.toThrow("different registration account, owner or agent");expect(fixture.counts()).toEqual({posts:1,reads:0});
 });

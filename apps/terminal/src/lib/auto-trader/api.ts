@@ -6,7 +6,7 @@ export const AUTH_DOMAIN={name:"X1CopyBot",version:"1"} as const;
 export const AUTH_TYPES={Request:[{name:"action",type:"string"},{name:"target",type:"address"},{name:"nonce",type:"string"},{name:"timestamp",type:"uint64"},{name:"bodyHash",type:"bytes32"}]} as const;
 export type AuthRequest={account:Address;domain:typeof AUTH_DOMAIN;types:typeof AUTH_TYPES;primaryType:"Request";message:{action:AutoTraderAction;target:Address;nonce:string;timestamp:bigint;bodyHash:Hex}};
 export type AuthSigner=(request:AuthRequest)=>Promise<Hex>;
-type Context={master:Address;sign:AuthSigner;assertAccount:()=>void;signal?:AbortSignal;fetcher?:typeof fetch;api?:string};
+type Context={master:Address;owner?:Address;sign:AuthSigner;assertAccount:()=>void;signal?:AbortSignal;fetcher?:typeof fetch;api?:string};
 function endpoint(api:string,op:string,master?:Address){const url=new URL(api,typeof location!=="undefined"?location.origin:"https://localhost");const localProxy=typeof location!=="undefined"&&url.origin===location.origin&&["/api/copybot","/api/auto-trader-signal"].includes(url.pathname);if((url.protocol!=="https:"&&!(localProxy&&url.protocol==="http:"&&["127.0.0.1","localhost","[::1]"].includes(url.hostname)))||url.username||url.password)throw new Error("Auto Trader requires an HTTPS API endpoint.");url.searchParams.set("op",op);if(master)url.searchParams.set("addr",master);return url.href;}
 async function json(url:string,options:RequestInit,fetcher=fetch){
  let response;try{response=await fetcher(url,{...options,cache:"no-store",redirect:"error",signal:options.signal??AbortSignal.timeout(20000)});}catch(cause){if(cause instanceof Error&&cause.name==="AbortError")throw cause;throw new Error("Auto Trader service is unavailable. No automatic retry was sent.");}
@@ -30,13 +30,19 @@ export async function getNonce({api=AUTO_TRADER_API,signal,fetcher=fetch}:{api?:
 // Construct and hash the body exactly once. Registration seals inside this callback,
 // after fetching the nonce/public key; raw private keys never enter mutation variables.
 export async function signedCall(action:AutoTraderAction,body:object|((serverPublicKey:string)=>object),context:Context){
- if(!["register","settings","pause","resume","flatten","remove"].includes(action)||!isAddress(context.master))throw new Error("Invalid Auto Trader action.");
+ if(!["register","settings","pause","resume","flatten","remove"].includes(action)||!isAddress(context.master)||context.owner!==undefined&&!isAddress(context.owner))throw new Error("Invalid Auto Trader action.");
  const {master,sign,assertAccount,signal,fetcher=fetch,api=AUTO_TRADER_API}=context;
  assertAccount();const n=await getNonce({api,signal,fetcher});assertAccount();
  const raw=JSON.stringify(typeof body==="function"?body(n.serverPubKey):body);
  if(new TextEncoder().encode(raw).length>32768)throw new Error("Auto Trader request is too large.");
- const timestamp=Date.now();const signature=await sign({account:master,domain:AUTH_DOMAIN,types:AUTH_TYPES,primaryType:"Request",message:{action,target:master,nonce:n.nonce,timestamp:BigInt(timestamp),bodyHash:keccak256(toBytes(raw))}});assertAccount();
- const result=await json(endpoint(api,action,action==="register"?undefined:master),{method:"POST",headers:{"content-type":"application/json","x-auth":JSON.stringify({nonce:n.nonce,timestamp,signature})},body:raw,signal},fetcher);assertAccount();
+ const timestamp=Date.now();const signature=await sign({account:context.owner??master,domain:AUTH_DOMAIN,types:AUTH_TYPES,primaryType:"Request",message:{action,target:master,nonce:n.nonce,timestamp:BigInt(timestamp),bodyHash:keccak256(toBytes(raw))}});assertAccount();
+ let result;
+ try{result=await json(endpoint(api,action,action==="register"?undefined:master),{method:"POST",headers:{"content-type":"application/json","x-auth":JSON.stringify({nonce:n.nonce,timestamp,signature})},body:raw,signal},fetcher);}
+ catch(error){
+  if(context.owner&&context.owner.toLowerCase()!==master.toLowerCase()&&error instanceof Error&&/signer is not the master account/i.test(error.message))throw new Error(`The Auto Trader API rejected your owner wallet’s signature for subaccount ${master}. The API must verify that this subaccount belongs to the signing owner. No retry or main-account fallback was sent.`);
+  throw error;
+ }
+ assertAccount();
  if(action==="pause"||action==="resume"||action==="flatten"){
   const expected=action==="pause"?"paused":action==="resume"?"active":"flatten-requested";
   if(result.state===expected)return result;
@@ -47,7 +53,22 @@ export async function signedCall(action:AutoTraderAction,body:object|((serverPub
   if(current.registered===true&&current.master?.toLowerCase()===master.toLowerCase()&&(current.state===expected||completedClose))return current;
   throw new Error("Request submitted, but its state could not be verified. Refresh status before retrying.");
  }
- if(action==="remove"?result.removed!==true:action==="register"&&result.registered!==true)throw new Error("Auto Trader did not confirm this action. Refresh status before retrying.");
+ if(action==="register"){
+  const requested=JSON.parse(raw),owner=context.owner??master;
+  const same=(value:unknown,address:Address)=>typeof value==="string"&&value.toLowerCase()===address.toLowerCase();
+  if(!same(requested.master,master)||typeof requested.agent!=="string"||!isAddress(requested.agent))throw new Error("Invalid Auto Trader registration account or agent.");
+  const agent=requested.agent as Address,isMain=same(owner,master);
+  const mismatched=(record:Record<string,unknown>)=>record.registered===false||record.master!==undefined&&!same(record.master,master)||record.owner!==undefined&&!same(record.owner,owner)||record.agent!==undefined&&!same(record.agent,agent);
+  const confirmed=(record:Record<string,unknown>)=>!mismatched(record)&&same(record.master,master)&&same(record.owner??(isMain?record.master:undefined),owner)&&same(record.agent,agent)&&record.hasKey===true&&record.state==="paused";
+  if(mismatched(result))throw new Error("Auto Trader returned a different registration account, owner or agent. Refresh status before retrying.");
+  // Registration returns a full record without registered:true. A minimal legacy
+  // acknowledgement must be verified by one read, never by a repeated POST.
+  if(confirmed(result))return {...result,registered:true};
+  const current=await json(endpoint(api,"status",master),{signal},fetcher);assertAccount();
+  if(current.registered===true&&confirmed(current))return current;
+  throw new Error("Registration submitted, but the selected account, owner, agent and paused key could not be verified. Refresh status before retrying.");
+ }
+ if(action==="remove"&&result.removed!==true)throw new Error("Auto Trader did not confirm this action. Refresh status before retrying.");
  return result;
 }
 export async function getStatus(master:Address,signal?:AbortSignal,fetcher=fetch):Promise<AutoTraderStatus>{const result=await json(endpoint(AUTO_TRADER_API,"status",master),{signal},fetcher);if(typeof result.registered!=="boolean"||result.registered&&result.master?.toLowerCase()!==master.toLowerCase())throw new Error("Invalid Auto Trader account response.");return result;}

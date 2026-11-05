@@ -1,3 +1,4 @@
+import {getRabbyProvider} from "./rabby-provider";
 import { getAddress, isAddress, zeroAddress, type EIP1193Provider } from "viem";
 import { getPhantomProvider } from "@/lib/x1/provider";
 import type { WithdrawalRecipient } from "./withdrawal-recipient";
@@ -16,8 +17,9 @@ export function getNativeEthereumProviders(): EIP1193Provider[] {
  const injected = (window as Window & { ethereum?: EIP1193Provider & { providers?: EIP1193Provider[] } }).ethereum;
  return [...new Set([injected, getPhantomProvider(), ...(injected?.providers ?? []), ...announced])].filter((provider): provider is EIP1193Provider => !!provider && typeof provider.request === "function");
 }
-export async function readNativeEthereumRecipient(requestAccess = false): Promise<WithdrawalRecipient> {
- const providers = getNativeEthereumProviders();
+export async function readNativeEthereumRecipient(requestAccess = false, connectorId?: string): Promise<WithdrawalRecipient> {
+ const rabby=connectorId==="rabby"?getRabbyProvider():undefined;
+ const providers = connectorId==="rabby" ? (rabby?[rabby]:[]) : getNativeEthereumProviders();
  if (!providers.length) return { address: "", status: "unavailable", message: "Open your Ethereum wallet to load its address." };
  const account = async (provider: EIP1193Provider, method: "eth_accounts" | "eth_requestAccounts") => {
   const accounts = await provider.request({ method });

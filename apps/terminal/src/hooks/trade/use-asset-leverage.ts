@@ -1,5 +1,5 @@
+import {useTradingAccount} from "@/hooks/use-trading-account";
 import { useEffect, useRef, useState } from "react";
-import { useConnection } from "wagmi";
 import { DEFAULT_MAX_LEVERAGE } from "@/config/trade";
 import {
 	getMarketCapabilities,
@@ -46,7 +46,7 @@ function getDefaultLeverage(maxLeverage: number): number {
 }
 
 export function useAssetLeverage(): UseAssetLeverageReturn {
-	const { address, isConnected } = useConnection();
+	const { address, isConnected } = useTradingAccount();
 	const { data: market } = useSelectedMarketInfo();
 
 	const storedMarginMode = useMarginMode();

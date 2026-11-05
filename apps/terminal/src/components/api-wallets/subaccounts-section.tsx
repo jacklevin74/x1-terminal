@@ -6,8 +6,9 @@ import {useCopyToClipboard} from "@/hooks/ui/use-copy-to-clipboard";
 import {useHyperliquid,useHyperliquidClients,useInfo} from "@/lib/hyperliquid";
 
 export function SubaccountsSection(){
- const {address}=useConnection();const {env}=useHyperliquid();const {user}=useHyperliquidClients();
- const accounts=useInfo("subAccounts",{user:address??zeroAddress},{enabled:!!address,refetchOnWindowFocus:true,refetchInterval:30000});
+ const {address,connector}=useConnection();const {env}=useHyperliquid();const {user}=useHyperliquidClients();
+ const accounts=useInfo("subAccounts",{user:address??zeroAddress},{enabled:!!address,refetchOnWindowFocus:true,refetchOnMount:"always",refetchInterval:30000});
+ const rows=address?(accounts.data??[]).filter(account=>account.master.toLowerCase()===address.toLowerCase()):[];
  const [name,setName]=useState("");const [busy,setBusy]=useState(false);const [error,setError]=useState<string|null>(null);const [message,setMessage]=useState<string|null>(null);
  const identity=useRef({address,env});identity.current={address,env};const locked=useRef(false),alive=useRef(true);
  useEffect(()=>{alive.current=true;return()=>{alive.current=false;};},[]);
@@ -27,11 +28,12 @@ export function SubaccountsSection(){
  }
  return <section id="subaccounts" aria-label="Subaccounts" className="space-y-3 rounded-xl border border-stroke-weak bg-surface p-4 scroll-mt-4">
   <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-sm font-semibold">Subaccounts</h2><button type="button" disabled={!address||busy} onClick={()=>void accounts.refetch()} className="text-xs text-brand disabled:opacity-40">Refresh accounts</button></div>
+  {address&&<div className="rounded-lg border border-stroke-weak bg-background p-3 text-xs"><span className="block text-fg-muted">Connected owner · {connector?.name??"Wallet"} · {env}</span><span className="mt-1 block break-all font-mono" data-subaccounts-owner={address}>{address}</span></div>}
   <p className="text-xs leading-relaxed text-fg-muted">Subaccounts have separate trading balances under your owner account. Hyperliquid currently requires $100,000 in trading volume to unlock creation and enforces account limits. Creating one transfers no funds and does not start a bot.</p>
   <form className="flex flex-wrap items-end gap-3" onSubmit={e=>{e.preventDefault();void create();}}><label className="min-w-0 flex-1 text-xs text-fg-muted">Subaccount name<input aria-label="Subaccount name" maxLength={16} value={name} disabled={busy||!address} onChange={e=>setName(e.target.value)} placeholder="e.g. HYPE strategy" className="mt-1 w-full rounded-lg border border-stroke-weak bg-background px-3 py-2 text-sm text-fg outline-none focus:border-brand" /></label><button type="submit" disabled={busy||!address||!user||!name.trim()} className="rounded-lg bg-brand px-3 py-2 text-sm font-medium text-fg-inverse disabled:opacity-40">{busy?"Confirm in wallet…":"Create subaccount"}</button></form>
-  <p className="text-xs text-fg-muted">Signed by your owner wallet on {env}. Auto Trader currently uses the owner account; subaccount trading and funding transfers are not configured here.</p>
+  <p className="text-xs text-fg-muted">Signed by your owner wallet on {env}. Select a subaccount in the top-right menu to trade or configure Auto Trader for it. Funding transfers between accounts are not configured here.</p>
   {error&&<p role="alert" className="break-words text-xs text-error">{error}</p>}{message&&<p role="status" className="break-words text-xs text-brand">{message}</p>}
-  {accounts.data?.length?<ul className="grid gap-2 sm:grid-cols-2">{accounts.data.map(account=><li key={account.subAccountUser} className="min-w-0 rounded-lg border border-stroke-weak p-3"><span className="block truncate text-xs font-medium">{account.name}</span><SubaccountAddress address={account.subAccountUser} /></li>)}</ul>:<p className="text-xs text-fg-muted">{!address?"Connect your owner wallet to view and create subaccounts.":accounts.isError?"Could not load subaccounts. Refresh accounts to retry.":accounts.isLoading?"Loading subaccounts…":"No subaccounts found."}</p>}
+  {rows.length?<ul className="grid gap-2 sm:grid-cols-2">{rows.map(account=><li key={account.subAccountUser} className="min-w-0 rounded-lg border border-stroke-weak p-3"><span className="block truncate text-xs font-medium">{account.name}</span><SubaccountAddress address={account.subAccountUser} /></li>)}</ul>:<p className="text-xs text-fg-muted">{!address?"Connect your owner wallet to view and create subaccounts.":accounts.isError?"Could not load subaccounts. Refresh accounts to retry.":accounts.isLoading?"Loading subaccounts…":"No subaccounts found for the connected owner."}</p>}
  </section>;
 }
 function SubaccountAddress({address}:{address:string}){

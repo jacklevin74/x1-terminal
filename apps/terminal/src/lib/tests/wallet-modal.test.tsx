@@ -8,6 +8,7 @@ vi.mock("wagmi", () => ({
  useConnectors: () => [
   { id: "phantom", uid: "p", name: "Phantom" },
   { id: "x1", uid: "x", name: "X1 Wallet" },
+  { id: "rabby", uid: "r", name: "Rabby Wallet" },
   { id: "other", uid: "o", name: "Other Wallet" },
  ],
  useConnect: () => ({ mutateAsync: state.connect, isPending: false }),
@@ -17,12 +18,12 @@ vi.mock("@hypeterminal/ui", () => {
  return { Modal: Wrapper, ModalContent: Wrapper, ModalPopup: Wrapper };
 });
 afterEach(() => { document.body.innerHTML = ""; state.connect.mockClear(); });
-it("offers only Phantom and X1, with an explicit derived-account acknowledgment", async () => {
+it("offers Rabby, Phantom and X1, with an explicit derived-account acknowledgment", async () => {
  const el = document.createElement("div"); document.body.append(el);
  const root = createRoot(el);
  await act(async () => { root.render(createElement(WalletModal, { open: true, onOpenChange: vi.fn() })); });
  const buttons = [...el.querySelectorAll("button")];
- expect(buttons).toHaveLength(2);
+ expect(buttons).toHaveLength(3);
  expect(buttons[0].textContent).toContain("Phantom");
  expect(buttons[1].textContent).toContain("X1 Wallet");
  expect(buttons[1].disabled).toBe(true);
@@ -32,4 +33,13 @@ it("offers only Phantom and X1, with an explicit derived-account acknowledgment"
  await act(async () => { buttons[1].click(); });
  expect(state.connect).toHaveBeenCalledWith({ connector: expect.objectContaining({ id: "x1" }) });
  await act(async () => root.unmount());
+});
+
+it("connects Rabby without requiring the X1 derived-account acknowledgment", async()=>{
+ const el=document.createElement("div");document.body.append(el);const root=createRoot(el);const close=vi.fn();
+ await act(async()=>root.render(createElement(WalletModal,{open:true,onOpenChange:close})));
+ const rabby=[...el.querySelectorAll("button")].find(b=>b.textContent?.includes("Rabby Wallet"))!;
+ expect(rabby.disabled).toBe(false);expect(el.textContent).toContain("approve signing requests on the device");
+ await act(async()=>rabby.click());expect(state.connect).toHaveBeenCalledWith({connector:expect.objectContaining({id:"rabby"})});expect(close).toHaveBeenCalledWith(false);
+ await act(async()=>root.unmount());
 });

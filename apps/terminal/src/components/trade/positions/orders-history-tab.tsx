@@ -1,9 +1,9 @@
+import {useTradingAccount} from "@/hooks/use-trading-account";
 import { useTransferHistory, TransferLinks } from "./withdrawal-history";
 import { AccountTableToolbar } from "./account-table-toolbar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { useState } from "react";
-import { useConnection } from "wagmi";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { MAX_HISTORY_ROWS } from "@/config/trade";
 import { cn } from "@/lib/cn";
@@ -17,7 +17,7 @@ import { Placeholder } from "./placeholder";
 import { positionViewRowClass, positionViewBodyClass, positionViewCellClass, positionViewHeadClass, positionsPanelTableLayoutClass, positionViewHeaderClass, positionsPanelTableShellClass, positionsPanelTabRootClass } from "./positions-panel-table-styles";
 
 export function OrdersHistoryTab() {
- const { address, isConnected } = useConnection();
+ const { address, isConnected } = useTradingAccount();
  const { scope } = useExchangeScope();
  const { setSelectedMarket } = useMarketActions();
  const markets = useMarkets();

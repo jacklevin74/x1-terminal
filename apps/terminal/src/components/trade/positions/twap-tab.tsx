@@ -1,8 +1,8 @@
+import {useTradingAccount} from "@/hooks/use-trading-account";
 import { AccountTableToolbar } from "./account-table-toolbar";
 import { Button, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { useMemo } from "react";
-import { useConnection } from "wagmi";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { TimeTicker } from "@/components/ui/time-ticker";
 import { HL_ALL_DEXS } from "@/config/app";
@@ -28,7 +28,7 @@ import {
 } from "./positions-panel-table-styles";
 
 export function TwapTab() {
-	const { address, isConnected } = useConnection();
+	const { address, isConnected } = useTradingAccount();
 	const { scope } = useExchangeScope();
 	const { setSelectedMarket } = useMarketActions();
 	const { data: twapStatesEvent } = useSubscription(

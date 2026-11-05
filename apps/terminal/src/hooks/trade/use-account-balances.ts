@@ -1,7 +1,7 @@
+import {useTradingAccount} from "@/hooks/use-trading-account";
 import type { AllDexsClearinghouseStateWsEvent, SpotStateWsEvent, WebData3WsEvent } from "@nktkas/hyperliquid";
 import { getAccountUnrealizedPnl } from "@/lib/positions/valuation";
 import { useMemo } from "react";
-import { useConnection } from "wagmi";
 import { useSubscription } from "@/lib/hyperliquid";
 
 type RawClearinghouseState = AllDexsClearinghouseStateWsEvent["clearinghouseStates"][number][1];
@@ -43,7 +43,7 @@ export interface AllDexsAccountState {
 }
 
 export function useAllDexsAccountState(): AllDexsAccountState {
-	const { address, isConnected } = useConnection();
+	const { address, isConnected } = useTradingAccount();
 	const enabled = isConnected && !!address;
 
 	const { data: clearinghouseEvent, status: perpStatus } = useSubscription(

@@ -1,7 +1,7 @@
+import {useTradingAccount} from "@/hooks/use-trading-account";
 import { AccountToolbarContext } from "./account-table-toolbar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@hypeterminal/ui";
 import { Suspense, useMemo, useState, useTransition } from "react";
-import { useConnection } from "wagmi";
 import { Spinner } from "@/components/ui/spinner";
 import { HL_ALL_DEXS } from "@/config/app";
 import { POSITIONS_TABS } from "@/config/trade";
@@ -29,7 +29,7 @@ export function PositionsPanel() {
  const [toolbarTarget, setToolbarTarget] = useState<HTMLDivElement | null>(null);
 	const { setPositionsActiveTab } = useGlobalSettingsActions();
 	const [isPending, startTransition] = useTransition();
-	const { address, isConnected } = useConnection();
+	const { address, isConnected } = useTradingAccount();
 	const { perpSummary, spotBalances } = useDefaultDexBalances();
 	const { positions } = useUserPositions();
 	const { data: ordersEvent } = useSubscription(

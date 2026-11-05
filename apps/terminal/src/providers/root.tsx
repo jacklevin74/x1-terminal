@@ -1,5 +1,6 @@
+import {useTradingAccount} from "@/hooks/use-trading-account";
 import { JurisdictionGate } from "@/components/trade/components/jurisdiction-gate";
-import { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import { reconnect } from "@wagmi/core";
 import { HyperliquidProvider, PERSISTED_QUERY_PREFIX } from "@hypeterminal/hl-react";
 import { i18n } from "@lingui/core";
@@ -7,7 +8,7 @@ import { I18nProvider } from "@lingui/react";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-import { useConnection, WagmiProvider } from "wagmi";
+import { WagmiProvider } from "wagmi";
 import { APP_NAME, RQ_CACHE_BUSTER, STORAGE_KEYS } from "@/config/app";
 import { DEFAULT_BUILDER_CONFIG } from "@/config/hyperliquid";
 import { RQ_CACHE_MAX_AGE_MS } from "@/config/time";
@@ -47,11 +48,11 @@ function HyperliquidBridge({ children }: { children: React.ReactNode }) {
   for (const event of events) window.addEventListener(event, resume);
   return () => { for (const event of events) window.removeEventListener(event, resume); };
  }, []);
-	const { address } = useConnection();
+	const { ownerAddress: address, subaccount } = useTradingAccount();
 
 	return (
-		<HyperliquidProvider env={env} userAddress={address} builderConfig={DEFAULT_BUILDER_CONFIG} agentName={APP_NAME}>
-			<MarketsProvider>{children}</MarketsProvider>
+		<HyperliquidProvider env={env} userAddress={address} vaultAddress={subaccount?.address} builderConfig={DEFAULT_BUILDER_CONFIG} agentName={APP_NAME}>
+			<MarketsProvider><Fragment key={`${address??"disconnected"}:${subaccount?.address??"main"}`}>{children}</Fragment></MarketsProvider>
 		</HyperliquidProvider>
 	);
 }

@@ -45,3 +45,12 @@ it("fills ETH from an injected Ethereum wallet even when the trading connector i
  expect(await readWithdrawalRecipient("ETH", "x1")).toMatchObject({ status: "ready", address });
  expect(request).toHaveBeenCalledWith({ method: "eth_accounts" });
 });
+
+it("uses Rabby for ETH recipients instead of an available Phantom account",async()=>{
+ const address=`0x${"34".repeat(20)}`;const request=vi.fn(async()=>[address]);Object.assign(window,{ethereum:{isRabby:true,request}});
+ state.request.mockResolvedValue([`0x${"56".repeat(20)}`]);
+ expect(await readWithdrawalRecipient("ETH","rabby")).toMatchObject({status:"ready",address});expect(state.request).not.toHaveBeenCalled();
+});
+it("does not substitute another wallet when Rabby is unavailable",async()=>{
+ expect(await readWithdrawalRecipient("ETH","rabby")).toMatchObject({status:"unavailable",address:""});expect(state.request).not.toHaveBeenCalled();
+});

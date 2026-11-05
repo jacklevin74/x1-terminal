@@ -48,9 +48,9 @@ describe("getWalletConnectProjectId", () => {
 });
 
 describe("createWagmiConfig", () => {
- it("offers exactly Phantom and X1 even if a legacy WalletConnect setting exists", async () => {
+ it("offers Rabby, Phantom and X1 even if a legacy WalletConnect setting exists", async () => {
   const { createWagmiConfig } = await import("@/config/wagmi");
   const config = createWagmiConfig({ env: { VITE_WALLET_CONNECT_PROJECT_ID: "abc" } });
-  expect(config.connectors.map(c => c.id)).toEqual(["phantom", "x1"]);
+  expect(config.connectors.map(c => c.id)).toEqual(["rabby", "phantom", "x1"]);
  });
 });

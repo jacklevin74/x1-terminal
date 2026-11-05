@@ -5,7 +5,7 @@ export interface WithdrawalRecipient { address: string; status: "ready" | "locke
 const lockedMessage = "Your wallet is locked or disconnected. Unlock it, then reconnect to load your withdrawal address.";
 export async function readWithdrawalRecipient(asset: "SOL" | "ETH", connectorId?: string, requestAccess = false): Promise<WithdrawalRecipient> {
  if (asset === "ETH") {
-  const native = await readNativeEthereumRecipient(requestAccess);
+  const native = await readNativeEthereumRecipient(requestAccess,connectorId);
   if (native.status === "ready" || native.status === "locked" || connectorId !== "x1") return native;
  }
  if (!connectorId) return { address: "", status: "unavailable", message: "Connect your wallet to load your withdrawal address." };
@@ -21,5 +21,5 @@ export async function readWithdrawalRecipient(asset: "SOL" | "ETH", connectorId?
    return { address, status: "ready" };
   } catch { return { address: "", status: "locked", message: lockedMessage }; }
  }
- return readNativeEthereumRecipient(requestAccess);
+ return readNativeEthereumRecipient(requestAccess,connectorId);
 }

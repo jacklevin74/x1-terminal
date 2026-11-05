@@ -1,3 +1,5 @@
+import {useTradingAccountStore} from "@/stores/use-trading-account-store";
+import {getNetwork} from "@/lib/network";
 // @vitest-environment jsdom
 import {act,createElement,type ReactNode} from "react";
 import {createRoot} from "react-dom/client";
@@ -5,24 +7,25 @@ import {beforeEach,afterEach,expect,it,vi} from "vitest";
 import nacl from "tweetnacl";
 import {AutoTraderPanel} from "@/components/auto-trader/auto-trader-panel";
 import type {AutoTraderStatus} from "@/lib/auto-trader/types";
-const state=vi.hoisted(()=>({owner:`0x${"ab".repeat(20)}`,env:"Mainnet",status:{registered:false} as AutoTraderStatus,agents:[] as {address:string;validUntil:number}[],fee:50,control:vi.fn(),approve:vi.fn(),sealed:null as Record<string,unknown>|null,pub:""}));
+const state=vi.hoisted(()=>({owner:`0x${"ab".repeat(20)}`,env:"Mainnet",status:{registered:false} as AutoTraderStatus,agents:[] as {address:string;validUntil:number}[],fee:50,statusTarget:vi.fn(),infoRead:vi.fn(),control:vi.fn(),approve:vi.fn(),sealed:null as Record<string,unknown>|null,pub:""}));
 vi.mock("@/lib/auto-trader/close-now",()=>({closeNow:vi.fn(async()=>{expect(state.status.state).toBe("paused");return 2;})}));
 vi.mock("@/hooks/trade/use-submit-plan",()=>({useSubmitPlan:()=>({submitPlan:vi.fn()})}));
 vi.mock("@lingui/react/macro",()=>({Trans:({children}:{children:ReactNode})=>children}));
 vi.mock("wagmi",()=>({useConnection:()=>({address:state.owner,isConnected:true}),useWalletClient:()=>({data:{account:{address:state.owner}}})}));
 vi.mock("@/config/hyperliquid",()=>({BUILDER_CONFIGURED:true,DEFAULT_BUILDER_CONFIG:{b:"0x95e1642b6c06e06e6ad9412a90e908dcb09f6c1a",f:50}}));
-vi.mock("@/lib/hyperliquid",()=>({readAgentFromStorage:()=>null,useAgentWallet:()=>({isReady:true}),useHyperliquid:()=>({env:state.env}),useExchange:(method:string)=>({mutateAsync:async(p:Record<string,unknown>)=>{state.approve(method,p);if(method==="approveAgent")state.agents.push({address:p.agentAddress as string,validUntil:Date.now()+90*86400000});if(method==="approveBuilderFee")state.fee=50;}}),useInfo:(method:string,params:{dex?:string})=>{
+vi.mock("@/lib/hyperliquid",()=>({readAgentFromStorage:()=>null,useAgentWallet:()=>({isReady:true}),useHyperliquid:()=>({env:state.env}),useExchange:(method:string)=>({mutateAsync:async(p:Record<string,unknown>)=>{state.approve(method,p);if(method==="approveAgent")state.agents.push({address:p.agentAddress as string,validUntil:Date.now()+90*86400000});if(method==="approveBuilderFee")state.fee=50;}}),useInfo:(method:string,params:{dex?:string;user?:string})=>{
+ state.infoRead(method,params);
  const get=()=>method==="extraAgents"?state.agents:method==="maxBuilderFee"?state.fee:method==="userAbstraction"?"disabled":method==="spotClearinghouseState"?{balances:[{coin:"USDC",total:"200"}]}:method==="allMids"?{BTC:"100"}:{marginSummary:{accountValue:params.dex?"0":"200"},assetPositions:[]};return {data:get(),isError:false,refetch:async()=>({data:get(),isError:false})};
 }}));
-vi.mock("@/lib/auto-trader/hooks",()=>({useAutoTraderStatus:()=>({data:state.status,isLoading:false,isError:false,refetch:async()=>({data:state.status})}),useAutoTraderSignal:()=>({data:{coins:[{coin:"BTC",score:100},{coin:"xyz:BRENTOIL",score:20},{coin:"xyz:MU",score:30},{coin:"xyz:INTC",score:40}],timestamp:Date.now()},isError:false}),useAutoTraderMutation:()=>({mutateAsync:async({action,body}:{action:string;body:object|((pub:string)=>Record<string,unknown>)})=>{
+vi.mock("@/lib/auto-trader/hooks",()=>({useAutoTraderStatus:(target:string)=>{state.statusTarget(target);return ({data:state.status,isLoading:false,isError:false,refetch:async()=>({data:state.status})})},useAutoTraderSignal:()=>({data:{coins:[{coin:"BTC",score:100},{coin:"xyz:BRENTOIL",score:20},{coin:"xyz:MU",score:30},{coin:"xyz:INTC",score:40}],timestamp:Date.now()},isError:false}),useAutoTraderMutation:()=>({mutateAsync:async({action,body}:{action:string;body:object|((pub:string)=>Record<string,unknown>)})=>{
  state.control(action);const payload=typeof body==="function"?body(state.pub):body;
- if(action==="register"){state.sealed=payload;state.status={registered:true,master:state.owner as `0x${string}`,agent:(payload as {agent:`0x${string}`}).agent,hasKey:true,state:"paused",settings:(payload as {settings:AutoTraderStatus["settings"]}).settings,validUntil:Date.now()+90*86400000};}
+ if(action==="register"){state.sealed=payload;state.status={registered:true,master:(payload as {master:`0x${string}`}).master,agent:(payload as {agent:`0x${string}`}).agent,hasKey:true,state:"paused",settings:(payload as {settings:AutoTraderStatus["settings"]}).settings,validUntil:Date.now()+90*86400000};}
  else if(action==="resume")state.status={...state.status,state:"active"};else if(action==="pause")state.status={...state.status,state:"paused"};else if(action==="flatten")state.status={...state.status,state:"flatten-requested"};else if(action==="remove")state.status={registered:false};return state.status;
 }})}));
 vi.mock("@hypeterminal/ui",()=>{const tag=({children}:{children:ReactNode})=>createElement("div",null,children);return {Tooltip:({children}:{children:ReactNode})=>children,Modal:({open,children}:{open:boolean;children:ReactNode})=>open?children:null,ModalPopup:tag,ModalHeader:tag,ModalTitle:tag,ModalContent:tag};});
 // These tests do not call the hosted service or sign any real on-chain action.
-beforeEach(()=>{state.owner=`0x${"ab".repeat(20)}`;state.env="Mainnet";state.status={registered:false};state.agents=[];state.fee=50;state.sealed=null;state.control.mockClear();state.approve.mockClear();state.pub=btoa(String.fromCharCode(...nacl.box.keyPair().publicKey));});
-afterEach(()=>vi.restoreAllMocks());
+beforeEach(()=>{useTradingAccountStore.getState().select(null);state.statusTarget.mockClear();state.infoRead.mockClear();state.owner=`0x${"ab".repeat(20)}`;state.env="Mainnet";state.status={registered:false};state.agents=[];state.fee=50;state.sealed=null;state.control.mockClear();state.approve.mockClear();state.pub=btoa(String.fromCharCode(...nacl.box.keyPair().publicKey));});
+afterEach(()=>{useTradingAccountStore.getState().select(null);vi.restoreAllMocks();});
 function button(node:HTMLElement,label:string){return [...node.querySelectorAll("button")].find(b=>b.textContent===label)!;}
 it("onboards a dedicated sealed agent, stays paused, and requires explicit enable confirmation",async()=>{
  const local=vi.spyOn(Storage.prototype,"setItem"),node=document.createElement("div"),root=createRoot(node);await act(async()=>root.render(createElement(AutoTraderPanel)));
@@ -67,4 +70,13 @@ it("pauses before submitting immediate close orders and never queues a scheduled
  const node=document.createElement("div"),root=createRoot(node);await act(async()=>root.render(createElement(AutoTraderPanel)));
  await act(async()=>button(node,"Close & pause").click());expect(state.control).not.toHaveBeenCalled();
  await act(async()=>button(node,"Confirm").click());expect(state.control.mock.calls.map(c=>c[0])).toEqual(["pause"]);expect(node.textContent).toContain("Positions verified closed");await act(async()=>root.unmount());
+});
+
+it("uses selected subaccount for readiness, status and registration while approvals use the signing owner",async()=>{
+ const sub=`0x${"12".repeat(20)}` as const;useTradingAccountStore.getState().select({owner:state.owner as `0x${string}`,address:sub,name:"Ledger strategy",network:getNetwork()});
+ const node=document.createElement("div"),root=createRoot(node);await act(async()=>root.render(createElement(AutoTraderPanel)));
+ expect(node.textContent).toContain(`Signing owner: ${state.owner}`);expect(node.textContent).toContain(`Trading account: Ledger strategy · ${sub}`);expect(state.statusTarget).toHaveBeenCalledWith(sub);
+ expect(state.infoRead).toHaveBeenCalledWith("clearinghouseState",{user:sub});expect(state.infoRead).toHaveBeenCalledWith("extraAgents",{user:state.owner});
+ await act(async()=>button(node,"Create Auto Trader API wallet").click());await act(async()=>button(node,"Register Auto Trader").click());expect(state.sealed?.master).toBe(sub);expect(state.sealed?.master).not.toBe(state.owner);
+ await act(async()=>root.unmount());
 });
