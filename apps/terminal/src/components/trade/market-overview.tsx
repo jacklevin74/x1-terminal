@@ -1,5 +1,5 @@
 import { t } from "@lingui/core/macro";
-import { ArrowSquareOutIcon, FireIcon } from "@phosphor-icons/react";
+import { ArrowSquareOutIcon } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import { get24hChange, getOiUsd } from "@/domain/market";
 import { cn } from "@/lib/cn";
@@ -140,7 +140,6 @@ export function MarketOverview() {
 						tooltip={<FundingTooltipContent fundingNum={fundingNum} />}
 						value={formatPercent(fundingNum, { minimumFractionDigits: 4, signDisplay: "exceptZero" })}
 						valueClass={getValueColorClass(fundingNum)}
-						icon={<FireIcon className="size-3 shrink-0" />}
 					/>
 				</>
 			)}
