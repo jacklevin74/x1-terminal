@@ -1,22 +1,18 @@
+import {ChartPanel} from "../chart/chart-panel";
 import { FireIcon } from "@phosphor-icons/react";
-import { ClientOnly } from "@tanstack/react-router";
 import { Skeleton } from "boneyard-js/react";
-import { Suspense } from "react";
 import { UI_TEXT } from "@/config/ui-text";
-import { get24hChange, getOiUsd, getPositionDex } from "@/domain/market";
+import { get24hChange, getOiUsd } from "@/domain/market";
 import { cn } from "@/lib/cn";
 import { formatPercent, formatUSD } from "@/lib/format";
 import { useSelectedMarketInfo } from "@/lib/hyperliquid";
-import { createLazyComponent } from "@/lib/lazy";
 import { toBig } from "@/lib/trade/numbers";
 import { getValueColorClass } from "@/lib/ui/value-color";
 import { useExchangeScope } from "@/providers/exchange-scope";
-import { useTheme } from "@/stores/use-global-settings-store";
 import { useMarketActions } from "@/stores/use-market-store";
 import { TokenSelector } from "../chart/token-selector";
 import { MobileBottomNavSpacer } from "./mobile-bottom-nav";
 
-const KlineChart = createLazyComponent(() => import("../chart/kline-chart"), "KlineChart");
 
 const overviewText = UI_TEXT.MARKET_OVERVIEW;
 
@@ -25,7 +21,6 @@ interface MobileChartViewProps {
 }
 
 export function MobileChartView({ className }: MobileChartViewProps) {
-	const theme = useTheme();
 	const { data: selectedMarket, isLoading } = useSelectedMarketInfo();
 	const { scope } = useExchangeScope();
 	const { setSelectedMarket } = useMarketActions();
@@ -98,24 +93,7 @@ export function MobileChartView({ className }: MobileChartViewProps) {
 			</div>
 
 			<div className="flex-1 min-h-0">
-				<ClientOnly
-					fallback={
-						<div className="h-full flex items-center justify-center">
-							<ChartSkeleton />
-						</div>
-					}
-				>
-					<Suspense fallback={<ChartSkeleton />}>
-						{selectedMarket && (
-							<KlineChart
-								symbol={selectedMarket.name}
-								positionDex={getPositionDex(selectedMarket)}
-								theme={theme === "dark" ? "dark" : "light"}
-								yAxisInside
-							/>
-						)}
-					</Suspense>
-				</ClientOnly>
+				<ChartPanel yAxisInside />
 			</div>
 
 			<MobileBottomNavSpacer />
@@ -130,8 +108,4 @@ function StatPill({ label, value }: { label: string; value: string }) {
 			<span className="tabular-nums text-fg text-xs">{value}</span>
 		</div>
 	);
-}
-
-function ChartSkeleton() {
-	return <div className="w-full h-full animate-pulse bg-surface" />;
 }

@@ -1,6 +1,6 @@
+import {TargetPreviewTable} from "./target-preview-table";
 import {useTradingAccount} from "@/hooks/use-trading-account";
 import {HelpTip} from "./help-tip";
-import {AutoTraderMarketLabel} from "./market-label";
 import { closeNow } from "@/lib/auto-trader/close-now";
 import { useSubmitPlan } from "@/hooks/trade/use-submit-plan";
 import { Trans } from "@lingui/react/macro";
@@ -16,7 +16,6 @@ import { sealAgentKey } from "@/lib/auto-trader/api";
 import { useAutoTraderMutation, useAutoTraderSignal, useAutoTraderStatus } from "@/lib/auto-trader/hooks";
 import { accountEquity, EXECUTOR_MARKETS, allowedMarkets, targetRows, validateSettings } from "@/lib/auto-trader/targets";
 import type { AutoTraderSettings } from "@/lib/auto-trader/types";
-import { TargetActionTooltip } from "./target-action-tooltip";
 import { SettingsCard, autoButton } from "./settings-card";
 import { StatusCard, money } from "./status-card";
 
@@ -178,7 +177,7 @@ function AutoTraderAccount({master}:{master:Address}){
   {message&&<p role="status" className="rounded-lg border border-stroke-weak p-3 text-sm text-brand">{message}</p>}
   {status.data?<StatusCard status={{...status.data,isSubaccount:!!subaccount||status.data.isSubaccount}} />:status.isLoading?<p className="text-sm text-fg-muted"><Trans>Loading Auto Trader status…</Trans></p>:null}
   <section aria-label="Auto Trader preview" className="space-y-3 rounded-xl border border-stroke-weak bg-surface p-4"><h3 className="text-sm font-semibold"><Trans>Target preview</Trans></h3><p className="text-xs text-fg-muted"><Trans>Preview uses your current form settings and public scores. The executor's verified cycle above is authoritative; prices, rounding and signal timing can differ.</Trans></p>
-   {preview?<div className="overflow-x-auto"><table className="w-full whitespace-nowrap text-left text-xs"><thead><tr>{["Market","Score","Target","Current","Gap","Action"].map(h=><th className="pb-2 pr-4 font-normal text-fg-muted" key={h}>{h}<HelpTip label={h} /></th>)}</tr></thead><tbody>{preview.map(row=><tr key={row.coin}><td className="py-1.5 pr-4"><AutoTraderMarketLabel coin={row.coin} /></td><td className="pr-4">{row.score??"—"}</td><td className="pr-4">{money(row.target)}</td><td className="pr-4">{money(row.current)}</td><td className="pr-4">{money(row.gap)}</td><td><div className="flex items-center gap-1">{row.actions.map(action=><TargetActionTooltip key={action} row={row} action={action} minOrderUsd={settings.minOrderUsd} unsaved={hasChanges} executionNote={executionNote} />)}</div></td></tr>)}</tbody></table></div>:<p className="text-xs text-fg-muted"><Trans>Waiting for valid settings, account balances, prices and signal data. No target values are assumed.</Trans></p>}
+   <TargetPreviewTable rows={preview} minOrderUsd={settings.minOrderUsd} unsaved={hasChanges} executionNote={executionNote} refreshing={[main,xyz,spot,mode,mids,xyzMids,signal].some(query=>query.isFetching)} />
    <p className="text-xs text-fg-muted">{allowedMarkets(settings,EXECUTOR_MARKETS).length} markets · {settings.leverage}x · allocation per market at score ±100: {money(equity===null?null:equity*settings.leverage/Math.max(allowedMarkets(settings,EXECUTOR_MARKETS).length,1))}</p>
    <p className="text-xs text-fg-muted"><Trans>Directional target = equity × leverage ÷ selected markets × score/100. Neutral signals hold existing positions unchanged; their target equals current exposure and no order is sent. Only the executor’s 12 supported markets count toward allocation; SOXL is excluded. Resizes try post-only orders, then IOC fallback after 60 seconds. Close legs use IOC within 1% of mid and are submitted before flip opening legs. The minimum order applies except for full closes.</Trans></p>
   </section>
