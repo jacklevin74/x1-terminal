@@ -51,7 +51,7 @@ export function MobileNavDrawer() {
 				<ListIcon className="size-4" />
 			</ButtonIcon>
 
-			<Drawer side="left" open={open} onOpenChange={setOpen}>
+			<Drawer side="right" open={open} onOpenChange={setOpen}>
 				<DrawerContent className="w-4/5 max-w-72 flex flex-col p-0">
 					<div className="h-12 px-3 flex items-center justify-between border-b border-stroke-weak shrink-0">
 						<X1TerminalLogo />
@@ -103,6 +103,22 @@ export function MobileNavDrawer() {
 								</div>
 							))}
 						</nav>
+
+						<div className="mx-3 border-t border-stroke-weak" />
+
+						<div className="px-1">
+							<button
+								type="button"
+								onClick={() => {
+									openSettingsDialog();
+									close();
+								}}
+								className="h-10 w-full flex items-center gap-3 px-2 rounded-8 text-sm text-fg-muted transition-colors duration-150 hover:text-fg hover:bg-control motion-reduce:transition-none"
+							>
+								<GearIcon className="size-4 shrink-0" />
+								<Trans>Settings</Trans>
+							</button>
+						</div>
 					</div>
 
 					<div className="shrink-0 p-3 border-t border-stroke-weak flex flex-col gap-2 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
@@ -132,20 +148,6 @@ export function MobileNavDrawer() {
 								<Trans>Connect Wallet</Trans>
 							</Button>
 						)}
-						<div className="flex items-center justify-between">
-							<ButtonIcon
-								variant="ghost"
-								intent="neutral"
-								size="sm"
-								aria-label="Settings"
-								onClick={() => {
-									openSettingsDialog();
-									close();
-								}}
-							>
-								<GearIcon className="size-4" />
-							</ButtonIcon>
-						</div>
 					</div>
 				</DrawerContent>
 			</Drawer>

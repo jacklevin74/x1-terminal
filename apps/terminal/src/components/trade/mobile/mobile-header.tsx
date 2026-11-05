@@ -1,49 +1,26 @@
-import { ButtonIcon } from "@hypeterminal/ui";
-import { BellIcon, GearIcon } from "@phosphor-icons/react";
 import { APP_HEADER_HEIGHT_CLASS } from "@/config/layout";
-import { UI_TEXT } from "@/config/ui-text";
 import { cn } from "@/lib/cn";
-import { useSettingsDialogActions } from "@/stores/use-global-modal-store";
 import { UserMenu } from "../header/user-menu";
 import X1TerminalLogo from "../header/x1-terminal-logo";
 import { MobileNavDrawer } from "./mobile-nav-drawer";
-
-const TOP_NAV_TEXT = UI_TEXT.TOP_NAV;
 
 interface Props {
 	className?: string;
 }
 
 export function MobileHeader({ className }: Props) {
-	const { open: openSettingsDialog } = useSettingsDialogActions();
-
 	return (
 		<header className={cn("pt-[env(safe-area-inset-top)]", "sticky top-0 z-40 bg-surface", className)}>
 			<div
 				className={cn(
 					APP_HEADER_HEIGHT_CLASS,
-					"box-border px-3 flex items-center justify-between gap-2 border-b border-stroke-weak",
+					"box-border pl-4 pr-2 flex items-center justify-between gap-3 border-b border-stroke-weak",
 				)}
 			>
-				<div className="flex min-w-0 items-center gap-2">
-					<MobileNavDrawer />
-					<X1TerminalLogo />
-				</div>
-
+				<X1TerminalLogo />
 				<div className="flex shrink-0 items-center gap-1">
 					<UserMenu />
-					<ButtonIcon variant="ghost" intent="neutral" size="sm" aria-label={TOP_NAV_TEXT.NOTIFICATIONS_ARIA}>
-						<BellIcon className="size-4" />
-					</ButtonIcon>
-					<ButtonIcon
-						variant="ghost"
-						intent="neutral"
-						size="sm"
-						aria-label={TOP_NAV_TEXT.SETTINGS_ARIA}
-						onClick={openSettingsDialog}
-					>
-						<GearIcon className="size-4" />
-					</ButtonIcon>
+					<MobileNavDrawer />
 				</div>
 			</div>
 		</header>

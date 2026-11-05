@@ -84,7 +84,7 @@ export function UserMenu() {
 				trigger={
 					<span className="inline-flex items-center gap-2 whitespace-nowrap">
 						<WalletLabel derived={derived} demo={demo} />
-						<span className={cn(demo && "max-[379px]:text-warning")}>
+						<span>
 							{address.slice(0, 4)}
 							<span className="max-md:hidden">{address.slice(4, 6)}</span>…{address.slice(-4)}
 						</span>
@@ -114,7 +114,7 @@ export function UserMenu() {
 }
 
 function WalletLabel({ derived, demo }: { derived: boolean; demo: boolean }) {
-	if (demo) return <span className="text-warning max-[379px]:hidden">Demo</span>;
+	if (demo) return <span className="text-warning">Demo</span>;
 	if (derived) return <X1Tile size={18} />;
 	return <span className="text-fg-muted max-md:hidden">Phantom</span>;
 }
