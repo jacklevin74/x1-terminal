@@ -3,6 +3,7 @@ import { t } from "@lingui/core/macro";
 import { Suspense, useCallback, useEffect, useId, useState } from "react";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/cn";
 import type { UnifiedMarketInfo } from "@/lib/hyperliquid";
 import { createLazyComponent } from "@/lib/lazy";
 import { MARKET_SELECTOR_TRIGGER_CLASSNAME, TokenSelectorTriggerContent } from "./token-selector-trigger";
@@ -86,7 +87,7 @@ export function TokenSelector({ selectedMarket, onValueChange }: TokenSelectorPr
 					aria-expanded={open}
 					aria-controls={popupId}
 					aria-label={t`Select token`}
-					className={MARKET_SELECTOR_TRIGGER_CLASSNAME}
+					className={cn(MARKET_SELECTOR_TRIGGER_CLASSNAME, "-ml-2")}
 					onPointerEnter={preloadPopup}
 					onPointerDown={preloadPopup}
 					onFocus={preloadPopup}
