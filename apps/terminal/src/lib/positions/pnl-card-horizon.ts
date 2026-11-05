@@ -429,7 +429,7 @@ export function buildPnlCardSvg(data: PnlCardData): string {
 	const roeRight = roeInkRight(roe, left);
 	parts.push(`<rect width="${CARD_WIDTH}" height="${CARD_HEIGHT}" fill="${GROUND}"/>`);
 	parts.push(background(gain, roeRight));
-	parts.push(logo(left, 52, 36, FG));
+	parts.push(logo(left, 57, 28, FG));
 	parts.push(microLabel(right, capBaseline(74, 16), "Position snapshot", MUTED, "end"));
 
 	const symbolSize = fitSize(data.symbol, 640, 40, 600);
