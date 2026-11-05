@@ -537,16 +537,10 @@
   }
 
   .depth-bar-ask {
-    background: linear-gradient(90deg, transparent 0%, oklch(from var(--text-error) l c h / 0.16) 100%);
+    background: color-mix(in oklab, var(--market-down) 16%, var(--bg-raised));
   }
   .depth-bar-bid {
-    background: linear-gradient(90deg, oklch(from var(--text-success) l c h / 0.16) 0%, transparent 100%);
-  }
-  .dark .depth-bar-ask {
-    background: linear-gradient(90deg, transparent 0%, oklch(from var(--text-error) l c h / 0.16) 100%);
-  }
-  .dark .depth-bar-bid {
-    background: linear-gradient(90deg, oklch(from var(--text-success) l c h / 0.16) 0%, transparent 100%);
+    background: color-mix(in oklab, var(--market-up) 16%, var(--bg-raised));
   }
 
   .trade-row-buy,
