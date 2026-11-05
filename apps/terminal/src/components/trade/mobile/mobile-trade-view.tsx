@@ -13,6 +13,7 @@ import { UI_TEXT } from "@/config/ui-text";
 import { get24hChange } from "@/domain/market";
 import { getLiquidationInfo } from "@/domain/trade/order/metrics";
 import { getSliderValue } from "@/domain/trade/order/size";
+import { getMidPx, useDefaultLimitPrice } from "@/hooks/trade/use-default-limit-price";
 import { useFeeRates } from "@/hooks/trade/use-fee-rates";
 import { useOrderEntryData } from "@/hooks/trade/use-order-entry-data";
 import { useOrderSubmit } from "@/hooks/trade/use-order-submit";
@@ -98,6 +99,15 @@ export function MobileTradeView({ className }: Props) {
 	const { handleSubmit: submitOrder, isSubmitting } = useOrderSubmit();
 
 	const usesLimitPrice = usesLimitPriceForOrder(orderType);
+	useDefaultLimitPrice({
+		form: "mobile",
+		marketName: market?.name,
+		midPx: getMidPx(market),
+		szDecimals: market?.szDecimals,
+		active: usesLimitPrice,
+		value: limitPriceInput,
+		setValue: setLimitPriceInput,
+	});
 	const isMarketExecution = orderType === "market" || isTakerOrderType(orderType);
 	const markPx = toNumberOrZero(market?.markPx);
 
@@ -411,7 +421,7 @@ export function MobileTradeView({ className }: Props) {
 							value={limitPriceInput}
 							onChange={(e: ChangeEvent<HTMLInputElement>) => setLimitPriceInput(e.target.value)}
 							onMidClick={setLimitPriceInput}
-							midPrice={markPx}
+							midPrice={getMidPx(market)}
 							szDecimals={market?.szDecimals}
 							disabled={isFormDisabled}
 						/>

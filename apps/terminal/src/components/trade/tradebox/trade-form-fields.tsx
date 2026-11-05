@@ -9,6 +9,7 @@ import { PriceInput } from "@/components/ui/price-input";
 import { FALLBACK_VALUE_PLACEHOLDER } from "@/config/app";
 import { ORDER_MIN_NOTIONAL_USD, SIZE_PERCENT_OPTIONS } from "@/config/trade";
 import { getSliderValue } from "@/domain/trade/order/size";
+import { getMidPx, useDefaultLimitPrice } from "@/hooks/trade/use-default-limit-price";
 import { useOrderEntryData } from "@/hooks/trade/use-order-entry-data";
 import { formatToken } from "@/lib/format";
 import { useSelectedMarketInfo } from "@/lib/hyperliquid";
@@ -75,6 +76,7 @@ export function TradeFormFields({
 	const tpSlEnabled = useTpSlEnabled();
 
 	const markPx = toNumberOrZero(market?.markPx);
+	const midPx = getMidPx(market);
 
 	const {
 		isSpotMarket,
@@ -97,6 +99,15 @@ export function TradeFormFields({
 	const twapOrder = isTwapOrderType(orderType);
 	const scaleOrder = isScaleOrderType(orderType);
 	const usesLimitPrice = usesLimitPriceForOrder(orderType);
+	useDefaultLimitPrice({
+		form: "desktop",
+		marketName: market?.name,
+		midPx: getMidPx(market),
+		szDecimals: szDecimals,
+		active: usesLimitPrice,
+		value: limitPriceInput,
+		setValue: setLimitPrice,
+	});
 	const usesTriggerPrice = usesTriggerPriceForOrder(orderType);
 	const canUseTpSl = canUseTpSlForOrder(orderType);
 	const showTif = orderType === "limit" || orderType === "scale";
@@ -189,7 +200,7 @@ export function TradeFormFields({
 					value={limitPriceInput}
 					onChange={(e) => setLimitPrice(e.target.value)}
 					onMidClick={setLimitPrice}
-					midPrice={markPx}
+					midPrice={midPx}
 					szDecimals={szDecimals}
 					invalid={!price && sizeValue > 0}
 					disabled={isFormDisabled}
