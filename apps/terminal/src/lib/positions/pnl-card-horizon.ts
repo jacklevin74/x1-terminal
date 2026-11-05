@@ -135,6 +135,7 @@ function cardFrame(defs: string, body: string): string {
 export const NAME = "Low camera, monolith, glossy mirror";
 
 const MARK_GAP = 48;
+const ROE_MAX_RIGHT = 700;
 
 interface Palette {
 	deep: string;
@@ -186,11 +187,6 @@ function palette(gain: boolean): Palette {
 
 function blurFilter(id: string, deviation: number): string {
 	return `<filter id="${id}" filterUnits="userSpaceOnUse" x="-900" y="-900" width="3000" height="2560" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="${deviation}"/></filter>`;
-}
-
-function roeInkRight(roe: string, left: number): number {
-	const size = fitSize(roe, 780, 156, 600, -0.03);
-	return inkX(left, roe, size, 600) + textWidth(roe, size, 600, -0.03);
 }
 
 function placeMark(
@@ -426,9 +422,8 @@ export function buildPnlCardSvg(data: PnlCardData): string {
 	const left = 64;
 	const right = CARD_WIDTH - 64;
 	const parts: string[] = [];
-	const roeRight = roeInkRight(roe, left);
 	parts.push(`<rect width="${CARD_WIDTH}" height="${CARD_HEIGHT}" fill="${GROUND}"/>`);
-	parts.push(background(gain, roeRight));
+	parts.push(background(gain, ROE_MAX_RIGHT));
 	parts.push(logo(left, 57, 28, FG));
 	parts.push(microLabel(right, capBaseline(74, 16), "Position snapshot", MUTED, "end"));
 
@@ -440,7 +435,7 @@ export function buildPnlCardSvg(data: PnlCardData): string {
 	parts.push(
 		`<text x="${inkX(left, sideLine, 20, 600)}" y="262" font-size="20" font-weight="600" letter-spacing="1.2" fill="${accent}">${xml(sideLine)}</text>`,
 	);
-	const roeSize = fitSize(roe, 780, 156, 600, -0.03);
+	const roeSize = fitSize(roe, ROE_MAX_RIGHT - left, 156, 600, -0.03);
 	parts.push(
 		`<text x="${inkX(left, roe, roeSize, 600)}" y="430" font-size="${roeSize}" font-weight="600" letter-spacing="${-0.03 * roeSize}" fill="${accent}">${xml(roe)}</text>`,
 	);
@@ -469,6 +464,6 @@ export function buildPnlCardSvg(data: PnlCardData): string {
 	parts.push(
 		`<text x="${right}" y="714" font-size="15" font-weight="500" fill="${MUTED}" text-anchor="end">terminal.x1.xyz</text>`,
 	);
-	const defs = backgroundDefs(gain, roeRight);
+	const defs = backgroundDefs(gain, ROE_MAX_RIGHT);
 	return cardFrame(defs, parts.join(""));
 }
