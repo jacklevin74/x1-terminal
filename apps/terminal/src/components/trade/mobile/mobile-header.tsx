@@ -5,7 +5,7 @@ import { UI_TEXT } from "@/config/ui-text";
 import { cn } from "@/lib/cn";
 import { useSettingsDialogActions } from "@/stores/use-global-modal-store";
 import { UserMenu } from "../header/user-menu";
-import { X1Tile } from "../header/x1-terminal-logo";
+import X1TerminalLogo from "../header/x1-terminal-logo";
 import { MobileNavDrawer } from "./mobile-nav-drawer";
 
 const TOP_NAV_TEXT = UI_TEXT.TOP_NAV;
@@ -25,12 +25,12 @@ export function MobileHeader({ className }: Props) {
 					"box-border px-3 flex items-center justify-between gap-2 border-b border-stroke-weak",
 				)}
 			>
-				<div className="flex items-center gap-2">
+				<div className="flex min-w-0 items-center gap-2">
 					<MobileNavDrawer />
-					<X1Tile />
+					<X1TerminalLogo />
 				</div>
 
-				<div className="flex items-center gap-1">
+				<div className="flex shrink-0 items-center gap-1">
 					<UserMenu />
 					<ButtonIcon variant="ghost" intent="neutral" size="sm" aria-label={TOP_NAV_TEXT.NOTIFICATIONS_ARIA}>
 						<BellIcon className="size-4" />

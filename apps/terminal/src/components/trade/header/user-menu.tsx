@@ -25,7 +25,7 @@ export function UserMenu() {
 					intent="brand"
 					size="sm"
 					onClick={() => setOpen(true)}
-					className={cn(APP_BAR_BUTTON_HEIGHT_CLASS, "text-sm font-semibold max-md:h-10 max-md:min-h-10")}
+					className={cn(APP_BAR_BUTTON_HEIGHT_CLASS, "text-sm font-semibold")}
 				>
 					Connect Wallet
 				</Button>
@@ -80,12 +80,13 @@ export function UserMenu() {
 				align="end"
 				size="sm"
 				triggerAriaLabel="Account and wallet"
-				triggerClassName="tabular-nums"
+				triggerClassName="tabular-nums max-md:h-8 max-md:px-2.5 max-md:[&>svg:last-child]:hidden"
 				trigger={
-					<span className="inline-flex items-center gap-2">
+					<span className="inline-flex items-center gap-2 whitespace-nowrap">
 						<WalletLabel derived={derived} demo={demo} />
-						<span>
-							{address.slice(0, 6)}…{address.slice(-4)}
+						<span className={cn(demo && "max-[379px]:text-warning")}>
+							{address.slice(0, 4)}
+							<span className="max-md:hidden">{address.slice(4, 6)}</span>…{address.slice(-4)}
 						</span>
 					</span>
 				}
@@ -113,9 +114,9 @@ export function UserMenu() {
 }
 
 function WalletLabel({ derived, demo }: { derived: boolean; demo: boolean }) {
-	if (demo) return <span className="text-warning">Demo</span>;
+	if (demo) return <span className="text-warning max-[379px]:hidden">Demo</span>;
 	if (derived) return <X1Tile size={18} />;
-	return <span className="text-fg-muted">Phantom</span>;
+	return <span className="text-fg-muted max-md:hidden">Phantom</span>;
 }
 
 function getAccountLabel(derived: boolean, demo: boolean) {
