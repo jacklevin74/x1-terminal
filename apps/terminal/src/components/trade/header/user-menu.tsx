@@ -1,8 +1,10 @@
 import { Button, Dropdown } from "@hypeterminal/ui";
-import { CopyIcon, KeyIcon, SignOutIcon, SlidersHorizontalIcon } from "@phosphor-icons/react";
+import { KeyIcon, SignOutIcon, SlidersHorizontalIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useConnection, useDisconnect } from "wagmi";
+import { CopyStateIcon } from "@/components/ui/copy-state-icon";
 import { APP_BAR_BUTTON_HEIGHT_CLASS } from "@/config/layout";
+import { useCopyToClipboard } from "@/hooks/ui/use-copy-to-clipboard";
 import { cn } from "@/lib/cn";
 import { exitDemoMode } from "@/lib/demo/demo-mode";
 import { removeAgentFromStorage } from "@/lib/hyperliquid";
@@ -16,6 +18,7 @@ export function UserMenu() {
 	const { mutate: disconnect } = useDisconnect();
 	const [open, setOpen] = useState(false);
 	const [exportOpen, setExportOpen] = useState(false);
+	const { copied, copy } = useCopyToClipboard();
 
 	if (!isConnected || !address) {
 		return (
@@ -53,9 +56,10 @@ export function UserMenu() {
 	const accountItems = [
 		{
 			label: `Copy ${address}`,
-			icon: <CopyIcon className="size-4" />,
+			icon: <CopyStateIcon copied={copied} announcement="Address copied" />,
+			closeOnClick: false,
 			onSelect: () => {
-				void navigator.clipboard.writeText(address);
+				void copy(address);
 			},
 		},
 		{

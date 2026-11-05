@@ -16,7 +16,6 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import {
 	CheckIcon,
-	CopyIcon,
 	DeviceMobileIcon,
 	KeyIcon,
 	QrCodeIcon,
@@ -26,6 +25,8 @@ import {
 } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import { useConnection } from "wagmi";
+import { CopyStateIcon } from "@/components/ui/copy-state-icon";
+import { CopySwapLabel } from "@/components/ui/copy-swap-label";
 import { useCopyToClipboard } from "@/hooks/ui/use-copy-to-clipboard";
 import { shortenAddress } from "@/lib/format";
 import { useAgentWalletActions, useAgentWalletStorage, useExchange, useHyperliquid } from "@/lib/hyperliquid";
@@ -63,8 +64,8 @@ export function MobileAgentSyncModal({ open, onOpenChange }: MobileAgentSyncModa
 	const localAgent = useAgentWalletStorage(env, address);
 	const { clearAgent } = useAgentWalletActions();
 	const approveAgent = useExchange("approveAgent");
-	const { copied: copiedPhoneLink, copy: copyPhoneLink } = useCopyToClipboard(1500);
-	const { copied: copiedPairingCode, copy: copyPairingCode } = useCopyToClipboard(1500);
+	const { copied: copiedPhoneLink, copy: copyPhoneLink } = useCopyToClipboard();
+	const { copied: copiedPairingCode, copy: copyPairingCode } = useCopyToClipboard();
 	const [syncState, setSyncState] = useState<SyncState>({ status: "idle" });
 	const [resetState, setResetState] = useState<ResetState>({ status: "idle" });
 	const [showQr, setShowQr] = useState(false);
@@ -399,10 +400,10 @@ function ReadySyncPanel({
 						intent="neutral"
 						size="sm"
 						onClick={onCopyPairingCode}
-						iconLeft={copiedPairingCode ? <CheckIcon className="size-3.5" /> : <CopyIcon className="size-3.5" />}
+						iconLeft={<CopyStateIcon copied={copiedPairingCode} className="size-3.5" />}
 						className="shrink-0"
 					>
-						{copiedPairingCode ? <Trans>Copied</Trans> : <Trans>Copy code</Trans>}
+						<CopySwapLabel copied={copiedPairingCode} idle={<Trans>Copy code</Trans>} done={<Trans>Copied</Trans>} />
 					</Button>
 				</div>
 				<p className="mt-2 select-all rounded-8 border border-stroke-weak bg-background px-3 py-2 text-center font-mono text-base font-semibold tracking-[0.12em] text-fg">
@@ -446,10 +447,10 @@ function ReadySyncPanel({
 					intent="neutral"
 					size="sm"
 					onClick={onCopyPhoneLink}
-					iconLeft={copiedPhoneLink ? <CheckIcon className="size-3.5" /> : <CopyIcon className="size-3.5" />}
+					iconLeft={<CopyStateIcon copied={copiedPhoneLink} className="size-3.5" />}
 					className="w-full"
 				>
-					{copiedPhoneLink ? <Trans>Copied</Trans> : <Trans>Copy phone link</Trans>}
+					<CopySwapLabel copied={copiedPhoneLink} idle={<Trans>Copy phone link</Trans>} done={<Trans>Copied</Trans>} />
 				</Button>
 				<Button
 					type="button"

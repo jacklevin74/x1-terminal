@@ -2,7 +2,10 @@ import { Button } from "@hypeterminal/ui";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useId, useRef, useState } from "react";
 import { useConnection } from "wagmi";
+import { CopyStateIcon } from "@/components/ui/copy-state-icon";
+import { CopySwapLabel } from "@/components/ui/copy-swap-label";
 import { NumberInput } from "@/components/ui/number-input";
+import { useCopyToClipboard } from "@/hooks/ui/use-copy-to-clipboard";
 import { formatDepositAddressError } from "@/lib/jurisdiction";
 import { readSolDepositBalance } from "@/lib/solana/deposit-balance";
 import { sendSolDeposit } from "@/lib/solana/phantom-deposit";
@@ -64,7 +67,7 @@ function SolDepositAccount({ recipient, compact }: { recipient: `0x${string}`; c
 	const [signature, setSignature] = useState<string | null>(null);
 	const [confirmed, setConfirmed] = useState(false);
 	const [confirmationNotice, setConfirmationNotice] = useState<string | null>(null);
-	const [copied, setCopied] = useState(false);
+	const { copied, copy } = useCopyToClipboard();
 	const deposit = useQuery({
 		queryKey: ["unit-sol-deposit", "mainnet", recipient],
 		queryFn: ({ signal }) => fetchSolDepositAddress(recipient, signal),
@@ -248,16 +251,12 @@ function SolDepositAccount({ recipient, compact }: { recipient: `0x${string}`; c
 							intent="neutral"
 							size="sm"
 							className="w-full"
-							onClick={async () => {
-								try {
-									await navigator.clipboard.writeText(deposit.data);
-									setCopied(true);
-								} catch {
-									setError("Could not copy. Select the address to copy it manually.");
-								}
-							}}
+							iconLeft={<CopyStateIcon copied={copied} className="size-3.5" />}
+							onClick={() =>
+								void copy(deposit.data, () => setError("Could not copy. Select the address to copy it manually."))
+							}
 						>
-							{copied ? "Copied" : "Copy SOL deposit address"}
+							<CopySwapLabel copied={copied} idle="Copy SOL deposit address" done="Copied" />
 						</Button>
 						<p className="break-all">
 							Hyperliquid account: <span className="text-fg tabular-nums">{recipient}</span>

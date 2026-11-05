@@ -1,14 +1,16 @@
 import { Button, ButtonIcon, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
-import { ArrowSquareOutIcon, CopyIcon } from "@phosphor-icons/react";
+import { ArrowSquareOutIcon } from "@phosphor-icons/react";
 import { useMemo, useState } from "react";
 import { hyperEvm } from "viem/chains";
 import { useConnection } from "wagmi";
+import { CopyStateIcon } from "@/components/ui/copy-state-icon";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { DEFAULT_QUOTE_TOKEN, HL_ALL_DEXS } from "@/config/app";
 import { SMALL_BALANCE_THRESHOLD_USD } from "@/config/trade";
 import { type BalanceRow, getPerpBalanceRows, getSpotBalanceRows, getTotalUsdValue } from "@/domain/trade/balances";
 import { useDefaultDexBalances } from "@/hooks/trade/use-account-balances";
+import { useCopyToClipboard } from "@/hooks/ui/use-copy-to-clipboard";
 import { cn } from "@/lib/cn";
 import { formatToken, formatUSD } from "@/lib/format";
 import { useSubscription } from "@/lib/hyperliquid";
@@ -51,6 +53,8 @@ export function BalancesTab() {
 	const [assetFilter, setAssetFilter] = useState("");
 	const [descending, setDescending] = useState(true);
 	const [copyError, setCopyError] = useState<string | null>(null);
+	const [copiedContract, setCopiedContract] = useState<string | null>(null);
+	const { copied, copy } = useCopyToClipboard();
 	const hideSmallBalances = useHideSmallBalances();
 	const { setHideSmallBalances } = useGlobalSettingsActions();
 	const { open: openSwapModal } = useSwapModalActions();
@@ -126,11 +130,8 @@ export function BalancesTab() {
 
 	async function copyContract(contract: string) {
 		setCopyError(null);
-		try {
-			await navigator.clipboard.writeText(contract);
-		} catch {
-			setCopyError("Could not copy the contract address.");
-		}
+		setCopiedContract(contract);
+		await copy(contract, () => setCopyError("Could not copy the contract address."));
 	}
 
 	function renderBalanceRow(row: BalanceRow) {
@@ -215,7 +216,7 @@ export function BalancesTab() {
 								className="text-fg-muted hover:text-fg"
 								onClick={() => void copyContract(contract)}
 							>
-								<CopyIcon className="size-3" />
+								<CopyStateIcon copied={copied && copiedContract === contract} className="size-3" />
 							</ButtonIcon>
 						</span>
 					) : (

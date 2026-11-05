@@ -3,6 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useId, useState } from "react";
 import { useConnection, useSendTransaction, useSwitchChain, useWaitForTransactionReceipt } from "wagmi";
 import { mainnet } from "wagmi/chains";
+import { CopyStateIcon } from "@/components/ui/copy-state-icon";
+import { CopySwapLabel } from "@/components/ui/copy-swap-label";
+import { useCopyToClipboard } from "@/hooks/ui/use-copy-to-clipboard";
 import { formatDepositAddressError } from "@/lib/jurisdiction";
 import {
 	fetchEthDepositAddress,
@@ -38,7 +41,7 @@ function EthDepositAccount({ recipient }: { recipient: `0x${string}` }) {
 	const receipt = useWaitForTransactionReceipt({ hash, chainId: mainnet.id, query: { enabled: !!hash } });
 	const [amount, setAmount] = useState("");
 	const [error, setError] = useState<string | null>(null);
-	const [copied, setCopied] = useState(false);
+	const { copied, copy } = useCopyToClipboard();
 	const depositAddress = useQuery({
 		queryKey: ["unit-eth-deposit", "mainnet", recipient],
 		queryFn: ({ signal }) => fetchEthDepositAddress(recipient, signal),
@@ -88,16 +91,14 @@ function EthDepositAccount({ recipient }: { recipient: `0x${string}` }) {
 						intent="neutral"
 						size="sm"
 						className="w-full"
-						onClick={async () => {
-							try {
-								await navigator.clipboard.writeText(depositAddress.data);
-								setCopied(true);
-							} catch {
-								setError("Could not copy. Select the address above to copy it manually.");
-							}
-						}}
+						iconLeft={<CopyStateIcon copied={copied} className="size-3.5" />}
+						onClick={() =>
+							void copy(depositAddress.data, () =>
+								setError("Could not copy. Select the address above to copy it manually."),
+							)
+						}
 					>
-						{copied ? "Copied" : "Copy ETH deposit address"}
+						<CopySwapLabel copied={copied} idle="Copy ETH deposit address" done="Copied" />
 					</Button>
 					<p className="text-fg-muted">
 						You can send from another Ethereum wallet or exchange to this address. It credits the Hyperliquid account

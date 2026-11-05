@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useConnection } from "wagmi";
 import { CopyStateIcon } from "@/components/ui/copy-state-icon";
+import { useCopyToClipboard } from "@/hooks/ui/use-copy-to-clipboard";
 import { formatDepositAddressError } from "@/lib/jurisdiction";
 import { fetchEthDepositAddress, fetchEthDepositFees, MIN_ETH_DEPOSIT } from "@/lib/unit/eth-deposit";
 import { fetchSolDepositAddress, fetchSolDepositFees, MIN_SOL_DEPOSIT } from "@/lib/unit/sol-deposit";
@@ -29,7 +30,7 @@ export function NativeDepositModal({ open, onClose }: Props) {
 	const { address } = useConnection();
 	const testnet = useIsTestnet();
 	const [asset, setAsset] = useState<"ETH" | "SOL">("ETH");
-	const [copied, setCopied] = useState(false);
+	const { copied, copy, reset } = useCopyToClipboard();
 	const [copyError, setCopyError] = useState(false);
 	const chain = asset === "ETH" ? "Ethereum" : "Solana";
 	const minimum = asset === "ETH" ? MIN_ETH_DEPOSIT : MIN_SOL_DEPOSIT;
@@ -52,20 +53,13 @@ export function NativeDepositModal({ open, onClose }: Props) {
 		retry: false,
 	});
 	useEffect(() => {
-		setCopied(false);
+		reset();
 		setCopyError(false);
-	}, [address, asset, open]);
+	}, [address, asset, open, reset]);
 
 	async function copyAddress() {
 		if (!deposit.data) return;
-		try {
-			await navigator.clipboard.writeText(deposit.data);
-			setCopied(true);
-			setCopyError(false);
-			setTimeout(() => setCopied(false), 1500);
-		} catch {
-			setCopyError(true);
-		}
+		if (await copy(deposit.data, () => setCopyError(true))) setCopyError(false);
 	}
 
 	return (
@@ -118,11 +112,10 @@ export function NativeDepositModal({ open, onClose }: Props) {
 									onClick={() => void copyAddress()}
 								>
 									<span className="break-all">{deposit.data ?? "Generating deposit address…"}</span>
-									{deposit.data && <CopyStateIcon copied={copied} />}
+									{deposit.data && <CopyStateIcon copied={copied} announcement="Address copied" />}
 								</button>
 							)}
 							{asset === "SOL" && deposit.data && <SolDeposit compact />}
-							<output className="sr-only">{copied ? "Address copied" : ""}</output>
 							{copyError && (
 								<p role="alert" className="text-center text-xs text-market-down">
 									Copy unavailable. Select the address and copy it manually.

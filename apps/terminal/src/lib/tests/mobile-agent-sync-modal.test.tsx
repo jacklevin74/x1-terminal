@@ -240,7 +240,7 @@ describe("MobileAgentSyncModal", () => {
 		await flushAsyncWork();
 
 		expect(testState.writeClipboard).toHaveBeenCalledWith(PAIRING_CODE);
-		expect(container.textContent).toContain("Copied");
+		expect(getButton(container, "Copy code").querySelector(".invisible")?.textContent).toBe("Copy code");
 
 		act(() => {
 			getButton(container, "Copy phone link").click();

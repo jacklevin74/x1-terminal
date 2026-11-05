@@ -1,6 +1,9 @@
 import { Button, Checkbox, Modal, ModalContent, ModalPopup, ModalTitle } from "@hypeterminal/ui";
 import { WarningIcon } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
+import { CopyStateIcon } from "@/components/ui/copy-state-icon";
+import { CopySwapLabel } from "@/components/ui/copy-swap-label";
+import { useCopyToClipboard } from "@/hooks/ui/use-copy-to-clipboard";
 import { exportX1PrivateKey } from "@/lib/x1/provider";
 
 interface Props {
@@ -12,12 +15,12 @@ export function ExportKeyModal({ address, onClose }: Props) {
 	const [acknowledged, setAcknowledged] = useState(false);
 	const [key, setKey] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
-	const [copied, setCopied] = useState(false);
+	const { copied, copy, reset } = useCopyToClipboard();
 	useEffect(() => {
 		const hide = () => {
 			setKey(null);
 			setAcknowledged(false);
-			setCopied(false);
+			reset();
 		};
 		const visibility = () => {
 			if (document.hidden) hide();
@@ -36,7 +39,7 @@ export function ExportKeyModal({ address, onClose }: Props) {
 			window.removeEventListener("storage", sessionChanged);
 			window.clearTimeout(timer);
 		};
-	}, [key, onClose]);
+	}, [key, onClose, reset]);
 
 	function handleReveal() {
 		setError(null);
@@ -49,13 +52,15 @@ export function ExportKeyModal({ address, onClose }: Props) {
 
 	async function handleCopy() {
 		setError(null);
+		function fail() {
+			setError("Could not copy the key. Check the connected account and clipboard permissions.");
+		}
 		try {
 			const current = exportX1PrivateKey(address);
 			if (current !== key) throw new Error("Account changed. Close this window and try again.");
-			await navigator.clipboard.writeText(current);
-			setCopied(true);
+			await copy(current, fail);
 		} catch {
-			setError("Could not copy the key. Check the connected account and clipboard permissions.");
+			fail();
 		}
 	}
 
@@ -125,8 +130,15 @@ export function ExportKeyModal({ address, onClose }: Props) {
 								Hidden after 60 seconds or when you leave this tab. Copying puts the key on your system clipboard;
 								replace the clipboard contents after importing.
 							</p>
-							<Button variant="filled" intent="brand" size="md" className="w-full" onClick={handleCopy}>
-								{copied ? "Private key copied" : "Copy private key"}
+							<Button
+								variant="filled"
+								intent="brand"
+								size="md"
+								className="w-full"
+								iconLeft={<CopyStateIcon copied={copied} announcement="Private key copied" inheritColor />}
+								onClick={handleCopy}
+							>
+								<CopySwapLabel copied={copied} idle="Copy private key" done="Private key copied" />
 							</Button>
 						</div>
 					)}

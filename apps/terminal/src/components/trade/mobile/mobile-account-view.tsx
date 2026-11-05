@@ -2,7 +2,6 @@ import { Badge, Button, ButtonIcon } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import {
 	ArrowsLeftRightIcon,
-	CopyIcon,
 	DownloadSimpleIcon,
 	SignOutIcon,
 	UploadSimpleIcon,
@@ -11,6 +10,7 @@ import {
 import { Skeleton } from "boneyard-js/react";
 import { useState } from "react";
 import { useConnection, useDisconnect } from "wagmi";
+import { CopyStateIcon } from "@/components/ui/copy-state-icon";
 import { InfoRow, InfoRowGroup } from "@/components/ui/info-row";
 import { UI_TEXT } from "@/config/ui-text";
 import { useDefaultDexBalances } from "@/hooks/trade/use-account-balances";
@@ -101,7 +101,7 @@ export function MobileAccountView({ className }: MobileAccountViewProps) {
 								onClick={handleCopyAddress}
 								aria-label={t`Copy address`}
 							>
-								<CopyIcon className={cn("size-3.5", copied && "text-market-up")} />
+								<CopyStateIcon copied={copied} announcement={t`Address copied`} className="size-3.5" />
 							</ButtonIcon>
 						</div>
 						<Badge tone="neutral" size="xs" className="self-start">

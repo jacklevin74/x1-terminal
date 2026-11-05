@@ -98,6 +98,7 @@ interface DropdownItem {
 	disabled?: boolean;
 	danger?: boolean;
 	active?: boolean;
+	closeOnClick?: boolean;
 	onSelect?: () => void;
 }
 
@@ -147,6 +148,7 @@ const Dropdown = React.forwardRef<HTMLDivElement, DropdownProps>(
 			<Menu.Item
 				key={item.label}
 				disabled={item.disabled}
+				closeOnClick={item.closeOnClick}
 				onClick={item.onSelect}
 				className={cn(
 					dropdownItemVariants({

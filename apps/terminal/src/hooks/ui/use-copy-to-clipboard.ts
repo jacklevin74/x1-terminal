@@ -1,27 +1,40 @@
 import { t } from "@lingui/core/macro";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
-export function useCopyToClipboard(resetDelay = 5000) {
+export function useCopyToClipboard(resetDelay = 1500) {
 	const [copied, setCopied] = useState(false);
 	const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-	async function copy(text: string) {
+	function clearTimer() {
+		if (timeoutRef.current) {
+			clearTimeout(timeoutRef.current);
+			timeoutRef.current = null;
+		}
+	}
+
+	const reset = useCallback(() => {
+		if (timeoutRef.current) {
+			clearTimeout(timeoutRef.current);
+			timeoutRef.current = null;
+		}
+		setCopied(false);
+	}, []);
+
+	async function copy(text: string, onError?: () => void) {
 		try {
 			await navigator.clipboard.writeText(text);
-			setCopied(true);
-			toast.success(t`Copied to clipboard`);
-
-			if (timeoutRef.current) {
-				clearTimeout(timeoutRef.current);
-			}
-
-			timeoutRef.current = setTimeout(() => {
-				setCopied(false);
-			}, resetDelay);
 		} catch {
-			toast.error(t`Failed to copy`);
+			if (onError) onError();
+			else toast.error(t`Couldn't copy. Select the text and copy it manually.`);
+			return false;
 		}
+		setCopied(true);
+		clearTimer();
+		timeoutRef.current = setTimeout(() => {
+			setCopied(false);
+		}, resetDelay);
+		return true;
 	}
 
 	useEffect(() => {
@@ -32,5 +45,5 @@ export function useCopyToClipboard(resetDelay = 5000) {
 		};
 	}, []);
 
-	return { copied, copy };
+	return { copied, copy, reset };
 }
