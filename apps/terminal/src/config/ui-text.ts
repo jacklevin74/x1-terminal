@@ -307,7 +307,6 @@ export const UI_TEXT = {
 		BUTTON_SELL: "Sell",
 		MODE_CROSS: "Cross",
 		MODE_ISOLATED: "Isolated",
-		MODE_COMING_SOON: "Coming soon",
 		LEVERAGE_ARIA: "Select leverage",
 		ORDER_TYPE_MARKET: "Market",
 		ORDER_TYPE_LIMIT: "Limit",

@@ -1,4 +1,4 @@
-import { Badge, Button, ButtonIcon, Drawer, DrawerContent } from "@hypeterminal/ui";
+import { Button, ButtonIcon, Drawer, DrawerContent } from "@hypeterminal/ui";
 import { Trans } from "@lingui/react/macro";
 import {
 	DownloadSimpleIcon,
@@ -13,7 +13,7 @@ import {
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useConnection } from "wagmi";
-import { SCOPE_NAV_ITEMS, STATIC_NAV_ITEMS } from "@/config/nav";
+import { SCOPE_NAV_ITEMS } from "@/config/nav";
 import { cn } from "@/lib/cn";
 import { useExchangeScope } from "@/providers/exchange-scope";
 import { useDepositModalActions, useSettingsDialogActions } from "@/stores/use-global-modal-store";
@@ -75,7 +75,9 @@ export function MobileNavDrawer() {
 										aria-current={isActive ? "page" : undefined}
 										className={cn(
 											"h-10 flex items-center gap-3 px-2 rounded-8 text-sm transition-colors duration-150 motion-reduce:transition-none",
-											isActive ? cn(item.activeClass, "font-medium") : "text-fg-muted hover:text-fg hover:bg-control",
+											isActive
+												? cn(item.activeClass, "bg-control font-medium")
+												: "text-fg-muted hover:text-fg hover:bg-control",
 										)}
 									>
 										<ScopeIcon scope={item.scope} />
@@ -83,25 +85,6 @@ export function MobileNavDrawer() {
 									</Link>
 								);
 							})}
-						</nav>
-
-						<div className="mx-3 border-t border-stroke-weak" />
-
-						<nav className="px-1 flex flex-col gap-1" aria-label="Platform">
-							<p className="h-6 px-2 flex items-center text-2xs font-normal uppercase tracking-micro text-fg-muted">
-								<Trans>Platform</Trans>
-							</p>
-							{STATIC_NAV_ITEMS.map((item) => (
-								<div
-									key={item.key}
-									className="h-10 flex items-center justify-between px-2 rounded-8 text-sm text-fg-disabled"
-								>
-									<span>{item.label}</span>
-									<Badge tone="neutral" size="xs" className="font-normal text-fg-disabled">
-										<Trans>Soon</Trans>
-									</Badge>
-								</div>
-							))}
 						</nav>
 
 						<div className="mx-3 border-t border-stroke-weak" />

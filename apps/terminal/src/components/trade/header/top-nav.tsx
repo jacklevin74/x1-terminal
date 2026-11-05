@@ -1,4 +1,4 @@
-import { Button, ButtonIcon, Divider, Dropdown } from "@hypeterminal/ui";
+import { Button, ButtonIcon, Dropdown } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { DownloadSimpleIcon, GearIcon } from "@phosphor-icons/react";
@@ -6,7 +6,7 @@ import { Link } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { useConnection } from "wagmi";
 import { APP_BAR_BUTTON_HEIGHT_CLASS, APP_HEADER_HEIGHT_CLASS } from "@/config/layout";
-import { SCOPE_NAV_ITEMS, STATIC_NAV_ITEMS } from "@/config/nav";
+import { SCOPE_NAV_ITEMS } from "@/config/nav";
 import { cn } from "@/lib/cn";
 import { createLazyComponent } from "@/lib/lazy";
 import { useExchangeScope } from "@/providers/exchange-scope";
@@ -50,18 +50,6 @@ export function TopNav() {
 							</Link>
 						);
 					})}
-					<Divider orientation="vertical" className="mx-2 h-4 self-center" />
-					{STATIC_NAV_ITEMS.map((item) => (
-						<button
-							key={item.key}
-							type="button"
-							disabled
-							tabIndex={-1}
-							className={cn(NAV_LINK_CLASS, "cursor-not-allowed text-fg-disabled")}
-						>
-							{item.label}
-						</button>
-					))}
 				</nav>
 			</div>
 

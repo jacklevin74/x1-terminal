@@ -34,40 +34,28 @@ export const SCOPE_NAV_ITEMS: readonly ScopeNavItem[] = [
 		scope: "all",
 		label: <Trans>All</Trans>,
 		to: "/",
-		activeClass: "bg-control text-fg",
+		activeClass: "text-fg",
 		accentClass: "bg-fg-muted",
 	},
 	{
 		scope: "perp",
 		label: <Trans>Perp</Trans>,
 		to: "/perp",
-		activeClass: "bg-control text-fg",
+		activeClass: "text-fg",
 		accentClass: "bg-scope-perp",
 	},
 	{
 		scope: "spot",
 		label: <Trans>Spot</Trans>,
 		to: "/spot",
-		activeClass: "bg-control text-fg",
+		activeClass: "text-fg",
 		accentClass: "bg-scope-spot",
 	},
 	{
 		scope: "builders-perp",
 		label: <Trans>Builders</Trans>,
 		to: "/builders-perp",
-		activeClass: "bg-control text-fg",
+		activeClass: "text-fg",
 		accentClass: "bg-scope-builders",
 	},
-] as const;
-
-export interface StaticNavItem {
-	key: string;
-	label: ReactNode;
-}
-
-export const STATIC_NAV_ITEMS: readonly StaticNavItem[] = [
-	{ key: "vaults", label: <Trans>Vaults</Trans> },
-	{ key: "portfolio", label: <Trans>Portfolio</Trans> },
-	{ key: "staking", label: <Trans>Staking</Trans> },
-	{ key: "leaderboard", label: <Trans>Leaderboard</Trans> },
 ] as const;

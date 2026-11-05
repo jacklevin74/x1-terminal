@@ -1,4 +1,4 @@
-import { Button, Tooltip } from "@hypeterminal/ui";
+import { Button } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 
 interface Props {
@@ -18,13 +18,6 @@ export function PositionRowActions({ disabled, closing, onLimit, onMarket, onRev
 			<Button variant="secondary" intent="neutral" size="xs" onClick={onMarket} disabled={disabled}>
 				{closing ? t`Closing...` : t`Market`}
 			</Button>
-			<Tooltip content={t`Trailing stops are not available yet.`}>
-				<span className="inline-flex">
-					<Button variant="secondary" intent="neutral" size="xs" disabled>
-						{t`Trailing`}
-					</Button>
-				</span>
-			</Tooltip>
 			<Button variant="secondary" intent="neutral" size="xs" onClick={onReverse} disabled={disabled}>
 				{t`Reverse`}
 			</Button>
