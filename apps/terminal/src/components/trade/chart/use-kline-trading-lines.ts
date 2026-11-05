@@ -1,10 +1,11 @@
 import { t } from "@lingui/core/macro";
-import type { Chart } from "klinecharts";
+import { type Chart, DomPosition } from "klinecharts";
 import { type RefObject, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { formatPriceForOrder } from "@/domain/trade/orders";
 import type { ChartLine } from "@/lib/chart/chart-lines";
 import {
+	axisTagWidth,
 	CANCEL_KEY,
 	DRAG_KEY,
 	getOrderLineHitBoxes,
@@ -205,4 +206,24 @@ export function useKlineTradingLines({ chartRef, symbol, dex, dataKey }: Params)
 		if (overlay.dragging()) overlay.update({ ...input });
 		else overlay.update({ ...input, drag: pending });
 	}, [input, pending]);
+
+	const fixedAxisSize = useRef<number | null>(null);
+	useEffect(() => {
+		const chart = chartRef.current;
+		if (!chart) return;
+		const texts = input.lines.map((line) => line.priceText);
+		if (pending) texts.push(pending.priceText);
+		const needed = texts.length ? Math.max(...texts.map(axisTagWidth)) : 0;
+		const current = chart.getSize("candle_pane", DomPosition.YAxis)?.width ?? 0;
+		const autoWidth = fixedAxisSize.current == null ? current : 0;
+		if (needed > current || (fixedAxisSize.current != null && needed !== fixedAxisSize.current)) {
+			if (needed > autoWidth && needed > 0) {
+				fixedAxisSize.current = needed;
+				chart.setStyles({ yAxis: { size: needed } });
+			} else if (fixedAxisSize.current != null) {
+				fixedAxisSize.current = null;
+				chart.setStyles({ yAxis: { size: "auto" } });
+			}
+		}
+	}, [chartRef, input, pending]);
 }

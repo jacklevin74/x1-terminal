@@ -13,7 +13,13 @@ import {
 
 export const ORDER_LINES_OVERLAY = "orderLines";
 const H = 20;
-const TAG_H = 18;
+const AXIS_TAG_H = 20;
+const AXIS_FONT = 12;
+const AXIS_PAD = 4;
+
+export function axisTagWidth(priceText: string): number {
+	return Math.ceil(textWidth(priceText, AXIS_FONT, 400) + AXIS_PAD * 2);
+}
 const FONT = 11;
 const LEFT = 8;
 export const CANCEL_KEY = "cancel:";
@@ -166,10 +172,11 @@ export function registerOrderLinesOverlay() {
 			const figures: unknown[] = [];
 			const markY = input.markPx != null ? yAxis.convertToPixel(input.markPx) : null;
 			const items = withDrag(input).map((line) => ({ line, y: yAxis.convertToPixel(line.price) }));
-			for (const { line, ly } of layoutAroundMark(items, markY, TAG_H + 4, bounding.height)) {
+			for (const { line, ly } of layoutAroundMark(items, markY, AXIS_TAG_H + 2, bounding.height)) {
 				const tone = toneColor(line.tone);
-				figures.push(rectFig(0, ly - TAG_H / 2, bounding.width, TAG_H, tone, undefined, 2));
-				figures.push(textFig(6, ly, line.priceText, p.page, { size: FONT, weight: 500 }));
+				const w = axisTagWidth(line.priceText);
+				figures.push(rectFig(0, ly - AXIS_TAG_H / 2, w, AXIS_TAG_H, tone, undefined, 4));
+				figures.push(textFig(AXIS_PAD, ly, line.priceText, p.page, { size: AXIS_FONT, weight: 400 }));
 			}
 			return figures as never;
 		},
