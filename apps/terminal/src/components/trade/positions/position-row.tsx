@@ -85,7 +85,12 @@ export function PositionRow(props: PositionRowProps) {
 					</Tooltip>
 				</div>
 			</TableCell>
-			<TableCell className={cn(num, "sticky right-0 z-10 bg-surface")}>
+			<TableCell
+				className={cn(
+					num,
+					"sticky right-0 z-10 bg-surface transition-colors group-hover:bg-[color-mix(in_oklab,var(--color-control)_50%,var(--color-surface))]",
+				)}
+			>
 				<PositionRowActions
 					disabled={m.actionsDisabled}
 					closing={props.isRowClosing}
