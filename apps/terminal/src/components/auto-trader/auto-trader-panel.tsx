@@ -1,3 +1,4 @@
+import {parseExecutorCycle} from "@/lib/auto-trader/executor-cycle";
 import {TargetPreviewTable} from "./target-preview-table";
 import {useTradingAccount} from "@/hooks/use-trading-account";
 import {HelpTip} from "./help-tip";
@@ -14,7 +15,7 @@ import { BUILDER_CONFIGURED, DEFAULT_BUILDER_CONFIG } from "@/config/hyperliquid
 import { useExchange, useHyperliquid, useInfo, useAgentWallet, readAgentFromStorage } from "@/lib/hyperliquid";
 import { sealAgentKey } from "@/lib/auto-trader/api";
 import { useAutoTraderMutation, useAutoTraderSignal, useAutoTraderStatus } from "@/lib/auto-trader/hooks";
-import { accountEquity, EXECUTOR_MARKETS, allowedMarkets, targetRows, validateSettings } from "@/lib/auto-trader/targets";
+import { accountEquity, validateSettings } from "@/lib/auto-trader/targets";
 import type { AutoTraderSettings } from "@/lib/auto-trader/types";
 import { SettingsCard, autoButton } from "./settings-card";
 import { StatusCard, money } from "./status-card";
@@ -45,7 +46,6 @@ function AutoTraderAccount({master}:{master:Address}){
  const opts={refetchInterval:30000,refetchOnWindowFocus:true};
  const main=useInfo("clearinghouseState",{user:master},opts),xyz=useInfo("clearinghouseState",{user:master,dex:"xyz"},opts),spot=useInfo("spotClearinghouseState",{user:master},opts),mode=useInfo("userAbstraction",{user:master},opts);
  const agents=useInfo("extraAgents",{user:address??zeroAddress},opts),fee=useInfo("maxBuilderFee",{user:address??zeroAddress,builder:AUTO_TRADER_BUILDER},opts);
- const mids=useInfo("allMids",{},opts),xyzMids=useInfo("allMids",{dex:"xyz"},opts);
  const approveAgent=useExchange("approveAgent"),approveFee=useExchange("approveBuilderFee");
  useEffect(()=>{alive.current=true;return()=>{alive.current=false;if(pending.current)pending.current.key="0x";pending.current=null;};},[]);
  useEffect(()=>{if(!initialized.current&&status.data){if(status.data.settings)setSettings(normalize(status.data.settings));initialized.current=true;}},[status.data]);
@@ -122,17 +122,11 @@ function AutoTraderAccount({master}:{master:Address}){
   if(op==="remove"){if(pending.current)pending.current.key="0x";pending.current=null;setPendingAddress(null);}
   setMessage(op==="flatten"?"Close request accepted and queued. Positions remain open until the next executor cycle (normally within five minutes), then trading pauses. Check cycle orders and fills below.":op==="remove"?"Auto Trader registration and stored service key removed. Existing positions remain open.":op==="resume"?"Enabled. Check the next cycle for live or dry-run execution.":op==="pause"?"Paused. Existing positions remain open.":"Settings saved for the next cycle.");
  }
- const current:Record<string,number>={};let pricesKnown=!!mids.data&&!!xyzMids.data&&!mids.isError&&!xyzMids.isError;
- for(const {position} of [...(main.data?.assetPositions??[]),...(xyz.data?.assetPositions??[])]){
-  const mid=Number((position.coin.includes(":")?xyzMids.data:mids.data)?.[position.coin]);
-  if(Number(position.szi)!==0&&(!Number.isFinite(mid)||mid<=0))pricesKnown=false;else current[position.coin]=Number(position.szi)*mid;
- }
- const preview=funded&&equity!==null&&!validationError&&signal.data&&!signal.isError&&pricesKnown?targetRows({equity,settings,signal:signal.data,current,killed:status.data?.plan?.killed===true}):null;
+ const executorCycle=parseExecutorCycle(status.data,master);
  const registered=status.data?.registered===true;
- const executionNote=!registered?"Register and start Auto Trader before live execution.":status.data?.state!=="active"?"Auto Trader is not active, so this preview does not submit orders.":"Live orders require the service’s live gate; dry-run cycles submit no orders.";
  return <>
   {!configured&&<p role="alert" className="text-sm text-error">The terminal builder must match {AUTO_TRADER_BUILDER} to use this service.</p>}
-  {subaccount&&<p role="status" className="rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm text-warning">Subaccount API registration and controls are supported. Automated subaccount execution is not deployed yet: registering or starting this account does not mean it is trading. Your main account registration is separate.</p>}
+  {subaccount&&!status.data?.lastCycle&&<p role="status" className="rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm text-warning">Waiting for the executor to report a cycle for this subaccount. Registration or an active state alone does not confirm trading. Your main account registration is separate.</p>}
   <div className="grid gap-4 lg:grid-cols-[1fr_2fr]">
    <section className="space-y-4 rounded-xl border border-stroke-weak bg-surface p-4"><h3 className="text-sm font-semibold"><Trans>Account readiness</Trans></h3><p className="break-all font-mono text-xs text-fg-muted">Signing owner: {address}</p><p className="break-all font-mono text-xs text-brand">Trading account: {subaccount?.name??"Main account"} · {master}</p><ul className="space-y-3">
     <Check label="Owner wallet" ok={!!wallet} detail={wallet?"Connected — signs control requests locally":"Connect or unlock Rabby / X1 Wallet / Phantom"} />
@@ -176,10 +170,8 @@ function AutoTraderAccount({master}:{master:Address}){
   {error&&<p role="alert" className="rounded-lg border border-error/30 bg-error/5 p-3 text-sm text-error">{error}</p>}
   {message&&<p role="status" className="rounded-lg border border-stroke-weak p-3 text-sm text-brand">{message}</p>}
   {status.data?<StatusCard status={{...status.data,isSubaccount:!!subaccount||status.data.isSubaccount}} />:status.isLoading?<p className="text-sm text-fg-muted"><Trans>Loading Auto Trader status…</Trans></p>:null}
-  <section aria-label="Auto Trader preview" className="space-y-3 rounded-xl border border-stroke-weak bg-surface p-4"><h3 className="text-sm font-semibold"><Trans>Target preview</Trans></h3><p className="text-xs text-fg-muted"><Trans>Preview uses your current form settings and public scores. The executor's verified cycle above is authoritative; prices, rounding and signal timing can differ.</Trans></p>
-   <TargetPreviewTable rows={preview} minOrderUsd={settings.minOrderUsd} unsaved={hasChanges} executionNote={executionNote} refreshing={[main,xyz,spot,mode,mids,xyzMids,signal].some(query=>query.isFetching)} />
-   <p className="text-xs text-fg-muted">{allowedMarkets(settings,EXECUTOR_MARKETS).length} markets · {settings.leverage}x · allocation per market at score ±100: {money(equity===null?null:equity*settings.leverage/Math.max(allowedMarkets(settings,EXECUTOR_MARKETS).length,1))}</p>
-   <p className="text-xs text-fg-muted"><Trans>Directional target = equity × leverage ÷ selected markets × score/100. Neutral signals hold existing positions unchanged; their target equals current exposure and no order is sent. Only the executor’s 12 supported markets count toward allocation; SOXL is excluded. Resizes try post-only orders, then IOC fallback after 60 seconds. Close legs use IOC within 1% of mid and are submitted before flip opening legs. The minimum order applies except for full closes.</Trans></p>
+  <section aria-label="Auto Trader preview" className="space-y-3 rounded-xl border border-stroke-weak bg-surface p-4"><h3 className="text-sm font-semibold">Target preview · last executor cycle</h3><p className="text-xs text-fg-muted">Targets and actions come directly from the selected account’s executor status API. Form edits do not change this table; saved changes appear after the executor reports a new cycle. Cycles older than 15 minutes are not shown.</p>
+   <TargetPreviewTable snapshot={executorCycle} account={master} refreshing={status.isFetching} unavailable={status.isError} />
   </section>
   <Modal open={confirm!==null} onOpenChange={open=>{if(!open&&!busy)setConfirm(null);}}><ModalPopup size="md"><ModalHeader><ModalTitle>{confirm==="resume"?"Enable Auto Trader?":confirm==="flatten"?"Close all perpetual positions?":confirm==="renew"?"Renew Auto Trader API wallet?":"Remove Auto Trader?"}</ModalTitle></ModalHeader><ModalContent className="space-y-4">
    <p className="break-all font-mono text-xs">Signing owner: {address}</p><p className="break-all font-mono text-xs text-brand">Trading account: {subaccount?.name??"Main account"} · {master}</p>

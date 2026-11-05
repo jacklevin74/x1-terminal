@@ -1,17 +1,21 @@
 import {useEffect,useState} from "react";
-import type {TargetPreviewRow} from "@/lib/auto-trader/action-explanation";
+import type {ExecutorCycle} from "@/lib/auto-trader/executor-cycle";
+import {isRecentExecutorCycle} from "@/lib/auto-trader/executor-cycle";
 import {AutoTraderMarketLabel} from "./market-label";
 import {HelpTip} from "./help-tip";
-import {TargetActionTooltip} from "./target-action-tooltip";
 import {money} from "./status-card";
-
-export function TargetPreviewTable({rows,minOrderUsd,unsaved,executionNote,refreshing=false}:{rows:TargetPreviewRow[]|null;minOrderUsd:number;unsaved:boolean;executionNote:string;refreshing?:boolean}){
- const [previous,setPrevious]=useState<{rows:TargetPreviewRow[];minOrderUsd:number}|null>(null);
- useEffect(()=>{if(rows)setPrevious({rows,minOrderUsd});},[rows,minOrderUsd]);
- const snapshot=rows?{rows,minOrderUsd}:previous;
- const retained=!rows&&!!previous;
+export function TargetPreviewTable({snapshot,account,refreshing=false,unavailable=false}:{snapshot:ExecutorCycle|null;account:string;refreshing?:boolean;unavailable?:boolean}){
+ const [previous,setPrevious]=useState<ExecutorCycle|null>(null),[now,setNow]=useState(()=>Date.now());
+ useEffect(()=>{setPrevious(old=>snapshot&&snapshot.account.toLowerCase()===account.toLowerCase()&&(!old||old.account.toLowerCase()!==account.toLowerCase()||snapshot.cycleTs>=old.cycleTs)?snapshot:refreshing&&old?.account.toLowerCase()===account.toLowerCase()?old:null);},[snapshot,account,refreshing]);
+ useEffect(()=>{const timer=setInterval(()=>setNow(Date.now()),1000);return()=>clearInterval(timer);},[]);
+ const candidate=snapshot??(refreshing?previous:null);
+ const cycle=!unavailable&&candidate?.account.toLowerCase()===account.toLowerCase()&&isRecentExecutorCycle(candidate,now)?candidate:null;
  return <>
-  <p role="status" className={`min-h-4 text-xs ${retained?"text-warning":"text-fg-muted"}`}>{retained?"Showing the last available preview while settings or refreshed data are unavailable. Values will update when valid data arrives.":refreshing?"Updating preview…":"Preview updates automatically."}</p>
-  {snapshot?<div className="overflow-x-auto"><table className="w-full whitespace-nowrap text-left text-xs"><thead><tr>{["Market","Score","Target","Current","Gap","Action"].map(h=><th className="pb-2 pr-4 font-normal text-fg-muted" key={h}>{h}<HelpTip label={h} /></th>)}</tr></thead><tbody>{snapshot.rows.map(row=><tr key={row.coin}><td className="py-1.5 pr-4"><AutoTraderMarketLabel coin={row.coin} /></td><td className="pr-4">{row.score??"—"}</td><td className="pr-4">{money(row.target)}</td><td className="pr-4">{money(row.current)}</td><td className="pr-4">{money(row.gap)}</td><td><div className="flex items-center gap-1">{row.actions.map(action=><TargetActionTooltip key={action} row={row} action={action} minOrderUsd={snapshot.minOrderUsd} unsaved={unsaved} executionNote={`${retained?"These values are from the previous available snapshot. ":""}${executionNote}`} />)}</div></td></tr>)}</tbody></table></div>:<p className="text-xs text-fg-muted">Waiting for valid settings, account balances, prices and signal data. No target values are assumed.</p>}
+  <p role="status" className={`min-h-4 text-xs ${unavailable?"text-warning":"text-fg-muted"}`}>{!cycle?"No recent executor cycle":refreshing?"Refreshing executor cycle…":"Showing the executor’s recorded decisions, not a forecast."}</p>
+  {cycle&&<>
+   <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-fg-muted"><span>Cycle: <time dateTime={new Date(cycle.cycleTs).toISOString()}>{new Date(cycle.cycleTs).toLocaleString()}</time></span><span>Equity: {money(cycle.equity)}</span><span>Target leverage: {cycle.targetLeverage===null?"—":`${cycle.targetLeverage}×`}</span><span>k: {cycle.k??"—"}</span>{cycle.scale!==null&&<span>Scale: {cycle.scale}</span>}<span>Held neutrals: {cycle.heldNeutrals??"—"}</span><span>Gross before cap: {money(cycle.grossBeforeCap)}</span><span>Gross after cap: {money(cycle.grossAfterCap)}</span></div>
+   <div className="overflow-x-auto"><table className="w-full whitespace-nowrap text-left text-xs"><thead><tr>{["Market","Score","Target","Current","Gap","Action","Reason"].map(h=><th className="pb-2 pr-4 font-normal text-fg-muted" key={h}>{h}<HelpTip label={h} /></th>)}</tr></thead><tbody>{cycle.rows.map((row,index)=><tr key={`${row.market}:${index}`}><td className="py-1.5 pr-4"><AutoTraderMarketLabel coin={row.market} /></td><td className="pr-4">{row.score??"—"}</td><td className="pr-4">{money(row.targetUsd)}</td><td className="pr-4">{money(row.currentUsd)}</td><td className="pr-4">{money(row.gapUsd)}</td><td className="pr-4"><span title={row.reason??"The executor did not provide a reason."}>{row.action??"—"}</span></td><td className="max-w-md whitespace-normal text-fg-muted">{row.reason??"—"}</td></tr>)}</tbody></table></div>
+   <p className="text-xs text-fg-muted">Missing values are shown as —. Scores, gaps and reasons are never inferred from prices, weights or form settings.</p>
+  </>}
  </>;
 }

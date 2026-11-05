@@ -100,7 +100,7 @@ msgstr "Account Balances"
 msgid "Account Equity"
 msgstr "Account Equity"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:137
+#: src/components/auto-trader/auto-trader-panel.tsx:131
 msgid "Account readiness"
 msgstr "Account readiness"
 
@@ -200,7 +200,7 @@ msgstr "Any portion that is not immediately filled will be canceled."
 #~ msgid "Appearance"
 #~ msgstr "Appearance"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:145
+#: src/components/auto-trader/auto-trader-panel.tsx:139
 msgid "Approve 0.05% fee"
 msgstr "Approve 0.05% fee"
 
@@ -366,7 +366,7 @@ msgstr "Buy"
 #~ msgid "Camera permission was denied."
 #~ msgstr "Camera permission was denied."
 
-#: src/components/auto-trader/auto-trader-panel.tsx:187
+#: src/components/auto-trader/auto-trader-panel.tsx:179
 #: src/components/trade/mobile/mobile-orders-tab.tsx:256
 #: src/components/trade/mobile/mobile-position-card.tsx:191
 #: src/components/trade/mobile/mobile-twap-tab.tsx:110
@@ -455,7 +455,7 @@ msgstr "Choose a deposit route"
 msgid "Close"
 msgstr "Close"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:171
+#: src/components/auto-trader/auto-trader-panel.tsx:165
 msgid "Close & pause"
 msgstr "Close & pause"
 
@@ -488,7 +488,7 @@ msgstr "Closing..."
 #~ msgid "completed"
 #~ msgstr "completed"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:187
+#: src/components/auto-trader/auto-trader-panel.tsx:179
 #: src/components/trade/positions/position-tpsl-modal.tsx:192
 #: src/components/trade/tradebox/bridge/confirmation-screen.tsx:162
 #: src/components/trade/tradebox/leverage-control.tsx:213
@@ -741,7 +741,7 @@ msgstr "Created"
 msgid "Creating link..."
 msgstr "Creating link..."
 
-#: src/components/auto-trader/auto-trader-panel.tsx:164
+#: src/components/auto-trader/auto-trader-panel.tsx:158
 msgid "Creating the dedicated API wallet does not start trading. Register, review your saved settings, then explicitly enable. Renewal replaces the previous Auto Trader key and registration pauses execution."
 msgstr "Creating the dedicated API wallet does not start trading. Register, review your saved settings, then explicitly enable. Renewal replaces the previous Auto Trader key and registration pauses execution."
 
@@ -880,8 +880,8 @@ msgstr "Direction"
 #~ msgstr "Directional target = equity × leverage ÷ selected markets × score/100. Neutral signals hold existing positions unchanged; their target equals current exposure and no order is sent. Flips close before reopening. Orders use IOC within 1% of mid; the minimum order applies except for full closes."
 
 #: src/components/auto-trader/auto-trader-panel.tsx:182
-msgid "Directional target = equity × leverage ÷ selected markets × score/100. Neutral signals hold existing positions unchanged; their target equals current exposure and no order is sent. Only the executor’s 12 supported markets count toward allocation; SOXL is excluded. Resizes try post-only orders, then IOC fallback after 60 seconds. Close legs use IOC within 1% of mid and are submitted before flip opening legs. The minimum order applies except for full closes."
-msgstr "Directional target = equity × leverage ÷ selected markets × score/100. Neutral signals hold existing positions unchanged; their target equals current exposure and no order is sent. Only the executor’s 12 supported markets count toward allocation; SOXL is excluded. Resizes try post-only orders, then IOC fallback after 60 seconds. Close legs use IOC within 1% of mid and are submitted before flip opening legs. The minimum order applies except for full closes."
+#~ msgid "Directional target = equity × leverage ÷ selected markets × score/100. Neutral signals hold existing positions unchanged; their target equals current exposure and no order is sent. Only the executor’s 12 supported markets count toward allocation; SOXL is excluded. Resizes try post-only orders, then IOC fallback after 60 seconds. Close legs use IOC within 1% of mid and are submitted before flip opening legs. The minimum order applies except for full closes."
+#~ msgstr "Directional target = equity × leverage ÷ selected markets × score/100. Neutral signals hold existing positions unchanged; their target equals current exposure and no order is sent. Only the executor’s 12 supported markets count toward allocation; SOXL is excluded. Resizes try post-only orders, then IOC fallback after 60 seconds. Close legs use IOC within 1% of mid and are submitted before flip opening legs. The minimum order applies except for full closes."
 
 #: src/components/trade/header/user-menu.tsx:140
 #~ msgid "Disconnect"
@@ -1064,7 +1064,7 @@ msgstr "Executor status"
 msgid "Explorer"
 msgstr "Explorer"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:146
+#: src/components/auto-trader/auto-trader-panel.tsx:140
 msgid "Fail-safe guards block trading on stale signals, expired agents, missing approvals or low equity. The daily loss stop blocks increases in exposure; it cannot guarantee a loss limit."
 msgstr "Fail-safe guards block trading on stale signals, expired agents, missing approvals or low equity. The daily loss stop blocks increases in exposure; it cannot guarantee a loss limit."
 
@@ -1445,7 +1445,7 @@ msgstr "Liquidated"
 msgid "Loading"
 msgstr "Loading"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:178
+#: src/components/auto-trader/auto-trader-panel.tsx:172
 msgid "Loading Auto Trader status…"
 msgstr "Loading Auto Trader status…"
 
@@ -1531,7 +1531,7 @@ msgstr "Mainnet"
 msgid "Maintenance Margin"
 msgstr "Maintenance Margin"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:173
+#: src/components/auto-trader/auto-trader-panel.tsx:167
 msgid "Manage / revoke API wallets"
 msgstr "Manage / revoke API wallets"
 
@@ -2259,8 +2259,8 @@ msgid "Preparing your quote..."
 msgstr "Preparing your quote..."
 
 #: src/components/auto-trader/auto-trader-panel.tsx:179
-msgid "Preview uses your current form settings and public scores. The executor's verified cycle above is authoritative; prices, rounding and signal timing can differ."
-msgstr "Preview uses your current form settings and public scores. The executor's verified cycle above is authoritative; prices, rounding and signal timing can differ."
+#~ msgid "Preview uses your current form settings and public scores. The executor's verified cycle above is authoritative; prices, rounding and signal timing can differ."
+#~ msgstr "Preview uses your current form settings and public scores. The executor's verified cycle above is authoritative; prices, rounding and signal timing can differ."
 
 #: src/components/ui/pagination.tsx:
 #~ msgid "Previous"
@@ -2348,7 +2348,7 @@ msgstr "Recent Trades"
 msgid "Reduce Only"
 msgstr "Reduce Only"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:144
+#: src/components/auto-trader/auto-trader-panel.tsx:138
 msgid "Refresh checks"
 msgstr "Refresh checks"
 
@@ -2356,7 +2356,7 @@ msgstr "Refresh checks"
 #~ msgid "Register Another"
 #~ msgstr "Register Another"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:157
+#: src/components/auto-trader/auto-trader-panel.tsx:151
 msgid "Register Auto Trader"
 msgstr "Register Auto Trader"
 
@@ -2374,7 +2374,7 @@ msgstr "Remove {0} from favorites"
 msgid "Remove {displayName} from favorites"
 msgstr "Remove {displayName} from favorites"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:172
+#: src/components/auto-trader/auto-trader-panel.tsx:166
 msgid "Remove Auto Trader"
 msgstr "Remove Auto Trader"
 
@@ -2382,7 +2382,7 @@ msgstr "Remove Auto Trader"
 #~ msgid "Remove from favorites"
 #~ msgstr "Remove from favorites"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:158
+#: src/components/auto-trader/auto-trader-panel.tsx:152
 msgid "Renew API wallet"
 msgstr "Renew API wallet"
 
@@ -2402,7 +2402,7 @@ msgstr "Reset"
 msgid "Reset phone access"
 msgstr "Reset phone access"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:160
+#: src/components/auto-trader/auto-trader-panel.tsx:154
 msgid "Reset to saved"
 msgstr "Reset to saved"
 
@@ -2447,7 +2447,7 @@ msgstr "Running Time ({TWAP_MINUTES_MIN}m - {0}h)"
 msgid "Runtime"
 msgstr "Runtime"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:159
+#: src/components/auto-trader/auto-trader-panel.tsx:153
 msgid "Save settings"
 msgstr "Save settings"
 
@@ -3036,8 +3036,8 @@ msgstr "Taking longer than expected"
 #~ msgstr "Target = equity × leverage ÷ selected markets × score/100. Scores strictly between −15 and +15 target zero. Flips close before reopening. Orders use IOC within 1% of mid; the minimum order applies except for full closes."
 
 #: src/components/auto-trader/auto-trader-panel.tsx:179
-msgid "Target preview"
-msgstr "Target preview"
+#~ msgid "Target preview"
+#~ msgstr "Target preview"
 
 #: src/components/auto-trader/status-card.tsx:27
 #~ msgid "Targets from the last executor cycle"
@@ -3093,7 +3093,7 @@ msgstr "The page you are looking for does not exist."
 #~ msgid "This phone link is not approved on Hyperliquid."
 #~ msgstr "This phone link is not approved on Hyperliquid."
 
-#: src/components/auto-trader/auto-trader-panel.tsx:162
+#: src/components/auto-trader/auto-trader-panel.tsx:156
 msgid "This setup key exists only in this page's memory. Register it before leaving. It is encrypted for the service; it is not saved to browser storage."
 msgstr "This setup key exists only in this page's memory. Register it before leaving. It is encrypted for the service; it is not saved to browser storage."
 
@@ -3350,7 +3350,7 @@ msgstr "Unrealized P&L"
 msgid "Unrealized PNL"
 msgstr "Unrealized PNL"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:163
+#: src/components/auto-trader/auto-trader-panel.tsx:157
 msgid "Unsaved settings. Save before enabling. Changes to an active trader apply on its next cycle."
 msgstr "Unsaved settings. Save before enabling. Changes to an active trader apply on its next cycle."
 
@@ -3431,8 +3431,8 @@ msgid "Waiting for trades..."
 msgstr "Waiting for trades..."
 
 #: src/components/auto-trader/auto-trader-panel.tsx:180
-msgid "Waiting for valid settings, account balances, prices and signal data. No target values are assumed."
-msgstr "Waiting for valid settings, account balances, prices and signal data. No target values are assumed."
+#~ msgid "Waiting for valid settings, account balances, prices and signal data. No target values are assumed."
+#~ msgstr "Waiting for valid settings, account balances, prices and signal data. No target values are assumed."
 
 #. placeholder {0}: shortenAddress(address)
 #: src/components/trade/tradebox/bridge/confirmation-screen.tsx:74

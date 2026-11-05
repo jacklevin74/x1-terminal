@@ -9,7 +9,6 @@ export function when(value:unknown){return typeof value==="number"&&Number.isFin
 export function executionLabel(status:AutoTraderStatus){
  if(!status.registered)return "Not registered";
  if(status.state==="paused")return "PAUSED";
- if(status.isSubaccount)return "SUBACCOUNT EXECUTION PENDING";
  if(status.state==="flatten-requested")return "CLOSE REQUESTED";
  if(!status.plan||status.plan.state!=="active"||!status.lastCycle)return "WAITING FOR CYCLE";
  if(Date.now()-(status.lastCycle??status.plan.ts)>600000)return "STALE CYCLE";
