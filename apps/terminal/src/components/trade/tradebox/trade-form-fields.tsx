@@ -2,6 +2,7 @@ import { Button, Checkbox, Slider, Tooltip } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { useId, useState } from "react";
 import { useConnection } from "wagmi";
+import { Collapse } from "@/components/ui/collapse";
 import { InfoRow, InfoRowGroup } from "@/components/ui/info-row";
 import { NumberInput } from "@/components/ui/number-input";
 import { PriceInput } from "@/components/ui/price-input";
@@ -167,7 +168,7 @@ export function TradeFormFields({
 				) : null}
 			</InfoRowGroup>
 
-			{usesTriggerPrice && (
+			<Collapse open={usesTriggerPrice} className="-mt-3" contentClassName="pt-3">
 				<PriceInput
 					inlineLabel={t`Trigger Price`}
 					placeholder="0.00"
@@ -179,9 +180,9 @@ export function TradeFormFields({
 					invalid={!isPositive(triggerPriceNum) && sizeValue > 0}
 					disabled={isFormDisabled}
 				/>
-			)}
+			</Collapse>
 
-			{usesLimitPrice && (
+			<Collapse open={usesLimitPrice} className="-mt-3" contentClassName="pt-3">
 				<PriceInput
 					inlineLabel={t`Limit Price`}
 					placeholder="0.00"
@@ -193,7 +194,7 @@ export function TradeFormFields({
 					invalid={!price && sizeValue > 0}
 					disabled={isFormDisabled}
 				/>
-			)}
+			</Collapse>
 
 			<div className="flex min-w-0 flex-col gap-1">
 				<NumberInput
@@ -256,9 +257,13 @@ export function TradeFormFields({
 				/>
 			</div>
 
-			{scaleOrder && <TradeFormScale markPx={markPx} szDecimals={szDecimals} disabled={isFormDisabled} />}
+			<Collapse open={scaleOrder} className="-mt-3" contentClassName="pt-3">
+				<TradeFormScale markPx={markPx} szDecimals={szDecimals} disabled={isFormDisabled} />
+			</Collapse>
 
-			{twapOrder && <TradeFormTwap disabled={isFormDisabled} />}
+			<Collapse open={twapOrder} className="-mt-3" contentClassName="pt-3">
+				<TradeFormTwap disabled={isFormDisabled} />
+			</Collapse>
 
 			{(capabilities.hasReduceOnly || (capabilities.hasTpSl && canUseTpSl) || showTif) && (
 				<div className="flex min-w-0 flex-col gap-3">
@@ -284,9 +289,9 @@ export function TradeFormFields({
 						{showTif && <TradeFormTif orderType={orderType} disabled={isFormDisabled} />}
 					</div>
 
-					{capabilities.hasTpSl && canUseTpSl && tpSlEnabled && (
+					<Collapse open={capabilities.hasTpSl && canUseTpSl && tpSlEnabled} className="-mt-3" contentClassName="pt-3">
 						<TradeFormTpSl referencePrice={price} size={sizeValue} szDecimals={szDecimals} disabled={isFormDisabled} />
-					)}
+					</Collapse>
 				</div>
 			)}
 		</div>
