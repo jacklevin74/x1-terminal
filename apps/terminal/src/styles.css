@@ -58,8 +58,6 @@
   --color-grey-solid-1000: #000000;
 
   /* ---- X1 Brand Gradient (the "1" in the logo) ---- */
-  --color-x1-cyan: #00c6ff;
-  --color-x1-blue: #0072ff;
 
   /* ---- Spacing Base (4px grid) ---- */
   --spacing: 4px;
@@ -121,10 +119,6 @@
     to { transform: translateY(100%); opacity: 0; }
   }
 
-  /* ---- Chart horizon glow (brand link to the PNL card horizon) ---- */
-  --color-horizon-rim: #2f2a9e;
-  --color-horizon-blue: #3b82f6;
-  --color-horizon-core: #c4f1ff;
 }
 
 /* =============================================

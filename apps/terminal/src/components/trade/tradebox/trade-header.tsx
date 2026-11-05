@@ -26,9 +26,7 @@ interface Props {
 const moreTriggerClass =
 	"relative h-full gap-1 rounded-none bg-transparent px-3 text-fg-muted hover:bg-transparent hover:text-fg data-[popup-open]:text-fg focus-visible:outline-offset-2";
 const moreActiveClass =
-	"font-medium text-fg after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:bg-linear-to-r/srgb after:from-x1-cyan after:to-x1-blue after:content-['']";
-const x1IndicatorClass =
-	"[&>[role=presentation]]:bg-linear-to-r/srgb [&>[role=presentation]]:from-x1-cyan [&>[role=presentation]]:to-x1-blue";
+	"font-medium text-fg after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:bg-fg after:content-['']";
 
 export function TradeHeader({
 	orderType,
@@ -93,7 +91,7 @@ export function TradeHeader({
 			)}
 			<div className={cn("flex h-9 items-stretch border-b border-stroke-weak max-md:h-10", insetClassName)}>
 				<Tabs value={tabsOrderType} onValueChange={handleTabChange} variant="underline" className="h-full">
-					<TabsList className={cn("h-full border-b-0", x1IndicatorClass)} hideIndicator={isAdvanced}>
+					<TabsList className={cn("h-full border-b-0")} hideIndicator={isAdvanced}>
 						<TabsTrigger value="market" className="h-full py-0">
 							{t`Market`}
 						</TabsTrigger>

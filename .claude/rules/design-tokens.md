@@ -96,8 +96,6 @@ All the above also work as `ring-stroke-*`, `outline-stroke-*`, `divide-stroke-*
 - `text-market-down` / `bg-market-down` negative PnL, price down (red)
 - `text-market-neutral` / `bg-market-neutral` unchanged
 - `--market-up-flash` / `--market-down-flash` (`text-market-up-flash`, `text-market-down-flash`) brief tick-flash tint: side colour mixed 55% toward `fg`
-- `from-x1-cyan` / `to-x1-blue` X1 brand gradient stops (the "1" in the logo), opaque, both themes
-- `bg-horizon-rim` / `bg-horizon-blue` / `bg-horizon-core` chart horizon glow shapes (deep indigo, brand blue, cyan-white), opaque, used only blurred in `chart-horizon-glow.tsx`
 - `bg-scope-perp` / `bg-scope-spot` / `bg-scope-builders` DEX category colors
 - `bg-sel` selection highlight
 
