@@ -1,8 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect x="2" y="2" width="20" height="20" rx="4" fill="#57cb60" fill-opacity="0.2" stroke="#57cb60" stroke-opacity="0.4" stroke-width="1"/>
-  <g transform="translate(6 6) scale(0.5)" stroke="#57cb60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 19h8"/>
-    <path d="m4 17 6-6-6-6"/>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="112" fill="#050505"/>
+  <g transform="translate(86 145.5) scale(2.764)">
+    <path d="M76.9314 0H62.289L42.451 26.1546L23.9103 0H0L29.6265 39.6956L-6.3884e-07 80H23.0058L41.8736 54.0388L59.7085 80H82.7143L54.7044 39.7582L85.3119 0H76.9314Z" fill="#FFFFFF"/>
+    <path d="M85.3125 15.7479L97.3316 0H123.001L123.001 79.9681H104.697L104.697 15.7479H85.3125Z" fill="url(#favicon_1_gradient)"/>
+    <defs>
+      <linearGradient id="favicon_1_gradient" x1="104.147" y1="0" x2="104.147" y2="79.9681" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#00C6FF"/>
+        <stop offset="1" stop-color="#0072FF"/>
+      </linearGradient>
+    </defs>
   </g>
 </svg>
