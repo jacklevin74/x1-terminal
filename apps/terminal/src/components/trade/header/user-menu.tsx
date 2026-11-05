@@ -114,7 +114,7 @@ export function UserMenu() {
 }
 
 function WalletLabel({ derived, demo }: { derived: boolean; demo: boolean }) {
-	if (demo) return <span className="text-warning">Demo</span>;
+	if (demo) return null;
 	if (derived) return <X1Tile size={18} />;
 	return <span className="text-fg-muted max-md:hidden">Phantom</span>;
 }

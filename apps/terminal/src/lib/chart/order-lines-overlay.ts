@@ -107,7 +107,7 @@ export function registerOrderLinesOverlay() {
 			const placed: { y: number; x: number; w: number }[] = [];
 			for (const { line, y } of [...items].sort((a, b) => a.y - b.y)) {
 				const tone = toneColor(line.tone);
-				const fill = mixHex(tone, p.page, 0.28);
+				const fill = tone;
 				const text = mainText(line);
 				const textW = textWidth(text, FONT, 500) + 16;
 				const qty = line.kind === "liquidation" ? null : line.sizeText;
@@ -125,10 +125,10 @@ export function registerOrderLinesOverlay() {
 				figures.push(rectFig(left, top, handleW + textW, H, fill, undefined, 2));
 				if (handleW) {
 					const cx = left + handleW / 2 + 1;
-					for (const dy of [-3, 0, 3]) figures.push(lineFig(cx - 3, y + dy, cx + 3, y + dy, "#ffffff", false));
+					for (const dy of [-3, 0, 3]) figures.push(lineFig(cx - 3, y + dy, cx + 3, y + dy, p.page, false));
 				}
 				figures.push(
-					textFig(left + handleW + textW / 2, y, text, "#ffffff", { align: "center", size: FONT, weight: 500 }),
+					textFig(left + handleW + textW / 2, y, text, p.page, { align: "center", size: FONT, weight: 500 }),
 				);
 				let x = left + handleW + textW;
 				if (qty) {
