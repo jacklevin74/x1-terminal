@@ -73,9 +73,11 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
 						{marks?.map((mark) => {
 							const percent = getMarkPercent(mark, min, max);
 							const reached = mark <= current;
+							const underThumb = Math.abs(mark - current) <= (max - min) * 0.02;
 							const dotClass = cn(
 								"absolute top-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full",
 								reached && !disabled ? rangeToneClasses[tone] : "bg-fg-disabled",
+								underThumb && "invisible",
 							);
 							const style = {
 								left: `calc(var(--slider-thumb) / 2 + (100% - var(--slider-thumb)) * ${percent / 100})`,
@@ -107,7 +109,7 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
 							index={thumbIndex}
 							className={cn(
 								"relative z-20 size-(--slider-thumb) rounded-full",
-								disabled ? "bg-fg-disabled" : "bg-fg",
+								disabled ? "bg-fg-disabled" : "bg-inverse-surface",
 								"focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus",
 								"before:absolute before:-inset-3 before:content-[''] max-md:before:-inset-3",
 							)}
