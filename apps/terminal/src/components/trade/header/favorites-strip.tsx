@@ -13,21 +13,16 @@ export function FavoritesStrip() {
 	const favorites = useFavoriteMarkets();
 	const selectedMarket = useSelectedMarket();
 
-	if (favorites.length === 0) {
-		return (
-			<div className="flex h-full items-center gap-2 text-xs text-fg-muted">
-				<StarIcon className="size-3 shrink-0" />
-				<span>{t`Select favorite markets`}</span>
-			</div>
-		);
-	}
+	if (favorites.length === 0) return null;
 
 	return (
-		<div className="flex h-full min-w-0 items-center gap-1 overflow-x-auto scrollbar-none">
-			<StarIcon weight="fill" className="mr-1 size-3 shrink-0 text-yellow" />
-			{favorites.map((name) => (
-				<FavoriteChip key={name} name={name} isActive={name === selectedMarket} />
-			))}
+		<div className="flex h-8 min-w-0 items-center border-b border-stroke-weak">
+			<div className="flex h-full min-w-0 items-center gap-1 overflow-x-auto scrollbar-none">
+				<StarIcon weight="fill" className="mr-1 size-3 shrink-0 text-yellow" />
+				{favorites.map((name) => (
+					<FavoriteChip key={name} name={name} isActive={name === selectedMarket} />
+				))}
+			</div>
 		</div>
 	);
 }
