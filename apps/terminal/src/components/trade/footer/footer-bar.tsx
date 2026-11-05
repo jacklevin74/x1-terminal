@@ -1,6 +1,6 @@
 import { Button, Divider } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
-import { GithubLogoIcon } from "@phosphor-icons/react";
+import { GithubLogoIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { ClientOnly } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { APP_VERSION, GITHUB_URL } from "@/config/app";
@@ -55,10 +55,12 @@ export function FooterBar() {
 				intent="neutral"
 				size="xxs"
 				onClick={open}
-				className="absolute left-1/2 -translate-x-1/2 text-fg-muted hover:text-fg"
-				aria-label={t`Open command menu`}
+				className="absolute left-1/2 -translate-x-1/2 gap-1.5 text-fg-muted hover:text-fg"
+				aria-label={t`Search markets`}
 			>
-				<kbd className="pointer-events-none font-sans tracking-normal tabular-nums">{"⌘K"}</kbd>
+				<MagnifyingGlassIcon className="size-3" aria-hidden />
+				<span>{t`Search markets`}</span>
+				<kbd className="pointer-events-none font-sans tabular-nums text-fg-disabled">{"⌘K"}</kbd>
 			</Button>
 			<div className="flex shrink-0 items-center gap-3">
 				<a
