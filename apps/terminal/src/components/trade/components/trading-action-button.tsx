@@ -20,7 +20,7 @@ function getLabel(isEnabling: boolean, showEnableTrading: boolean, children: Rea
 			</>
 		);
 	}
-	if (showEnableTrading) return t`Enable`;
+	if (showEnableTrading) return t`Enable Trading`;
 	return children;
 }
 
