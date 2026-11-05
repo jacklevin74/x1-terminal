@@ -28,7 +28,7 @@ function OrderbookRowComponent({ level, side, maxTotal, priceDecimals, showInQuo
 	return (
 		<div className="group relative h-5 shrink-0 cursor-pointer transition-colors duration-150 hover:bg-control/50 motion-reduce:transition-none">
 			<div
-				className={cn("pointer-events-none absolute inset-y-0 right-0", isAsk ? "depth-bar-ask" : "depth-bar-bid")}
+				className={cn("pointer-events-none absolute inset-y-0 left-0", isAsk ? "depth-bar-ask" : "depth-bar-bid")}
 				style={{ width: `${depthPct}%` }}
 			/>
 			<div className="relative z-10 grid h-full grid-cols-3 items-center gap-2 px-3 text-xs font-normal tabular-nums">
