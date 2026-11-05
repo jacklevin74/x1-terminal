@@ -2,6 +2,7 @@ import { registerOverlay } from "klinecharts";
 import {
 	type ChartLine,
 	type ChartLinesInput,
+	layoutAroundMark,
 	lineFig,
 	palette,
 	rectFig,
@@ -163,12 +164,12 @@ export function registerOrderLinesOverlay() {
 			if (!yAxis) return [];
 			const p = palette();
 			const figures: unknown[] = [];
-			for (const line of withDrag(input)) {
-				const ly = yAxis.convertToPixel(line.price);
-				if (ly < 0 || ly > bounding.height) continue;
+			const markY = input.markPx != null ? yAxis.convertToPixel(input.markPx) : null;
+			const items = withDrag(input).map((line) => ({ line, y: yAxis.convertToPixel(line.price) }));
+			for (const { line, ly } of layoutAroundMark(items, markY, TAG_H + 4, bounding.height)) {
 				const tone = toneColor(line.tone);
-				figures.push(rectFig(1, ly - TAG_H / 2, bounding.width - 4, TAG_H, p.page, tone, 2));
-				figures.push(textFig(6, ly, line.priceText, tone, { size: FONT, weight: 500 }));
+				figures.push(rectFig(0, ly - TAG_H / 2, bounding.width, TAG_H, tone, undefined, 2));
+				figures.push(textFig(6, ly, line.priceText, p.page, { size: FONT, weight: 500 }));
 			}
 			return figures as never;
 		},
