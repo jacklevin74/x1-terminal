@@ -51,6 +51,7 @@ const selectTriggerVariants = cva(
 interface SelectOption {
 	value: string;
 	label: string;
+	icon?: React.ReactNode;
 	disabled?: boolean;
 }
 
@@ -81,18 +82,18 @@ function isGroupOption(option: SelectOption | SelectGroupOption): option is Sele
 	return "options" in option;
 }
 
-function findSelectedLabel(
+function findSelectedOption(
 	options: (SelectOption | SelectGroupOption)[],
 	value: string | null | undefined,
-): string | undefined {
+): SelectOption | undefined {
 	if (!value) return undefined;
 	for (const opt of options) {
 		if (isGroupOption(opt)) {
 			for (const option of opt.options) {
-				if (option.value === value) return option.label;
+				if (option.value === value) return option;
 			}
 		} else if (opt.value === value) {
-			return opt.label;
+			return opt;
 		}
 	}
 	return undefined;
@@ -123,7 +124,8 @@ const Select = React.forwardRef<HTMLDivElement, SelectProps>(
 		ref,
 	) => {
 		const size = sizeProp ?? DEFAULT_SIZE;
-		const selectedLabel = findSelectedLabel(options, value ?? defaultValue);
+		const selectedOption = findSelectedOption(options, value ?? defaultValue);
+		const selectedLabel = selectedOption?.label;
 		const renderItem = (option: SelectOption) => (
 			<BaseSelect.Item
 				key={option.value}
@@ -131,7 +133,10 @@ const Select = React.forwardRef<HTMLDivElement, SelectProps>(
 				disabled={option.disabled}
 				className={cn(menuItemClass, "justify-between data-selected:font-medium")}
 			>
-				<BaseSelect.ItemText>{option.label}</BaseSelect.ItemText>
+				<BaseSelect.ItemText className="flex min-w-0 items-center gap-2">
+					{option.icon}
+					<span className="truncate">{option.label}</span>
+				</BaseSelect.ItemText>
 				<BaseSelect.ItemIndicator className="shrink-0 text-fg">
 					<CheckIcon size={12} weight="bold" />
 				</BaseSelect.ItemIndicator>
@@ -179,7 +184,14 @@ const Select = React.forwardRef<HTMLDivElement, SelectProps>(
 								"group-data-disabled/trigger:text-fg-disabled",
 							)}
 						>
-							{selectedLabel}
+							{selectedOption?.icon ? (
+								<span className={cn("inline-flex min-w-0 items-center gap-2", inlineLabel && "justify-end")}>
+									{selectedOption.icon}
+									<span className="truncate">{selectedLabel}</span>
+								</span>
+							) : (
+								selectedLabel
+							)}
 						</BaseSelect.Value>
 						<BaseSelect.Icon className="shrink-0 text-fg-muted transition-transform duration-150 group-data-popup-open/trigger:rotate-180 motion-reduce:transition-none">
 							<CaretDownIcon size={12} weight="bold" />

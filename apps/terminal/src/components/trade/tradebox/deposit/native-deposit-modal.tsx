@@ -11,9 +11,13 @@ import { NativeDepositIntro } from "./native-deposit-intro";
 import { readOnlyFieldClass, warningNoticeClass } from "./shared-ui";
 import { SolDeposit } from "./sol-deposit";
 
+function AssetIcon({ coin }: { coin: string }) {
+	return <img src={`/tokens/${coin}.svg`} alt="" className="size-4 shrink-0 rounded-full" draggable={false} />;
+}
+
 const DEPOSIT_ASSET_OPTIONS = [
-	{ value: "ETH", label: "ETH" },
-	{ value: "SOL", label: "SOL" },
+	{ value: "ETH", label: "ETH", icon: <AssetIcon coin="ETH" /> },
+	{ value: "SOL", label: "SOL", icon: <AssetIcon coin="SOL" /> },
 ];
 
 interface Props {
