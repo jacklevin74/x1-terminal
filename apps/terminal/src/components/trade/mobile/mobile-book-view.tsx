@@ -12,6 +12,7 @@ import { getPriceGroupingKey, getPriceGroupingOptions, processLevels } from "@/l
 import { useGlobalSettings, useGlobalSettingsActions } from "@/stores/use-global-settings-store";
 import { OrderbookRow } from "../orderbook/orderbook-row";
 import { TradesPanel } from "../orderbook/trades-panel";
+import { useOrderbookRows } from "../orderbook/use-orderbook-rows";
 import { MobileBottomNavSpacer } from "./mobile-bottom-nav";
 
 const ORDERBOOK_TEXT = UI_TEXT.ORDERBOOK;
@@ -26,6 +27,7 @@ interface MobileBookViewProps {
 
 export function MobileBookView({ className }: MobileBookViewProps) {
 	const [view, setView] = useState<View>("book");
+	const [visibleRows, rowsRef] = useOrderbookRows();
 	const [selectedOptionKey, setSelectedOptionKey] = useState<string | null>(null);
 	const { showOrderbookInQuote } = useGlobalSettings();
 	const { setShowOrderbookInQuote } = useGlobalSettingsActions();
@@ -168,11 +170,11 @@ export function MobileBookView({ className }: MobileBookViewProps) {
 					</button>
 				</div>
 
-				<div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+				<div ref={rowsRef} className="flex-1 min-h-0 flex flex-col overflow-hidden">
 					{bookStatus !== "error" && asks.length > 0 ? (
 						<div className="flex-1 flex flex-col justify-end overflow-hidden">
 							{asks
-								.slice(0, 12)
+								.slice(0, visibleRows)
 								.reverse()
 								.map((level) => (
 									<OrderbookRow
@@ -218,7 +220,7 @@ export function MobileBookView({ className }: MobileBookViewProps) {
 
 					{bookStatus !== "error" && bids.length > 0 ? (
 						<div className="flex-1 flex flex-col overflow-hidden">
-							{bids.slice(0, 12).map((level) => (
+							{bids.slice(0, visibleRows).map((level) => (
 								<OrderbookRow
 									key={`bid-${level.price}-${level.size}`}
 									level={level}
