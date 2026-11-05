@@ -1,6 +1,7 @@
 import { Button, Modal, ModalContent, ModalPopup } from "@hypeterminal/ui";
 import { useId, useState } from "react";
 import { useConnect, useConnectors } from "wagmi";
+import { X1Tile } from "../header/x1-terminal-logo";
 
 interface Props {
 	open: boolean;
@@ -66,13 +67,17 @@ export function WalletModal({ open, onOpenChange, embedded = false }: Props) {
 						disabled={isPending}
 						onClick={() => handleSelect(c)}
 					>
-						<span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-[9px] border border-stroke-weak bg-surface group-disabled:opacity-50">
-							<img
-								src={c.id === "x1" ? "/wallets/x1-wallet.svg" : "/wallets/phantom.svg"}
-								alt=""
-								draggable={false}
-								className="size-[30px] object-contain"
-							/>
+						<span className="shrink-0 group-disabled:opacity-50">
+							{c.id === "x1" ? (
+								<X1Tile size={36} />
+							) : (
+								<img
+									src="/wallets/phantom.svg"
+									alt=""
+									draggable={false}
+									className="block size-9 rounded-[9px] object-contain"
+								/>
+							)}
 						</span>
 						<span className="flex min-w-0 flex-col gap-0.5">
 							<span className="text-sm font-medium text-fg group-disabled:text-fg-disabled">{c.name}</span>
