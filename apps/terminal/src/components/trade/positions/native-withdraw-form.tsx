@@ -1,4 +1,5 @@
 import { Button, ModalContent, ModalHeader, ModalTitle } from "@hypeterminal/ui";
+import { WalletIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useId, useRef, useState } from "react";
 import { isAddress, parseEther, zeroAddress } from "viem";
@@ -31,6 +32,10 @@ import { WalletModal } from "../components/wallet-modal";
 import { explorerLinkClass, inlineLinkButtonClass } from "../tradebox/deposit/shared-ui";
 import { TransferModalBody } from "./transfer-modal";
 import { useWithdrawalRecipient } from "./use-withdrawal-recipient";
+
+function trimZeros(value: string): string {
+	return value.includes(".") ? value.replace(/\.?0+$/, "") : value;
+}
 
 export function NativeWithdrawForm({
 	onBack,
@@ -270,11 +275,13 @@ export function NativeWithdrawForm({
 		);
 	if (walletModalOpen) return <WalletModal embedded open onOpenChange={setWalletModalOpen} />;
 	const recipientMessage =
-		recipient.status === "locked"
-			? "Wallet locked or disconnected."
-			: recipient.status === "manual"
-				? "Enter an Ethereum recipient address."
-				: "Connect your wallet to continue.";
+		recipient.status === "locked" ? "Wallet locked or disconnected." : "Connect your wallet to continue.";
+	const needsWallet = !!recipient.message && recipient.status !== "manual";
+	const balanceText = trimZeros(floorToString(balance, decimals));
+	function connectWallet() {
+		if (connector?.id) void recipient.refresh(true);
+		else setWalletModalOpen(true);
+	}
 	return (
 		<>
 			<ModalHeader className="sr-only">
@@ -299,44 +306,80 @@ export function NativeWithdrawForm({
 					) : (
 						<>
 							<div className="space-y-1">
-								<FieldLabel htmlFor={destinationId}>Recipient · {chain}</FieldLabel>
-								<Input
-									id={destinationId}
-									aria-label={`${chain} withdrawal destination`}
-									readOnly={sol || busy || review}
-									value={destination}
-									onChange={(e) => {
-										setDestination(e.target.value.trim());
-										setReview(false);
-									}}
-									placeholder={sol ? "Connect your Solana wallet" : "0x… Ethereum address"}
-									spellCheck={false}
-									autoComplete="off"
-								/>
+								<FieldLabel htmlFor={destinationId}>Recipient</FieldLabel>
+								{needsWallet && !destination ? (
+									<button
+										id={destinationId}
+										type="button"
+										disabled={busy || recipient.reading}
+										onClick={connectWallet}
+										className="flex h-10 w-full items-center justify-between rounded-8 bg-control px-3 text-xs text-fg transition-colors duration-150 hover:bg-control-hover disabled:cursor-not-allowed disabled:text-fg-disabled motion-reduce:transition-none"
+									>
+										<span>
+											{recipient.reading
+												? "Reading wallet…"
+												: `${recipient.status === "locked" ? "Unlock" : "Connect"} ${chain} wallet`}
+										</span>
+										<WalletIcon className="size-4 shrink-0 text-fg-muted" aria-hidden="true" />
+									</button>
+								) : (
+									<Input
+										id={destinationId}
+										aria-label={`${chain} withdrawal destination`}
+										readOnly={sol || busy || review}
+										value={destination}
+										onChange={(e) => {
+											setDestination(e.target.value.trim());
+											setReview(false);
+										}}
+										placeholder={sol ? `${chain} wallet address` : "0x… Ethereum address"}
+										spellCheck={false}
+										autoComplete="off"
+									/>
+								)}
 							</div>
-							{recipient.reading && <output className="block text-fg-muted">Reading wallet…</output>}
-							{recipient.message && (
+							{recipient.reading && destination && <output className="block text-fg-muted">Reading wallet…</output>}
+							{needsWallet && destination && (
 								<output className="flex flex-wrap items-center justify-between gap-2">
 									<p className="text-fg-muted">{recipientMessage}</p>
-									{recipient.status !== "manual" && (
-										<Button
-											variant="link"
-											intent="neutral"
-											size="xs"
-											disabled={busy || recipient.reading}
-											onClick={() => {
-												if (connector?.id) void recipient.refresh(true);
-												else setWalletModalOpen(true);
-											}}
-										>
-											Unlock / reconnect wallet
-										</Button>
-									)}
+									<Button
+										variant="link"
+										intent="neutral"
+										size="xs"
+										disabled={busy || recipient.reading}
+										onClick={connectWallet}
+									>
+										Unlock / reconnect wallet
+									</Button>
 								</output>
 							)}
+							<div className="space-y-1">
+								<NumberInput
+									id={amountId}
+									aria-label={`${asset} withdrawal amount`}
+									inlineLabel="Amount"
+									suffix={asset}
+									value={amount}
+									disabled={busy || review}
+									onChange={(e) => {
+										setAmount(e.target.value);
+										setReview(false);
+									}}
+									placeholder="0.00"
+									maxLabel="Max"
+									onMaxClick={() => setAmount(floorToString(balance, decimals))}
+								/>
+								<div className="flex min-h-6 items-center justify-between gap-2 text-fg-muted tabular-nums">
+									<span>
+										Min {minimum} {asset}
+									</span>
+									<span>
+										{balanceText} {asset} available
+									</span>
+								</div>
+							</div>
 							{usdcAvailable > 0 && (
-								<div className="flex min-h-6 items-center justify-between gap-2">
-									<span className="text-fg-muted tabular-nums">{floorToString(usdcAvailable, 2)} USDC available</span>
+								<div className="flex min-h-6 items-center">
 									<Button
 										variant="link"
 										intent="neutral"
@@ -359,30 +402,6 @@ export function NativeWithdrawForm({
 							{swapSubmitted && (
 								<output className="block text-fg-secondary">Swap submitted. Check your updated balance.</output>
 							)}
-							<div className="space-y-1">
-								<div className="flex min-h-6 items-center justify-between text-fg-muted">
-									<span>Amount ({asset})</span>
-									<span className="tabular-nums">{floorToString(balance, decimals)} available</span>
-								</div>
-								<NumberInput
-									id={amountId}
-									aria-label={`${asset} withdrawal amount`}
-									inlineLabel="Amount"
-									suffix={asset}
-									value={amount}
-									disabled={busy || review}
-									onChange={(e) => {
-										setAmount(e.target.value);
-										setReview(false);
-									}}
-									placeholder="0.00"
-									maxLabel="Max"
-									onMaxClick={() => setAmount(floorToString(balance, decimals))}
-								/>
-								<p className="text-fg-muted">
-									Minimum {minimum} {asset}
-								</p>
-							</div>
 							<InfoRowGroup className="border-t border-stroke-weak pt-3">
 								{fees.data && <InfoRow label={`Fee · est. ${fees.data.eta}`} value={`${fees.data.fee} ${asset}`} />}
 								{gasCheck.data && Number(gasCheck.data.fee) > 0 && (
