@@ -43,7 +43,7 @@ export function FooterBar() {
 		<footer
 			className={cn(
 				APP_FOOTER_HEIGHT_CLASS,
-				"fixed right-0 bottom-0 left-0 z-40 flex items-center justify-between border-t border-stroke-weak bg-background px-3 text-2xs font-normal uppercase tracking-micro text-fg-muted",
+				"fixed right-0 bottom-0 left-0 z-40 flex items-center justify-between border-t border-stroke-weak bg-background px-3 text-xs font-normal text-fg-muted",
 			)}
 		>
 			<div className="flex min-w-0 items-center gap-2">
