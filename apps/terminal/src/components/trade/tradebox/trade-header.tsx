@@ -71,6 +71,22 @@ export function TradeHeader({
 
 	return (
 		<div className="flex min-w-0 flex-col">
+			{isLeveraged && (
+				<div className={cn("grid grid-cols-2 gap-2 pt-3 pb-1", insetClassName)}>
+					<Button variant="secondary" intent="neutral" size="sm" onClick={onMarginLeverageClick}>
+						{marginLabel}
+					</Button>
+					<Button
+						variant="secondary"
+						intent="neutral"
+						size="sm"
+						onClick={onMarginLeverageClick}
+						className="tabular-nums"
+					>
+						{leverage ?? 1}x
+					</Button>
+				</div>
+			)}
 			<div className={cn("flex h-9 items-center gap-1 border-b border-stroke-weak max-md:h-10", insetClassName)}>
 				<Tabs value={tabsOrderType} onValueChange={handleTabChange} className="h-full">
 					<TabsList className="h-full max-md:h-full border-b-0">
@@ -96,23 +112,6 @@ export function TradeHeader({
 			</div>
 
 			<div className={cn("flex min-w-0 flex-col gap-2 pt-3", insetClassName)}>
-				{isLeveraged && (
-					<div className="grid grid-cols-2 gap-2">
-						<Button variant="secondary" intent="neutral" size="sm" onClick={onMarginLeverageClick}>
-							{marginLabel}
-						</Button>
-						<Button
-							variant="secondary"
-							intent="neutral"
-							size="sm"
-							onClick={onMarginLeverageClick}
-							className="tabular-nums"
-						>
-							{leverage ?? 1}x
-						</Button>
-					</div>
-				)}
-
 				<SideToggle side={side} onSideChange={onSideChange} labels={sideLabels} />
 			</div>
 		</div>
