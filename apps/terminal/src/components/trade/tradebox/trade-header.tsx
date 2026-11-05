@@ -24,7 +24,9 @@ interface Props {
 }
 
 const moreTriggerClass =
-	"h-7 max-md:h-8 gap-1 px-3 text-fg-muted hover:text-fg data-[popup-open]:text-fg focus-visible:outline-offset-2";
+	"relative h-full gap-1 rounded-none bg-transparent px-3 text-fg-muted hover:bg-transparent hover:text-fg data-[popup-open]:text-fg focus-visible:outline-offset-2";
+const moreActiveClass =
+	"font-medium text-fg after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:bg-fg after:content-['']";
 
 export function TradeHeader({
 	orderType,
@@ -87,11 +89,15 @@ export function TradeHeader({
 					</Button>
 				</div>
 			)}
-			<div className={cn("flex h-9 items-center gap-1 border-b border-stroke-weak max-md:h-10", insetClassName)}>
-				<Tabs value={tabsOrderType} onValueChange={handleTabChange} className="h-full">
-					<TabsList className="h-full max-md:h-full border-b-0">
-						<TabsTrigger value="market">{t`Market`}</TabsTrigger>
-						<TabsTrigger value="limit">{t`Limit`}</TabsTrigger>
+			<div className={cn("flex h-9 items-stretch border-b border-stroke-weak max-md:h-10", insetClassName)}>
+				<Tabs value={tabsOrderType} onValueChange={handleTabChange} variant="underline" className="h-full">
+					<TabsList className="h-full border-b-0" hideIndicator={isAdvanced}>
+						<TabsTrigger value="market" className="h-full py-0">
+							{t`Market`}
+						</TabsTrigger>
+						<TabsTrigger value="limit" className="h-full py-0">
+							{t`Limit`}
+						</TabsTrigger>
 					</TabsList>
 				</Tabs>
 				<Dropdown
@@ -107,7 +113,7 @@ export function TradeHeader({
 					align="start"
 					triggerVariant="minimal"
 					triggerAriaLabel={t`Order type`}
-					triggerClassName={cn(moreTriggerClass, isAdvanced && "bg-control font-medium text-fg")}
+					triggerClassName={cn(moreTriggerClass, isAdvanced && moreActiveClass)}
 				/>
 			</div>
 
