@@ -5,7 +5,6 @@ export interface ExecutionFill {
 	px: string;
 	sz: string;
 	tid: number;
-	oid?: number;
 }
 export interface ExecutionMarker {
 	id: string;

@@ -4,14 +4,11 @@ import { type RefObject, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { formatPriceForOrder } from "@/domain/trade/orders";
 import type { ChartLine } from "@/lib/chart/chart-lines";
-import type { ExecutionFill } from "@/lib/chart/execution-markers";
-import { animateProgress } from "@/lib/chart/fresh-fills";
 import {
 	axisTagWidth,
 	CANCEL_KEY,
 	DRAG_KEY,
 	getOrderLineHitBoxes,
-	LINE_PULSE_MS,
 	ORDER_LINES_OVERLAY,
 	type OrderLinesData,
 	registerOrderLinesOverlay,
@@ -110,11 +107,7 @@ export function useKlineTradingLines({ chartRef, symbol, dex, dataKey }: Params)
 
 	const stateRef = useRef({ input, pending });
 	stateRef.current = { input, pending };
-	const overlayRef = useRef<{
-		update: (next: Partial<OrderLinesData>) => void;
-		dragging: () => boolean;
-		pulse: (ids: string[]) => void;
-	} | null>(null);
+	const overlayRef = useRef<{ update: (next: Partial<OrderLinesData>) => void; dragging: () => boolean } | null>(null);
 	const hasLines = input.lines.length > 0 || input.markPx != null;
 
 	useEffect(() => {
@@ -124,17 +117,9 @@ export function useKlineTradingLines({ chartRef, symbol, dex, dataKey }: Params)
 		chart.removeOverlay({ name: ORDER_LINES_OVERLAY });
 		const initial = stateRef.current;
 		const anchor = initial.input.lines[0]?.price ?? initial.input.markPx ?? 0;
-		const data: OrderLinesData = { ...initial.input, drag: initial.pending, hover: null, pulse: null };
+		const data: OrderLinesData = { ...initial.input, drag: initial.pending, hover: null };
 		let dragging: { oid: number } | null = null;
 		let id: string | null = null;
-		let stopPulse: (() => void) | null = null;
-
-		function pulse(ids: string[]) {
-			stopPulse?.();
-			stopPulse = animateProgress(LINE_PULSE_MS, (t) => {
-				update({ pulse: t < 1 ? Object.fromEntries(ids.map((key) => [key, t])) : null });
-			});
-		}
 
 		function update(next: Partial<OrderLinesData>) {
 			Object.assign(data, next);
@@ -179,7 +164,7 @@ export function useKlineTradingLines({ chartRef, symbol, dex, dataKey }: Params)
 				return true;
 			},
 		}) as string | null;
-		overlayRef.current = { update, dragging: () => dragging != null, pulse };
+		overlayRef.current = { update, dragging: () => dragging != null };
 
 		const dom = chart.getDom();
 		function hitAt(event: MouseEvent): string | null {
@@ -207,7 +192,6 @@ export function useKlineTradingLines({ chartRef, symbol, dex, dataKey }: Params)
 		dom?.addEventListener("mouseleave", onLeave);
 
 		return () => {
-			stopPulse?.();
 			overlayRef.current = null;
 			dom?.removeEventListener("mousemove", onMove);
 			dom?.removeEventListener("mouseleave", onLeave);
@@ -242,12 +226,4 @@ export function useKlineTradingLines({ chartRef, symbol, dex, dataKey }: Params)
 			}
 		}
 	}, [chartRef, input, pending]);
-
-	function pulseFills(fills: ExecutionFill[]) {
-		const ids = new Set(["position"]);
-		for (const fill of fills) if (fill.oid != null) ids.add(`order:${fill.oid}`);
-		overlayRef.current?.pulse([...ids]);
-	}
-
-	return { pulseFills };
 }

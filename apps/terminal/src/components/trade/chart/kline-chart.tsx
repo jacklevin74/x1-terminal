@@ -161,9 +161,7 @@ export function KlineChart({
 				}
 			});
 
-		const ro = new ResizeObserver(() => {
-			chart.resize();
-		});
+		const ro = new ResizeObserver(() => chart.resize());
 		ro.observe(container);
 
 		return () => {
@@ -257,8 +255,8 @@ export function KlineChart({
 	const hasFailed = !isLoading && loadResult?.failed === true;
 	const dataKey = isLoading || hasFailed ? null : loadKey;
 
-	const { pulseFills } = useKlineTradingLines({ chartRef, symbol, dex: positionDex, dataKey });
-	useKlineExecutions(chartRef, symbol, activeInterval.barMs, dataKey, pulseFills);
+	useKlineExecutions(chartRef, symbol, activeInterval.barMs, dataKey);
+	useKlineTradingLines({ chartRef, symbol, dex: positionDex, dataKey });
 
 	return (
 		<div className="flex flex-col h-full">
