@@ -8,6 +8,7 @@ import {
 	rectFig,
 	textFig,
 	textWidth,
+	toneAlpha,
 	toneColor,
 } from "./chart-lines";
 
@@ -25,10 +26,13 @@ const LEFT = 8;
 export const CANCEL_KEY = "cancel:";
 export const DRAG_KEY = "drag:";
 const HANDLE_W = 16;
+export const LINE_PULSE_MS = 500;
+const PULSE_GROW = 5;
 
 export interface OrderLinesData extends ChartLinesInput {
 	drag?: { oid: number; price: number; priceText: string } | null;
 	hover?: string | null;
+	pulse?: Record<string, number> | null;
 }
 
 export interface OrderLineHitBox {
@@ -58,6 +62,23 @@ function mixHex(a: string, b: string, t: number): string {
 	const pb = Number.parseInt(b.slice(1, 7), 16);
 	const ch = (shift: number) => Math.round(((pa >> shift) & 255) * (1 - t) + ((pb >> shift) & 255) * t);
 	return `#${((ch(16) << 16) | (ch(8) << 8) | ch(0)).toString(16).padStart(6, "0")}`;
+}
+
+function pulseFig(line: ChartLine, t: number, left: number, top: number, width: number) {
+	const eased = 1 - (1 - t) ** 3;
+	const grow = 1 + PULSE_GROW * eased;
+	return {
+		type: "rect",
+		attrs: { x: left - grow, y: top - grow, width: width + grow * 2, height: H + grow * 2 },
+		styles: {
+			style: "stroke",
+			color: "transparent",
+			borderColor: toneAlpha(line.tone, 0.6 * (1 - t)),
+			borderSize: 1,
+			borderRadius: 2 + grow,
+		},
+		ignoreEvent: true,
+	};
 }
 
 function mainText(line: ChartLine): string {
@@ -121,6 +142,8 @@ export function registerOrderLinesOverlay() {
 				}
 				placed.push({ y, x: left, w: total });
 				const top = y - H / 2;
+				const pulse = input.pulse?.[line.id];
+				if (pulse != null && pulse < 1) figures.push(pulseFig(line, pulse, left, top, total));
 				figures.push(rectFig(left, top, total, H, p.page, tone, 2));
 				figures.push(rectFig(left, top, handleW + textW, H, fill, undefined, 2));
 				if (handleW) {

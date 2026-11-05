@@ -3,6 +3,7 @@ import { t } from "@lingui/core/macro";
 import { ArrowsLeftRightIcon, DownloadSimpleIcon, UploadSimpleIcon } from "@phosphor-icons/react";
 import { useConnection } from "wagmi";
 import { InfoRow, InfoRowGroup } from "@/components/ui/info-row";
+import { RollingNumber } from "@/components/ui/rolling-number";
 import { DEFAULT_QUOTE_TOKEN, FALLBACK_VALUE_PLACEHOLDER } from "@/config/app";
 import { getSpotAvailableValue } from "@/domain/trade/balances";
 import { useDefaultDexBalances } from "@/hooks/trade/use-account-balances";
@@ -15,6 +16,7 @@ type SummaryRow = {
 	label: string;
 	value: string;
 	valueClassName?: string;
+	rolling?: boolean;
 };
 
 export function AccountPanel() {
@@ -84,11 +86,13 @@ export function AccountPanel() {
 				{
 					label: t`Balance`,
 					value: formatUSD(perpMetrics.balance),
+					rolling: true,
 				},
 				{
 					label: t`Unrealized PNL`,
 					value: formatUSD(perpMetrics.unrealizedPnl, { signDisplay: "exceptZero" }),
 					valueClassName: getValueColorClass(perpMetrics.unrealizedPnl),
+					rolling: true,
 				},
 				{
 					label: t`Cross Margin Ratio`,
@@ -118,11 +122,19 @@ export function AccountPanel() {
 						<InfoRowGroup>
 							<InfoRow
 								label={t`Spot`}
-								value={spotMetrics ? formatUSD(spotMetrics.totalValue) : FALLBACK_VALUE_PLACEHOLDER}
+								value={
+									spotMetrics ? <RollingNumber value={formatUSD(spotMetrics.totalValue)} /> : FALLBACK_VALUE_PLACEHOLDER
+								}
 							/>
 							<InfoRow
 								label={t`Perps`}
-								value={perpMetrics ? formatUSD(perpMetrics.accountValue) : FALLBACK_VALUE_PLACEHOLDER}
+								value={
+									perpMetrics ? (
+										<RollingNumber value={formatUSD(perpMetrics.accountValue)} />
+									) : (
+										FALLBACK_VALUE_PLACEHOLDER
+									)
+								}
 							/>
 						</InfoRowGroup>
 					</section>
@@ -132,7 +144,12 @@ export function AccountPanel() {
 							<h3 className="flex min-h-6 items-center text-xs font-medium text-fg">{t`Perps Overview`}</h3>
 							<InfoRowGroup>
 								{perpRows.map((row) => (
-									<InfoRow key={row.label} label={row.label} value={row.value} valueClassName={row.valueClassName} />
+									<InfoRow
+										key={row.label}
+										label={row.label}
+										value={row.rolling ? <RollingNumber value={row.value} /> : row.value}
+										valueClassName={row.valueClassName}
+									/>
 								))}
 							</InfoRowGroup>
 						</section>

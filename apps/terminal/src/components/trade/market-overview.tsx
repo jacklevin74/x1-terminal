@@ -2,6 +2,7 @@ import { t } from "@lingui/core/macro";
 import { ArrowSquareOutIcon } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import { get24hChange, getOiUsd } from "@/domain/market";
+import { useTickFlash } from "@/hooks/ui/use-tick-flash";
 import { cn } from "@/lib/cn";
 import { formatClockDuration, formatPercent, formatUSD, shortenAddress } from "@/lib/format";
 import {
@@ -116,13 +117,18 @@ export function MarketOverview() {
 		setTick({ coin: perpCoin, price: markPxForDisplay, direction: step === 0 ? tick.direction : step });
 	}
 
+	const priceRef = useTickFlash<HTMLSpanElement>(markPxForDisplay, perpCoin);
+
 	const heroPrice = markPxForDisplay != null ? formatUSD(markPxForDisplay, { compact: false }) : "—";
 	const changePct = change24h !== null ? formatPercent(change24h / 100, { signDisplay: "exceptZero" }) : "—";
 	const compactUsd = { notation: "compact", compactDisplay: "short" } as const;
 
 	return (
 		<div className="flex min-w-0 flex-nowrap items-center gap-6">
-			<span className={cn("shrink-0 text-base font-medium tabular-nums", getTickColorClass(tick.direction))}>
+			<span
+				ref={priceRef}
+				className={cn("shrink-0 text-base font-medium tabular-nums", getTickColorClass(tick.direction))}
+			>
 				{heroPrice}
 			</span>
 			<StatBlock

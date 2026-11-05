@@ -1,8 +1,12 @@
-import { memo } from "react";
+import { memo, useEffect, useRef } from "react";
 import { cn } from "@/lib/cn";
 import { formatNumber } from "@/lib/format";
 import type { BookLevel } from "@/lib/trade/orderbook";
+import { isLevelResized, playFlash } from "@/lib/ui/flash";
 import { useOrderbookActions } from "@/stores/use-orderbook-actions-store";
+
+const LEVEL_FLASH_KEYFRAMES: Keyframe[] = [{ opacity: 0.07 }, { opacity: 0 }];
+const LEVEL_FLASH_OPTIONS: KeyframeAnimationOptions = { duration: 400, easing: "ease-out" };
 
 interface Props {
 	level: BookLevel;
@@ -17,6 +21,16 @@ function OrderbookRowComponent({ level, side, maxTotal, priceDecimals, showInQuo
 	const { setSelectedPrice } = useOrderbookActions();
 	const depthPct = maxTotal > 0 ? (level.total / maxTotal) * 100 : 0;
 	const isAsk = side === "ask";
+	const flashRef = useRef<HTMLDivElement>(null);
+	const prevLevelRef = useRef<{ price: number; size: number } | null>(null);
+
+	useEffect(() => {
+		const next = { price: level.price, size: level.size };
+		if (isLevelResized(prevLevelRef.current, next)) {
+			playFlash(flashRef.current, LEVEL_FLASH_KEYFRAMES, LEVEL_FLASH_OPTIONS);
+		}
+		prevLevelRef.current = next;
+	}, [level.price, level.size]);
 
 	const sizeValue = showInQuote ? level.size * level.price : level.size;
 	const totalValue = showInQuote ? level.total * level.price : level.total;
@@ -30,6 +44,10 @@ function OrderbookRowComponent({ level, side, maxTotal, priceDecimals, showInQuo
 			<div
 				className={cn("pointer-events-none absolute inset-y-0 left-0", isAsk ? "depth-bar-ask" : "depth-bar-bid")}
 				style={{ width: `${depthPct}%` }}
+			/>
+			<div
+				ref={flashRef}
+				className={cn("pointer-events-none absolute inset-0 opacity-0", isAsk ? "bg-market-down" : "bg-market-up")}
 			/>
 			<div className="relative z-10 grid h-full grid-cols-3 items-center gap-2 px-3 text-xs font-normal tabular-nums">
 				<button

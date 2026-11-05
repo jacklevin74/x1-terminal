@@ -12,6 +12,7 @@ import { useState } from "react";
 import { useConnection, useDisconnect } from "wagmi";
 import { CopyStateIcon } from "@/components/ui/copy-state-icon";
 import { InfoRow, InfoRowGroup } from "@/components/ui/info-row";
+import { RollingNumber } from "@/components/ui/rolling-number";
 import { UI_TEXT } from "@/config/ui-text";
 import { useDefaultDexBalances } from "@/hooks/trade/use-account-balances";
 import { useCopyToClipboard } from "@/hooks/ui/use-copy-to-clipboard";
@@ -125,10 +126,12 @@ export function MobileAccountView({ className }: MobileAccountViewProps) {
 					<Skeleton name="account-equity" loading={isLoading}>
 						<div className="flex flex-col gap-1">
 							<div className="text-2xs uppercase tracking-micro text-fg-muted">{ACCOUNT_TEXT.EQUITY_LABEL}</div>
-							<div className="text-base font-medium tabular-nums text-fg">{formatUSD(accountValue)}</div>
+							<div className="text-base font-medium tabular-nums text-fg">
+								<RollingNumber value={formatUSD(accountValue)} />
+							</div>
 							<div className={cn("text-xs tabular-nums", unrealizedPnl >= 0 ? "text-market-up" : "text-market-down")}>
-								{unrealizedPnl >= 0 ? "+" : ""}
-								{formatUSD(unrealizedPnl)} <span className="text-fg-muted">{ACCOUNT_TEXT.UNREALIZED_LABEL}</span>
+								<RollingNumber value={`${unrealizedPnl >= 0 ? "+" : ""}${formatUSD(unrealizedPnl)}`} />{" "}
+								<span className="text-fg-muted">{ACCOUNT_TEXT.UNREALIZED_LABEL}</span>
 							</div>
 						</div>
 					</Skeleton>

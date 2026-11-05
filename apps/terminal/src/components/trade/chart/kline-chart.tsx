@@ -1,6 +1,6 @@
 import { t } from "@lingui/core/macro";
 import type { Chart, KLineData } from "klinecharts";
-import { dispose, FormatDateType, init, LoadDataType } from "klinecharts";
+import { DomPosition, dispose, FormatDateType, init, LoadDataType } from "klinecharts";
 import { useEffect, useRef, useState } from "react";
 import { type ChartTypeConfig, DEFAULT_CHART_TYPE, INITIAL_CANDLE_COUNT, VOLUME_INDICATOR_NAME } from "@/config/chart";
 import { MS_PER_DAY, TAB_RESTORE_THRESHOLD_MS } from "@/config/time";
@@ -9,6 +9,7 @@ import { formatShortDate, formatTime, formatTooltipDate } from "@/lib/chart/form
 import { DEFAULT_INTERVAL } from "@/lib/chart/kline-config";
 import { buildKlineStyles } from "@/lib/chart/kline-styles";
 import { getInfoClient, useSubscription } from "@/lib/hyperliquid";
+import { ChartHorizonGlow } from "./chart-horizon-glow";
 import type { ChartSource, ChartSourceToggleIntentHandlers } from "./chart-source-toggle";
 import { ChartStatus } from "./chart-status";
 import { KlineToolbar } from "./kline-toolbar";
@@ -66,6 +67,7 @@ export function KlineChart({
 	tradingViewIntentHandlers,
 }: Props) {
 	const containerRef = useRef<HTMLDivElement>(null);
+	const stageRef = useRef<HTMLDivElement>(null);
 	const chartRef = useRef<Chart | null>(null);
 	const [activeInterval, setActiveInterval] = useState(DEFAULT_INTERVAL);
 	const [activeChartType, setActiveChartType] = useState<ChartTypeConfig>(DEFAULT_CHART_TYPE);
@@ -161,7 +163,16 @@ export function KlineChart({
 				}
 			});
 
-		const ro = new ResizeObserver(() => chart.resize());
+		function syncHorizon() {
+			const pane = chart?.getSize("candle_pane", DomPosition.Root);
+			if (pane) stageRef.current?.style.setProperty("--horizon-y", `${pane.top + pane.height}px`);
+		}
+		syncHorizon();
+
+		const ro = new ResizeObserver(() => {
+			chart.resize();
+			syncHorizon();
+		});
 		ro.observe(container);
 
 		return () => {
@@ -255,8 +266,8 @@ export function KlineChart({
 	const hasFailed = !isLoading && loadResult?.failed === true;
 	const dataKey = isLoading || hasFailed ? null : loadKey;
 
-	useKlineExecutions(chartRef, symbol, activeInterval.barMs, dataKey);
-	useKlineTradingLines({ chartRef, symbol, dex: positionDex, dataKey });
+	const { pulseFills } = useKlineTradingLines({ chartRef, symbol, dex: positionDex, dataKey });
+	useKlineExecutions(chartRef, symbol, activeInterval.barMs, dataKey, pulseFills);
 
 	return (
 		<div className="flex flex-col h-full">
@@ -268,7 +279,8 @@ export function KlineChart({
 				onChartSourceChange={onChartSourceChange}
 				tradingViewIntentHandlers={tradingViewIntentHandlers}
 			/>
-			<div className="relative flex-1 min-h-0">
+			<div ref={stageRef} className="relative flex-1 min-h-0">
+				<ChartHorizonGlow />
 				<div ref={containerRef} className="absolute inset-0" />
 				{isLoading ? <ChartStatus label={t`Loading`} pulse /> : null}
 				{hasFailed ? <ChartStatus label={t`Failed to load chart.`} /> : null}

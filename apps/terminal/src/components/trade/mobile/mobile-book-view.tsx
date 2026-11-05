@@ -178,7 +178,7 @@ export function MobileBookView({ className }: MobileBookViewProps) {
 								.reverse()
 								.map((level) => (
 									<OrderbookRow
-										key={`ask-${level.price}-${level.size}`}
+										key={`ask-${level.price}`}
 										level={level}
 										side="ask"
 										maxTotal={maxTotal}
@@ -222,7 +222,7 @@ export function MobileBookView({ className }: MobileBookViewProps) {
 						<div className="flex-1 flex flex-col overflow-hidden">
 							{bids.slice(0, visibleRows).map((level) => (
 								<OrderbookRow
-									key={`bid-${level.price}-${level.size}`}
+									key={`bid-${level.price}`}
 									level={level}
 									side="bid"
 									maxTotal={maxTotal}

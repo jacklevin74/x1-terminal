@@ -45,6 +45,8 @@ export interface FillBucket {
 	sizeText: string;
 	avgPxText: string;
 	anchor: number;
+	enterFrom?: number;
+	enter?: number;
 }
 
 export function toneColor(tone: Tone): string {

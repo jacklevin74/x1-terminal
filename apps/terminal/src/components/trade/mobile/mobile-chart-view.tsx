@@ -5,6 +5,7 @@ import { Skeleton } from "boneyard-js/react";
 import { Suspense } from "react";
 import { UI_TEXT } from "@/config/ui-text";
 import { get24hChange, getOiUsd, getPositionDex } from "@/domain/market";
+import { useTickFlash } from "@/hooks/ui/use-tick-flash";
 import { cn } from "@/lib/cn";
 import { formatPercent, formatPrice, formatUSD } from "@/lib/format";
 import { useSelectedMarketInfo } from "@/lib/hyperliquid";
@@ -39,6 +40,7 @@ export function MobileChartView({ className }: MobileChartViewProps) {
 	const markPx = selectedMarket?.markPx;
 	const change24h = get24hChange(selectedMarket?.prevDayPx, selectedMarket?.markPx);
 	const oiUsd = getOiUsd(selectedMarket?.openInterest, selectedMarket?.markPx);
+	const priceRef = useTickFlash<HTMLDivElement>(markPx, selectedMarket?.name ?? "");
 
 	return (
 		<div className={cn("flex flex-col flex-1 min-h-0", className)}>
@@ -48,6 +50,7 @@ export function MobileChartView({ className }: MobileChartViewProps) {
 				<Skeleton name="market-price" loading={isLoading}>
 					<div className="text-right">
 						<div
+							ref={priceRef}
 							className={cn(
 								"text-base font-medium tabular-nums",
 								change24h !== null ? getValueColorClass(change24h) : "text-fg",

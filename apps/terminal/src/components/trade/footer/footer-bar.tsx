@@ -9,6 +9,7 @@ import { cn } from "@/lib/cn";
 import { formatTime } from "@/lib/format";
 import { type ApiStatus, useApiStatus } from "@/lib/hyperliquid";
 import { useCommandMenuActions } from "@/stores/use-global-modal-store";
+import { FooterStatusDot } from "./footer-status-dot";
 
 function getStatusDisplay(status: ApiStatus) {
 	switch (status) {
@@ -47,7 +48,7 @@ export function FooterBar() {
 			)}
 		>
 			<div className="flex min-w-0 items-center gap-2">
-				<span aria-hidden className={cn("size-1.5 shrink-0 rounded-full", dotClass)} />
+				<FooterStatusDot dotClass={dotClass} isConnected={status === "connected"} />
 				<span>{text}</span>
 			</div>
 			<Button
