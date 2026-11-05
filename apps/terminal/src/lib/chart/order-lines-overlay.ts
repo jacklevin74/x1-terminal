@@ -2,7 +2,6 @@ import { registerOverlay } from "klinecharts";
 import {
 	type ChartLine,
 	type ChartLinesInput,
-	layoutAroundMark,
 	lineFig,
 	palette,
 	rectFig,
@@ -17,6 +16,35 @@ const TAG_H = 18;
 const FONT = 11;
 const LEFT = 8;
 export const CANCEL_KEY = "cancel:";
+export const DRAG_KEY = "drag:";
+const HANDLE_W = 16;
+
+export interface OrderLinesData extends ChartLinesInput {
+	drag?: { oid: number; price: number; priceText: string } | null;
+	hover?: string | null;
+}
+
+export interface OrderLineHitBox {
+	key: string;
+	x: number;
+	y: number;
+	w: number;
+	h: number;
+}
+
+let hitBoxes: OrderLineHitBox[] = [];
+
+export function getOrderLineHitBoxes(): OrderLineHitBox[] {
+	return hitBoxes;
+}
+
+function withDrag(input: OrderLinesData): ChartLine[] {
+	const drag = input.drag;
+	if (!drag) return input.lines;
+	return input.lines.map((line) =>
+		line.oid === drag.oid ? { ...line, price: drag.price, priceText: drag.priceText } : line,
+	);
+}
 
 function mixHex(a: string, b: string, t: number): string {
 	const pa = Number.parseInt(a.slice(1, 7), 16);
@@ -47,11 +75,12 @@ export function registerOrderLinesOverlay() {
 		needDefaultXAxisFigure: false,
 		needDefaultYAxisFigure: false,
 		createPointFigures: ({ overlay, bounding, yAxis }) => {
-			const input = overlay.extendData as ChartLinesInput;
+			const input = overlay.extendData as OrderLinesData;
 			if (!yAxis) return [];
 			const p = palette();
 			const figures: unknown[] = [];
-			const items = input.lines
+			const boxes: OrderLineHitBox[] = [];
+			const items = withDrag(input)
 				.map((line) => ({ line, y: yAxis.convertToPixel(line.price) }))
 				.filter((i) => i.y >= 0 && i.y <= bounding.height);
 			for (const { line, y } of items) {
@@ -77,7 +106,8 @@ export function registerOrderLinesOverlay() {
 				const qty = line.kind === "liquidation" ? null : line.sizeText;
 				const qtyW = qty ? textWidth(qty, FONT, 500) + 16 : 0;
 				const closeW = line.oid == null ? 0 : 18;
-				const total = textW + qtyW + closeW;
+				const handleW = line.oid != null && line.order ? HANDLE_W : 0;
+				const total = handleW + textW + qtyW + closeW;
 				let left = LEFT;
 				for (const box of placed) {
 					if (Math.abs(box.y - y) < H + 2 && left < box.x + box.w + 6 && left + total > box.x) left = box.x + box.w + 6;
@@ -85,34 +115,57 @@ export function registerOrderLinesOverlay() {
 				placed.push({ y, x: left, w: total });
 				const top = y - H / 2;
 				figures.push(rectFig(left, top, total, H, p.page, tone, 2));
-				figures.push(rectFig(left, top, textW, H, fill, undefined, 2));
-				figures.push(textFig(left + textW / 2, y, text, "#ffffff", { align: "center", size: FONT, weight: 500 }));
-				let x = left + textW;
+				figures.push(rectFig(left, top, handleW + textW, H, fill, undefined, 2));
+				if (handleW) {
+					const cx = left + handleW / 2 + 1;
+					for (const dy of [-3, 0, 3]) figures.push(lineFig(cx - 3, y + dy, cx + 3, y + dy, "#ffffff", false));
+				}
+				figures.push(
+					textFig(left + handleW + textW / 2, y, text, "#ffffff", { align: "center", size: FONT, weight: 500 }),
+				);
+				let x = left + handleW + textW;
 				if (qty) {
 					figures.push(textFig(x + qtyW / 2, y, qty, p.fg, { align: "center", size: FONT, weight: 500 }));
 					x += qtyW;
 				}
-				if (closeW) {
-					figures.push(lineFig(x, top + 1, x, top + H - 1, tone, false));
-					figures.push(textFig(x + closeW / 2, y, "×", p.secondary, { align: "center", size: 13, weight: 400 }));
+				if (handleW) {
+					const key = `${DRAG_KEY}${line.oid}`;
+					boxes.push({ key, x: left, y: top, w: x - left, h: H });
 					figures.push({
-						key: `${CANCEL_KEY}${line.oid}`,
+						key,
+						type: "rect",
+						attrs: { x: left, y: top, width: x - left, height: H },
+						styles: { style: "fill", color: "rgba(0,0,0,0)" },
+					});
+				}
+				if (closeW) {
+					const key = `${CANCEL_KEY}${line.oid}`;
+					const hovered = input.hover === key;
+					boxes.push({ key, x, y: top, w: closeW, h: H });
+					if (hovered) figures.push(rectFig(x, top + 1, closeW - 1, H - 2, mixHex(tone, p.page, 0.6), undefined, 0));
+					figures.push(lineFig(x, top + 1, x, top + H - 1, tone, false));
+					figures.push(
+						textFig(x + closeW / 2, y, "×", hovered ? p.fg : p.secondary, { align: "center", size: 13, weight: 400 }),
+					);
+					figures.push({
+						key,
 						type: "rect",
 						attrs: { x, y: top, width: closeW, height: H },
 						styles: { style: "fill", color: "rgba(0,0,0,0)" },
 					});
 				}
 			}
+			hitBoxes = boxes;
 			return figures as never;
 		},
 		createYAxisFigures: ({ overlay, bounding, yAxis }) => {
-			const input = overlay.extendData as ChartLinesInput;
+			const input = overlay.extendData as OrderLinesData;
 			if (!yAxis) return [];
 			const p = palette();
-			const markY = input.markPx != null ? yAxis.convertToPixel(input.markPx) : null;
-			const items = input.lines.map((line) => ({ line, y: yAxis.convertToPixel(line.price) }));
 			const figures: unknown[] = [];
-			for (const { line, ly } of layoutAroundMark(items, markY, TAG_H + 2, bounding.height)) {
+			for (const line of withDrag(input)) {
+				const ly = yAxis.convertToPixel(line.price);
+				if (ly < 0 || ly > bounding.height) continue;
 				const tone = toneColor(line.tone);
 				figures.push(rectFig(1, ly - TAG_H / 2, bounding.width - 4, TAG_H, p.page, tone, 2));
 				figures.push(textFig(6, ly, line.priceText, tone, { size: FONT, weight: 500 }));

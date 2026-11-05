@@ -19,6 +19,15 @@ export interface ChartLine {
 	valueText?: string;
 	closesLong?: boolean;
 	oid?: number;
+	order?: ChartLineOrder | null;
+}
+
+export interface ChartLineOrder {
+	isBuy: boolean;
+	size: string;
+	reduceOnly: boolean;
+	tif: "Gtc" | "Ioc" | "Alo";
+	trigger: { isMarket: boolean; tpsl: "tp" | "sl"; limitPx: number } | null;
 }
 
 export interface ChartLinesInput {

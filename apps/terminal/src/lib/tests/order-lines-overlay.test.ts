@@ -66,7 +66,7 @@ describe("order lines overlay", () => {
 		expect(keys).toEqual([`${CANCEL_KEY}7`]);
 	});
 
-	it("stacks labels that would overlap", async () => {
+	it("shifts labels that would overlap to the right on their own line", async () => {
 		const { registerOrderLinesOverlay } = await import("@/lib/chart/order-lines-overlay");
 		registerOrderLinesOverlay();
 		const config = registerOverlay.mock.calls[0]?.[0];
@@ -82,7 +82,11 @@ describe("order lines overlay", () => {
 			bounding: { width: 600, height: 300 },
 			yAxis,
 		});
-		const hits = figures.filter((f: { key?: string }) => f.key).map((f: { attrs: { y: number } }) => f.attrs.y);
-		expect(Math.abs(hits[1] - hits[0])).toBeGreaterThanOrEqual(20);
+		const hits = figures
+			.filter((f: { key?: string }) => f.key)
+			.map((f: { attrs: { x: number; y: number; width: number } }) => f.attrs);
+		expect(hits[0].y).toBe(100 - 10);
+		expect(hits[1].y).toBe(105 - 10);
+		expect(hits[1].x).toBeGreaterThanOrEqual(hits[0].x + hits[0].width);
 	});
 });

@@ -587,3 +587,13 @@ html[data-input="pointer"] :focus-visible:not(input, textarea, [contenteditable=
   outline: none !important;
   --tw-ring-shadow: 0 0 #0000 !important;
 }
+
+.chart-cursor-pointer,
+.chart-cursor-pointer * {
+	cursor: pointer !important;
+}
+
+.chart-cursor-row-resize,
+.chart-cursor-row-resize * {
+	cursor: row-resize !important;
+}

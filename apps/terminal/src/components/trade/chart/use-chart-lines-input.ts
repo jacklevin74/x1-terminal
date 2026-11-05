@@ -1,9 +1,23 @@
 import { useConnection } from "wagmi";
 import { HL_ALL_DEXS } from "@/config/app";
-import type { ChartLine, ChartLinesInput, Tone } from "@/lib/chart/chart-lines";
+import type { ChartLine, ChartLineOrder, ChartLinesInput, Tone } from "@/lib/chart/chart-lines";
 import { formatPrice, formatToken, formatUSD } from "@/lib/format";
 import { useMarkets, useSubscription, useUserPositions } from "@/lib/hyperliquid";
-import { isStopOrder, isTakeProfitOrder } from "@/lib/trade/open-orders";
+import { isMarketTriggerOrder, isStopOrder, isTakeProfitOrder, type OpenOrder } from "@/lib/trade/open-orders";
+
+function lineOrder(order: OpenOrder, tp: boolean): ChartLineOrder | null {
+	if (!(Number(order.sz) > 0)) return null;
+	const tif = order.tif === "Ioc" || order.tif === "Alo" ? order.tif : "Gtc";
+	return {
+		isBuy: order.side === "B",
+		size: order.sz,
+		reduceOnly: order.reduceOnly,
+		tif,
+		trigger: order.isTrigger
+			? { isMarket: isMarketTriggerOrder(order), tpsl: tp ? "tp" : "sl", limitPx: Number(order.limitPx) }
+			: null,
+	};
+}
 
 export function useChartLinesInput(symbol: string, dex?: string): ChartLinesInput {
 	const { address, isConnected } = useConnection();
@@ -81,6 +95,7 @@ export function useChartLinesInput(symbol: string, dex?: string): ChartLinesInpu
 			title: tp ? "TP" : sl ? "SL" : order.side === "B" ? "Buy" : "Sell",
 			closesLong: order.side === "A",
 			oid: order.oid,
+			order: lineOrder(order, tp),
 			...expected(px, Number(order.sz), order.side === "A"),
 		});
 	}
