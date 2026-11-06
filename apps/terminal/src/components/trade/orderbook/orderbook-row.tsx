@@ -5,8 +5,8 @@ import type { BookLevel } from "@/lib/trade/orderbook";
 import { isLevelResized, playFlash } from "@/lib/ui/flash";
 import { useOrderbookActions } from "@/stores/use-orderbook-actions-store";
 
-const LEVEL_FLASH_KEYFRAMES: Keyframe[] = [{ opacity: 0.07 }, { opacity: 0 }];
-const LEVEL_FLASH_OPTIONS: KeyframeAnimationOptions = { duration: 400, easing: "ease-out" };
+const LEVEL_FLASH_KEYFRAMES: Keyframe[] = [{ opacity: 0.2 }, { opacity: 0.2, offset: 0.35 }, { opacity: 0 }];
+const LEVEL_FLASH_OPTIONS: KeyframeAnimationOptions = { duration: 700, easing: "ease-out" };
 
 interface Props {
 	level: BookLevel;
