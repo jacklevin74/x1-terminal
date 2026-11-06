@@ -1,184 +1,43 @@
-import { Button } from "@hypeterminal/ui";
-import { t } from "@lingui/core/macro";
-import { ArrowsLeftRightIcon, DownloadSimpleIcon, UploadSimpleIcon } from "@phosphor-icons/react";
-import { useConnection } from "wagmi";
-import { InfoRow, InfoRowGroup } from "@/components/ui/info-row";
-import { DEFAULT_QUOTE_TOKEN, FALLBACK_VALUE_PLACEHOLDER } from "@/config/app";
-import { getSpotAvailableValue } from "@/domain/trade/balances";
-import { useAccountUnrealizedPnl, useDefaultDexBalances } from "@/hooks/trade/use-account-balances";
-import { cn } from "@/lib/cn";
-import { formatPercent, formatUSD } from "@/lib/format";
-import { toNumberOrZero } from "@/lib/trade/numbers";
-import { getValueColorClass } from "@/lib/ui/value-color";
-import { useDepositModalActions } from "@/stores/use-global-modal-store";
+import {t} from "@lingui/core/macro";
+import {Button} from "@hypeterminal/ui";
+import {useConnection} from "wagmi";
+import {InfoRow,InfoRowGroup} from "@/components/ui/info-row";
+import {useAllDexsAccountState} from "@/hooks/trade/use-account-balances";
+import {useInfo} from "@/lib/hyperliquid";
+import {summarizeAccount} from "@/lib/positions/account-summary";
+import {formatPercent,formatUSD} from "@/lib/format";
+import {getValueColorClass} from "@/lib/ui/value-color";
+import {useDepositModalActions} from "@/stores/use-global-modal-store";
+import {FALLBACK_VALUE_PLACEHOLDER} from "@/config/app";
 
-type SummaryRow = {
-	label: string;
-	value: string;
-	valueClassName?: string;
-};
-
-export function AccountPanel() {
-	const { open: openDepositModal } = useDepositModalActions();
-	const { isConnected } = useConnection();
-	const {
-		marginSummary,
-		perpSummary,
-		perpPositions,
-		spotBalances,
-		spotAvailableAfterMaintenance,
-		crossMaintenanceMarginUsed,
-	} = useDefaultDexBalances();
-
-	const accountUnrealizedPnl = useAccountUnrealizedPnl();
-	let perpMetrics = null;
-	if (marginSummary && perpSummary) {
-		const crossAccountValue = toNumberOrZero(perpSummary.accountValue);
-		const crossTotalNtlPos = toNumberOrZero(perpSummary.totalNtlPos);
-		const maintenanceMargin = toNumberOrZero(crossMaintenanceMarginUsed);
-
-		let nativeUnrealizedPnl = 0;
-		for (const pos of perpPositions) {
-			nativeUnrealizedPnl += toNumberOrZero(pos.position.unrealizedPnl);
-		}
-
-		const balance = crossAccountValue - nativeUnrealizedPnl;
-		const marginRatio = crossAccountValue > 0 ? maintenanceMargin / crossAccountValue : 0;
-		const crossLeverage = crossAccountValue > 0 ? Math.abs(crossTotalNtlPos) / crossAccountValue : 0;
-
-		perpMetrics = {
-			accountValue: crossAccountValue,
-			balance,
-			unrealizedPnl: accountUnrealizedPnl,
-			marginRatio,
-			crossLeverage,
-			maintenanceMargin,
-		};
-	}
-
-	let spotMetrics = null;
-	if (isConnected) {
-		let totalValue = 0;
-		const tokens: Array<{ coin: string; total: number; available: number; usdValue: number }> = [];
-
-		for (const b of spotBalances) {
-			const total = toNumberOrZero(b.total);
-			const entryNtl = toNumberOrZero(b.entryNtl);
-
-			if (total === 0) continue;
-
-			const available = toNumberOrZero(getSpotAvailableValue(b, spotAvailableAfterMaintenance));
-			const usdValue = b.coin === DEFAULT_QUOTE_TOKEN ? total : entryNtl;
-
-			totalValue += usdValue;
-			tokens.push({ coin: b.coin, total, available, usdValue });
-		}
-
-		tokens.sort((a, b) => b.usdValue - a.usdValue);
-		spotMetrics = { totalValue, topTokens: tokens.slice(0, 3) };
-	}
-
-	const hasPerpData = isConnected && perpMetrics !== null;
-	const hasSpotData = isConnected && spotMetrics !== null;
-
-	const perpRows: SummaryRow[] = perpMetrics
-		? [
-				{
-					label: t`Balance`,
-					value: formatUSD(perpMetrics.balance),
-					valueClassName: "tabular-nums",
-				},
-				{
-					label: t`Unrealized PNL`,
-					value: formatUSD(perpMetrics.unrealizedPnl, { signDisplay: "exceptZero" }),
-					valueClassName: cn("tabular-nums", perpMetrics.unrealizedPnl === null ? "text-fg-muted" : getValueColorClass(perpMetrics.unrealizedPnl)),
-				},
-				{
-					label: t`Cross Margin Ratio`,
-					value: formatPercent(perpMetrics.marginRatio, { maximumFractionDigits: 2 }),
-					valueClassName: "tabular-nums",
-				},
-				{
-					label: t`Maintenance Margin`,
-					value: formatUSD(perpMetrics.maintenanceMargin),
-					valueClassName: "tabular-nums",
-				},
-				{
-					label: t`Cross Account Leverage`,
-					value: `${perpMetrics.crossLeverage.toFixed(2)}x`,
-					valueClassName: "tabular-nums",
-				},
-			]
-		: [];
-
-	return (
-		<div className="shrink-0 flex flex-col bg-surface border-t border-stroke-weak pb-6 overflow-hidden">
-			<div className="px-2 py-2 border-b border-stroke-weak">
-				<span className="text-xs font-medium text-fg-muted uppercase tracking-wide">{t`Account`}</span>
-			</div>
-
-			{!isConnected ? (
-				<div className="text-xs text-fg-muted text-center py-4">{t`Connect wallet to view account`}</div>
-			) : (
-				<div className="p-2 overflow-y-auto">
-					<p className="text-xs font-medium text-fg mb-1">{t`Account Equity`}</p>
-					<InfoRowGroup className="divide-y-0">
-						<InfoRow
-							label={t`Spot`}
-							value={spotMetrics ? formatUSD(spotMetrics.totalValue) : FALLBACK_VALUE_PLACEHOLDER}
-							valueClassName="tabular-nums"
-						/>
-						<InfoRow
-							label={t`Perps`}
-							value={perpMetrics ? formatUSD(perpMetrics.accountValue) : FALLBACK_VALUE_PLACEHOLDER}
-							valueClassName="tabular-nums"
-						/>
-					</InfoRowGroup>
-
-					{hasPerpData && (
-						<>
-							<p className="text-xs font-medium text-fg mt-3 mb-1">{t`Perps Overview`}</p>
-							<InfoRowGroup className="divide-y-0">
-								{perpRows.map((row) => (
-									<InfoRow key={row.label} label={row.label} value={row.value} valueClassName={row.valueClassName} />
-								))}
-							</InfoRowGroup>
-						</>
-					)}
-
-					{(hasPerpData || hasSpotData) && (
-						<div className="grid grid-cols-3 gap-1 mt-4">
-							<Button
-								variant="outline"
-								intent="neutral"
-								onClick={() => openDepositModal("withdraw")}
-								aria-label={t`Withdraw`}
-								iconLeft={<UploadSimpleIcon className="size-4" />}
-							>
-								{t`Withdraw`}
-							</Button>
-							<Button
-								variant="outline"
-								intent="neutral"
-								onClick={() => openDepositModal("deposit")}
-								aria-label={t`Deposit`}
-								iconLeft={<DownloadSimpleIcon className="size-4" />}
-							>
-								{t`Deposit`}
-							</Button>
-							<Button
-								variant="outline"
-								intent="neutral"
-								onClick={() => openDepositModal("bridge")}
-								aria-label={t`Bridge`}
-								iconLeft={<ArrowsLeftRightIcon className="size-4" />}
-							>
-								{t`Bridge`}
-							</Button>
-						</div>
-					)}
-				</div>
-			)}
-		</div>
-	);
+function RiskGauge({ratio}:{ratio:number}){
+ const progress=Math.max(0,Math.min(1,ratio));
+ return <svg aria-hidden="true" viewBox="0 0 32 18" className="h-3.5 w-6"><path d="M3 16a13 13 0 0 1 26 0" fill="none" stroke="currentColor" strokeWidth="6" className="text-fill-strong"/><path d="M3 16a13 13 0 0 1 26 0" fill="none" stroke="currentColor" strokeWidth="6" pathLength="1" strokeDasharray="0.75 0.25" className="text-success"/><path d="M3 16a13 13 0 0 1 26 0" fill="none" stroke="currentColor" strokeWidth="6" pathLength="1" strokeDasharray="0.25 0.75" strokeDashoffset="-0.75" className="text-error"/><path d="M16 16v-9" stroke="currentColor" strokeWidth="2" transform={`rotate(${-90+180*progress} 16 16)`}/></svg>;
+}
+function Hint({label,text}:{label:string;text:string}){return <span title={text} tabIndex={0} className="cursor-help underline decoration-dotted underline-offset-4">{label}</span>;}
+export function AccountPanel(){
+ const {isConnected}=useConnection(),{open}=useDepositModalActions();
+ const state=useAllDexsAccountState();
+ const options={enabled:isConnected,staleTime:300000};
+ const metas=useInfo("allPerpMetas",undefined,options),dexs=useInfo("perpDexs",undefined,options);
+ const spot=useInfo("spotMetaAndAssetCtxs",undefined,{enabled:isConnected,refetchInterval:30000});
+ const collateral:Record<string,number>={},prices:Record<number,number>={0:1};
+ metas.data?.forEach((meta,index)=>{const name=index===0?"":dexs.data?.[index]?.name;if(name!==undefined)collateral[name]=meta.collateralToken;});
+ if(spot.data)spot.data[0].universe.forEach((market,index)=>{if(market.tokens[1]!==0)return;const price=Number(spot.data![1][index]?.markPx);if(Number.isFinite(price)&&price>0)prices[market.tokens[0]]=price;});
+ const summary=summarizeAccount({states:state.clearinghouseStates,balances:state.spotBalances,mode:state.accountAbstraction,collateral,prices,ready:!state.isLoading&&!state.hasError});
+ const unified=state.accountAbstraction==="unifiedAccount",portfolio=state.accountAbstraction==="portfolioMargin";
+ const ratioColor=summary.ratio===null?"text-fg-muted":summary.ratio>=0.95?"text-error":summary.ratio>=0.75?"text-warning":"text-success";
+ const ratioLabel=unified?t`Unified Account Ratio`:portfolio?t`Portfolio Margin Ratio`:t`Cross Margin Ratio`;
+ return <section aria-label={t`Account summary`} className="shrink-0 bg-surface px-2 pb-8 pt-3">
+  <div className="grid grid-cols-2 gap-2"><Button variant="filled" intent="brand" onClick={()=>open("deposit")} aria-label={t`Deposit`}>{t`Deposit`}</Button><Button variant="outline" intent="neutral" onClick={()=>open("withdraw")} aria-label={t`Withdraw`}>{t`Withdraw`}</Button></div>
+  <div className="mt-3 border-t border-stroke-weak pt-3"><h3 className="mb-2 text-sm font-semibold">{unified?t`Unified Account Summary`:portfolio?t`Portfolio Margin Summary`:t`Account Summary`}</h3>
+   {!isConnected?<p className="py-3 text-xs text-fg-muted">{t`Connect wallet to view account`}</p>:<InfoRowGroup className="divide-y-0 tracking-normal [&>[data-slot=info-row]]:px-0 [&>[data-slot=info-row]]:py-1.5">
+    <InfoRow label={<Hint label={ratioLabel} text={unified?t`Highest collateral-token maintenance ratio across perpetual DEXs. Isolated margin is deducted from that token’s available balance. A higher ratio means less margin headroom.`:portfolio?t`Portfolio margin risk requires portfolio-specific collateral and borrowing data. It is unavailable in this summary.`:t`Highest cross maintenance margin divided by cross account equity across perpetual DEXs.`}/>} value={summary.ratio===null?FALLBACK_VALUE_PLACEHOLDER:<span className="inline-flex items-center gap-1.5"><RiskGauge ratio={summary.ratio}/>{summary.ratio===Infinity?">100%":formatPercent(summary.ratio,{maximumFractionDigits:2,signDisplay:"never"})}</span>} valueClassName={ratioColor}/>
+    <InfoRow label={t`Portfolio Value`} value={formatUSD(summary.portfolioValue,{compact:false})}/>
+    <InfoRow label={t`Unrealized PNL`} value={formatUSD(summary.unrealizedPnl,{compact:false})} valueClassName={summary.unrealizedPnl===null?"text-fg-muted":getValueColorClass(summary.unrealizedPnl)}/>
+    <InfoRow label={<Hint label={t`Perps Maintenance Margin`} text={t`Cross maintenance margin reported by Hyperliquid, summed across perpetual DEXs for the selected account.`}/>} value={formatUSD(summary.maintenance,{compact:false})}/>
+    <InfoRow label={<Hint label={unified?t`Unified Account Leverage`:t`Account Leverage`} text={t`Total absolute perpetual position value across DEXs divided by portfolio value. This is account exposure, not an individual order’s leverage setting.`}/>} value={summary.leverage===null?FALLBACK_VALUE_PLACEHOLDER:`${summary.leverage.toFixed(2)}x`}/>
+   </InfoRowGroup>}
+  </div>
+ </section>;
 }

@@ -64,12 +64,6 @@ export const UI_TEXT = {
 		ADD_FUNDS: "Add funds",
 		DISCONNECT: "Disconnect",
 	},
-	THEME_TOGGLE: {
-		SWITCH_LIGHT: "Switch to light mode",
-		SWITCH_DARK: "Switch to dark mode",
-		LIGHT: "Light",
-		DARK: "Dark",
-	},
 	BREADCRUMB: {
 		ARIA_LABEL: "breadcrumb",
 		ELLIPSIS_LABEL: "More",
