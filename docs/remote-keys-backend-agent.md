@@ -1,19 +1,30 @@
-# Backend agent task: implement remote KMS signing for `/keys`
+# Remote KMS signing for `/keys`
 
-## Objective and repositories
+## Implemented services
 
-Replace the missing production service behind X1 Terminal `/keys` with real
-owner-authorized KMS agent creation and paused Auto Trader registration.
+The production handler and executor are already merged. Do not reimplement them
+in this repository.
 
-- `jacklevin74/x1-terminal`: read `docs/remote-keys-api.md`,
-  `apps/terminal/src/lib/remote-keys/api.ts` and the `/keys` page first.
-- `jacklevin74/wxnt-sale-deploy`: extend the existing `/api/copybot` handler.
-- `jacklevin74/hl-ws`: integrate KMS at the current copybot signer seam.
+- `jacklevin74/wxnt-sale-deploy` PR #10, commit `25e3ea947d09b0ba6426cdb776ff14181ab3e70c`: `/api/copybot` operations `kms-status`, `kms-nonce`, `kms-create`, and `kms-register`.
+- `jacklevin74/hl-ws` PR #4, commit `7cd992b3148f237f8b93f0a5fbbd1a5fcd336ea1`: KMS signer at the existing copybot signing seam.
+- `jacklevin74/x1-terminal`: `/keys` client in `docs/remote-keys-api.md` and `apps/terminal/src/lib/remote-keys/api.ts`.
 
-The localhost demo is working, including real KMS signatures and independent
-browser recovery. It **simulates** Hyperliquid approval and backend registration.
+The localhost demo can create real KMS test signatures and recover them in the
+browser. It still **simulates** Hyperliquid approval and backend registration.
 It proves signing compatibility, not production IAM readiness or exchange
 acceptance. Never copy the demo's lack of owner authentication into production.
+
+`supported: true` is the only status that opens setup. `validUntil: null` is a
+non-expiring approval and stays current. State `disabled` cannot be approved,
+registered, or signed. Registration succeeds only in `paused`. A `signer: "kms"`
+Auto Trader registration does not ask the browser for a private key.
+
+The public proxy `https://wxnt-sale-sim.vercel.app/api/copybot` does not yet
+serve these operations. Isolated testing needs a separate non-production
+deployment of the merged handler. This repository does not deploy it, create
+production KMS keys, approve or register agents, restart executors, or place
+trades. Do not merge the terminal pull request until that isolated test is
+explicitly authorized.
 
 The portable reference implementation is in `tools/remote-keys-demo/`:
 `src/kms-signer.js`, its unit tests, independent Python digest vectors and the
@@ -22,17 +33,17 @@ production must retain its existing action-building and posting logic.
 
 ## Required API operations
 
-Implement the exact shapes and EIP-712 definitions in `remote-keys-api.md`:
+The merged handler uses the shapes and EIP-712 definitions in `remote-keys-api.md`:
 
 1. GET `op=kms-status&addr=<selected-account>`: public, account-scoped metadata.
 2. GET `op=kms-nonce&addr=<selected-account>`: single-use nonce for `X1RemoteKeys/1`.
 3. POST `op=kms-create&addr=<selected-account>`: create a non-exportable KMS agent.
 4. POST `op=kms-register&addr=<selected-account>`: verify approval and register paused.
 
-No new Vercel function files under `api/`; put shared modules in `api/_lib/`.
-Do not advertise `supported: true` until the actual executor supports this signer.
-Report required contract adjustments instead of silently changing the protocol.
-Keep demo state and production registrations entirely separate.
+No additional Vercel function files belong under this terminal's `api/`.
+`supported: true` is advertised only when the merged executor can sign.
+Keep demo state and production registrations entirely separate. Contract
+adjustments belong in the service repositories, not a second implementation here.
 
 ## Authorization and request safety
 
