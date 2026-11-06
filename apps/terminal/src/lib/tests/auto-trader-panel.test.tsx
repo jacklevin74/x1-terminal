@@ -61,7 +61,8 @@ it("lists each API wallet and blocks start until the selected wallet is register
 it("renders market choices supplied by the API rather than the former fixed list",async()=>{
  const node=document.createElement("div"),root=createRoot(node);await act(async()=>root.render(createElement(AutoTraderPanel)));
  const labels=[...node.querySelectorAll('label')].filter(l=>l.querySelector('input[type="checkbox"]')).map(l=>l.textContent);
- expect(labels).toEqual(["BTC","xyz:BRENTOIL","xyz:MU","xyz:INTC"]);expect(labels).not.toContain("ETH");
+ expect(labels).toEqual(["BTC","xyz:BRENTOIL","xyz:MU","xyz:INTC","XRPAwaiting signal API"]);
+ const pending=[...node.querySelectorAll("label")].find(l=>l.textContent?.includes("Awaiting signal API"));expect(pending?.querySelector("input")?.disabled).toBe(false);expect(labels).not.toContain("ETH");
  await act(async()=>root.unmount());
 });
 

@@ -14,6 +14,7 @@ export const categoryMapping: Record<string, MarketCategory[]> = {
 	SOL: ["layer1", "trending"],
 	AVAX: ["layer1"],
 	NEAR: ["layer1"],
+	XRP: ["layer1"],
 	ATOM: ["layer1"],
 	DOT: ["layer1"],
 	ADA: ["layer1"],
