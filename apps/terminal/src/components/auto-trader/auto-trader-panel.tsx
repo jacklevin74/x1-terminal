@@ -16,7 +16,8 @@ import { useExchange, useHyperliquid, useInfo, useAgentWallet, readAgentFromStor
 import { sealAgentKey } from "@/lib/auto-trader/api";
 import { useAutoTraderMutation, useAutoTraderSignal, useAutoTraderStatus } from "@/lib/auto-trader/hooks";
 import { accountEquity, validateSettings } from "@/lib/auto-trader/targets";
-import type { AutoTraderSettings } from "@/lib/auto-trader/types";
+import { autoTraderCanSign, type AutoTraderSettings } from "@/lib/auto-trader/types";
+import { agentApprovalCurrent } from "@/lib/trade/api-wallets";
 import { SettingsCard, autoButton } from "./settings-card";
 import { StatusCard, money } from "./status-card";
 
@@ -36,7 +37,7 @@ function AutoTraderAccount({master}:{master:Address}){
  const {submitPlan}=useSubmitPlan();
  const tradingAgent=useAgentWallet();
  const identity=useRef({address,target,env});identity.current={address,target,env};
- const alive=useRef(true),locked=useRef(false),pending=useRef<{key:Hex;address:Address;validUntil:number}|null>(null);
+ const alive=useRef(true),locked=useRef(false),pending=useRef<{key:Hex;address:Address;validUntil:number|null}|null>(null);
  const [pendingAddress,setPendingAddress]=useState<Address|null>(null),[busy,setBusy]=useState(false),[progress,setProgress]=useState("");
  const [error,setError]=useState<string|null>(null),[message,setMessage]=useState<string|null>(null),[confirm,setConfirm]=useState<"resume"|"flatten"|"remove"|"renew"|null>(null);
  const [selectedAgent,setSelectedAgent]=useState(""),[importKey,setImportKey]=useState("");
@@ -49,14 +50,14 @@ function AutoTraderAccount({master}:{master:Address}){
  const approveAgent=useExchange("approveAgent"),approveFee=useExchange("approveBuilderFee");
  useEffect(()=>{alive.current=true;return()=>{alive.current=false;if(pending.current)pending.current.key="0x";pending.current=null;};},[]);
  useEffect(()=>{if(!initialized.current&&status.data){if(status.data.settings)setSettings(normalize(status.data.settings));initialized.current=true;}},[status.data]);
- useEffect(()=>{if(status.data?.registered&&status.data.hasKey&&pending.current&&status.data.agent?.toLowerCase()===pending.current.address.toLowerCase()){pending.current.key="0x";pending.current=null;setPendingAddress(null);}},[status.data]);
+ useEffect(()=>{if(status.data?.registered&&autoTraderCanSign(status.data)&&pending.current&&status.data.agent?.toLowerCase()===pending.current.address.toLowerCase()){pending.current.key="0x";pending.current=null;setPendingAddress(null);}},[status.data]);
  const configured=BUILDER_CONFIGURED&&DEFAULT_BUILDER_CONFIG?.b.toLowerCase()===AUTO_TRADER_BUILDER;
  const infoError=main.isError||xyz.isError||spot.isError||mode.isError;
  const equity=infoError?null:accountEquity(mode.data,main.data,xyz.data,spot.data);
  const funded=equity!==null&&equity>=AUTO_TRADER_MIN_EQUITY;
  const selectedMatches=!selectedAgent||selectedAgent.toLowerCase()===status.data?.agent?.toLowerCase();
  const targetAgent=selectedAgent||pendingAddress||status.data?.agent;
- const agentApproved=!agents.isError&&!!targetAgent&&!!agents.data?.some(row=>row.address.toLowerCase()===targetAgent.toLowerCase()&&row.validUntil>Date.now());
+ const agentApproved=!agents.isError&&!!targetAgent&&!!agents.data?.some(row=>row.address.toLowerCase()===targetAgent.toLowerCase()&&agentApprovalCurrent(row.validUntil));
  const feeApproved=!fee.isError&&fee.data!==undefined&&fee.data>=50;
  const hasChanges=!!status.data?.settings&&JSON.stringify(normalize(settings))!==JSON.stringify(normalize(status.data.settings));
  let validationError:string|null=null;try{validateSettings(settings,markets);}catch(e){validationError=e instanceof Error?e.message:"Invalid settings.";}
@@ -74,15 +75,15 @@ function AutoTraderAccount({master}:{master:Address}){
   const existing=await agents.refetch();check();if(existing.isError||!existing.data)throw new Error("Could not verify existing API wallets.");
   if(!pending.current){const key=generatePrivateKey();pending.current={key,address:privateKeyToAccount(key).address,validUntil:Date.now()+90*86400000};setPendingAddress(pending.current.address);}
   const fresh=pending.current;
-  if(!existing.data.some(row=>row.address.toLowerCase()===fresh.address.toLowerCase()&&row.validUntil>Date.now())){
+  if(!existing.data.some(row=>row.address.toLowerCase()===fresh.address.toLowerCase()&&agentApprovalCurrent(row.validUntil))){
    setProgress("Approve the dedicated Auto Trader API wallet.");await approveAgent.mutateAsync({agentAddress:fresh.address,agentName:`${AUTO_TRADER_AGENT_NAME} valid_until ${fresh.validUntil}`});check();
   }
-  const verified=await agents.refetch();check();if(verified.isError||!verified.data?.some(row=>row.address.toLowerCase()===fresh.address.toLowerCase()&&row.validUntil>Date.now()))throw new Error("API approval was submitted but is not verified yet. Retry this step to check it.");
+  const verified=await agents.refetch();check();if(verified.isError||!verified.data?.some(row=>row.address.toLowerCase()===fresh.address.toLowerCase()&&agentApprovalCurrent(row.validUntil)))throw new Error("API approval was submitted but is not verified yet. Retry this step to check it.");
   setMessage("Auto Trader API wallet approved. Register the sealed key next; registration starts paused.");
  }
  async function useExisting(){
   const row=agents.data?.find(a=>a.address.toLowerCase()===selectedAgent.toLowerCase());
-  if(!row||row.validUntil<=Date.now())throw new Error("Select a valid API wallet.");
+  if(!row||!agentApprovalCurrent(row.validUntil))throw new Error("Select a valid API wallet.");
   const stored=readAgentFromStorage(env,address!);
   const key=stored?.publicKey.toLowerCase()===selectedAgent.toLowerCase()?stored.privateKey:importKey.trim() as Hex;
   if(!/^0x[\da-f]{64}$/i.test(key)||privateKeyToAccount(key).address.toLowerCase()!==selectedAgent.toLowerCase())throw new Error("Enter the private key matching the selected API wallet.");
@@ -92,7 +93,7 @@ function AutoTraderAccount({master}:{master:Address}){
  }
  async function register(){
   const fresh=pending.current;if(!fresh)throw new Error("Create a fresh Auto Trader API wallet first.");
-  validateSettings(settings,markets);const list=await refreshChecks();if(!list.some(row=>row.address.toLowerCase()===fresh.address.toLowerCase()&&row.validUntil>Date.now()))throw new Error("The new Auto Trader API wallet is not approved for this owner.");
+  validateSettings(settings,markets);const list=await refreshChecks();if(!list.some(row=>row.address.toLowerCase()===fresh.address.toLowerCase()&&agentApprovalCurrent(row.validUntil)))throw new Error("The new Auto Trader API wallet is not approved for this owner.");
   setProgress("Seal and register the trading key.");
   await control.mutateAsync({action:"register",body:serverPubKey=>({master,agent:fresh.address,sealedKey:sealAgentKey(fresh.key,serverPubKey),settings:normalize(settings)})});check();fresh.key="0x";pending.current=null;setPendingAddress(null);
   await status.refetch();check();setMessage("Registered and paused. Review settings, then enable Auto Trader.");
@@ -113,7 +114,7 @@ function AutoTraderAccount({master}:{master:Address}){
    if(!selectedMatches)throw new Error("Register the selected API wallet first.");
    validateSettings(settings,markets);if(hasChanges)throw new Error("Save your settings before enabling Auto Trader.");
    const list=await refreshChecks(),current=await status.refetch();check();
-   if(current.isError||!current.data?.registered||!current.data.hasKey||!list.some(row=>row.address.toLowerCase()===current.data?.agent?.toLowerCase()&&row.validUntil>Date.now()))throw new Error("A registered, approved Auto Trader API wallet with a stored key is required.");
+   if(current.isError||!current.data?.registered||!autoTraderCanSign(current.data)||!list.some(row=>row.address.toLowerCase()===current.data?.agent?.toLowerCase()&&agentApprovalCurrent(row.validUntil)))throw new Error("A registered, approved Auto Trader API wallet with a stored key is required.");
   }
   if(op==="settings")validateSettings(settings,markets);
   setProgress(`Sign Auto Trader ${op}.`);await control.mutateAsync({action:op,body:op==="settings"?normalize(settings):{}});check();
@@ -133,16 +134,16 @@ function AutoTraderAccount({master}:{master:Address}){
     <Check label="Account equity" ok={funded} detail={equity===null?mode.data==="portfolioMargin"?"Portfolio margin is not supported by this integration":"Waiting for verified account balances":`${money(equity)} · minimum $15`} />
     <Check label="Auto Trader API wallet" ok={agentApproved} detail={targetAgent??"Separate trading-only key; never uses the owner's private key"} />
     <Check label="Builder fee" ok={feeApproved} detail={fee.isError?"Approval status unavailable":"0.05% per fill, plus exchange fees"} />
-    <Check label="Service registration" ok={registered&&!!status.data?.hasKey} detail={registered?status.data?.hasKey?"Encrypted key held by execution service":"Key missing — register again":"Not registered; registration starts paused"} />
+    <Check label="Service registration" ok={registered&&autoTraderCanSign(status.data)} detail={registered?autoTraderCanSign(status.data)?status.data?.signer?.toLowerCase()==="kms"?"AWS KMS signs for this account. No private key is stored in the browser.":"Encrypted key held by execution service":"Key missing — register again":"Not registered; registration starts paused"} />
    </ul>
    <button type="button" disabled={busy} className="text-xs text-brand" onClick={()=>{void Promise.all([agents.refetch(),fee.refetch(),main.refetch(),xyz.refetch(),spot.refetch(),mode.refetch(),status.refetch()]);}}><Trans>Refresh checks</Trans></button>
    {!feeApproved&&<button type="button" className={autoButton} disabled={busy||!wallet||!configured} onClick={()=>void run(async()=>{setProgress("Approve the 0.05% builder fee.");await approveFee.mutateAsync({builder:AUTO_TRADER_BUILDER,maxFeeRate:"0.05%"});check();const f=await fee.refetch();check();if(f.isError||f.data===undefined||f.data<50)throw new Error("Fee approval submitted but not verified. Refresh checks.");setMessage("Builder fee verified.");})}><Trans>Approve 0.05% fee</Trans></button>}
    <p className="text-xs text-fg-muted"><Trans>Fail-safe guards block trading on stale signals, expired agents, missing approvals or low equity. The daily loss stop blocks increases in exposure; it cannot guarantee a loss limit.</Trans></p>
   </section>
   <section className="space-y-4 rounded-xl border border-stroke-weak bg-surface p-4">
-   <div className="block space-y-2 text-sm"><span>API wallet<HelpTip label="API wallet" /></span><select aria-label="Auto Trader API wallet" className="w-full rounded-lg border border-stroke-weak bg-background px-3 py-2" disabled={busy} value={selectedAgent} onChange={e=>{setSelectedAgent(e.target.value);setImportKey("");setError(null);}}><option value="">{status.data?.agent?`Registered wallet · ${status.data.agent}`:"Create a new API wallet"}</option>{agents.data?.map(row=><option key={row.address} value={row.address}>{(row.name??"").replace(/ valid_until \d+$/, "")||"Unnamed"} · {row.address}{row.validUntil<=Date.now()?" · Expired":""}</option>)}</select></div>
+   <div className="block space-y-2 text-sm"><span>API wallet<HelpTip label="API wallet" /></span><select aria-label="Auto Trader API wallet" className="w-full rounded-lg border border-stroke-weak bg-background px-3 py-2" disabled={busy} value={selectedAgent} onChange={e=>{setSelectedAgent(e.target.value);setImportKey("");setError(null);}}><option value="">{status.data?.agent?`Registered wallet · ${status.data.agent}`:"Create a new API wallet"}</option>{agents.data?.map(row=><option key={row.address} value={row.address}>{(row.name??"").replace(/ valid_until \d+$/, "")||"Unnamed"} · {row.address}{agentApprovalCurrent(row.validUntil)?"":" · Expired"}</option>)}</select></div>
    <p className="rounded-lg border border-warning/30 bg-warning/5 p-3 text-xs leading-relaxed"><strong className="text-warning">Fund the selected trading account, not this API wallet.</strong> Auto Trader uses only the selected account’s Hyperliquid balance. API wallets only sign trades and need no separate funding; choosing a different API wallet does not create a separate balance.</p>
-   {selectedAgent&&(!selectedMatches||!status.data?.hasKey)&&<div className="space-y-3"><p className="text-xs text-fg-muted">One Auto Trader registration is shown per selected trading account. Registering this wallet replaces the current registration and pauses execution. The settings below will be saved for this wallet.</p><label className="block text-xs">API private key (if unavailable on this device)<input aria-label="Selected API wallet private key" type="password" autoComplete="off" value={importKey} disabled={busy} onChange={e=>setImportKey(e.target.value)} className="mt-2 w-full rounded-lg border border-stroke-weak bg-background px-3 py-2" /></label><button type="button" className={autoButton} disabled={busy||!funded||!feeApproved||!configured||status.isError||!status.data||!!validationError} onClick={()=>void run(useExisting)}>Register selected API wallet</button></div>}
+   {selectedAgent&&(!selectedMatches||!autoTraderCanSign(status.data))&&<div className="space-y-3"><p className="text-xs text-fg-muted">One Auto Trader registration is shown per selected trading account. Registering this wallet replaces the current registration and pauses execution. The settings below will be saved for this wallet.</p><label className="block text-xs">API private key (if unavailable on this device)<input aria-label="Selected API wallet private key" type="password" autoComplete="off" value={importKey} disabled={busy} onChange={e=>setImportKey(e.target.value)} className="mt-2 w-full rounded-lg border border-stroke-weak bg-background px-3 py-2" /></label><button type="button" className={autoButton} disabled={busy||!funded||!feeApproved||!configured||status.isError||!status.data||!!validationError} onClick={()=>void run(useExisting)}>Register selected API wallet</button></div>}
    <SettingsCard markets={markets} value={settings} onChange={setSettings} disabled={busy||status.isLoading} />
    {!markets.length&&<p role="status" className="text-xs text-fg-muted">{signal.isError?"Market list unavailable. Refresh to retry.":"Loading markets from the signal API…"}</p>}
    {validationError&&<p role="alert" className="text-xs text-error">{validationError}</p>}
@@ -160,7 +161,7 @@ function AutoTraderAccount({master}:{master:Address}){
   </div>
   {status.isError&&<p role="alert" className="text-sm text-error">Auto Trader status is unavailable. {status.error instanceof Error?status.error.message:""} {status.data?"Showing the last received status; enabling is blocked.":"Refresh checks to retry."}</p>}
   {registered&&<div className="flex flex-wrap gap-3 rounded-xl border border-stroke-weak bg-surface p-4">
-   <span className="inline-flex items-center"><button type="button" className={autoButton} disabled={busy||!selectedMatches||status.isError||status.data?.state==="active"||status.data?.state==="flatten-requested"||!funded||!agentApproved||!feeApproved||!status.data?.hasKey||hasChanges||!!validationError||!!pendingAddress} onClick={()=>setConfirm("resume")}><span>Start Auto Trader</span></button><HelpTip label="Start Auto Trader" /></span>
+   <span className="inline-flex items-center"><button type="button" className={autoButton} disabled={busy||!selectedMatches||status.isError||status.data?.state==="active"||status.data?.state==="flatten-requested"||!funded||!agentApproved||!feeApproved||!autoTraderCanSign(status.data)||hasChanges||!!validationError||!!pendingAddress} onClick={()=>setConfirm("resume")}><span>Start Auto Trader</span></button><HelpTip label="Start Auto Trader" /></span>
    <span className="inline-flex items-center"><button type="button" className="rounded-lg border border-stroke-weak px-4 py-2 text-sm disabled:opacity-40" disabled={busy||!selectedMatches||status.isError||status.data?.state==="paused"} onClick={()=>void run(()=>action("pause"))}><span>Stop Auto Trader</span></button><HelpTip label="Stop Auto Trader" /></span>
    <span className="inline-flex items-center"><button type="button" className="rounded-lg border border-stroke-weak px-4 py-2 text-sm disabled:opacity-40" disabled={busy||status.data?.state==="flatten-requested"} onClick={()=>setConfirm("flatten")}><Trans>Close & pause</Trans></button><HelpTip label="Close & pause" /></span>
    <span className="inline-flex items-center"><button type="button" className="px-3 py-2 text-sm text-error disabled:opacity-40" disabled={busy} onClick={()=>setConfirm("remove")}><Trans>Remove Auto Trader</Trans></button><HelpTip label="Remove Auto Trader" /></span>
