@@ -76,14 +76,19 @@ export function PositionsPanel() {
 
 	return (
 		<AccountToolbarContext.Provider value={{ target: toolbarTarget, activeTab }}>
-			<Tabs value={activeTab} onValueChange={handleTabChange} className="flex h-full min-h-0 flex-col overflow-hidden">
-				<div className="flex h-9 shrink-0 items-center gap-3 border-b border-stroke-weak px-3">
-					<div className="min-w-0 flex-1 overflow-x-auto scrollbar-none">
-						<TabsList className="h-9 min-w-max border-b-0">
+			<Tabs
+				value={activeTab}
+				onValueChange={handleTabChange}
+				variant="underline"
+				className="flex h-full min-h-0 flex-col overflow-hidden"
+			>
+				<div className="flex h-9 shrink-0 items-stretch gap-3 border-b border-stroke-weak px-3">
+					<div className="h-full min-w-0 flex-1 overflow-x-auto scrollbar-none">
+						<TabsList className="h-full min-w-max border-b-0">
 							{POSITIONS_TABS.map((tab) => {
 								const count = getTabCount(tab.value);
 								return (
-									<TabsTrigger key={tab.value} value={tab.value}>
+									<TabsTrigger key={tab.value} value={tab.value} className="h-full py-0">
 										{tab.label}
 										{typeof count === "number" ? <span className="tabular-nums text-fg-muted">{count}</span> : null}
 									</TabsTrigger>
@@ -91,7 +96,10 @@ export function PositionsPanel() {
 							})}
 						</TabsList>
 					</div>
-					<div ref={setToolbarTarget} className="min-w-0 max-w-11/20 shrink-0 overflow-x-auto scrollbar-none" />
+					<div
+						ref={setToolbarTarget}
+						className="self-center min-w-0 max-w-11/20 shrink-0 overflow-x-auto scrollbar-none"
+					/>
 				</div>
 				<TabsContent value="balances" className={tabContentClass}>
 					<Suspense fallback={<TabLoadingFallback />}>
