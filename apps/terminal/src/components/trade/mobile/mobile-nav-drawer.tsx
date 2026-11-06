@@ -18,7 +18,6 @@ import { cn } from "@/lib/cn";
 import { useExchangeScope } from "@/providers/exchange-scope";
 import { useDepositModalActions, useSettingsDialogActions } from "@/stores/use-global-modal-store";
 import { WalletModal } from "../components/wallet-modal";
-import { ThemeToggle } from "../header/theme-toggle";
 
 function ScopeIcon({ scope }: { scope: string }) {
 	switch (scope) {
@@ -156,7 +155,6 @@ export function MobileNavDrawer() {
 							>
 								<GearIcon className="size-4" />
 							</ButtonIcon>
-							<ThemeToggle />
 						</div>
 					</div>
 				</DrawerContent>

@@ -13,7 +13,7 @@ vi.mock("@/hooks/ui/use-copy-to-clipboard",()=>({useCopyToClipboard:()=>({copy:v
 vi.mock("@/components/trade/components/wallet-modal",()=>({WalletModal:()=>null}));
 vi.mock("@hypeterminal/ui",()=>({Button:({children}:{children:ReactNode})=>createElement("button",null,children),ButtonIcon:()=>null,Badge:({children}:{children:ReactNode})=>children}));
 vi.mock("boneyard-js/react",()=>({Skeleton:({children}:{children:ReactNode})=>children}));
-vi.mock("@/lib/hyperliquid",()=>({useSubscription:(method:string)=>{
+vi.mock("@/lib/hyperliquid",()=>({useInfo:()=>({data:undefined}),useSubscription:(method:string)=>{
  const summary={accountValue:"218.063997",totalNtlPos:"1105.760757",totalRawUsd:"-391.600504",totalMarginUsed:"221.15215"};
  const data=method==="allDexsClearinghouseState"?{clearinghouseStates:[["",{marginSummary:summary,crossMarginSummary:summary,assetPositions:[{position:{szi:"1",unrealizedPnl:state.native}}],withdrawable:"0",crossMaintenanceMarginUsed:"43.148251"}],["xyz",{assetPositions:[{position:{szi:"-1",unrealizedPnl:state.builder}}]}]]}:method==="spotState"?{spotState:{balances:[]}}:{userState:{abstraction:"unifiedAccount"}};
  return {data,status:"active"};
@@ -22,7 +22,7 @@ beforeEach(()=>{state.native="-8.103336";state.builder="20.83139";});
 it("shows the combined account PNL on desktop and updates when the builder venue changes",async()=>{
  const node=document.createElement("div"),root=createRoot(node);await act(async()=>root.render(createElement(AccountPanel)));
  const pnl=()=>[...node.querySelectorAll('[data-slot="info-row"]')].find(el=>el.querySelector('[data-slot="info-row-label"]')?.textContent==="Unrealized PNL")!.querySelector('[data-slot="info-row-value"]')!.textContent;
- expect(pnl()).toBe("+$12.73");state.builder="5";await act(async()=>root.render(createElement(AccountPanel)));expect(pnl()).toBe("-$3.10");
+ expect(pnl()).toBe("$12.73");state.builder="5";await act(async()=>root.render(createElement(AccountPanel)));expect(pnl()).toBe("-$3.10");
  state.builder="invalid";await act(async()=>root.render(createElement(AccountPanel)));expect(pnl()).not.toContain("8.10");expect(pnl()).not.toContain("0.00");await act(async()=>root.unmount());
 });
 it("uses the same combined PNL on mobile",async()=>{

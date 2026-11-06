@@ -12,7 +12,6 @@ import { createLazyComponent } from "@/lib/lazy";
 import { useExchangeScope } from "@/providers/exchange-scope";
 import { useDepositModalActions, useSettingsDialogActions } from "@/stores/use-global-modal-store";
 import { useIsTestnet } from "@/stores/use-global-settings-store";
-import { ThemeToggle } from "./theme-toggle";
 
 const UserMenu = createLazyComponent(() => import("./user-menu"), "UserMenu");
 
@@ -109,7 +108,6 @@ export function TopNav() {
 				<Suspense fallback={<UserMenuSkeleton />}>
 					<UserMenu />
 				</Suspense>
-				<ThemeToggle />
 				<ButtonIcon
 					variant="ghost"
 					intent="neutral"

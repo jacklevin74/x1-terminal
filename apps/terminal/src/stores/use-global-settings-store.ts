@@ -14,7 +14,7 @@ import { getNetwork, type Network } from "@/lib/network";
 import { createValidatedStorage } from "@/lib/storage/validated-storage";
 import type { MarginMode } from "@/lib/trade/margin-mode";
 
-type Theme = "dark" | "light";
+type Theme = "dark";
 
 const globalSettingsSchema = z.object({
 	state: z.object({
@@ -66,7 +66,6 @@ interface GlobalSettingsStore {
 		setMarginMode: (mode: MarginMode) => void;
 		setPositionsActiveTab: (tab: string) => void;
 		setMobileActiveTab: (tab: string) => void;
-		setTheme: (theme: Theme) => void;
 		setNetwork: (network: Network) => void;
 	};
 }
@@ -91,7 +90,6 @@ const useGlobalSettingsStore = create<GlobalSettingsStore>()(
 				setMarginMode: (mode) => set({ marginMode: mode }),
 				setPositionsActiveTab: (tab) => set({ positionsActiveTab: tab }),
 				setMobileActiveTab: (tab) => set({ mobileActiveTab: tab }),
-				setTheme: (theme) => set({ theme }),
 				setNetwork: (network) => {
 					set({ network });
 					if (typeof window !== "undefined") window.location.reload();
@@ -134,7 +132,7 @@ const useGlobalSettingsStore = create<GlobalSettingsStore>()(
 					showOrderbookInQuote,
 					marketOrderSlippagePercent: slippagePercent,
 					marginMode: p?.marginMode === "isolated" ? "isolated" : "cross",
-					theme: p?.theme === "light" ? "light" : "dark",
+					theme: "dark", // Migrate saved light-mode preferences without resetting other settings.
 					network: p?.network === "mainnet" || p?.network === "testnet" ? p.network : DEFAULT_GLOBAL_SETTINGS.network,
 				};
 			},
@@ -142,24 +140,14 @@ const useGlobalSettingsStore = create<GlobalSettingsStore>()(
 	),
 );
 
-function applyThemeClass(theme: Theme) {
-	if (typeof document === "undefined") return;
-	const root = document.documentElement;
-	root.classList.remove("light", "dark");
-	root.classList.add(theme);
+// Dark is the only supported application theme, including restored sessions.
+if (typeof document !== "undefined") {
+ document.documentElement.classList.remove("light");
+ document.documentElement.classList.add("dark");
 }
-
-applyThemeClass(useGlobalSettingsStore.getState().theme);
-useGlobalSettingsStore.subscribe((state, prev) => {
-	if (state.theme !== prev.theme) applyThemeClass(state.theme);
-});
 
 export function useTheme() {
 	return useGlobalSettingsStore((state) => state.theme);
-}
-
-export function useSetTheme() {
-	return useGlobalSettingsStore((state) => state.actions.setTheme);
 }
 
 export function useGlobalSettings() {

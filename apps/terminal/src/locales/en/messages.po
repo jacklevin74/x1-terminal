@@ -85,8 +85,8 @@ msgstr "7 days"
 #~ msgstr "About Builder Codes"
 
 #: src/components/trade/tradebox/account-panel.tsx:117
-msgid "Account"
-msgstr "Account"
+#~ msgid "Account"
+#~ msgstr "Account"
 
 #: src/components/trade/header/user-menu.tsx:124
 #~ msgid "Account and wallet"
@@ -97,12 +97,24 @@ msgid "Account Balances"
 msgstr "Account Balances"
 
 #: src/components/trade/tradebox/account-panel.tsx:124
-msgid "Account Equity"
-msgstr "Account Equity"
+#~ msgid "Account Equity"
+#~ msgstr "Account Equity"
+
+#: src/components/trade/tradebox/account-panel.tsx:39
+msgid "Account Leverage"
+msgstr "Account Leverage"
 
 #: src/components/auto-trader/auto-trader-panel.tsx:131
 msgid "Account readiness"
 msgstr "Account readiness"
+
+#: src/components/trade/tradebox/account-panel.tsx:31
+msgid "Account summary"
+msgstr "Account summary"
+
+#: src/components/trade/tradebox/account-panel.tsx:33
+msgid "Account Summary"
+msgstr "Account Summary"
 
 #: src/components/trade/header/user-menu.tsx:
 #~ msgid "Accounts"
@@ -225,7 +237,7 @@ msgstr "Asset"
 msgid "Auto Trader"
 msgstr "Auto Trader"
 
-#: src/components/auto-trader/settings-card.tsx:10
+#: src/components/auto-trader/settings-card.tsx:11
 msgid "Auto Trader settings"
 msgstr "Auto Trader settings"
 
@@ -263,8 +275,8 @@ msgstr "Back online"
 #~ msgstr "Back to asset selection"
 
 #: src/components/trade/tradebox/account-panel.tsx:87
-msgid "Balance"
-msgstr "Balance"
+#~ msgid "Balance"
+#~ msgstr "Balance"
 
 #: src/components/trade/tradebox/trade-form-fields.tsx:127
 msgid "Balance available to trade"
@@ -287,8 +299,6 @@ msgstr "Balance available to trade"
 #~ msgstr "Breadcrumb"
 
 #: src/components/trade/mobile/mobile-account-view.tsx:186
-#: src/components/trade/tradebox/account-panel.tsx:173
-#: src/components/trade/tradebox/account-panel.tsx:176
 msgid "Bridge"
 msgstr "Bridge"
 
@@ -556,12 +566,12 @@ msgstr "Connect Rabby, X1 Wallet or Phantom above to configure Auto Trader."
 
 #: src/components/trade/mobile/mobile-account-view.tsx:67
 #: src/components/trade/mobile/mobile-account-view.tsx:73
-#: src/components/trade/mobile/mobile-nav-drawer.tsx:143
+#: src/components/trade/mobile/mobile-nav-drawer.tsx:142
 #: src/lib/trade/use-button-content.ts:48
 msgid "Connect Wallet"
 msgstr "Connect Wallet"
 
-#: src/components/trade/tradebox/account-panel.tsx:121
+#: src/components/trade/tradebox/account-panel.tsx:34
 msgid "Connect wallet to view account"
 msgstr "Connect wallet to view account"
 
@@ -753,18 +763,22 @@ msgid "Cross"
 msgstr "Cross"
 
 #: src/components/trade/tradebox/account-panel.tsx:107
-msgid "Cross Account Leverage"
-msgstr "Cross Account Leverage"
+#~ msgid "Cross Account Leverage"
+#~ msgstr "Cross Account Leverage"
 
 #: src/components/trade/tradebox/account-panel.tsx:
 #~ msgid "Cross Leverage"
 #~ msgstr "Cross Leverage"
 
+#: src/components/trade/tradebox/account-panel.tsx:38
+msgid "Cross maintenance margin reported by Hyperliquid, summed across perpetual DEXs for the selected account."
+msgstr "Cross maintenance margin reported by Hyperliquid, summed across perpetual DEXs for the selected account."
+
 #: src/components/trade/mobile/mobile-account-view.tsx:107
 msgid "Cross Margin"
 msgstr "Cross Margin"
 
-#: src/components/trade/tradebox/account-panel.tsx:97
+#: src/components/trade/tradebox/account-panel.tsx:30
 msgid "Cross Margin Ratio"
 msgstr "Cross Margin Ratio"
 
@@ -792,7 +806,7 @@ msgstr "Current"
 msgid "Cycle orders and fills"
 msgstr "Cycle orders and fills"
 
-#: src/components/auto-trader/settings-card.tsx:12
+#: src/components/auto-trader/settings-card.tsx:13
 msgid "Daily loss stop (%)"
 msgstr "Daily loss stop (%)"
 
@@ -808,10 +822,10 @@ msgstr "Daily loss stop reached. Opens and adds are blocked; the executor can on
 msgid "Default"
 msgstr "Default"
 
-#: src/components/trade/header/top-nav.tsx:100
-#: src/components/trade/mobile/mobile-nav-drawer.tsx:132
-#: src/components/trade/tradebox/account-panel.tsx:164
-#: src/components/trade/tradebox/account-panel.tsx:167
+#: src/components/trade/header/top-nav.tsx:99
+#: src/components/trade/mobile/mobile-nav-drawer.tsx:131
+#: src/components/trade/tradebox/account-panel.tsx:32
+#: src/components/trade/tradebox/account-panel.tsx:32
 #: src/components/trade/tradebox/deposit-modal.tsx:98
 #: src/components/trade/tradebox/deposit-modal.tsx:120
 #: src/components/trade/tradebox/deposit-modal.tsx:141
@@ -1281,6 +1295,14 @@ msgstr "H"
 msgid "Hide small"
 msgstr "Hide small"
 
+#: src/components/trade/tradebox/account-panel.tsx:35
+msgid "Highest collateral-token maintenance ratio across perpetual DEXs. Isolated margin is deducted from that token’s available balance. A higher ratio means less margin headroom."
+msgstr "Highest collateral-token maintenance ratio across perpetual DEXs. Isolated margin is deducted from that token’s available balance. A higher ratio means less margin headroom."
+
+#: src/components/trade/tradebox/account-panel.tsx:35
+msgid "Highest cross maintenance margin divided by cross account equity across perpetual DEXs."
+msgstr "Highest cross maintenance margin divided by cross account equity across perpetual DEXs."
+
 #: src/components/trade/chart/token-selector-content.tsx:97
 msgid "HIP-3"
 msgstr "HIP-3"
@@ -1376,7 +1398,7 @@ msgstr "Leaderboard"
 #~ msgid "Learn more"
 #~ msgstr "Learn more"
 
-#: src/components/auto-trader/settings-card.tsx:11
+#: src/components/auto-trader/settings-card.tsx:12
 #: src/components/trade/tradebox/leverage-control.tsx:38
 #: src/components/trade/tradebox/leverage-control.tsx:131
 #: src/components/trade/tradebox/margin-mode-modal.tsx:203
@@ -1527,7 +1549,6 @@ msgid "Mainnet"
 msgstr "Mainnet"
 
 #: src/components/trade/mobile/mobile-account-view.tsx:152
-#: src/components/trade/tradebox/account-panel.tsx:102
 msgid "Maintenance Margin"
 msgstr "Maintenance Margin"
 
@@ -1640,9 +1661,9 @@ msgstr "Market not ready"
 msgid "markets"
 msgstr "markets"
 
-#: src/components/auto-trader/settings-card.tsx:15
+#: src/components/auto-trader/settings-card.tsx:16
 #: src/components/trade/chart/token-selector-content.tsx:235
-#: src/components/trade/mobile/mobile-nav-drawer.tsx:81
+#: src/components/trade/mobile/mobile-nav-drawer.tsx:80
 msgid "Markets"
 msgstr "Markets"
 
@@ -1703,7 +1724,7 @@ msgstr "Minimum deposit is {0} USDC"
 msgid "Minimum deposit is 5 USDC"
 msgstr "Minimum deposit is 5 USDC"
 
-#: src/components/auto-trader/settings-card.tsx:13
+#: src/components/auto-trader/settings-card.tsx:14
 msgid "Minimum order (USD)"
 msgstr "Minimum order (USD)"
 
@@ -2129,16 +2150,20 @@ msgid "Perpetuals"
 msgstr "Perpetuals"
 
 #: src/components/trade/tradebox/account-panel.tsx:132
-msgid "Perps"
-msgstr "Perps"
+#~ msgid "Perps"
+#~ msgstr "Perps"
 
 #: src/components/trade/positions/send-modal.tsx:178
 msgid "Perps Account"
 msgstr "Perps Account"
 
+#: src/components/trade/tradebox/account-panel.tsx:38
+msgid "Perps Maintenance Margin"
+msgstr "Perps Maintenance Margin"
+
 #: src/components/trade/tradebox/account-panel.tsx:140
-msgid "Perps Overview"
-msgstr "Perps Overview"
+#~ msgid "Perps Overview"
+#~ msgstr "Perps Overview"
 
 #: src/components/pages/builder-page.tsx:
 #~ msgid "Perps: Max 0.1% (10 basis points)"
@@ -2193,7 +2218,7 @@ msgstr "Placed"
 msgid "Plans run about every five minutes. Active does not guarantee live trading: execution also requires the operator's live gate. Paused and dry-run plans send no orders."
 msgstr "Plans run about every five minutes. Active does not guarantee live trading: execution also requires the operator's live gate. Paused and dry-run plans send no orders."
 
-#: src/components/trade/mobile/mobile-nav-drawer.tsx:103
+#: src/components/trade/mobile/mobile-nav-drawer.tsx:102
 msgid "Platform"
 msgstr "Platform"
 
@@ -2218,6 +2243,22 @@ msgstr "Platform"
 #: src/config/nav.tsx:65
 msgid "Portfolio"
 msgstr "Portfolio"
+
+#: src/components/trade/tradebox/account-panel.tsx:30
+msgid "Portfolio Margin Ratio"
+msgstr "Portfolio Margin Ratio"
+
+#: src/components/trade/tradebox/account-panel.tsx:35
+msgid "Portfolio margin risk requires portfolio-specific collateral and borrowing data. It is unavailable in this summary."
+msgstr "Portfolio margin risk requires portfolio-specific collateral and borrowing data. It is unavailable in this summary."
+
+#: src/components/trade/tradebox/account-panel.tsx:33
+msgid "Portfolio Margin Summary"
+msgstr "Portfolio Margin Summary"
+
+#: src/components/trade/tradebox/account-panel.tsx:36
+msgid "Portfolio Value"
+msgstr "Portfolio Value"
 
 #: src/components/trade/mobile/mobile-funding-tab.tsx:100
 #: src/components/trade/tradebox/trade-form-fields.tsx:154
@@ -2632,7 +2673,7 @@ msgstr "Set to {p}%"
 #~ msgstr "Set TP/SL for {0}"
 
 #: src/components/trade/components/global-settings-modal.tsx:76
-#: src/components/trade/header/top-nav.tsx:118
+#: src/components/trade/header/top-nav.tsx:116
 msgid "Settings"
 msgstr "Settings"
 
@@ -2780,7 +2821,7 @@ msgstr "Slippage tolerance"
 #~ msgid "Something went wrong"
 #~ msgstr "Something went wrong"
 
-#: src/components/trade/mobile/mobile-nav-drawer.tsx:112
+#: src/components/trade/mobile/mobile-nav-drawer.tsx:111
 msgid "Soon"
 msgstr "Soon"
 
@@ -2815,7 +2856,6 @@ msgstr "Source"
 #: src/components/trade/mobile/mobile-balances-tab.tsx:223
 #: src/components/trade/positions/transfer-modal.tsx:73
 #: src/components/trade/positions/transfer-modal.tsx:74
-#: src/components/trade/tradebox/account-panel.tsx:127
 #: src/config/nav.tsx:46
 msgid "Spot"
 msgstr "Spot"
@@ -2974,12 +3014,12 @@ msgstr "Switch to Arbitrum"
 #~ msgstr "Switch to Arbitrum to deposit USDC to Hyperliquid"
 
 #: src/components/trade/header/theme-toggle.tsx:31
-msgid "Switch to dark mode"
-msgstr "Switch to dark mode"
+#~ msgid "Switch to dark mode"
+#~ msgstr "Switch to dark mode"
 
 #: src/components/trade/header/theme-toggle.tsx:31
-msgid "Switch to light mode"
-msgstr "Switch to light mode"
+#~ msgid "Switch to light mode"
+#~ msgstr "Switch to light mode"
 
 #: src/components/trade/testnet-banner.tsx:30
 msgid "Switch to Mainnet"
@@ -3150,6 +3190,10 @@ msgstr "TOKEN"
 #: src/components/trade/orderbook/orderbook-panel.tsx:140
 msgid "Total"
 msgstr "Total"
+
+#: src/components/trade/tradebox/account-panel.tsx:39
+msgid "Total absolute perpetual position value across DEXs divided by portfolio value. This is account exposure, not an individual order’s leverage setting."
+msgstr "Total absolute perpetual position value across DEXs divided by portfolio value. This is account exposure, not an individual order’s leverage setting."
 
 #: src/components/trade/positions/twap-tab.tsx:
 #~ msgid "Total Size"
@@ -3333,6 +3377,18 @@ msgstr "TWAP Orders"
 #~ msgid "Unable to close position."
 #~ msgstr "Unable to close position."
 
+#: src/components/trade/tradebox/account-panel.tsx:39
+msgid "Unified Account Leverage"
+msgstr "Unified Account Leverage"
+
+#: src/components/trade/tradebox/account-panel.tsx:30
+msgid "Unified Account Ratio"
+msgstr "Unified Account Ratio"
+
+#: src/components/trade/tradebox/account-panel.tsx:33
+msgid "Unified Account Summary"
+msgstr "Unified Account Summary"
+
 #: src/lib/errors/format.ts:12
 msgid "Unknown error"
 msgstr "Unknown error"
@@ -3346,7 +3402,7 @@ msgstr "Unknown symbol: {symbolName}"
 msgid "Unrealized P&L"
 msgstr "Unrealized P&L"
 
-#: src/components/trade/tradebox/account-panel.tsx:92
+#: src/components/trade/tradebox/account-panel.tsx:37
 msgid "Unrealized PNL"
 msgstr "Unrealized PNL"
 
@@ -3478,8 +3534,8 @@ msgstr "Wallet not connected"
 #~ msgid "will arrive in ~5 min"
 #~ msgstr "will arrive in ~5 min"
 
-#: src/components/trade/tradebox/account-panel.tsx:155
-#: src/components/trade/tradebox/account-panel.tsx:158
+#: src/components/trade/tradebox/account-panel.tsx:32
+#: src/components/trade/tradebox/account-panel.tsx:32
 msgid "Withdraw"
 msgstr "Withdraw"
 
