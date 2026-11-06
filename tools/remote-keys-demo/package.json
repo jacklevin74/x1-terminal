@@ -1,0 +1,21 @@
+{
+  "name": "@x1-terminal/remote-keys-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "check": "node --check src/kms-signer.js && node --check src/keys-demo-service.js && node --check scripts/serve-keys-demo.js",
+    "demo:keys": "AWS_PROFILE=aws-toolkit AWS_REGION=us-east-2 node scripts/serve-keys-demo.js",
+    "test:aws": "AWS_PROFILE=aws-toolkit AWS_REGION=us-east-2 AWS_KMS_LIVE=1 node --test integration/aws-hl-wallet.test.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-kms": "^3.0.0",
+    "@aws-sdk/client-sts": "^3.1163.0",
+    "@msgpack/msgpack": "^3.1.3",
+    "ethers": "^6.0.0"
+  }
+}

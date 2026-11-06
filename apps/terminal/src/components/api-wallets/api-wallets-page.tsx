@@ -91,7 +91,7 @@ export function ApiWalletsPage(){
   finally{lock.current=false;setBusy(false);}
  }
  return <main className="min-h-dvh bg-background p-4 text-fg sm:p-8"><div className="mx-auto max-w-7xl space-y-5">
-  <header className="flex items-center justify-between gap-4"><a href="/" className="text-sm text-brand">← X1 Terminal</a><UserMenu /></header>
+  <header className="flex items-center justify-between gap-4"><a href="/" className="text-sm text-brand">← X1 Terminal</a><div className="flex items-center gap-4"><a href="/keys" className="text-sm text-brand">Remote signing keys ↗</a><UserMenu /></div></header>
   <div><h1 className="text-3xl font-semibold">API</h1><p className="mt-3 max-w-4xl text-sm text-fg-muted">API wallets can trade on behalf of your account without withdrawal permissions. Use your account address for balance, position and order queries.</p><p className="mt-2 break-all font-mono text-xs text-fg-muted">{env} · Account: {address??"Connect your wallet"}</p></div>
   <section id="builder-fee-approval" aria-label="Builder fee approval" className="rounded-xl border border-stroke-weak bg-surface p-4">
    <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-sm font-semibold">X1 trading fee · {builderFeeRate}</h2><p className="mt-1 text-xs text-fg-muted">{connector?.id==="x1"?"Approve with your X1-derived Hyperliquid account.":"Approve with the account owner's wallet."} This is separate from API wallet authorization.</p></div><span role="status" className="text-sm text-brand">{!address?"Wallet not connected":fee.isError?"Status unavailable":fee.data===undefined?"Checking approval…":fee.data>=Number(builderFee)?"Fee approved":"Fee approval required"}</span></div>
