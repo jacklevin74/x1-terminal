@@ -2,6 +2,17 @@ import {getAccountUnrealizedPnl} from "./valuation";
 import type {AllDexsAccountState} from "@/hooks/trade/use-account-balances";
 type State=AllDexsAccountState["clearinghouseStates"];
 const value=(input:unknown)=>typeof input==="string"&&input.trim()!==""&&Number.isFinite(Number(input))?Number(input):null;
+/** Spot contexts may omit/delist markets: array offsets are not stable identities. */
+export function spotUsdPrices(universe:readonly {name:string;tokens:readonly number[]}[],contexts:readonly {coin:string;markPx?:string}[]){
+ const byMarket=new Map(contexts.map(ctx=>[ctx.coin,value(ctx.markPx)]));
+ const prices:Record<number,number>={0:1};
+ for(const market of universe){
+  if(market.tokens[1]!==0||market.tokens[0]===0)continue;
+  const price=byMarket.get(market.name);
+  if(price!==undefined&&price!==null&&price>0)prices[market.tokens[0]]=price;
+ }
+ return prices;
+}
 export function summarizeAccount({states,balances,mode,prices={},collateral={},ready=true}:{states:State;balances:AllDexsAccountState["spotBalances"];mode:string|null;prices?:Record<number,number>;collateral?:Record<string,number>;ready?:boolean}){
  const unrealizedPnl=getAccountUnrealizedPnl(states);
  if(!ready||!mode)return {portfolioValue:null,unrealizedPnl,maintenance:null,ratio:null,leverage:null};

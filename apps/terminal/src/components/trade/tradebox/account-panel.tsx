@@ -4,7 +4,7 @@ import {useConnection} from "wagmi";
 import {InfoRow,InfoRowGroup} from "@/components/ui/info-row";
 import {useAllDexsAccountState} from "@/hooks/trade/use-account-balances";
 import {useInfo} from "@/lib/hyperliquid";
-import {summarizeAccount} from "@/lib/positions/account-summary";
+import {spotUsdPrices,summarizeAccount} from "@/lib/positions/account-summary";
 import {formatPercent,formatUSD} from "@/lib/format";
 import {getValueColorClass} from "@/lib/ui/value-color";
 import {useDepositModalActions} from "@/stores/use-global-modal-store";
@@ -21,9 +21,10 @@ export function AccountPanel(){
  const options={enabled:isConnected,staleTime:300000};
  const metas=useInfo("allPerpMetas",undefined,options),dexs=useInfo("perpDexs",undefined,options);
  const spot=useInfo("spotMetaAndAssetCtxs",undefined,{enabled:isConnected,refetchInterval:30000});
- const collateral:Record<string,number>={},prices:Record<number,number>={0:1};
+ const collateral:Record<string,number>={};
+ const prices=spot.data?spotUsdPrices(spot.data[0].universe,spot.data[1]):{0:1};
  metas.data?.forEach((meta,index)=>{const name=index===0?"":dexs.data?.[index]?.name;if(name!==undefined)collateral[name]=meta.collateralToken;});
- if(spot.data)spot.data[0].universe.forEach((market,index)=>{if(market.tokens[1]!==0)return;const price=Number(spot.data![1][index]?.markPx);if(Number.isFinite(price)&&price>0)prices[market.tokens[0]]=price;});
+
  const summary=summarizeAccount({states:state.clearinghouseStates,balances:state.spotBalances,mode:state.accountAbstraction,collateral,prices,ready:!state.isLoading&&!state.hasError});
  const unified=state.accountAbstraction==="unifiedAccount",portfolio=state.accountAbstraction==="portfolioMargin";
  const ratioColor=summary.ratio===null?"text-fg-muted":summary.ratio>=0.95?"text-error":summary.ratio>=0.75?"text-warning":"text-success";
