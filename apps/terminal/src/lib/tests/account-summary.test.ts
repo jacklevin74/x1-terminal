@@ -1,5 +1,5 @@
 import {expect,it} from "vitest";
-import {summarizeAccount} from "@/lib/positions/account-summary";
+import {spotUsdPrices,summarizeAccount} from "@/lib/positions/account-summary";
 import type {AllDexsAccountState} from "@/hooks/trade/use-account-balances";
 const state=(mm:string,ntl:string,pnl:string,isolated=false)=>({crossMaintenanceMarginUsed:mm,marginSummary:{accountValue:"0"},crossMarginSummary:{accountValue:"0"},assetPositions:[{position:{szi:"1",positionValue:ntl,unrealizedPnl:pnl,marginUsed:isolated?"5000":"0",leverage:{type:isolated?"isolated":"cross"}}}]});
 const input=()=>({states:[["",state("1000","50000","10")],["xyz",state("2377.81","57248.28","25.51")]] as unknown as AllDexsAccountState["clearinghouseStates"],balances:[{coin:"USDC",token:0,total:"40471.05",hold:"0",entryNtl:"0"}],mode:"unifiedAccount",collateral:{"":0,xyz:0}});
@@ -19,4 +19,16 @@ it("never values spot assets at historical entry notional or invents incomplete 
 it("does not fabricate portfolio-margin risk or classify unfunded cross exposure as healthy",()=>{
  expect(summarizeAccount({...input(),mode:"portfolioMargin"}).ratio).toBeNull();expect(summarizeAccount({...input(),mode:"portfolioMargin"}).portfolioValue).toBeNull();
  const data=input();data.balances[0].total="0";expect(summarizeAccount(data).ratio).toBe(Infinity);
+});
+
+it("matches sparse spot contexts by market name instead of valuing MAX at another token’s price",()=>{
+ const universe=[{name:"@107",tokens:[150,0]},{name:"@188",tokens:[299,0]},{name:"@591",tokens:[734,0]}];
+ const contexts=[{coin:"@306",markPx:"8.2877"},{coin:"@591",markPx:"0.000001"},{coin:"@107",markPx:"80"},{coin:"@188",markPx:"0.003"}];
+ const prices=spotUsdPrices(universe,contexts);expect(prices).toEqual({0:1,150:80,299:0.003,734:0.000001});
+ const data=input();data.balances=[{coin:"USDC",token:0,total:"241034.91626236",hold:"0",entryNtl:"0"},{coin:"MAX",token:734,total:"165124.2589",hold:"0",entryNtl:"0"}];
+ expect(summarizeAccount({...data,prices}).portfolioValue).toBeCloseTo(241035.0813866189);
+});
+it("never falls back to a neighboring context when the market quote is missing",()=>{
+ const prices=spotUsdPrices([{name:"@591",tokens:[734,0]}],[{coin:"@306",markPx:"8.2877"}]);expect(prices[734]).toBeUndefined();
+ const data=input();data.balances.push({coin:"MAX",token:734,total:"165124.2589",hold:"0",entryNtl:"0"});expect(summarizeAccount({...data,prices}).portfolioValue).toBeNull();
 });
