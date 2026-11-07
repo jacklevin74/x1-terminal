@@ -18,9 +18,10 @@ export function summarizeAccount({states,balances,mode,prices={},collateral={},r
  if(!ready||!mode)return {portfolioValue:null,unrealizedPnl,maintenance:null,ratio:null,leverage:null};
  let spotValue:number|null=0;
  for(const balance of balances){const amount=value(balance.total),price=balance.token===0?1:prices[balance.token];if(amount===null){spotValue=null;break;}if(!amount)continue;if(!(price>0)){spotValue=null;break;}spotValue+=amount*price;}
- let gross:number|null=0,maintenance:number|null=0,perpValue:number|null=0;
+ let gross:number|null=0,maintenance:number|null=0,perpValue:number|null=0,crossNotional:number|null=0;
  const groups=new Map<number,{maintenance:number;isolated:number}>();let completeCollateral=true,completeStandardRatio=true,standardRatio=0;
  for(const [dex,state] of states){
+  const ntl=value(state.crossMarginSummary?.totalNtlPos);if(ntl===null)crossNotional=null;else if(crossNotional!==null)crossNotional+=Math.abs(ntl);
   const mm=value(state.crossMaintenanceMarginUsed),equity=value(state.marginSummary?.accountValue),cross=value(state.crossMarginSummary?.accountValue);
   if(mm===null)maintenance=null;else if(maintenance!==null)maintenance+=mm;
   if(equity===null)perpValue=null;else if(perpValue!==null)perpValue+=equity;
@@ -41,5 +42,11 @@ export function summarizeAccount({states,balances,mode,prices={},collateral={},r
   ratio=completeCollateral?0:null;
   if(ratio!==null)for(const [token,group] of groups){const balance=balances.filter(b=>b.token===token).reduce((sum,b)=>sum+Number(b.total),0),available=balance-group.isolated;if(!Number.isFinite(available)){ratio=null;break;}ratio=Math.max(ratio,available>0?group.maintenance/available:group.maintenance>0?Infinity:0);}
  }
- return {portfolioValue,unrealizedPnl,maintenance,ratio,leverage:portfolioValue!==null&&portfolioValue>0&&gross!==null?gross/portfolioValue:gross===0&&portfolioValue===0?0:null};
+ // Match Hyperliquid unified leverage: cross notional / spot balances eligible
+ // as perp collateral. Ordinary spot holdings do not dilute perpetual leverage.
+ let collateralValue:number|null=Object.keys(collateral).length?0:null;
+ const eligible=new Set(Object.values(collateral));
+ for(const balance of balances){if(!eligible.has(balance.token))continue;const amount=value(balance.total),price=balance.token===0?1:prices[balance.token];if(amount===null||amount!==0&&!(price>0)){collateralValue=null;break;}if(collateralValue!==null&&amount!==0)collateralValue+=amount*price;}
+ const leverage=mode==="unifiedAccount"?collateralValue!==null&&collateralValue>0&&crossNotional!==null?Math.max(0,crossNotional/collateralValue):crossNotional===0&&collateralValue===0?0:null:portfolioValue!==null&&portfolioValue>0&&gross!==null?gross/portfolioValue:gross===0&&portfolioValue===0?0:null;
+ return {portfolioValue,unrealizedPnl,maintenance,ratio,leverage};
 }

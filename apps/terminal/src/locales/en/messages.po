@@ -100,7 +100,7 @@ msgstr "Account Balances"
 #~ msgid "Account Equity"
 #~ msgstr "Account Equity"
 
-#: src/components/trade/tradebox/account-panel.tsx:39
+#: src/components/trade/tradebox/account-panel.tsx:40
 msgid "Account Leverage"
 msgstr "Account Leverage"
 
@@ -108,11 +108,11 @@ msgstr "Account Leverage"
 msgid "Account readiness"
 msgstr "Account readiness"
 
-#: src/components/trade/tradebox/account-panel.tsx:31
+#: src/components/trade/tradebox/account-panel.tsx:32
 msgid "Account summary"
 msgstr "Account summary"
 
-#: src/components/trade/tradebox/account-panel.tsx:33
+#: src/components/trade/tradebox/account-panel.tsx:34
 msgid "Account Summary"
 msgstr "Account Summary"
 
@@ -571,7 +571,7 @@ msgstr "Connect Rabby, X1 Wallet or Phantom above to configure Auto Trader."
 msgid "Connect Wallet"
 msgstr "Connect Wallet"
 
-#: src/components/trade/tradebox/account-panel.tsx:34
+#: src/components/trade/tradebox/account-panel.tsx:35
 msgid "Connect wallet to view account"
 msgstr "Connect wallet to view account"
 
@@ -770,7 +770,7 @@ msgstr "Cross"
 #~ msgid "Cross Leverage"
 #~ msgstr "Cross Leverage"
 
-#: src/components/trade/tradebox/account-panel.tsx:38
+#: src/components/trade/tradebox/account-panel.tsx:39
 msgid "Cross maintenance margin reported by Hyperliquid, summed across perpetual DEXs for the selected account."
 msgstr "Cross maintenance margin reported by Hyperliquid, summed across perpetual DEXs for the selected account."
 
@@ -778,9 +778,13 @@ msgstr "Cross maintenance margin reported by Hyperliquid, summed across perpetua
 msgid "Cross Margin"
 msgstr "Cross Margin"
 
-#: src/components/trade/tradebox/account-panel.tsx:30
+#: src/components/trade/tradebox/account-panel.tsx:31
 msgid "Cross Margin Ratio"
 msgstr "Cross Margin Ratio"
+
+#: src/components/trade/tradebox/account-panel.tsx:40
+msgid "Cross-perpetual exposure divided by the value of balances used as perpetual collateral. Other spot holdings are excluded."
+msgstr "Cross-perpetual exposure divided by the value of balances used as perpetual collateral. Other spot holdings are excluded."
 
 #: src/components/trade/tradebox/margin-mode-modal.tsx:108
 msgid "Current"
@@ -824,8 +828,8 @@ msgstr "Default"
 
 #: src/components/trade/header/top-nav.tsx:99
 #: src/components/trade/mobile/mobile-nav-drawer.tsx:131
-#: src/components/trade/tradebox/account-panel.tsx:32
-#: src/components/trade/tradebox/account-panel.tsx:32
+#: src/components/trade/tradebox/account-panel.tsx:33
+#: src/components/trade/tradebox/account-panel.tsx:33
 #: src/components/trade/tradebox/deposit-modal.tsx:98
 #: src/components/trade/tradebox/deposit-modal.tsx:120
 #: src/components/trade/tradebox/deposit-modal.tsx:141
@@ -1295,11 +1299,11 @@ msgstr "H"
 msgid "Hide small"
 msgstr "Hide small"
 
-#: src/components/trade/tradebox/account-panel.tsx:35
+#: src/components/trade/tradebox/account-panel.tsx:36
 msgid "Highest collateral-token maintenance ratio across perpetual DEXs. Isolated margin is deducted from that token’s available balance. A higher ratio means less margin headroom."
 msgstr "Highest collateral-token maintenance ratio across perpetual DEXs. Isolated margin is deducted from that token’s available balance. A higher ratio means less margin headroom."
 
-#: src/components/trade/tradebox/account-panel.tsx:35
+#: src/components/trade/tradebox/account-panel.tsx:36
 msgid "Highest cross maintenance margin divided by cross account equity across perpetual DEXs."
 msgstr "Highest cross maintenance margin divided by cross account equity across perpetual DEXs."
 
@@ -2157,7 +2161,7 @@ msgstr "Perpetuals"
 msgid "Perps Account"
 msgstr "Perps Account"
 
-#: src/components/trade/tradebox/account-panel.tsx:38
+#: src/components/trade/tradebox/account-panel.tsx:39
 msgid "Perps Maintenance Margin"
 msgstr "Perps Maintenance Margin"
 
@@ -2244,19 +2248,19 @@ msgstr "Platform"
 msgid "Portfolio"
 msgstr "Portfolio"
 
-#: src/components/trade/tradebox/account-panel.tsx:30
+#: src/components/trade/tradebox/account-panel.tsx:31
 msgid "Portfolio Margin Ratio"
 msgstr "Portfolio Margin Ratio"
 
-#: src/components/trade/tradebox/account-panel.tsx:35
+#: src/components/trade/tradebox/account-panel.tsx:36
 msgid "Portfolio margin risk requires portfolio-specific collateral and borrowing data. It is unavailable in this summary."
 msgstr "Portfolio margin risk requires portfolio-specific collateral and borrowing data. It is unavailable in this summary."
 
-#: src/components/trade/tradebox/account-panel.tsx:33
+#: src/components/trade/tradebox/account-panel.tsx:34
 msgid "Portfolio Margin Summary"
 msgstr "Portfolio Margin Summary"
 
-#: src/components/trade/tradebox/account-panel.tsx:36
+#: src/components/trade/tradebox/account-panel.tsx:37
 msgid "Portfolio Value"
 msgstr "Portfolio Value"
 
@@ -3191,7 +3195,7 @@ msgstr "TOKEN"
 msgid "Total"
 msgstr "Total"
 
-#: src/components/trade/tradebox/account-panel.tsx:39
+#: src/components/trade/tradebox/account-panel.tsx:40
 msgid "Total absolute perpetual position value across DEXs divided by portfolio value. This is account exposure, not an individual order’s leverage setting."
 msgstr "Total absolute perpetual position value across DEXs divided by portfolio value. This is account exposure, not an individual order’s leverage setting."
 
@@ -3377,15 +3381,15 @@ msgstr "TWAP Orders"
 #~ msgid "Unable to close position."
 #~ msgstr "Unable to close position."
 
-#: src/components/trade/tradebox/account-panel.tsx:39
+#: src/components/trade/tradebox/account-panel.tsx:40
 msgid "Unified Account Leverage"
 msgstr "Unified Account Leverage"
 
-#: src/components/trade/tradebox/account-panel.tsx:30
+#: src/components/trade/tradebox/account-panel.tsx:31
 msgid "Unified Account Ratio"
 msgstr "Unified Account Ratio"
 
-#: src/components/trade/tradebox/account-panel.tsx:33
+#: src/components/trade/tradebox/account-panel.tsx:34
 msgid "Unified Account Summary"
 msgstr "Unified Account Summary"
 
@@ -3402,7 +3406,7 @@ msgstr "Unknown symbol: {symbolName}"
 msgid "Unrealized P&L"
 msgstr "Unrealized P&L"
 
-#: src/components/trade/tradebox/account-panel.tsx:37
+#: src/components/trade/tradebox/account-panel.tsx:38
 msgid "Unrealized PNL"
 msgstr "Unrealized PNL"
 
@@ -3534,8 +3538,8 @@ msgstr "Wallet not connected"
 #~ msgid "will arrive in ~5 min"
 #~ msgstr "will arrive in ~5 min"
 
-#: src/components/trade/tradebox/account-panel.tsx:32
-#: src/components/trade/tradebox/account-panel.tsx:32
+#: src/components/trade/tradebox/account-panel.tsx:33
+#: src/components/trade/tradebox/account-panel.tsx:33
 msgid "Withdraw"
 msgstr "Withdraw"
 
