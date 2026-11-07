@@ -1,7 +1,7 @@
 import {expect,it} from "vitest";
 import {spotUsdPrices,summarizeAccount} from "@/lib/positions/account-summary";
 import type {AllDexsAccountState} from "@/hooks/trade/use-account-balances";
-const state=(mm:string,ntl:string,pnl:string,isolated=false)=>({crossMaintenanceMarginUsed:mm,marginSummary:{accountValue:"0"},crossMarginSummary:{accountValue:"0"},assetPositions:[{position:{szi:"1",positionValue:ntl,unrealizedPnl:pnl,marginUsed:isolated?"5000":"0",leverage:{type:isolated?"isolated":"cross"}}}]});
+const state=(mm:string,ntl:string,pnl:string,isolated=false)=>({crossMaintenanceMarginUsed:mm,marginSummary:{accountValue:"0"},crossMarginSummary:{accountValue:"0",totalNtlPos:ntl},assetPositions:[{position:{szi:"1",positionValue:ntl,unrealizedPnl:pnl,marginUsed:isolated?"5000":"0",leverage:{type:isolated?"isolated":"cross"}}}]});
 const input=()=>({states:[["",state("1000","50000","10")],["xyz",state("2377.81","57248.28","25.51")]] as unknown as AllDexsAccountState["clearinghouseStates"],balances:[{coin:"USDC",token:0,total:"40471.05",hold:"0",entryNtl:"0"}],mode:"unifiedAccount",collateral:{"":0,xyz:0}});
 it("uses unified equity once and aggregates exposure, maintenance and PNL across venues",()=>{
  const summary=summarizeAccount(input());expect(summary.portfolioValue).toBe(40471.05);expect(summary.unrealizedPnl).toBe(35.51);expect(summary.maintenance).toBe(3377.81);expect(summary.leverage).toBeCloseTo(2.65,2);expect(summary.ratio).toBeCloseTo(3377.81/40471.05);
@@ -31,4 +31,11 @@ it("matches sparse spot contexts by market name instead of valuing MAX at anothe
 it("never falls back to a neighboring context when the market quote is missing",()=>{
  const prices=spotUsdPrices([{name:"@591",tokens:[734,0]}],[{coin:"@306",markPx:"8.2877"}]);expect(prices[734]).toBeUndefined();
  const data=input();data.balances.push({coin:"MAX",token:734,total:"165124.2589",hold:"0",entryNtl:"0"});expect(summarizeAccount({...data,prices}).portfolioValue).toBeNull();
+});
+
+it("does not dilute unified leverage with non-collateral spot holdings or isolated notional",()=>{
+ const data=input();data.balances.push({coin:"HYPE",token:150,total:"1000",hold:"0",entryNtl:"0"});
+ data.states[0][1].assetPositions[0].position.positionValue="100000";
+ const summary=summarizeAccount({...data,prices:{150:80}});expect(summary.portfolioValue).toBe(120471.05);expect(summary.leverage).toBeCloseTo(107248.28/40471.05);
+ expect(summarizeAccount({...data,prices:{150:80},collateral:{}}).leverage).toBeNull();
 });

@@ -23,7 +23,7 @@ export function AccountPanel(){
  const spot=useInfo("spotMetaAndAssetCtxs",undefined,{enabled:isConnected,refetchInterval:30000});
  const collateral:Record<string,number>={};
  const prices=spot.data?spotUsdPrices(spot.data[0].universe,spot.data[1]):{0:1};
- metas.data?.forEach((meta,index)=>{const name=index===0?"":dexs.data?.[index]?.name;if(name!==undefined)collateral[name]=meta.collateralToken;});
+ if(metas.data&&dexs.data&&!metas.isError&&!dexs.isError)metas.data.forEach((meta,index)=>{const name=index===0?"":dexs.data?.[index]?.name;if(name!==undefined)collateral[name]=meta.collateralToken;});
 
  const summary=summarizeAccount({states:state.clearinghouseStates,balances:state.spotBalances,mode:state.accountAbstraction,collateral,prices,ready:!state.isLoading&&!state.hasError});
  const unified=state.accountAbstraction==="unifiedAccount",portfolio=state.accountAbstraction==="portfolioMargin";
@@ -37,7 +37,7 @@ export function AccountPanel(){
     <InfoRow label={t`Portfolio Value`} value={formatUSD(summary.portfolioValue,{compact:false})}/>
     <InfoRow label={t`Unrealized PNL`} value={formatUSD(summary.unrealizedPnl,{compact:false})} valueClassName={summary.unrealizedPnl===null?"text-fg-muted":getValueColorClass(summary.unrealizedPnl)}/>
     <InfoRow label={<Hint label={t`Perps Maintenance Margin`} text={t`Cross maintenance margin reported by Hyperliquid, summed across perpetual DEXs for the selected account.`}/>} value={formatUSD(summary.maintenance,{compact:false})}/>
-    <InfoRow label={<Hint label={unified?t`Unified Account Leverage`:t`Account Leverage`} text={t`Total absolute perpetual position value across DEXs divided by portfolio value. This is account exposure, not an individual order’s leverage setting.`}/>} value={summary.leverage===null?FALLBACK_VALUE_PLACEHOLDER:`${summary.leverage.toFixed(2)}x`}/>
+    <InfoRow label={<Hint label={unified?t`Unified Account Leverage`:t`Account Leverage`} text={unified?t`Cross-perpetual exposure divided by the value of balances used as perpetual collateral. Other spot holdings are excluded.`:t`Total absolute perpetual position value across DEXs divided by portfolio value. This is account exposure, not an individual order’s leverage setting.`}/>} value={summary.leverage===null?FALLBACK_VALUE_PLACEHOLDER:`${summary.leverage.toFixed(2)}x`}/>
    </InfoRowGroup>}
   </div>
  </section>;
