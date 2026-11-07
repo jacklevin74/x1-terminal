@@ -24,7 +24,7 @@ export const autoTraderHelp:Record<string,string>={
  "Target":"Signed dollar exposure decided by the executor for this cycle, including its sizing, neutral holds and caps. Positive is long; negative is short. The terminal displays the API value without recalculating it.",
  "Current":"Signed position value recorded by the executor for this same cycle. This is a cycle snapshot, not the latest browser market price.",
  "Gap":"Adjustment reported by the executor for this cycle. If the API does not provide a gap, the page shows — instead of subtracting or guessing.",
- "Action":"The decision recorded by the executor for this market and cycle. This is not a prediction for the next cycle. See the returned reason and cycle orders/fills for execution details.",
+ "Action":"The executor’s recorded action, labeled with the position side and buy/sell direction. Increase short means sell more; reduce short means buy back part of the short. Increase long means buy more; reduce long means sell part of the long. Skip means no order for that adjustment. Original executor tags are available on hover. These are cycle decisions, not confirmation of a fill.",
  "Reason":"The explanation returned by the executor, including any neutral, minimum-order or cap decision. Missing reasons are shown as — without inventing an explanation.",
  "Last cycle":"Timestamp of the last cycle reported by the service. It does not confirm a fill; inspect Cycle orders and fills for execution results.",
  "Equity":"Account equity reported by the last executor cycle, used for that cycle's target sizing. It can differ from the latest browser snapshot.",
