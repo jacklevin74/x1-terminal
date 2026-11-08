@@ -4,13 +4,14 @@ import { createRoot } from "react-dom/client";
 import { expect, it, vi } from "vitest";
 import { HistoryTab } from "@/components/trade/positions/history-tab";
 vi.mock("@/components/trade/positions/trade-pnl-share", () => ({ TradePnlShare: () => null }));
+import { useTradeHistory } from "@/hooks/use-trade-history";
 const hash = `0x${"ab".repeat(32)}`;
 vi.mock("@lingui/core/macro", () => ({ t: (strings: TemplateStringsArray, ...values: unknown[]) => strings.reduce((s, part, i) => s + part + (values[i] ?? ""), "") }));
 vi.mock("wagmi", () => ({ useConnection: () => ({ address: `0x${"cd".repeat(20)}`, isConnected: true }) }));
-vi.mock("@/hooks/use-trade-history", () => ({ useTradeHistory: () => ({ status: "active", fills: [
+vi.mock("@/hooks/use-trade-history", () => ({ useTradeHistory: vi.fn(() => ({ status: "active", fills: [
  { coin: "BTC", crossed: true, side: "B", dir: "Open Long", time: 1_800_000_000_000, px: "100.25", sz: "2", fee: "0.10", feeToken: "USDC", closedPnl: "0", tid: 1, hash: `0x${"ab".repeat(32)}` },
  { coin: "BTC", crossed: false, side: "A", dir: "Close Long", time: 1_800_000_001_000, px: "101", sz: "1", fee: "0.05", feeToken: "USDC", closedPnl: "0.75", tid: 2, hash: `0x${"cd".repeat(32)}` },
- ] }) }));
+ ] })) }));
 vi.mock("@/lib/hyperliquid", () => ({ useMarkets: () => ({ getMarket: () => ({ kind: "perp", shortName: "BTC" }), getSzDecimals: () => 3 }) }));
 vi.mock("@/providers/exchange-scope", () => ({ useExchangeScope: () => ({ scope: "perp" }) }));
 vi.mock("@/stores/use-market-store", () => ({ useMarketActions: () => ({ setSelectedMarket: vi.fn() }) }));
@@ -35,4 +36,19 @@ it("matches the requested columns, displays trade value and units, and sorts tim
  expect(node.querySelectorAll("tbody tr")).toHaveLength(1);
  expect(node.querySelector("tbody tr")?.textContent).toContain("Close Long");
  await act(async () => root.unmount()); node.remove();
+});
+
+it("places Show more trades after the rows and hides it when all matches are shown", async () => {
+ const sample = vi.mocked(useTradeHistory)().fills[0];
+ const records = Array.from({ length: 206 }, (_, tid) => ({ ...sample, tid }));
+ vi.mocked(useTradeHistory).mockReturnValue({ fills: records, status: "active", loading: false, warning: null, error: null });
+ const node = document.createElement("div"); const root = createRoot(node);
+ await act(async () => root.render(createElement(HistoryTab)));
+ const more = [...node.querySelectorAll("button")].find(button => button.textContent === "Show more trades")!;
+ expect(node.querySelectorAll("tbody tr")).toHaveLength(200);
+ expect(node.querySelector("table")!.compareDocumentPosition(more) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+ await act(async () => more.click());
+ expect(node.querySelectorAll("tbody tr")).toHaveLength(206);
+ expect([...node.querySelectorAll("button")].some(button => button.textContent === "Show more trades")).toBe(false);
+ await act(async () => root.unmount());
 });

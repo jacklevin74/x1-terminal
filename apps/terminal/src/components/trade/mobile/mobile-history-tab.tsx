@@ -57,7 +57,7 @@ export function MobileHistoryTab({ className }: Props) {
 				</div>
 				<div className="flex-1 min-h-0 overflow-y-auto px-3 pb-3 space-y-2">
  <div role="status" className="text-xs text-fg-muted">Last 24 hours{loading ? " · Updating…" : ""}{warning && <span className="text-error"> · {warning}</span>}</div>
- {allFills.length > visible && <button type="button" className="text-xs text-brand" onClick={() => setVisible(value => value + MAX_HISTORY_ROWS)}>Show more trades</button>}
+
 					{fills.map((fill) => {
 						const market = markets.getMarket(fill.coin);
                         const quote = market?.kind === "spot" ? market.tokensInfo[1]?.displayName ?? "USDC" : market?.kind === "builderPerp" ? market.quoteToken?.displayName ?? "USDC" : "USDC";
@@ -124,6 +124,7 @@ export function MobileHistoryTab({ className }: Props) {
 							</div>
 						);
 					})}
+ {allFills.length > visible && <button type="button" className="text-xs text-brand" onClick={() => setVisible(value => value + MAX_HISTORY_ROWS)}>Show more trades</button>}
 				</div>
 			</div>
 		</Skeleton>
