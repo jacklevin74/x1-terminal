@@ -31,7 +31,8 @@ export function HistoryTab() {
  const [typeFilter, setTypeFilter] = useState(""); const [sideFilter, setSideFilter] = useState(""); const [roleFilter, setRoleFilter] = useState(""); const [marketFilter, setMarketFilter] = useState(""); const [aggregate, setAggregate] = useState(false);
  const { fills: allFills, status, warning, loading } = useTradeHistory(aggregate);
  const [visible, setVisible] = useState(MAX_HISTORY_ROWS);
- const fills = allFills.filter(fill => (!typeFilter || (fill.liquidation ? "Liquidated" : fill.dir) === typeFilter) && (!sideFilter || fill.side === sideFilter) && (!roleFilter || (fill.crossed ? "Taker" : "Maker") === roleFilter) && (!marketFilter || fill.coin === marketFilter)).slice().sort((a, b) => descending ? b.time - a.time : a.time - b.time).slice(0, visible);
+ const matchingFills = allFills.filter(fill => (!typeFilter || (fill.liquidation ? "Liquidated" : fill.dir) === typeFilter) && (!sideFilter || fill.side === sideFilter) && (!roleFilter || (fill.crossed ? "Taker" : "Maker") === roleFilter) && (!marketFilter || fill.coin === marketFilter)).slice().sort((a, b) => descending ? b.time - a.time : a.time - b.time);
+ const fills = matchingFills.slice(0, visible);
  let placeholder = null;
  if (!isConnected) placeholder = <Placeholder>{t`Connect your wallet to view trade history.`}</Placeholder>;
  else if (status === "subscribing") placeholder = <Placeholder>{t`Loading trade history...`}</Placeholder>;
@@ -43,7 +44,6 @@ export function HistoryTab() {
    <label className="inline-flex items-center gap-2 border-l border-stroke-weak pl-4 text-fg"><input type="checkbox" aria-label="Aggregate trade history" checked={aggregate} onChange={event => setAggregate(event.target.checked)} className="size-3.5 accent-brand" />Aggregate</label>
   </AccountTableToolbar>}
   <div className="px-3 py-1 text-xs text-fg-muted" role="status">Last 24 hours · {allFills.length} fills{loading ? " · Updating…" : ""}{warning && <span className="ml-2 text-error">{warning}</span>}</div>
-  {fills.length === visible && <button type="button" className="text-xs text-brand" onClick={() => setVisible(value => value + MAX_HISTORY_ROWS)}>Show more trades</button>}
   <div className={positionsPanelTableShellClass}>
   {placeholder ?? <ScrollArea className="min-h-0 w-full flex-1">
    <Table className="table-auto min-w-max w-full">
@@ -80,7 +80,9 @@ export function HistoryTab() {
       </TableRow>;
      })}
     </TableBody>
-   </Table><ScrollBar orientation="horizontal" />
+   </Table>
+   {matchingFills.length > visible && <div className="flex justify-center px-3 py-3"><button type="button" className="text-xs text-brand hover:underline" onClick={() => setVisible(value => value + MAX_HISTORY_ROWS)}>Show more trades</button></div>}
+   <ScrollBar orientation="horizontal" />
   </ScrollArea>}
  </div></div>;
 }

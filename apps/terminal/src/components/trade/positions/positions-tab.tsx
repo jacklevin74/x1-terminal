@@ -1,3 +1,5 @@
+import { sortPositions, type PositionSort, type PositionSortKey } from "@/lib/positions/sort-positions";
+import { PositionSortLabel } from "./position-sort-label";
 import {useTradingAccount} from "@/hooks/use-trading-account";
 import { closePositionsInSequence } from "@/lib/positions/close-all";
 import { Button, Modal, ModalContent, ModalHeader, ModalPopup, ModalTitle, Table, TableBody, TableHead, TableHeader, TableRow } from "@hypeterminal/ui";
@@ -30,7 +32,13 @@ export function PositionsTab() {
 	const { address, isConnected } = useTradingAccount();
 	const slippageBps = useMarketOrderSlippageBps();
  const currentAddress = useRef(address); currentAddress.current = address;
- const [sortDescending, setSortDescending] = useState(true);
+ const [sort, setSort] = useState<PositionSort>({ key: "value", descending: true });
+ function handleSort(key: PositionSortKey) {
+  setSort(previous => ({ key, descending: previous.key === key ? !previous.descending : key !== "market" }));
+ }
+ function sortLabel(label: string, field: PositionSortKey) {
+  return <PositionSortLabel label={label} field={field} sort={sort} onSort={handleSort} />;
+ }
  const [closeAllOpen, setCloseAllOpen] = useState(false);
  const [closingAll, setClosingAll] = useState(false);
  const closeAllBusy = useRef(false);
@@ -110,7 +118,7 @@ export function PositionsTab() {
  return result.ok;
 	}
 
- const sortedPositions = useMemo(() => [...positions].sort((a, b) => (Number(a.positionValue) - Number(b.positionValue)) * (sortDescending ? -1 : 1)), [positions, sortDescending]);
+ const sortedPositions = useMemo(() => sortPositions(positions, sort, tpSlOrdersByCoin, coin => markets.getMarket(coin)?.shortName ?? coin.split(":").at(-1) ?? coin), [positions, sort, tpSlOrdersByCoin, markets]);
  const closeAllData = positions.map(p => {
   const market = markets.getMarket(p.coin); const markPx = Number(mids?.[p.coin]); const size = Math.abs(Number(p.szi));
   if (typeof market?.assetId !== "number" || !Number.isFinite(markPx) || markPx <= 0 || !Number.isFinite(size) || size <= 0) return null;
@@ -174,13 +182,18 @@ export function PositionsTab() {
 						<Table className="table-auto w-max min-w-0">
        <TableHeader className={positionViewHeaderClass}>
         <TableRow className="border-0">
-         {[
-          "Market", "Size", "Position Value", "Entry Price", "Mark Price", "PNL (ROE %)", "Liq. Price", "Margin", "Funding", "TP/SL", "Close All",
-         ].map(label => <TableHead key={label} scope="col" size="dense" className={positionViewHeadClass} aria-sort={label === "Position Value" ? sortDescending ? "descending" : "ascending" : undefined}>
-          {label === "Position Value" ? <button type="button" onClick={() => setSortDescending(value => !value)} className="inline-flex items-center gap-1 hover:text-fg">{label}<span aria-hidden="true">{sortDescending ? "⌄" : "⌃"}</span></button>
-           : label === "Close All" ? <button type="button" className="text-[#50d8c5] hover:underline disabled:opacity-40" disabled={!canCloseAll || closingAll} onClick={() => setCloseAllOpen(true)}>{closingAll ? "Closing…" : label}</button>
-           : label}
-         </TableHead>)}
+         {([
+          ["Market", "market"], ["Size", "size"], ["Position Value", "value"], ["Entry Price", "entry"], ["Mark Price", "mark"],
+          ["PNL (ROE %)", "pnl"], ["Liq. Price", "liquidation"], ["Margin", "margin"], ["Funding", "funding"], ["TP/SL", "tp"], ["Close All", null],
+         ] as const).map(([label, field]) => {
+          const active = field === sort.key || (field === "pnl" && sort.key === "roe") || (field === "tp" && sort.key === "sl");
+          return <TableHead key={label} scope="col" size="dense" className={positionViewHeadClass} aria-sort={active ? sort.descending ? "descending" : "ascending" : undefined}>
+           {field === null ? <button type="button" className="text-[#50d8c5] hover:underline disabled:opacity-40" disabled={!canCloseAll || closingAll} onClick={() => setCloseAllOpen(true)}>{closingAll ? "Closing…" : label}</button>
+            : field === "pnl" ? <span className="inline-flex items-center gap-1">{sortLabel("PNL", "pnl")} ({sortLabel("ROE %", "roe")})</span>
+            : field === "tp" ? <span className="inline-flex items-center gap-1">{sortLabel("TP", "tp")} / {sortLabel("SL", "sl")}</span>
+            : sortLabel(label, field)}
+          </TableHead>;
+         })}
         </TableRow>
        </TableHeader>
 							<TableBody className={positionViewBodyClass}>
