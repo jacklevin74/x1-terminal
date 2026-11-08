@@ -1,3 +1,4 @@
+import { useTerminalBrand } from "../header/terminal-brand";
 import { ButtonIcon } from "@hypeterminal/ui";
 import { BellIcon, GearIcon, TerminalIcon } from "@phosphor-icons/react";
 import { APP_HEADER_HEIGHT_CLASS } from "@/config/layout";
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export function MobileHeader({ className }: Props) {
+ const brand = useTerminalBrand();
 	const { open: openSettingsDialog } = useSettingsDialogActions();
 
 	return (
@@ -28,9 +30,9 @@ export function MobileHeader({ className }: Props) {
 			<div className={cn(APP_HEADER_HEIGHT_CLASS, "px-2 flex items-center justify-between")}>
 				<div className="flex items-center gap-1">
 					<MobileNavDrawer />
-					<div className="size-6 rounded-8 bg-brand/10 border border-stroke-brand-strong/30 flex items-center justify-center">
+					{brand ?? <div className="size-6 rounded-8 bg-brand/10 border border-stroke-brand-strong/30 flex items-center justify-center">
 						<TerminalIcon className="size-3.5 text-brand" />
-					</div>
+					</div>}
 				</div>
 
 				<div className="flex items-center gap-0.5">

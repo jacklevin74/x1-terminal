@@ -1,3 +1,4 @@
+import { useTerminalBrand } from "./terminal-brand";
 import { Button, ButtonIcon, Divider, Dropdown } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
@@ -29,6 +30,7 @@ function getScopeAccentClass(scope: string): string {
 }
 
 export function TopNav() {
+ const brand = useTerminalBrand();
 	const { open: openDepositModal } = useDepositModalActions();
 	const { open: openSettingsDialog } = useSettingsDialogActions();
 	const { isConnected } = useConnection();
@@ -47,7 +49,7 @@ export function TopNav() {
 			)}
 		>
 			<div className="flex items-center gap-3 min-w-0">
-				<div className="flex items-center gap-1.5">
+				{brand ?? <div className="flex items-center gap-1.5">
 					<div className="size-5 rounded-8 bg-brand/10 border border-stroke-brand-strong/30 flex items-center justify-center">
 						<TerminalIcon className="size-3 text-brand" />
 					</div>
@@ -55,13 +57,14 @@ export function TopNav() {
 						<span className="text-brand">X1 </span>
 						<span className="text-fg">TERMINAL</span>
 					</span>
-				</div>
+				</div>}
 				<Divider orientation="vertical" className="my-2 hidden lg:block" />
 				<nav className="hidden lg:flex items-center text-xs tracking-wide">
 					{SCOPE_NAV_ITEMS.map((item) => (
 						<Link
 							key={item.scope}
-							to={item.to}
+							to={brand ? "/newtheme" : item.to}
+       search={brand ? { scope: item.scope } : {}}
 							className={cn(
 								"px-2.5 py-1 rounded-8 transition-colors duration-150",
 								scope === item.scope ? item.activeClass : "text-fg-muted hover:text-fg",

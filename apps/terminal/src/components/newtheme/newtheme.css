@@ -1,0 +1,145 @@
+/* PR #2 dark palette, pinned to 38e032b8f3c042f528283010a27ae198910d7169.
+   Explicitly scoped: cached CSS cannot restyle the regular terminal after navigation. */
+html[data-terminal-theme="newtheme"] {
+    color-scheme: dark;
+
+    /* Background */
+    --bg-base: #07070a;
+    --bg-raised: #121217;
+    --bg-overlay: #1b1b22;
+    --bg-sunken: #000000;
+    --bg-alternate: #121217;
+    --bg-band: #ffffff0a;
+    --bg-brand: #ececf1;
+    --bg-inverse: #ffffff;
+
+    /* Text */
+    --text-strong: #fffffff2;
+    --text-secondary: #ffffffb8;
+    --text-weak: #ffffff8f;
+    --text-brand: #ececf1;
+    --text-disabled: #ffffff52;
+    --text-error: #ff5c6c;
+    --text-warning: #ffc23d;
+    --text-success: #2ee6a6;
+    --text-info: #4cb8ff;
+    --text-inverse-strong: #000626e5;
+    --text-inverse-weak: #000933a6;
+    --text-inverse-disabled: #0011661a;
+
+    /* Fill */
+    --fill-strong: #ffffff;
+    --fill-weak: #ffffff0f;
+    --fill-weaker: #ffffff08;
+    --fill-control: #22222a;
+    --fill-control-hover: #2c2c36;
+    --fill-hover: #ffffff0f;
+    --fill-press: #ffffff1f;
+    --fill-selected: #ececf1;
+    --fill-disabled: #ffffff1f;
+    --fill-overlay: #00000099;
+    --fill-brand-strong: #ececf1;
+    --fill-brand-weak: #ececf10f;
+    --fill-error-strong: #ff5c6c;
+    --fill-error-weak: #ff5c6c14;
+    --fill-warning-strong: #ffc23d;
+    --fill-warning-weak: #ffc23d14;
+    --fill-success-strong: #2ee6a6;
+    --fill-success-weak: #2ee6a614;
+    --fill-info-strong: #4cb8ff;
+    --fill-info-weak: #4cb8ff14;
+    --fill-inverse-strong: #07070a;
+    --fill-inverse-weak: #0015800a;
+    --fill-inverse-hover: #0015800a;
+    --fill-inverse-press: #0011661a;
+    --fill-inverse-disabled: #0011661a;
+    --fill-white: #ffffff;
+    --fill-yellow: #fec62e;
+
+    /* Stroke */
+    --stroke-strong: #ffffff99;
+    --stroke-weak: #ffffff14;
+    --stroke-faint: #ffffff0d;
+    --stroke-control-focus: #ffffff3d;
+    --stroke-selected: #ececf1;
+    --stroke-focus: #ececf1;
+    --stroke-disabled: #ffffff1f;
+    --stroke-brand-strong: #ececf1cc;
+    --stroke-brand-weak: #ececf133;
+    --stroke-error-strong: #ff5c6ccc;
+    --stroke-error-weak: #ff5c6c33;
+    --stroke-warning-strong: #ffc23dcc;
+    --stroke-warning-weak: #ffc23d33;
+    --stroke-success-strong: #2ee6a6cc;
+    --stroke-success-weak: #2ee6a633;
+    --stroke-info-strong: #4cb8ffcc;
+    --stroke-info-weak: #4cb8ff33;
+    --stroke-inverse-strong: #000d4d73;
+    --stroke-inverse-weak: #0011661a;
+    --stroke-inverse-disabled: #0011661a;
+
+    /* Icon */
+    --icon-neutral: #ffffff99;
+    --icon-brand: #ececf1cc;
+    --icon-disabled: #ffffff1f;
+    --icon-error: #ff5c6ccc;
+    --icon-warning: #ffc23dcc;
+    --icon-success: #2ee6a6cc;
+    --icon-info: #4cb8ffcc;
+    --icon-inverse: #000d4d73;
+    --icon-inverse-strong: #000626e5;
+    --icon-inverse-disabled: #0011661a;
+
+    /* HyperTerminal Trading Extensions (Dark) */
+    --market-up: var(--text-success);
+    --market-down: var(--text-error);
+    --market-up-flash: color-mix(in oklab, var(--market-up) 55%, var(--text-strong));
+    --market-down-flash: color-mix(in oklab, var(--market-down) 55%, var(--text-strong));
+    --market-neutral: #6B7280;
+    --scope-perp: #4F7DFF;
+    --scope-spot: #2DD4BF;
+    --scope-builders: #F59E0B;
+    --sel: rgba(79, 125, 255, 0.15);
+
+    /* Elevation (menus, popovers, tooltips, modals) */
+    --elevation-menu: 0 4px 8px rgba(0, 0, 0, 0.45), 0 16px 32px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+html[data-terminal-theme="newtheme"] {
+ --radius-xs: 4px;
+ --radius-sm: 8px;
+ --radius-md: 8px;
+ --radius-lg: 8px;
+ --radius-xl: 12px;
+ --text-3xs: 11px;
+ --text-3xs--line-height: 16px;
+}
+html[data-terminal-theme="newtheme"] :is(button, a, input, select) { -webkit-tap-highlight-color: transparent; }
+html[data-terminal-theme="newtheme"] :is(button, input, select, [role="tab"]) { border-radius: 8px; }
+html[data-terminal-theme="newtheme"] :is(input, select) { font-variant-numeric: tabular-nums; }
+html[data-terminal-theme="newtheme"] div:has(> input):not([role="slider"]) {
+ background-color: var(--fill-control);
+ border-color: transparent;
+ border-radius: 8px;
+}
+html[data-terminal-theme="newtheme"] div:has(> input):focus-within {
+ border-color: var(--stroke-control-focus);
+}
+html[data-terminal-theme="newtheme"] input[type="checkbox"] { accent-color: var(--text-success); }
+html[data-terminal-theme="newtheme"] [role="tablist"] { background: transparent; border-radius: 0; border-bottom: 1px solid var(--stroke-weak); }
+html[data-terminal-theme="newtheme"] [role="tab"] { border-radius: 0; border-bottom: 2px solid transparent; background: transparent; }
+html[data-terminal-theme="newtheme"] [role="tab"][aria-selected="true"] { border-bottom-color: var(--text-strong); color: var(--text-strong); background: transparent; }
+html[data-terminal-theme="newtheme"] .depth-bar-ask { left: 0 !important; right: auto !important; background: color-mix(in srgb, var(--market-down) 15%, transparent); }
+html[data-terminal-theme="newtheme"] .depth-bar-bid { background: color-mix(in srgb, var(--market-up) 15%, transparent); }
+html[data-terminal-theme="newtheme"] table { font-variant-numeric: tabular-nums; }
+html[data-terminal-theme="newtheme"] th { color: var(--text-weak); font-size: 11px; font-weight: 500; }
+html[data-terminal-theme="newtheme"] td { border-color: var(--stroke-faint); }
+html[data-terminal-theme="newtheme"] tr:hover td { background-color: var(--fill-weaker); }
+.newtheme-badge { border: 1px solid var(--stroke-weak); border-radius: 4px; padding: 2px 5px; color: var(--text-weak); font-size: 10px; line-height: 14px; white-space: nowrap; }
+.newtheme-brand { display: inline-flex; align-items: center; gap: 9px; flex-shrink: 0; color: var(--text-strong); }
+.newtheme-brand-word { font-size: 12px; font-weight: 800; letter-spacing: 1.4px; }
+.newtheme-tile { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 7px; background: #16171b; border: 1px solid #ffffff14; }
+.newtheme-tile svg { width: 16px; height: 11px; }
+@media (max-width: 767px) { .newtheme-brand-word, .newtheme-badge { display: none; } }
+@media (prefers-reduced-motion: reduce) {
+ html[data-terminal-theme="newtheme"] *, html[data-terminal-theme="newtheme"] *::before, html[data-terminal-theme="newtheme"] *::after { transition-duration: 0s !important; animation-duration: 0s !important; }
+}
