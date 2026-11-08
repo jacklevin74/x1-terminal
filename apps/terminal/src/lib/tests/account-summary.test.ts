@@ -39,3 +39,23 @@ it("does not dilute unified leverage with non-collateral spot holdings or isolat
  const summary=summarizeAccount({...data,prices:{150:80}});expect(summary.portfolioValue).toBe(120471.05);expect(summary.leverage).toBeCloseTo(107248.28/40471.05);
  expect(summarizeAccount({...data,prices:{150:80},collateral:{}}).leverage).toBeNull();
 });
+
+it("reconciles unified equity with held orders and an isolated position without double deductions",()=>{
+ // Anonymized live reconciliation: order holds remain in total equity, while
+ // isolated margin reduces the collateral available for the risk ratio only.
+ const equity="40281.131688",isolatedMargin="367.418421";
+ const data=input();
+ data.balances=[{coin:"USDC",token:0,total:equity,hold:"23000.034529",entryNtl:"0"}];
+ data.states[0][1]=state("3518.084216","113163.08054","92.070956") as typeof data.states[0][1];
+ data.states[1][1]=state("0","0","-70.135493",true) as typeof data.states[0][1];
+ data.states[1][1].assetPositions[0].position.marginUsed=isolatedMargin;
+ data.states[1][1].assetPositions[0].position.positionValue="1837.092105";
+ const summary=summarizeAccount(data);
+ expect(summary.portfolioValue).toBe(Number(equity));
+ expect(summary.unrealizedPnl).toBeCloseTo(21.935463,6);
+ expect(summary.maintenance).toBe(3518.084216);
+ expect(summary.ratio).toBeCloseTo(3518.084216/(Number(equity)-Number(isolatedMargin)),12);
+ expect((summary.ratio!*100).toFixed(2)).toBe("8.81");
+ expect(summary.leverage).toBeCloseTo(2.8093322058702728,12);
+ expect(summary.leverage!.toFixed(2)).toBe("2.81");
+});
