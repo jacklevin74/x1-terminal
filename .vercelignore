@@ -22,3 +22,6 @@ apps/terminal/public/analytics/
 .codex/
 .agents/
 .claude/
+
+# Local KMS development tooling and runtime state never deploy to Vercel.
+tools/remote-keys-demo/

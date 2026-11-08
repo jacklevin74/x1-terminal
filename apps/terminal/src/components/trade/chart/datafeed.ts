@@ -113,6 +113,12 @@ function isSameBar(a: Bar | undefined, b: Bar | undefined): boolean {
 	);
 }
 
+// TradingView fixes native mark text at >=10px. A centered SVG label lets
+// compact 12px badges use a 25% smaller letter without changing vendor code.
+const executionLabelImages = Object.fromEntries((["B", "S"] as const).map(label => [label,
+ `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><text x="6" y="6" text-anchor="middle" dominant-baseline="central" font-family="Arial, sans-serif" font-size="7.5" font-weight="700" fill="white">${label}</text></svg>`)}`,
+]));
+
 const configuration: DatafeedConfiguration = {
 	exchanges: [{ value: EXCHANGE, name: EXCHANGE, desc: EXCHANGE }],
 	supported_resolutions: SUPPORTED_RESOLUTIONS,
@@ -132,7 +138,8 @@ export function createDatafeed(getFills: () => readonly ExecutionFill[] = () => 
    const markers = buildExecutionMarkers(getFills(), coinFromSymbolName(info.ticker ?? info.name), interval.barMs);
    callback(markers.filter(m => m.time / 1000 >= from && m.time / 1000 <= to).map(m => ({
     id: m.id, time: m.time / 1000, color: { background: m.color, border: m.color }, label: m.label,
-    text: `${m.label === "B" ? "Buy" : "Sell"} ${m.size} @ ${m.price}`, labelFontColor: "#ffffff", minSize: 18, borderWidth: 0,
+    text: `${m.label === "B" ? "Buy" : "Sell"} ${m.size} @ ${m.price}`, labelFontColor: "#ffffff", minSize: 12, borderWidth: 0,
+    imageUrl: executionLabelImages[m.label], showLabelWhenImageLoaded: false,
    })));
   },
 		onReady: (callback: OnReadyCallback) => {

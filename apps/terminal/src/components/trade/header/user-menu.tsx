@@ -42,6 +42,7 @@ export function UserMenu() {
    { label: `Copy ${active.address??address}`, onSelect: () => { void navigator.clipboard.writeText(active.address??address); } },
    { label: "Auto Trader", onSelect: () => { window.location.assign("/API#auto-trader"); } },
    { label: "API wallets", onSelect: () => { window.location.assign("/API"); } },
+   { label: "Remote signing keys", onSelect: () => { window.location.assign("/keys"); } },
    { label: "Trading setup · 0.05% fee", onSelect: () => window.dispatchEvent(new Event("x1:setup")) },
    ...(derived ? [{ label: "Export derived private key", onSelect: () => setExportOpen(true) }] : []),
    { label: "Disconnect", onSelect: () => {

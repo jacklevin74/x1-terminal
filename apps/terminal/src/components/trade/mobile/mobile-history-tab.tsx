@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useTradeHistory } from "@/hooks/use-trade-history";
 import {useTradingAccount} from "@/hooks/use-trading-account";
 import { TradePnlShare } from "../positions/trade-pnl-share";
 import { t } from "@lingui/core/macro";
@@ -8,7 +10,7 @@ import { MAX_HISTORY_ROWS } from "@/config/trade";
 import { cn } from "@/lib/cn";
 import { getHyperliquidTxUrl as getExplorerTxUrl } from "@/lib/explorer";
 import { formatDateTimeShort, formatNumber, formatToken, formatUSD } from "@/lib/format";
-import { useMarkets, useSubscription } from "@/lib/hyperliquid";
+import { useMarkets } from "@/lib/hyperliquid";
 import { toNumber } from "@/lib/trade/numbers";
 import { getValueColorClass } from "@/lib/ui/value-color";
 import { useExchangeScope } from "@/providers/exchange-scope";
@@ -21,21 +23,14 @@ interface Props {
 }
 
 export function MobileHistoryTab({ className }: Props) {
-	const { address, isConnected } = useTradingAccount();
+	const { isConnected } = useTradingAccount();
 	const { scope } = useExchangeScope();
 	const { setSelectedMarket } = useMarketActions();
 	const markets = useMarkets();
-	const {
-		data: fillsEvent,
-		status,
-		error,
-	} = useSubscription(
-		"userFills",
-		{ user: address ?? "0x0", aggregateByTime: true },
-		{ enabled: isConnected && !!address },
-	);
+ const { fills: allFills, status, warning, loading } = useTradeHistory();
+ const [visible, setVisible] = useState(MAX_HISTORY_ROWS);
+ const fills = allFills.slice(0, visible);
 
-	const fills = fillsEvent?.fills?.slice(0, MAX_HISTORY_ROWS).sort((a, b) => b.time - a.time) ?? [];
 	const headerCount = isConnected ? `${fills.length}` : FALLBACK_VALUE_PLACEHOLDER;
 
 	if (!isConnected) {
@@ -46,23 +41,14 @@ export function MobileHistoryTab({ className }: Props) {
 		);
 	}
 
-	if (status === "error") {
-		return (
-			<div className="flex-1 flex items-center justify-center p-6 text-sm text-error">
-				<span>{t`Failed to load trade history.`}</span>
-				{error instanceof Error && <span className="mt-1 text-xs text-fg-muted">{error.message}</span>}
-			</div>
-		);
-	}
-
-	if (status === "active" && fills.length === 0) {
+	if (status === "active" && fills.length === 0 && !warning) {
 		return (
 			<div className="flex-1 flex items-center justify-center p-6 text-sm text-fg-muted">{t`No fills found.`}</div>
 		);
 	}
 
 	return (
-		<Skeleton name="history-tab" loading={status === "subscribing" || status === "idle"}>
+		<Skeleton name="history-tab" loading={status === "subscribing"}>
 			<div className={cn("flex-1 min-h-0 flex flex-col", className)}>
 				<div className="px-3 py-2 flex items-center gap-2 text-xs uppercase tracking-wider text-fg-muted">
 					<ClockCounterClockwiseIcon className="size-3" />
@@ -70,6 +56,8 @@ export function MobileHistoryTab({ className }: Props) {
 					<span className="font-semibold text-brand ml-auto tabular-nums">{headerCount}</span>
 				</div>
 				<div className="flex-1 min-h-0 overflow-y-auto px-3 pb-3 space-y-2">
+ <div role="status" className="text-xs text-fg-muted">Last 24 hours{loading ? " · Updating…" : ""}{warning && <span className="text-error"> · {warning}</span>}</div>
+ {allFills.length > visible && <button type="button" className="text-xs text-brand" onClick={() => setVisible(value => value + MAX_HISTORY_ROWS)}>Show more trades</button>}
 					{fills.map((fill) => {
 						const market = markets.getMarket(fill.coin);
                         const quote = market?.kind === "spot" ? market.tokensInfo[1]?.displayName ?? "USDC" : market?.kind === "builderPerp" ? market.quoteToken?.displayName ?? "USDC" : "USDC";
