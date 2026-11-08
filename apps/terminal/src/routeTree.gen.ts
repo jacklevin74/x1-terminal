@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SpotRouteImport } from './routes/spot'
 import { Route as PerpRouteImport } from './routes/perp'
+import { Route as NewthemeRouteImport } from './routes/newtheme'
 import { Route as MobileAgentSyncRouteImport } from './routes/mobile-agent-sync'
 import { Route as BuildersPerpRouteImport } from './routes/builders-perp'
 import { Route as AutoTraderRouteImport } from './routes/auto-trader'
@@ -28,6 +29,11 @@ const SpotRoute = SpotRouteImport.update({
 const PerpRoute = PerpRouteImport.update({
   id: '/perp',
   path: '/perp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewthemeRoute = NewthemeRouteImport.update({
+  id: '/newtheme',
+  path: '/newtheme',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MobileAgentSyncRoute = MobileAgentSyncRouteImport.update({
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/auto-trader': typeof AutoTraderRoute
   '/builders-perp': typeof BuildersPerpRouteWithChildren
   '/mobile-agent-sync': typeof MobileAgentSyncRoute
+  '/newtheme': typeof NewthemeRoute
   '/perp': typeof PerpRoute
   '/spot': typeof SpotRoute
   '/builders-perp/$dex': typeof BuildersPerpDexRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/API': typeof APIRoute
   '/auto-trader': typeof AutoTraderRoute
   '/mobile-agent-sync': typeof MobileAgentSyncRoute
+  '/newtheme': typeof NewthemeRoute
   '/perp': typeof PerpRoute
   '/spot': typeof SpotRoute
   '/builders-perp/$dex': typeof BuildersPerpDexRoute
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/auto-trader': typeof AutoTraderRoute
   '/builders-perp': typeof BuildersPerpRouteWithChildren
   '/mobile-agent-sync': typeof MobileAgentSyncRoute
+  '/newtheme': typeof NewthemeRoute
   '/perp': typeof PerpRoute
   '/spot': typeof SpotRoute
   '/builders-perp/$dex': typeof BuildersPerpDexRoute
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/auto-trader'
     | '/builders-perp'
     | '/mobile-agent-sync'
+    | '/newtheme'
     | '/perp'
     | '/spot'
     | '/builders-perp/$dex'
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/API'
     | '/auto-trader'
     | '/mobile-agent-sync'
+    | '/newtheme'
     | '/perp'
     | '/spot'
     | '/builders-perp/$dex'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/auto-trader'
     | '/builders-perp'
     | '/mobile-agent-sync'
+    | '/newtheme'
     | '/perp'
     | '/spot'
     | '/builders-perp/$dex'
@@ -152,6 +164,7 @@ export interface RootRouteChildren {
   AutoTraderRoute: typeof AutoTraderRoute
   BuildersPerpRoute: typeof BuildersPerpRouteWithChildren
   MobileAgentSyncRoute: typeof MobileAgentSyncRoute
+  NewthemeRoute: typeof NewthemeRoute
   PerpRoute: typeof PerpRoute
   SpotRoute: typeof SpotRoute
 }
@@ -170,6 +183,13 @@ declare module '@tanstack/react-router' {
       path: '/perp'
       fullPath: '/perp'
       preLoaderRoute: typeof PerpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/newtheme': {
+      id: '/newtheme'
+      path: '/newtheme'
+      fullPath: '/newtheme'
+      preLoaderRoute: typeof NewthemeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mobile-agent-sync': {
@@ -252,6 +272,7 @@ const rootRouteChildren: RootRouteChildren = {
   AutoTraderRoute: AutoTraderRoute,
   BuildersPerpRoute: BuildersPerpRouteWithChildren,
   MobileAgentSyncRoute: MobileAgentSyncRoute,
+  NewthemeRoute: NewthemeRoute,
   PerpRoute: PerpRoute,
   SpotRoute: SpotRoute,
 }
