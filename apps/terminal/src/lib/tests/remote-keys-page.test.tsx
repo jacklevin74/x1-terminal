@@ -4,15 +4,15 @@ import {createRoot} from "react-dom/client";
 import {QueryClient,QueryClientProvider} from "@tanstack/react-query";
 import {afterEach,beforeEach,expect,it,vi} from "vitest";
 import {RemoteKeysPage} from "@/components/remote-keys/remote-keys-page";
-const state=vi.hoisted(()=>({owner:`0x${"11".repeat(20)}`,account:`0x${"22".repeat(20)}`,available:false,get:vi.fn(),mutate:vi.fn(),approve:vi.fn()}));
+const state=vi.hoisted(()=>({owner:`0x${"11".repeat(20)}`,account:`0x${"22".repeat(20)}`,available:false,get:vi.fn(),mutate:vi.fn(),approve:vi.fn(),approvals:[] as {address:string;name?:string;validUntil:number|null}[]}));
 vi.mock("wagmi",()=>({useConnection:()=>({address:state.owner}),useWalletClient:()=>({data:{signTypedData:vi.fn()}})}));
 vi.mock("@/hooks/use-trading-account",()=>({useTradingAccount:()=>({address:state.account,subaccount:{name:"Strategy"}})}));
 vi.mock("@/components/trade/header/user-menu",()=>({UserMenu:()=> <button>Account selector</button>}));
-vi.mock("@/lib/hyperliquid",()=>({useHyperliquid:()=>({env:"Mainnet"}),useExchange:()=>({mutateAsync:state.approve}),useInfo:()=>({data:[],isError:false,refetch:vi.fn()})}));
-vi.mock("@/lib/remote-keys/api",()=>({getRemoteKeys:(...args:unknown[])=>state.get(...args),remoteKeysMutation:(...args:unknown[])=>state.mutate(...args)}));
+vi.mock("@/lib/hyperliquid",()=>({useHyperliquid:()=>({env:"Mainnet"}),useExchange:()=>({mutateAsync:state.approve}),useInfo:()=>({data:state.approvals,isError:false,refetch:async()=>({data:state.approvals,error:null})})}));
+vi.mock("@/lib/remote-keys/api",async importOriginal=>{const actual=await importOriginal<typeof import("@/lib/remote-keys/api")>();return {...actual,getRemoteKeys:(...args:unknown[])=>state.get(...args),remoteKeysMutation:(...args:unknown[])=>state.mutate(...args)};});
 const data=()=>({version:1,supported:true,owner:state.owner,account:state.account,region:"us-east-2",canCreate:true,agents:[]});
 let cleanup:(()=>Promise<void>)|undefined;
-beforeEach(()=>{state.owner=`0x${"11".repeat(20)}`;state.account=`0x${"22".repeat(20)}`;state.get.mockReset();state.mutate.mockReset();state.approve.mockReset();});
+beforeEach(()=>{state.owner=`0x${"11".repeat(20)}`;state.account=`0x${"22".repeat(20)}`;state.approvals=[];state.get.mockReset();state.mutate.mockReset();state.approve.mockReset();});
 afterEach(async()=>{await cleanup?.();cleanup=undefined;});
 async function setup(){const host=document.createElement("div");document.body.append(host);const root=createRoot(host),client=new QueryClient({defaultOptions:{queries:{retry:false},mutations:{retry:false}}});const render=()=>root.render(<QueryClientProvider client={client}><RemoteKeysPage /></QueryClientProvider>);cleanup=async()=>{await act(async()=>root.unmount());client.clear();host.remove();};await act(async()=>{render();await new Promise(resolve=>setTimeout(resolve,30));});return {host,render};}
 const button=(host:HTMLElement,name:string)=>[...host.querySelectorAll('button')].find(b=>b.textContent?.includes(name))!;
@@ -26,6 +26,22 @@ it("creates an agent only through the remote service and leaves owner approval a
  await act(async()=>button(host,"Create KMS agent").click());
  expect(state.mutate).toHaveBeenCalledWith("kms-create",{name:"X1 Remote",days:30},expect.objectContaining({owner:state.owner,account:state.account}));
  expect(host.textContent).toContain("Awaiting approval");expect(button(host,"Register remote signer").disabled).toBe(true);expect(state.approve).not.toHaveBeenCalled();
+});
+it("approves a non-expiring agent with a short name and blocks a disabled key",async()=>{
+ const agent=`0x${"33".repeat(20)}`;
+ state.get.mockResolvedValue({...data(),agents:[{id:"forever",agent,name:"X1 Remote",state:"awaiting_approval",createdAt:Date.now(),validUntil:null,lastSignedAt:null},{id:"off",agent:`0x${"44".repeat(20)}`,name:"Retired",state:"disabled",createdAt:Date.now(),validUntil:null,lastSignedAt:null}]});
+ state.approve.mockImplementation(async(request:{agentName:string;agentAddress:string})=>{state.approvals.push({address:request.agentAddress,name:request.agentName,validUntil:null});});
+ const {host}=await setup();await act(async()=>{await new Promise(resolve=>setTimeout(resolve,30));});
+ expect(host.textContent).toContain("Approval does not expire");expect(host.textContent).toContain("Signing is disabled for this key.");
+ const cards=[...host.querySelectorAll("article")];expect(cards[1]?.textContent).toContain("Signing disabled");expect(cards[1]?.textContent).not.toContain("Approve on Hyperliquid");expect(cards[1]?.textContent).not.toContain("Register remote signer");
+ expect(button(host,"Approve on Hyperliquid").disabled).toBe(false);
+ await act(async()=>button(host,"Approve on Hyperliquid").click());
+ const named=state.approve.mock.calls[0][0].agentName as string;expect(named).toBe(`X1K${agent.slice(2,14)}`);expect(named.length).toBeLessThanOrEqual(16);expect(named).not.toContain("valid_until");
+ expect(button(host,"Register remote signer").disabled).toBe(false);
+});
+it("shows an explicit disabled state when the service reports supported false",async()=>{
+ state.get.mockRejectedValue(Error("Remote signing is disabled."));const {host}=await setup();await act(async()=>{await new Promise(resolve=>setTimeout(resolve,30));});
+ expect(host.textContent).toContain("Remote signing is disabled");expect(button(host,"Create KMS agent").disabled).toBe(true);
 });
 it("does not show another selected account's remote agents",async()=>{
  state.get.mockResolvedValue({...data(),agents:[{id:"one",agent:`0x${"33".repeat(20)}`,name:"Old account agent",state:"paused",createdAt:Date.now(),validUntil:null,lastSignedAt:null}]});

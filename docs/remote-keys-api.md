@@ -1,13 +1,25 @@
 # `/keys` remote-signing integration contract
 
-The terminal page is implemented. These operations are a **proposed contract**, not
-an assertion that the current copybot backend supports them. Until it does, the
-page reports that the service is not connected and disables setup. Do not return
-success or synthetic agents for unsupported operations.
+The copybot handler is implemented in `jacklevin74/wxnt-sale-deploy` PR #10
+(`25e3ea947d09b0ba6426cdb776ff14181ab3e70c`). The executor signer is implemented
+in `jacklevin74/hl-ws` PR #4 (`7cd992b3148f237f8b93f0a5fbbd1a5fcd336ea1`). This
+repository does not reimplement either service.
 
-Extend the existing `/api/copybot` handler (no additional Vercel function files).
-The terminal uses its existing same-origin proxy. AWS SDKs, credentials, KMS key
-ARNs, private material and the ability to sign arbitrary digests remain server-side.
+The page enables creation and registration only when `kms-status` returns
+`supported: true` for the selected account. `supported: false` keeps setup
+disabled and must not be answered with synthetic agents. Any other HTTP failure
+is shown as the signing service not being connected.
+
+The terminal still proxies `/api/copybot` to `https://wxnt-sale-sim.vercel.app`.
+That public deployment currently answers `kms-status`, `kms-nonce`, `kms-create`,
+and `kms-register` the same way it answers an unknown operation (`not registered`
+once `addr` is present). Live setup therefore stays unavailable until a
+non-production deployment of the merged handler is wired up. This page does not
+perform that deployment.
+
+AWS SDKs, credentials, KMS key ARNs, private material and the ability to sign
+arbitrary digests remain server-side. No production KMS key, agent approval,
+registration, executor restart, or trade is authorized by this contract.
 
 ## Status
 
@@ -36,11 +48,15 @@ ARNs, private material and the ability to sign arbitrary digests remain server-s
 Addresses above are placeholders. Timestamps are Unix milliseconds. `id` contains
 only letters/digits/underscore/hyphen, max 128 characters; it is not a KMS ARN.
 `name` max 48 characters. Valid states: `awaiting_approval`, `approved`, `paused`,
-`disabled`. Null is required for unavailable `validUntil`/`lastSignedAt`. Status
-must derive owner/subaccount mapping server-side, not trust a supplied owner.
-Return only public agent metadata for the selected account. Set `canCreate` false
-when quotas or billing policy prohibit creation. Records must represent
-AWS-generated non-exportable secp256k1 KMS keys, not legacy encrypted local keys.
+`disabled`. `validUntil: null` is a non-expiring approval and is current, not
+missing. A positive timestamp is an expiring approval. `lastSignedAt` is null
+until a successful signature. Status must derive owner/subaccount mapping
+server-side, not trust a supplied owner. Return only public agent metadata for
+the selected account. Set `canCreate` false when quotas or billing policy
+prohibit creation, and `supported: false` when KMS signing is disabled. Records
+must represent AWS-generated non-exportable secp256k1 KMS keys, not legacy
+encrypted local keys. A `disabled` record cannot be approved or registered, and
+the executor must not sign with it.
 
 ## Mutation authorization
 
@@ -68,7 +84,7 @@ After verifying owner consent and account ownership, create an isolated
 `ECC_SECG_P256K1` `SIGN_VERIFY` key in `us-east-2`; derive its public address.
 Persist key ARN only on the backend with owner and selected-account scope.
 Return full status plus `createdAgentId`, referencing an `awaiting_approval` row.
-Set the intended `validUntil`. Do not approve the agent or start a bot.
+Set the intended `validUntil`, or `null` when the approval does not expire. Do not approve the agent or start a bot.
 Handle orphan creation and idempotency so an interrupted response cannot create
 unbounded billable keys. Apply the production KMS IAM separation documented in
 the KSM project before enabling this endpoint. Tests using a human AWS profile
@@ -76,13 +92,24 @@ are not evidence that production IAM separation exists.
 
 ### Owner approval
 
-The terminal uses its existing owner-wallet `approveAgent` flow with
-`agentAddress` and `agentName: 'X1 KMS <first-16-agent-address-hex> valid_until <validUntil>'`.
-The per-key approval name avoids replacing a different key with the same display name. It verifies
-`extraAgents` for the owner before allowing registration. Agent approval is
-owner-wide on Hyperliquid; backend authorization must still restrict this key to
-its selected trading account. The page never requests an AWS credential or raw
-private key and does not sign trading payloads in the owner wallet.
+The terminal uses its existing owner-wallet `approveAgent` flow. Hyperliquid
+agent names have a 1–16 character base; a trailing ` valid_until <milliseconds>`
+is excluded from that count and makes the approval expire. The earlier
+`X1 KMS <first 16 hex>` base is 23 characters and is rejected by
+`@nktkas/hyperliquid` 0.32.2 before the wallet signs.
+
+Non-expiring records (`validUntil: null`) are approved as
+`X1K<first 12 lowercase hex characters of the agent address>` (15 characters,
+no suffix). Hyperliquid then reports `extraAgents[].validUntil: null`, which
+the page treats as approved. Expiring records use that same base plus
+` valid_until <validUntil>`. The distinct base avoids replacing a different key
+that shares a display name. Disabled records are not submitted.
+
+The page verifies `extraAgents` for the owner before allowing registration.
+Null `validUntil` counts as current. Agent approval is owner-wide on
+Hyperliquid; backend authorization must still restrict this key to its selected
+trading account. The page never requests an AWS credential or raw private key
+and does not sign trading payloads in the owner wallet.
 
 ### Register
 
@@ -99,9 +126,11 @@ as part of this request. Reject disabled/expired records. Preserve existing
 settings and all execution risk gates.
 
 The UI's "Configure Auto Trader" link goes to the existing `/API#auto-trader`
-page. That page/executor must understand KMS registration before the service
-advertises support: creation/approval alone do not integrate a remote signer into
-manual terminal orders or switch the production executor's signer.
+page. A registration with `signer: "kms"` is usable without importing a private
+key, including when `validUntil` is null. `supported: true` already means the
+merged executor can sign for that registration. Creation or approval alone does
+not switch manual terminal orders onto the remote signer. Registration remains
+paused until the owner explicitly starts Auto Trader.
 
 ## Executor boundary
 
@@ -117,10 +146,12 @@ Track per-key signature timestamps from actual successful signatures, not UI rea
 Frontend tests cover account/region binding, signed body hashing, secret-field
 allowlisting, mismatched auth domains, account changes during signing, paused
 registration confirmation, no automatic mutation retries, disconnected service,
-agent creation stages and hiding another account's cached records.
+`supported: false`, non-expiring `validUntil: null`, the 16-character approval
+name, disabled keys, agent creation stages and hiding another account's cached
+records.
 
-No backend deployment, KMS resource creation, agent approval, bot restart or live
-trade is performed by adding this page.
+Updating this page does not deploy the merged handler, create a KMS key,
+approve an agent, register a bot, restart an executor, or place a trade.
 
 ## Local demo with real AWS signing
 

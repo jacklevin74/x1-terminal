@@ -6,6 +6,14 @@ export const KEYS_TYPES={Request:[{name:"action",type:"string"},{name:"target",t
 export type RemoteAgent={id:string;agent:Address;name:string;state:"awaiting_approval"|"approved"|"paused"|"disabled";createdAt:number;validUntil:number|null;lastSignedAt:number|null};
 export type RemoteKeysStatus={version:1;supported:true;owner:Address;account:Address;region:"us-east-2";canCreate:boolean;agents:RemoteAgent[];createdAgentId?:string};
 export type KeysAuthRequest={account:Address;domain:typeof KEYS_DOMAIN;types:typeof KEYS_TYPES;primaryType:"Request";message:{action:string;target:Address;nonce:string;timestamp:bigint;bodyHash:Hex}};
+/** Hyperliquid counts only the base name, max 16. Null expiry must omit `valid_until` so the approval does not expire. */
+export function remoteAgentApprovalName(agent:Address,validUntil:number|null){
+ const base=`X1K${agent.slice(2,14).toLowerCase()}`;
+ if(base.length>16)throw new Error("Remote agent name exceeds Hyperliquid's 16-character limit.");
+ if(validUntil==null)return base;
+ if(!(typeof validUntil==="number"&&Number.isFinite(validUntil)&&validUntil>Date.now()))throw new Error("Create a current remote agent before authorizing it.");
+ return `${base} valid_until ${validUntil}`;
+}
 const same=(a:unknown,b:string)=>typeof a==="string"&&a.toLowerCase()===b.toLowerCase();
 const finite=(v:unknown)=>typeof v==="number"&&Number.isFinite(v)&&v>0;
 function scope(owner:Address,account:Address){if(!isAddress(owner)||!isAddress(account))throw new Error("Connect a valid owner and trading account.");}
@@ -26,7 +34,7 @@ async function request(op:string,account:Address,init:RequestInit={},fetcher=fet
  if(!response.ok)throw new Error(op==="kms-status"?"Remote signing service is not connected.":"Remote signer request could not be confirmed. Refresh before retrying; no automatic retry was sent.");
  const data=await response.json();if(!data||typeof data!=="object")throw new Error("Remote signing service returned an invalid response.");return data;
 }
-export async function getRemoteKeys(owner:Address,account:Address,signal?:AbortSignal,fetcher=fetch){scope(owner,account);return parseKeysStatus(await request("kms-status",account,{signal},fetcher),owner,account);}
+export async function getRemoteKeys(owner:Address,account:Address,signal?:AbortSignal,fetcher=fetch){scope(owner,account);const data=await request("kms-status",account,{signal},fetcher);if(data&&(data as {supported?:unknown}).supported===false)throw new Error("Remote signing is disabled.");return parseKeysStatus(data,owner,account);}
 export async function remoteKeysMutation(action:"kms-create"|"kms-register",body:Record<string,unknown>,context:{owner:Address;account:Address;assertAccount:()=>void;sign:(request:KeysAuthRequest)=>Promise<Hex>;fetcher?:typeof fetch}){
  const {owner,account,assertAccount,sign,fetcher=fetch}=context;scope(owner,account);assertAccount();
  if(action!=="kms-create"&&action!=="kms-register")throw new Error("Unsupported remote key operation.");

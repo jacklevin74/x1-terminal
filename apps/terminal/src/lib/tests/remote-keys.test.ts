@@ -1,6 +1,7 @@
 import {expect,it,vi} from "vitest";
 import {keccak256,toBytes,type Address,type Hex} from "viem";
-import {getRemoteKeys,parseKeysStatus,remoteKeysMutation,KEYS_DOMAIN,KEYS_TYPES,type KeysAuthRequest} from "@/lib/remote-keys/api";
+import {getRemoteKeys,parseKeysStatus,remoteAgentApprovalName,remoteKeysMutation,KEYS_DOMAIN,KEYS_TYPES,type KeysAuthRequest} from "@/lib/remote-keys/api";
+import {agentApprovalCurrent} from "@/lib/trade/api-wallets";
 const owner=`0x${"11".repeat(20)}` as Address,account=`0x${"22".repeat(20)}` as Address,agent=`0x${"33".repeat(20)}` as Address;
 const signature=`0x${"44".repeat(65)}` as Hex;
 const row=()=>({id:"test-agent",agent,name:"Remote test",state:"awaiting_approval",createdAt:Date.now(),validUntil:Date.now()+86400000,lastSignedAt:null});
@@ -41,6 +42,17 @@ it("registration confirms exactly the requested agent in paused state",async()=>
  await expect(remoteKeysMutation("kms-register",{id:"test-agent",agent},{owner,account,fetcher,sign:async()=>signature,assertAccount:()=>{}})).resolves.toMatchObject({account});
  result.agents[0].state="approved";fetcher.mockResolvedValueOnce(response(nonce)).mockResolvedValueOnce(response(result));
  await expect(remoteKeysMutation("kms-register",{id:"test-agent",agent},{owner,account,fetcher,sign:async()=>signature,assertAccount:()=>{}})).rejects.toThrow("paused state");
+});
+it("treats a null expiry as a current non-expiring approval and keeps disabled signing closed",()=>{
+ expect(parseKeysStatus({...status(),agents:[{...row(),validUntil:null,state:"awaiting_approval"}]},owner,account).agents[0].validUntil).toBeNull();
+ expect(agentApprovalCurrent(null)).toBe(true);expect(agentApprovalCurrent(Date.now()-1)).toBe(false);
+ const name=remoteAgentApprovalName(agent,null);expect(name).toBe(`X1K${agent.slice(2,14).toLowerCase()}`);expect(name.length).toBeLessThanOrEqual(16);expect(name).not.toContain("valid_until");
+ const expiring=remoteAgentApprovalName(agent,Date.now()+86400000);expect(expiring.replace(/ valid_until \d+$/,"")).toHaveLength(name.length);expect(expiring).toContain("valid_until");
+ expect(()=>parseKeysStatus({...status(),supported:false},owner,account)).toThrow();
+});
+it("keeps setup closed when the service explicitly disables KMS",async()=>{
+ const fetcher=vi.fn<typeof fetch>().mockResolvedValue(response({version:1,supported:false,owner,account}));
+ await expect(getRemoteKeys(owner,account,undefined,fetcher)).rejects.toThrow("Remote signing is disabled.");
 });
 it("does not retry ambiguous creation or disclose backend errors",async()=>{
  const fetcher=vi.fn<typeof fetch>().mockResolvedValueOnce(response(nonce)).mockResolvedValueOnce(response({error:"sensitive backend internals"},false));

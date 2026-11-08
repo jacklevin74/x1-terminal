@@ -46,5 +46,7 @@ Fixed digest vectors were generated independently with Python msgpack/eth-accoun
 matching the official Hyperliquid SDK. Regenerate with the optional dependencies
 and `python scripts/generate-hl-vectors.py` if changing encoding.
 
-Production implementation instructions: [backend agent handoff](../../docs/remote-keys-backend-agent.md).
-Exact frontend protocol: [API contract](../../docs/remote-keys-api.md).
+The production handler and executor are already merged in wxnt-sale-deploy PR #10
+and hl-ws PR #4. This package stays a localhost demo and does not call them.
+Constraints: [backend notes](../../docs/remote-keys-backend-agent.md).
+Frontend protocol: [API contract](../../docs/remote-keys-api.md).
