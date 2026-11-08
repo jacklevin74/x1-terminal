@@ -6,12 +6,13 @@ import { t } from "@lingui/core/macro";
 import { ArrowSquareOutIcon } from "@phosphor-icons/react";
 import Big from "big.js";
 import { useState } from "react";
+import { useTradeHistory } from "@/hooks/use-trade-history";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { MAX_HISTORY_ROWS } from "@/config/trade";
 import { cn } from "@/lib/cn";
 import { getHyperliquidTxUrl } from "@/lib/explorer";
 import { formatDateTime, formatPrice, formatToken } from "@/lib/format";
-import { useMarkets, useSubscription } from "@/lib/hyperliquid";
+import { useMarkets } from "@/lib/hyperliquid";
 import { useExchangeScope } from "@/providers/exchange-scope";
 import { useMarketActions } from "@/stores/use-market-store";
 import { AssetBadge } from "../components/asset-badge";
@@ -22,19 +23,18 @@ import {
 } from "./positions-panel-table-styles";
 
 export function HistoryTab() {
- const { address, isConnected } = useTradingAccount();
+ const { isConnected } = useTradingAccount();
  const { scope } = useExchangeScope();
  const { setSelectedMarket } = useMarketActions();
  const markets = useMarkets();
  const [descending, setDescending] = useState(true);
- const [typeFilter, setTypeFilter] = useState(""); const [sideFilter, setSideFilter] = useState(""); const [roleFilter, setRoleFilter] = useState(""); const [marketFilter, setMarketFilter] = useState(""); const [aggregate, setAggregate] = useState(true);
- const { data: fillsEvent, status, error } = useSubscription("userFills", { user: address ?? "0x0", aggregateByTime: aggregate }, { enabled: isConnected && !!address });
- const allFills = fillsEvent?.fills ?? [];
- const fills = allFills.filter(fill => (!typeFilter || (fill.liquidation ? "Liquidated" : fill.dir) === typeFilter) && (!sideFilter || fill.side === sideFilter) && (!roleFilter || (fill.crossed ? "Taker" : "Maker") === roleFilter) && (!marketFilter || fill.coin === marketFilter)).slice().sort((a, b) => descending ? b.time - a.time : a.time - b.time).slice(0, MAX_HISTORY_ROWS);
+ const [typeFilter, setTypeFilter] = useState(""); const [sideFilter, setSideFilter] = useState(""); const [roleFilter, setRoleFilter] = useState(""); const [marketFilter, setMarketFilter] = useState(""); const [aggregate, setAggregate] = useState(false);
+ const { fills: allFills, status, warning, loading } = useTradeHistory(aggregate);
+ const [visible, setVisible] = useState(MAX_HISTORY_ROWS);
+ const fills = allFills.filter(fill => (!typeFilter || (fill.liquidation ? "Liquidated" : fill.dir) === typeFilter) && (!sideFilter || fill.side === sideFilter) && (!roleFilter || (fill.crossed ? "Taker" : "Maker") === roleFilter) && (!marketFilter || fill.coin === marketFilter)).slice().sort((a, b) => descending ? b.time - a.time : a.time - b.time).slice(0, visible);
  let placeholder = null;
  if (!isConnected) placeholder = <Placeholder>{t`Connect your wallet to view trade history.`}</Placeholder>;
- else if (status === "subscribing" || status === "idle") placeholder = <Placeholder>{t`Loading trade history...`}</Placeholder>;
- else if (status === "error") placeholder = <Placeholder variant="error">{t`Failed to load trade history.`}{error instanceof Error && <span className="mt-1 text-xs text-fg-muted">{error.message}</span>}</Placeholder>;
+ else if (status === "subscribing") placeholder = <Placeholder>{t`Loading trade history...`}</Placeholder>;
  else if (!fills.length) placeholder = <Placeholder>{allFills.length ? "No trades match these filters." : t`No fills found.`}</Placeholder>;
  const headings = [t`Time`, t`Market`, t`Direction`, t`Price`, t`Size`, t`Trade Value`, t`Fee`, t`Closed PNL`];
  return <div className={positionsPanelTabRootClass}>
@@ -42,6 +42,8 @@ export function HistoryTab() {
    {[{ label: "Type", value: typeFilter, set: setTypeFilter, values: [...new Set(allFills.map(fill => fill.liquidation ? "Liquidated" : fill.dir))] }, { label: "Side", value: sideFilter, set: setSideFilter, values: ["B", "A"] }, { label: "Role", value: roleFilter, set: setRoleFilter, values: ["Maker", "Taker"] }, { label: "Market", value: marketFilter, set: setMarketFilter, values: [...new Set(allFills.map(fill => fill.coin))] }].map(filter => <select key={filter.label} aria-label={`Trade history ${filter.label.toLowerCase()} filter`} value={filter.value} onChange={event => filter.set(event.target.value)} className="max-w-40 bg-surface py-1 text-fg outline-none"><option value="">{filter.label}</option>{filter.values.map(value => <option key={value} value={value}>{filter.label === "Side" ? value === "B" ? "Buy" : "Sell" : filter.label === "Market" ? markets.getMarket(value)?.pairName ?? value : value}</option>)}</select>)}
    <label className="inline-flex items-center gap-2 border-l border-stroke-weak pl-4 text-fg"><input type="checkbox" aria-label="Aggregate trade history" checked={aggregate} onChange={event => setAggregate(event.target.checked)} className="size-3.5 accent-brand" />Aggregate</label>
   </AccountTableToolbar>}
+  <div className="px-3 py-1 text-xs text-fg-muted" role="status">Last 24 hours · {allFills.length} fills{loading ? " · Updating…" : ""}{warning && <span className="ml-2 text-error">{warning}</span>}</div>
+  {fills.length === visible && <button type="button" className="text-xs text-brand" onClick={() => setVisible(value => value + MAX_HISTORY_ROWS)}>Show more trades</button>}
   <div className={positionsPanelTableShellClass}>
   {placeholder ?? <ScrollArea className="min-h-0 w-full flex-1">
    <Table className="table-auto min-w-max w-full">

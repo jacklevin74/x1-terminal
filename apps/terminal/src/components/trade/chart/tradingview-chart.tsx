@@ -122,6 +122,8 @@ export function TradingViewChart({
 				widget.onChartReady(() => {
 					if (disposed || widgetRef.current !== widget) return;
 					chartReadyRef.current = true;
+     widget.activeChart().clearMarks();
+     widget.activeChart().refreshMarks();
      setReadyWidget({ widget, key: `${symbol}:${interval}:${theme}` });
 				});
 
