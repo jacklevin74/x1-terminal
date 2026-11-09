@@ -33,10 +33,11 @@ export function KlineToolbar({
 						key={interval.resolution}
 						type="button"
 						onClick={() => onIntervalChange(interval)}
+      aria-pressed={activeInterval.resolution === interval.resolution}
 						className={cn(
 							"px-1.5 py-0.5 text-xs rounded-8 transition-colors",
 							activeInterval.resolution === interval.resolution
-								? "text-fg font-semibold"
+								? "text-success bg-success/10 font-semibold"
 								: "text-fg-muted hover:text-fg",
 						)}
 					>
@@ -48,7 +49,7 @@ export function KlineToolbar({
 						<span
 							className={cn(
 								"flex items-center gap-0.5",
-								isNonFavoriteActive ? "text-fg font-semibold" : "text-fg-muted font-normal",
+								isNonFavoriteActive ? "text-success font-semibold" : "text-fg-muted font-normal",
 							)}
 						>
 							{isNonFavoriteActive ? activeInterval.label : null}
@@ -63,8 +64,9 @@ export function KlineToolbar({
 					size="sm"
 					triggerVariant="minimal"
 					triggerAriaLabel={t`More intervals`}
+     triggerClassName={isNonFavoriteActive ? "text-success bg-success/10" : undefined}
 					className="inline-flex"
-					popupClassName="min-w-0 w-max"
+					popupClassName="min-w-0 w-max [&_[role=menuitem].font-semibold]:text-success"
 				/>
 				<div className="h-3 w-px shrink-0 self-center bg-stroke-weak/50" aria-hidden />
 				<Dropdown

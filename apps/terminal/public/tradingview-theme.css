@@ -108,3 +108,13 @@ body,
 [class*="Search"] input:focus {
 	border-color: var(--tv-accent) !important;
 }
+
+/* Highlight the currently selected interval, independently of the brand color. */
+.layout__area--top button[role="radio"][data-value][aria-checked="true"] {
+ color: var(--tv-timeframe-active, #26a69a) !important;
+ background-color: var(--tv-timeframe-active-bg, rgba(38, 166, 154, 0.12)) !important;
+}
+.layout__area--top button[role="radio"][data-value][aria-checked="true"] * {
+ color: var(--tv-timeframe-active, #26a69a) !important;
+ font-weight: 600 !important;
+}
