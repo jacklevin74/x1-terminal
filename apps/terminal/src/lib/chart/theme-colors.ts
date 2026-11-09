@@ -327,6 +327,8 @@ ${staticCss}
 	--tv-border: ${border};
 	--tv-toolbar-border: ${toolbarBorder};
 	--tv-accent: ${accent};
+ --tv-timeframe-active: ${colorToHex(colors.green)};
+ --tv-timeframe-active-bg: ${colorToRgba(colors.green, 0.12)};
 
 	--tv-color-platform-background: ${bg};
 	--tv-color-pane-background: ${bg};
