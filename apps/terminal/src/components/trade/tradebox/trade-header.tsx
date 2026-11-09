@@ -7,6 +7,7 @@ import type { MarketKind } from "@/lib/hyperliquid";
 import type { MarginMode } from "@/lib/trade/margin-mode";
 import { getAdvancedOrderLabel, getTabsOrderType } from "@/lib/trade/order-types";
 import type { Side } from "@/lib/trade/types";
+import { MoodSlot } from "../mood/mood-slot";
 import { SideToggle } from "./side-toggle";
 
 interface Props {
@@ -115,6 +116,7 @@ export function TradeHeader({
 					triggerAriaLabel={t`Order type`}
 					triggerClassName={cn(moreTriggerClass, isAdvanced && moreActiveClass)}
 				/>
+				<MoodSlot slot="order" />
 			</div>
 
 			<div className={cn("flex min-w-0 flex-col gap-2 pt-3", insetClassName)}>

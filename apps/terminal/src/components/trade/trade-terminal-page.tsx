@@ -13,6 +13,7 @@ import { createLazyComponent } from "@/lib/lazy";
 import { useIsTestnet } from "@/stores/use-global-settings-store";
 import { TopNav } from "./header/top-nav";
 import { MainWorkspace } from "./layout/main-workspace";
+import { MoodSlot } from "./mood/mood-slot";
 import { TestnetBanner } from "./testnet-banner";
 
 const MobileTerminal = createLazyComponent(() => import("./mobile/mobile-terminal"), "MobileTerminal");
@@ -46,6 +47,7 @@ export function TradeTerminalPage() {
 					<TestnetBanner />
 					<TopNav />
 					<MainWorkspace />
+					<MoodSlot slot="floating" />
 					<Suspense fallback={null}>
 						<FooterBar />
 					</Suspense>

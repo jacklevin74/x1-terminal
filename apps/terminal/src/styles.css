@@ -626,3 +626,32 @@ html[data-input="pointer"] :focus-visible:not(input, textarea, [contenteditable=
 .chart-cursor-row-resize * {
 	cursor: row-resize !important;
 }
+
+/* Mood Ring exploration (variants 1–6) */
+.mood-ring-spin {
+  border-radius: 9999px;
+  background: conic-gradient(from 0deg, var(--mood), color-mix(in oklch, var(--mood) 45%, white), var(--mood), color-mix(in oklch, var(--mood) 60%, black), var(--mood));
+  -webkit-mask: radial-gradient(circle, transparent 58%, #000 62%);
+  mask: radial-gradient(circle, transparent 58%, #000 62%);
+  animation: mood-spin 9s linear infinite;
+}
+.mood-glow {
+  border-radius: 9999px;
+  background: var(--mood);
+  filter: blur(7px);
+  opacity: 0.45;
+}
+.mood-breathe { animation: mood-breathe 4s ease-in-out infinite; }
+.mood-spin-slow { animation: mood-spin 40s linear infinite; }
+.mood-stone { position: relative; overflow: hidden; border-radius: 9999px; background: var(--mood); }
+.mood-stone > span { position: absolute; border-radius: 9999px; filter: blur(3px); }
+.mood-stone > span:nth-child(1) { width: 70%; height: 70%; left: -14%; top: -14%; background: var(--mood-a); animation: mood-drift-a 5s ease-in-out infinite alternate; }
+.mood-stone > span:nth-child(2) { width: 64%; height: 64%; right: -14%; bottom: -8%; background: var(--mood-b); animation: mood-drift-b 6s ease-in-out infinite alternate; }
+.mood-stone > span:nth-child(3) { width: 34%; height: 34%; left: 22%; top: 14%; background: white; opacity: 0.35; filter: blur(1.5px); }
+@keyframes mood-spin { to { transform: rotate(360deg); } }
+@keyframes mood-breathe { 50% { opacity: 0.25; transform: scale(0.9); } }
+@keyframes mood-drift-a { to { transform: translate(40%, 35%); } }
+@keyframes mood-drift-b { to { transform: translate(-40%, -30%); } }
+@media (prefers-reduced-motion: reduce) {
+  .mood-ring-spin, .mood-breathe, .mood-spin-slow, .mood-stone > span { animation: none; }
+}

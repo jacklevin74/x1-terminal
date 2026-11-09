@@ -15,6 +15,7 @@ import {
 import { toBig } from "@/lib/trade/numbers";
 import { getValueColorClass } from "@/lib/ui/value-color";
 import { StatBlock } from "./chart/stat-block";
+import { MoodSlot } from "./mood/mood-slot";
 
 const HOUR_MS = 3_600_000;
 
@@ -166,6 +167,7 @@ export function MarketOverview() {
 					}
 				/>
 			)}
+			<MoodSlot slot="market" />
 		</div>
 	);
 }

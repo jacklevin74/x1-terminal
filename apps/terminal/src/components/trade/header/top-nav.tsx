@@ -12,6 +12,7 @@ import { createLazyComponent } from "@/lib/lazy";
 import { useExchangeScope } from "@/providers/exchange-scope";
 import { useDepositModalActions, useSettingsDialogActions } from "@/stores/use-global-modal-store";
 import { useIsTestnet } from "@/stores/use-global-settings-store";
+import { MoodSlot } from "../mood/mood-slot";
 import X1TerminalLogo from "./x1-terminal-logo";
 
 const UserMenu = createLazyComponent(() => import("./user-menu"), "UserMenu");
@@ -62,6 +63,7 @@ export function TopNav() {
 							{item.label}
 						</button>
 					))}
+					<MoodSlot slot="nav" />
 				</nav>
 			</div>
 
@@ -92,6 +94,7 @@ export function TopNav() {
 						/>
 					</div>
 				)}
+				<MoodSlot slot="header" />
 				<Suspense fallback={<UserMenuSkeleton />}>
 					<UserMenu />
 				</Suspense>

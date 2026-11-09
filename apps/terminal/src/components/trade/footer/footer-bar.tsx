@@ -9,6 +9,8 @@ import { cn } from "@/lib/cn";
 import { formatTime } from "@/lib/format";
 import { type ApiStatus, useApiStatus } from "@/lib/hyperliquid";
 import { useCommandMenuActions } from "@/stores/use-global-modal-store";
+import { MoodSlot } from "../mood/mood-slot";
+import { MoodVariantSwitcher } from "../mood/mood-variant-switcher";
 import { FooterStatusDot } from "./footer-status-dot";
 
 function getStatusDisplay(status: ApiStatus) {
@@ -50,6 +52,11 @@ export function FooterBar() {
 			<div className="flex min-w-0 items-center gap-2">
 				<FooterStatusDot dotClass={dotClass} isConnected={status === "connected"} />
 				<span>{text}</span>
+				<MoodSlot slot="footer" />
+				<Divider orientation="vertical" className="h-3 self-center" />
+				<ClientOnly>
+					<MoodVariantSwitcher />
+				</ClientOnly>
 			</div>
 			<Button
 				variant="secondary"

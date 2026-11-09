@@ -29,6 +29,7 @@ function PopoverTrigger({ asChild, children, ...props }: PopoverTriggerProps) {
 function PopoverContent({
 	className,
 	align = "center",
+	side = "bottom",
 	sideOffset = POPOVER_DEFAULT_SIDE_OFFSET,
 	alignOffset = 0,
 	collisionPadding = POPOVER_DEFAULT_COLLISION_PADDING,
@@ -37,6 +38,7 @@ function PopoverContent({
 	...props
 }: React.ComponentProps<typeof PopoverPrimitive.Popup> & {
 	align?: "start" | "center" | "end";
+	side?: "top" | "bottom" | "left" | "right";
 	sideOffset?: number;
 	alignOffset?: number;
 	collisionPadding?: number;
@@ -47,6 +49,7 @@ function PopoverContent({
 		<PopoverPrimitive.Portal keepMounted={keepMounted}>
 			<PopoverPrimitive.Positioner
 				align={align}
+				side={side}
 				sideOffset={sideOffset}
 				alignOffset={alignOffset}
 				collisionPadding={collisionPadding}
