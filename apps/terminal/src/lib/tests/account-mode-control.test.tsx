@@ -3,7 +3,8 @@ import { act, createElement, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { expect, it, vi } from "vitest";
 import { AccountModeControl } from "@/components/trade/components/account-mode-control";
-const state=vi.hoisted(()=>({mode:"unifiedAccount",address:`0x${"cd".repeat(20)}`,send:vi.fn(),refetch:vi.fn()}));
+const state=vi.hoisted(()=>({mode:"unifiedAccount",pathname:"/",address:`0x${"cd".repeat(20)}`,send:vi.fn(),refetch:vi.fn()}));
+vi.mock("@tanstack/react-router",()=>({useLocation:()=>({pathname:state.pathname})}));
 vi.mock("wagmi",()=>({useConnection:()=>({address:state.address,isConnected:true})}));
 vi.mock("@/stores/use-global-settings-store",()=>({useIsTestnet:()=>false}));
 vi.mock("@tanstack/react-query",()=>({useQuery:()=>({data:state.mode,isError:false,refetch:state.refetch})}));
@@ -35,4 +36,16 @@ it("supports Manual to Unified and reports a rejected signature without changing
  expect(node.querySelector('[role="alert"]')?.textContent).toContain("User rejected signature");
  expect(node.textContent).toContain("Mode: Manual");expect(node.querySelector('[role="status"]')).toBeNull();
  await act(async()=>root.unmount());
+});
+
+it.each(["default","unifiedAccount"])("defaults newtheme selection to Unified while displaying actual %s mode",async current=>{
+ state.pathname="/newtheme";state.mode=current;state.send.mockReset();
+ const node=document.createElement("div"),root=createRoot(node);
+ await act(async()=>root.render(createElement(AccountModeControl)));
+ expect(node.textContent).toContain(`Mode: ${current==="default"?"Manual":"Unified"}`);
+ await act(async()=>node.querySelector('button')!.click());
+ expect(node.querySelector<HTMLInputElement>('input[value="unifiedAccount"]')?.checked).toBe(true);
+ expect(node.querySelector<HTMLInputElement>('input[value="disabled"]')?.checked).toBe(false);
+ expect(state.send).not.toHaveBeenCalled();
+ await act(async()=>root.unmount());state.pathname="/";
 });

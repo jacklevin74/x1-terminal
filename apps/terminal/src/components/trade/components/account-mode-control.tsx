@@ -1,3 +1,4 @@
+import { useLocation } from "@tanstack/react-router";
 import { Button, Modal, ModalContent, ModalDescription, ModalHeader, ModalPopup, ModalTitle } from "@hypeterminal/ui";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -17,14 +18,15 @@ function modeLabel(mode: string | undefined) {
 
 export function AccountModeControl() {
  const { address, isConnected } = useConnection();
+ const { pathname } = useLocation();
  const testnet = useIsTestnet();
  if (!isConnected || !address) return null;
- return <AccountModeContent key={`${address}:${testnet}`} address={address} testnet={testnet} />;
+ return <AccountModeContent key={`${address}:${testnet}`} address={address} testnet={testnet} preferredMode={pathname === "/newtheme" ? "unifiedAccount" : undefined} />;
 }
 
-function AccountModeContent({ address, testnet }: { address: `0x${string}`; testnet: boolean }) {
+function AccountModeContent({ address, testnet, preferredMode }: { address: `0x${string}`; testnet: boolean; preferredMode?: Mode }) {
  const [open, setOpen] = useState(false);
- const [selected, setSelected] = useState<Mode>("disabled");
+ const [selected, setSelected] = useState<Mode>(preferredMode ?? "disabled");
  const [error, setError] = useState<string | null>(null);
  const [submitted, setSubmitted] = useState(false);
  const mode = useQuery({ queryKey: ["account-mode", address, testnet], queryFn: ({ signal }) => getInfoClient().userAbstraction({ user: address }, signal), staleTime: 10_000, refetchInterval: 15_000, retry: 1 });
@@ -42,7 +44,7 @@ function AccountModeContent({ address, testnet }: { address: `0x${string}`; test
   } catch (cause) { setError(cause instanceof Error ? cause.message : "Could not change account mode."); }
  }
  return <>
-  <Button variant="outline" intent="neutral" size="sm" aria-label={`Account mode: ${mode.isError ? "unavailable" : current}`} className="!border-brand/30 !text-brand whitespace-nowrap" onClick={() => { setSelected(mode.data === "unifiedAccount" ? "disabled" : "unifiedAccount"); setError(null); setSubmitted(false); setOpen(true); void mode.refetch(); }}>Mode: {mode.isError ? "Retry" : current} <span aria-hidden="true">⌄</span></Button>
+  <Button variant="outline" intent="neutral" size="sm" aria-label={`Account mode: ${mode.isError ? "unavailable" : current}`} className="!border-brand/30 !text-brand whitespace-nowrap" onClick={() => { setSelected(preferredMode ?? (mode.data === "unifiedAccount" ? "disabled" : "unifiedAccount")); setError(null); setSubmitted(false); setOpen(true); void mode.refetch(); }}>Mode: {mode.isError ? "Retry" : current} <span aria-hidden="true">⌄</span></Button>
   <Modal open={open} onOpenChange={value => { if (!change.isPending) setOpen(value); }}>
    <ModalPopup size="sm" showClose={!change.isPending}>
     <ModalHeader><ModalTitle>Account mode</ModalTitle><ModalDescription>Current mode: {mode.isError ? "Unavailable" : current}</ModalDescription></ModalHeader>

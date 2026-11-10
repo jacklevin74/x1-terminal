@@ -16,6 +16,7 @@ import { Route as MobileAgentSyncRouteImport } from './routes/mobile-agent-sync'
 import { Route as KeysRouteImport } from './routes/keys'
 import { Route as BuildersPerpRouteImport } from './routes/builders-perp'
 import { Route as AutoTraderRouteImport } from './routes/auto-trader'
+import { Route as Api_keysRouteImport } from './routes/api_keys'
 import { Route as APIRouteImport } from './routes/API'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
@@ -57,6 +58,11 @@ const AutoTraderRoute = AutoTraderRouteImport.update({
   path: '/auto-trader',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Api_keysRoute = Api_keysRouteImport.update({
+  id: '/api_keys',
+  path: '/api_keys',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const APIRoute = APIRouteImport.update({
   id: '/API',
   path: '/API',
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/API': typeof APIRoute
+  '/api_keys': typeof Api_keysRoute
   '/auto-trader': typeof AutoTraderRoute
   '/builders-perp': typeof BuildersPerpRouteWithChildren
   '/keys': typeof KeysRoute
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/API': typeof APIRoute
+  '/api_keys': typeof Api_keysRoute
   '/auto-trader': typeof AutoTraderRoute
   '/keys': typeof KeysRoute
   '/mobile-agent-sync': typeof MobileAgentSyncRoute
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/API': typeof APIRoute
+  '/api_keys': typeof Api_keysRoute
   '/auto-trader': typeof AutoTraderRoute
   '/builders-perp': typeof BuildersPerpRouteWithChildren
   '/keys': typeof KeysRoute
@@ -131,6 +140,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/API'
+    | '/api_keys'
     | '/auto-trader'
     | '/builders-perp'
     | '/keys'
@@ -145,6 +155,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/API'
+    | '/api_keys'
     | '/auto-trader'
     | '/keys'
     | '/mobile-agent-sync'
@@ -158,6 +169,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/API'
+    | '/api_keys'
     | '/auto-trader'
     | '/builders-perp'
     | '/keys'
@@ -173,6 +185,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
   APIRoute: typeof APIRoute
+  Api_keysRoute: typeof Api_keysRoute
   AutoTraderRoute: typeof AutoTraderRoute
   BuildersPerpRoute: typeof BuildersPerpRouteWithChildren
   KeysRoute: typeof KeysRoute
@@ -233,6 +246,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AutoTraderRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api_keys': {
+      id: '/api_keys'
+      path: '/api_keys'
+      fullPath: '/api_keys'
+      preLoaderRoute: typeof Api_keysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/API': {
       id: '/API'
       path: '/API'
@@ -289,6 +309,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   APIRoute: APIRoute,
+  Api_keysRoute: Api_keysRoute,
   AutoTraderRoute: AutoTraderRoute,
   BuildersPerpRoute: BuildersPerpRouteWithChildren,
   KeysRoute: KeysRoute,

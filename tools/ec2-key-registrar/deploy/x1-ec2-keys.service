@@ -1,0 +1,31 @@
+[Unit]
+Description=X1 Terminal EC2 KMS key creation service (no signing)
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=simple
+User=x1-ec2-keys
+Group=x1-ec2-keys
+WorkingDirectory=/opt/x1-ec2-keys
+Environment=AWS_REGION=us-east-2
+Environment=X1_REGISTRAR_ROLE_ARN=arn:aws:iam::938952892987:role/x1-ec2-key-registrar
+Environment=X1_KEYS_DB=/var/lib/x1-ec2-keys/keys.sqlite
+ExecStart=/usr/bin/node /opt/x1-ec2-keys/src/server.js
+Restart=on-failure
+RestartSec=10
+UMask=0077
+StateDirectory=x1-ec2-keys
+StateDirectoryMode=0700
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+[Install]
+WantedBy=multi-user.target
