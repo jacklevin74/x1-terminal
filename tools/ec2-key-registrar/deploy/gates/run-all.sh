@@ -17,7 +17,7 @@ aws sts get-caller-identity --query Account --output text >/dev/null || { echo "
 $EC2 true || { echo "cannot SSH to EC2"; exit 1; }
 
 if ask "1/5 IAM: create x1-ec2-key-lifecycle, replace registrar policy (removes PutKeyPolicy)"; then
-  sh $G/1-iam.sh || fail "1 IAM" "re-apply $G/../registrar-policy.previous.json (fill in the account id) and delete role x1-ec2-key-lifecycle"
+  sh $G/1-iam.sh || fail "1 IAM" "aws iam put-role-policy --role-name x1-ec2-key-registrar --policy-name create-ec2-api-keys-only --policy-document file://tools/ec2-key-registrar/deploy/registrar-policy.live-backup.json; then delete role x1-ec2-key-lifecycle"
 fi
 if ask "2/5 Security group: new group x1-ec2-keys-cloudfront, TCP 80 from CloudFront only, attached to the instance"; then
   sh $G/2-security-group.sh || fail "2 security group" "sh $G/2-security-group.sh rollback"
