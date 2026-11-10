@@ -90,3 +90,13 @@ it("signs Auto Trader requests with the X1-derived owner and no chain-specific d
  const signed=await wallet.signTypedData({account:address,domain:AUTH_DOMAIN,types:AUTH_TYPES,primaryType:"Request",message});
  expect(AUTH_DOMAIN).not.toHaveProperty("chainId");expect(await verifyTypedData({address,domain:AUTH_DOMAIN,types:AUTH_TYPES,primaryType:"Request",message,signature:signed})).toBe(true);
 });
+
+it("connects X1 independently when another extension owns a read-only Ethereum global",async()=>{
+ const previous=Object.getOwnPropertyDescriptor(window,"ethereum"),other={request:vi.fn()},get=()=>other;
+ Object.defineProperty(window,"ethereum",{configurable:true,get});
+ try{
+  const wallet=install();const provider=getX1Provider()!;const addresses=await provider.request({method:"eth_requestAccounts"});
+  expect(addresses).toHaveLength(1);expect(wallet.signMessage).toHaveBeenCalledOnce();expect(other.request).not.toHaveBeenCalled();
+  expect(Object.getOwnPropertyDescriptor(window,"ethereum")?.get).toBe(get);
+ }finally{if(previous)Object.defineProperty(window,"ethereum",previous);else Reflect.deleteProperty(window,"ethereum");}
+});
