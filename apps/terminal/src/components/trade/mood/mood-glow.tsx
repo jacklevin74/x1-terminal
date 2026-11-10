@@ -65,13 +65,22 @@ export function MoodGlow({ score, center, radius, inner, lo, hi }: Props) {
 					<stop offset="0" stopColor="#fff" />
 					<stop offset="1" stopColor="#000" />
 				</linearGradient>
+				<radialGradient id={`${id}-edge`} gradientUnits="userSpaceOnUse" cx={center} cy={center} r={inner}>
+					<stop offset="0.7" stopColor="#fff" />
+					<stop offset="1" stopColor="#000" />
+				</radialGradient>
+				<mask id={`${id}-rim`} maskUnits="userSpaceOnUse">
+					<circle cx={center} cy={center} r={inner} fill={`url(#${id}-edge)`} />
+				</mask>
 				<mask id={`${id}-floor`} maskUnits="userSpaceOnUse">
 					<circle cx={center} cy={center} r={inner} fill={`url(#${id}-fade)`} />
 				</mask>
 			</defs>
-			<g filter={`url(#${id}-blur)`}>
-				{layer("bear", score < 0)}
-				{layer("bull", score > 0)}
+			<g mask={`url(#${id}-rim)`}>
+				<g filter={`url(#${id}-blur)`}>
+					{layer("bear", score < 0)}
+					{layer("bull", score > 0)}
+				</g>
 			</g>
 		</g>
 	);

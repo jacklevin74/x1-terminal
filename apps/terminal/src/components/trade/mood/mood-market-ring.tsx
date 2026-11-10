@@ -1,5 +1,5 @@
 import { Drawer, DrawerClose, DrawerContent, DrawerTrigger } from "@hypeterminal/ui";
-import { CaretRightIcon, RobotIcon, WarningIcon, XIcon } from "@phosphor-icons/react";
+import { CaretRightIcon, RobotIcon, XIcon } from "@phosphor-icons/react";
 import { useId, useState } from "react";
 import { cn } from "@/lib/cn";
 import {
@@ -16,9 +16,7 @@ import {
 	signedScore,
 	targetWeight,
 } from "@/lib/mood/signal";
-import { useMoodGauge } from "@/stores/use-mood-variant-store";
 import { MoodBackPill, MoodMarketStepper } from "./mood-back-nav";
-import { MoodDrawerOptions } from "./mood-drawer-options";
 import { MoodHeroGauge } from "./mood-hero-gauge";
 import { ScoreArc } from "./mood-parts";
 
@@ -32,7 +30,8 @@ interface Props {
 type Tab = "market" | "all";
 
 export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
-	const [tab, setTab] = useState<Tab>(coin ? "market" : "all");
+	const [chosenTab, setTab] = useState<Tab | null>(null);
+	const tab: Tab = chosenTab ?? (coin ? "market" : "all");
 	const [focus, setFocus] = useState<string | null>(null);
 	const s = score ?? 0;
 	const shown = focus ? signal.coins.find((c) => c.coin === focus) : coin;
@@ -51,7 +50,14 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 	}
 	const focused = focus !== null && tab === "market";
 	return (
-		<Drawer side="right" onOpenChange={(open) => !open && setFocus(null)}>
+		<Drawer
+			side="right"
+			onOpenChange={(open) => {
+				if (open) return;
+				setFocus(null);
+				setTab(null);
+			}}
+		>
 			<DrawerTrigger className="flex shrink-0 items-center gap-2.5 rounded-8 px-2 py-1 transition-colors hover:bg-fill-hover">
 				<ScoreArc value={s} size={26} stroke={3.5} />
 				<span className="text-left">
@@ -106,7 +112,6 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 						/>
 					)}
 				</div>
-				<MoodDrawerOptions />
 			</DrawerContent>
 		</Drawer>
 	);
@@ -128,7 +133,6 @@ function SegButton({ active, onClick, children }: { active: boolean; onClick: ()
 }
 
 function MarketTab({ coin, name, score }: { coin: MoodCoin | undefined; name: string; score: number }) {
-	const gauge = useMoodGauge();
 	if (!coin) {
 		return (
 			<div className="mt-2 rounded-12 bg-surface p-5 text-center">
@@ -145,12 +149,8 @@ function MarketTab({ coin, name, score }: { coin: MoodCoin | undefined; name: st
 	return (
 		<div className="space-y-3">
 			<section className="relative overflow-hidden rounded-12 bg-surface px-5 pt-5 pb-4">
-				<MoodHeroGauge style={gauge} score={score} from={first} name={name} />
+				<MoodHeroGauge score={score} name={name} />
 				<div className="relative mt-3 flex items-center justify-center gap-2 text-xs">
-					<span className="text-fg-muted">
-						{holders} of {MOOD_POOL_SIZE} traders hold {name}
-					</span>
-					<span className="size-0.5 rounded-full bg-fg-muted" />
 					<span className="tabular-nums" style={{ color: moodColor(delta * 3) }}>
 						{signedScore(delta)} in 24h
 					</span>
@@ -205,13 +205,12 @@ function MarketTab({ coin, name, score }: { coin: MoodCoin | undefined; name: st
 				</SectionTitle>
 				<TraderPips long={coin.tradersLong} short={coin.tradersShort} />
 				{coin.dominant && coin.dominant.share >= 0.4 && (
-					<div className="mt-3 flex gap-2.5 rounded-8 bg-warning-soft p-3 text-xs">
-						<WarningIcon weight="fill" className="mt-px size-4 flex-none text-warning" />
-						<div className="text-fg-secondary">
-							<span className="font-medium text-fg">One trader dominates {name}.</span>{" "}
-							<span className="tabular-nums">{shortAddress(coin.dominant.usr)}</span> holds{" "}
-							{Math.round(coin.dominant.share * 100)}% of gross exposure.
-						</div>
+					<div className="mt-3 flex items-center justify-between text-2xs text-fg-muted">
+						<span>Largest trader</span>
+						<span className="tabular-nums">
+							<span className="text-fg-secondary">{shortAddress(coin.dominant.usr)}</span> ·{" "}
+							{Math.round(coin.dominant.share * 100)}% of exposure
+						</span>
 					</div>
 				)}
 			</section>
