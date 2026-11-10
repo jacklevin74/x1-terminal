@@ -1,6 +1,6 @@
 import { Drawer, DrawerClose, DrawerContent, DrawerTrigger } from "@hypeterminal/ui";
 import { CaretDownIcon, CaretRightIcon, RobotIcon, XIcon } from "@phosphor-icons/react";
-import { useId, useState } from "react";
+import { useId, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import {
 	coinName,
@@ -33,6 +33,8 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 	const [chosenTab, setTab] = useState<Tab | null>(null);
 	const tab: Tab = chosenTab ?? (coin ? "market" : "all");
 	const [focus, setFocus] = useState<string | null>(null);
+	const [dir, setDir] = useState<0 | 1 | -1>(0);
+	const scroller = useRef<HTMLDivElement>(null);
 	const s = score ?? 0;
 	const shown = focus ? signal.coins.find((c) => c.coin === focus) : coin;
 	const shownName = shown ? coinName(shown.coin) : coinName(marketName);
@@ -40,13 +42,18 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 	const updated = new Date(signal.now).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 	const order = [...signal.coins].sort((a, b) => b.score - a.score);
 	const index = order.findIndex((c) => c.coin === focus);
-	function backToAll() {
-		setFocus(null);
-		setTab("all");
+	function go(next: { tab: Tab; focus: string | null }, direction: 1 | -1) {
+		setDir(direction);
+		setTab(next.tab);
+		setFocus(next.focus);
+		scroller.current?.scrollTo({ top: 0 });
 	}
-	function step(dir: -1 | 1) {
-		const next = order[index + dir];
-		if (next) setFocus(next.coin);
+	function backToAll() {
+		go({ tab: "all", focus: null }, -1);
+	}
+	function step(d: -1 | 1) {
+		const next = order[index + d];
+		if (next) go({ tab: "market", focus: next.coin }, d);
 	}
 	const focused = focus !== null && tab === "market";
 	return (
@@ -56,6 +63,7 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 				if (open) return;
 				setFocus(null);
 				setTab(null);
+				setDir(0);
 			}}
 		>
 			<DrawerTrigger className="flex shrink-0 items-center gap-2.5 rounded-8 px-2 py-1 transition-colors hover:bg-fill-hover">
@@ -71,24 +79,27 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 				<div className="flex h-14 flex-none items-center gap-3 px-4">
 					<div className="min-w-0 flex-1">
 						{focused ? (
-							<MoodBackPill onBack={backToAll} />
+							<div key="back" className="mood-fade-in">
+								<MoodBackPill onBack={backToAll} />
+							</div>
 						) : (
-							<>
+							<div key="title" className="mood-fade-in">
 								<div className="text-sm font-medium">Mood Ring</div>
 								<div className="text-2xs text-fg-muted">Updated {updated}</div>
-							</>
+							</div>
 						)}
 					</div>
 					{focused ? (
-						<MoodMarketStepper index={index} total={order.length} onStep={step} />
+						<div key="stepper" className="mood-fade-in">
+							<MoodMarketStepper index={index} total={order.length} onStep={step} />
+						</div>
 					) : (
-						<div className="flex rounded-full bg-control p-0.5">
-							<SegButton active={tab === "market"} onClick={() => setTab("market")}>
-								{coinName(marketName)}
-							</SegButton>
-							<SegButton active={tab === "all"} onClick={() => setTab("all")}>
-								All markets
-							</SegButton>
+						<div key="tabs" className="mood-fade-in">
+							<TabSwitch
+								market={coinName(marketName)}
+								tab={tab}
+								onChange={(t) => go({ tab: t, focus: null }, t === "all" ? 1 : -1)}
+							/>
 						</div>
 					)}
 					<DrawerClose
@@ -98,37 +109,57 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 						<XIcon className="size-4" />
 					</DrawerClose>
 				</div>
-				<div className="flex-1 overflow-y-auto px-4 pb-4">
-					{tab === "market" ? (
-						<MarketTab coin={shown} name={shownName} score={shownScore} />
-					) : (
-						<AllTab
-							signal={signal}
-							current={coin?.coin}
-							onPick={(c) => {
-								setFocus(c === coin?.coin ? null : c);
-								setTab("market");
-							}}
-						/>
-					)}
+				<div ref={scroller} className="flex-1 overflow-x-hidden overflow-y-auto px-4 pb-4">
+					<div key={`${tab}:${focus ?? ""}`} className={viewClass(dir)}>
+						{tab === "market" ? (
+							<MarketTab coin={shown} name={shownName} score={shownScore} />
+						) : (
+							<AllTab
+								signal={signal}
+								current={coin?.coin}
+								onPick={(c) => go({ tab: "market", focus: c === coin?.coin ? null : c }, 1)}
+							/>
+						)}
+					</div>
 				</div>
 			</DrawerContent>
 		</Drawer>
 	);
 }
 
-function SegButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function TabSwitch({ market, tab, onChange }: { market: string; tab: Tab; onChange: (tab: Tab) => void }) {
+	const refs = useRef<Record<Tab, HTMLButtonElement | null>>({ market: null, all: null });
+	const [thumb, setThumb] = useState<{ left: number; width: number } | null>(null);
+	useLayoutEffect(() => {
+		const el = refs.current[tab];
+		if (el) setThumb({ left: el.offsetLeft, width: el.offsetWidth });
+	}, [tab, market]);
 	return (
-		<button
-			type="button"
-			onClick={onClick}
-			className={cn(
-				"h-7 rounded-full px-3 text-xs transition-colors",
-				active ? "bg-control-hover font-medium text-fg" : "text-fg-muted hover:text-fg",
+		<div className="relative flex rounded-full bg-control p-0.5">
+			{thumb && (
+				<span
+					className="absolute top-0.5 bottom-0.5 rounded-full bg-control-hover transition-[left,width] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)]"
+					style={{ left: thumb.left, width: thumb.width }}
+				/>
 			)}
-		>
-			{children}
-		</button>
+			{(["market", "all"] as const).map((t) => (
+				<button
+					key={t}
+					ref={(el) => {
+						refs.current[t] = el;
+					}}
+					type="button"
+					onClick={() => onChange(t)}
+					className={cn(
+						"relative h-7 rounded-full px-3 text-xs transition-colors",
+						tab === t ? "font-medium text-fg" : "text-fg-muted hover:text-fg",
+						!thumb && tab === t && "bg-control-hover",
+					)}
+				>
+					{t === "market" ? market : "All markets"}
+				</button>
+			))}
+		</div>
 	);
 }
 
@@ -506,4 +537,10 @@ function AllTab({
 			</section>
 		</div>
 	);
+}
+
+function viewClass(dir: 0 | 1 | -1) {
+	if (dir === 1) return "mood-view-next";
+	if (dir === -1) return "mood-view-prev";
+	return undefined;
 }

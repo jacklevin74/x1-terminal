@@ -663,3 +663,13 @@ html[data-input="pointer"] :focus-visible:not(input, textarea, [contenteditable=
   --mood-bull-mid: oklch(0.72 0.15 165);
   --mood-bull-core: oklch(0.95 0.06 170);
 }
+.mood-view-next { animation: mood-view-next 320ms cubic-bezier(0.23, 1, 0.32, 1) both; }
+.mood-view-prev { animation: mood-view-prev 320ms cubic-bezier(0.23, 1, 0.32, 1) both; }
+.mood-fade-in { animation: mood-fade-in 220ms cubic-bezier(0.23, 1, 0.32, 1) both; }
+@keyframes mood-view-next { from { opacity: 0; transform: translateX(28px); } }
+@keyframes mood-view-prev { from { opacity: 0; transform: translateX(-28px); } }
+@keyframes mood-opacity-in { from { opacity: 0; } }
+@keyframes mood-fade-in { from { opacity: 0; transform: scale(0.97); filter: blur(2px); } }
+@media (prefers-reduced-motion: reduce) {
+  .mood-view-next, .mood-view-prev, .mood-fade-in { animation: mood-opacity-in 160ms ease-out both; }
+}
