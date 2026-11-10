@@ -7,6 +7,7 @@ export interface MoodCoin {
 	pctLong: number;
 	tradersLong: number;
 	tradersShort: number;
+	flow1h: number;
 	flow24h: number;
 	vol24h: number;
 	posScore: number;

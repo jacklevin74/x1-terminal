@@ -1,20 +1,22 @@
 import { Drawer, DrawerClose, DrawerContent, DrawerTrigger } from "@hypeterminal/ui";
-import { XIcon } from "@phosphor-icons/react";
-import { useState } from "react";
+import { CaretRightIcon, RobotIcon, WarningIcon, XIcon } from "@phosphor-icons/react";
+import { useId, useState } from "react";
 import { cn } from "@/lib/cn";
 import {
 	coinName,
 	compactUsd,
+	MOOD_DEADBAND,
 	MOOD_POOL_SIZE,
 	type MoodCoin,
 	type MoodSignal,
 	moodColor,
 	moodLabel,
+	moodTile,
 	shortAddress,
 	signedScore,
 	targetWeight,
 } from "@/lib/mood/signal";
-import { DivergingBar, ScoreArc, ScoreNumber, Spark } from "./mood-parts";
+import { ScoreArc } from "./mood-parts";
 
 interface Props {
 	signal: MoodSignal;
@@ -23,11 +25,18 @@ interface Props {
 	score: number | null;
 }
 
+type Tab = "market" | "all";
+
 export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
-	const [tab, setTab] = useState<"market" | "all">(coin ? "market" : "all");
+	const [tab, setTab] = useState<Tab>(coin ? "market" : "all");
+	const [focus, setFocus] = useState<string | null>(null);
 	const s = score ?? 0;
+	const shown = focus ? signal.coins.find((c) => c.coin === focus) : coin;
+	const shownName = shown ? coinName(shown.coin) : coinName(marketName);
+	const shownScore = focus ? (shown?.score ?? 0) : s;
+	const updated = new Date(signal.now).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 	return (
-		<Drawer side="right">
+		<Drawer side="right" onOpenChange={(open) => !open && setFocus(null)}>
 			<DrawerTrigger className="flex shrink-0 items-center gap-2.5 rounded-8 px-2 py-1 transition-colors hover:bg-fill-hover">
 				<ScoreArc value={s} size={26} stroke={3.5} />
 				<span className="text-left">
@@ -37,41 +46,64 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 					</span>
 				</span>
 			</DrawerTrigger>
-			<DrawerContent className="w-[400px]">
-				<div className="flex items-center gap-1 border-b border-stroke-weak px-3 pt-2">
-					<TabButton active={tab === "market"} onClick={() => setTab("market")}>
-						{coinName(marketName)}
-					</TabButton>
-					<TabButton active={tab === "all"} onClick={() => setTab("all")}>
-						All markets
-					</TabButton>
+			<DrawerContent className="w-[420px]">
+				<div className="flex h-14 flex-none items-center gap-3 px-4">
+					<div className="min-w-0 flex-1">
+						<div className="text-sm font-medium">Mood Ring</div>
+						<div className="text-2xs text-fg-muted">
+							{MOOD_POOL_SIZE} traders · updated {updated}
+						</div>
+					</div>
+					<div className="flex rounded-8 bg-control p-0.5">
+						<SegButton active={tab === "market"} onClick={() => setTab("market")}>
+							{shownName}
+						</SegButton>
+						<SegButton active={tab === "all"} onClick={() => setTab("all")}>
+							All markets
+						</SegButton>
+					</div>
 					<DrawerClose
-						className="ml-auto grid size-8 place-items-center rounded-8 text-fg-muted hover:bg-fill-hover hover:text-fg"
+						className="grid size-8 place-items-center rounded-8 text-fg-muted transition-colors hover:bg-fill-hover hover:text-fg"
 						aria-label="Close"
 					>
 						<XIcon className="size-4" />
 					</DrawerClose>
 				</div>
-				{tab === "market" ? (
-					<MarketTab coin={coin} marketName={marketName} score={s} />
-				) : (
-					<AllTab signal={signal} marketName={marketName} />
-				)}
+				<div className="flex-1 overflow-y-auto px-4 pb-4">
+					{tab === "market" ? (
+						<MarketTab
+							coin={shown}
+							name={shownName}
+							score={shownScore}
+							isFocus={focus !== null}
+							onBack={() => {
+								setFocus(null);
+							}}
+						/>
+					) : (
+						<AllTab
+							signal={signal}
+							current={coin?.coin}
+							onPick={(c) => {
+								setFocus(c === coin?.coin ? null : c);
+								setTab("market");
+							}}
+						/>
+					)}
+				</div>
 			</DrawerContent>
 		</Drawer>
 	);
 }
 
-function TabButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function SegButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
 	return (
 		<button
 			type="button"
 			onClick={onClick}
 			className={cn(
-				"relative h-10 px-2 text-sm",
-				active
-					? "font-medium text-fg after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:bg-fg"
-					: "text-fg-muted hover:text-fg",
+				"h-7 rounded-[6px] px-3 text-xs transition-colors",
+				active ? "bg-control-hover font-medium text-fg" : "text-fg-muted hover:text-fg",
 			)}
 		>
 			{children}
@@ -79,122 +111,421 @@ function TabButton({ active, onClick, children }: { active: boolean; onClick: ()
 	);
 }
 
-function MarketTab({ coin, marketName, score }: { coin: MoodCoin | undefined; marketName: string; score: number }) {
+const SWEEP = (120 * Math.PI) / 180;
+
+function arc(c: number, r: number, a0: number, a1: number) {
+	const p = (a: number) => `${(c + r * Math.sin(a)).toFixed(2)} ${(c - r * Math.cos(a)).toFixed(2)}`;
+	return `M${p(a0)} A${r} ${r} 0 ${a1 - a0 > Math.PI ? 1 : 0} 1 ${p(a1)}`;
+}
+
+function Gauge({ score, size }: { score: number; size: number }) {
+	const stroke = 10;
+	const c = size / 2;
+	const r = c - stroke / 2 - 2;
+	const a = (Math.max(-100, Math.min(100, score)) / 100) * SWEEP;
+	const knob = { x: c + r * Math.sin(a), y: c - r * Math.cos(a) };
+	return (
+		<svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true" className="block">
+			<path
+				d={arc(c, r, -SWEEP, SWEEP)}
+				fill="none"
+				stroke="var(--color-control-hover)"
+				strokeWidth={stroke}
+				strokeLinecap="round"
+			/>
+			{a !== 0 && (
+				<path
+					d={arc(c, r, Math.min(0, a), Math.max(0, a))}
+					fill="none"
+					stroke={moodColor(score)}
+					strokeWidth={stroke}
+					strokeLinecap="round"
+				/>
+			)}
+			<line
+				x1={c}
+				x2={c}
+				y1={c - r - stroke / 2 - 4}
+				y2={c - r + stroke / 2 + 4}
+				stroke="var(--color-fg-muted)"
+				strokeWidth={1.5}
+			/>
+			<circle cx={knob.x} cy={knob.y} r={stroke / 2 + 2.5} fill="var(--color-fg)" />
+			<circle cx={knob.x} cy={knob.y} r={stroke / 2 - 1} fill={moodColor(score)} />
+		</svg>
+	);
+}
+
+function MarketTab({
+	coin,
+	name,
+	score,
+	isFocus,
+	onBack,
+}: {
+	coin: MoodCoin | undefined;
+	name: string;
+	score: number;
+	isFocus: boolean;
+	onBack: () => void;
+}) {
 	if (!coin) {
 		return (
-			<p className="p-4 text-sm text-fg-muted">
-				The pool of {MOOD_POOL_SIZE} traders does not trade {coinName(marketName)}. Open All markets to see the markets
-				it tracks.
-			</p>
+			<div className="mt-2 rounded-12 bg-surface p-5 text-center">
+				<div className="text-sm font-medium">No pool data for {name}</div>
+				<p className="mt-1 text-xs text-fg-muted">
+					The {MOOD_POOL_SIZE} traders do not hold or trade {name}. Open All markets to see the markets they trade.
+				</p>
+			</div>
 		);
 	}
-	const w = targetWeight(coin.score);
 	const first = coin.history[0]?.[1] ?? coin.score;
+	const delta = coin.score - first;
+	const holders = coin.tradersLong + coin.tradersShort;
 	return (
-		<div className="flex-1 space-y-5 overflow-y-auto p-4">
-			<div className="flex items-center gap-4">
-				<div className="relative">
-					<ScoreArc value={score} size={112} stroke={8} />
-					<span className="absolute inset-0 grid place-items-center">
-						<ScoreNumber score={score} className="text-[28px]" />
-					</span>
-				</div>
-				<div>
-					<div className="text-base font-medium">{moodLabel(score)}</div>
-					<div className="mt-1 text-xs text-fg-muted">
-						{coin.tradersLong + coin.tradersShort} of {MOOD_POOL_SIZE} pool traders hold {coinName(coin.coin)}
+		<div className="space-y-3">
+			{isFocus && (
+				<button type="button" onClick={onBack} className="text-xs text-fg-muted transition-colors hover:text-fg">
+					← Back to the current market
+				</button>
+			)}
+
+			<section className="relative overflow-hidden rounded-12 bg-surface px-5 pt-5 pb-4">
+				<span
+					className="pointer-events-none absolute top-6 left-1/2 size-32 -translate-x-1/2 rounded-full transition-colors duration-500"
+					style={{ background: moodColor(score), filter: "blur(48px)", opacity: 0.18 + Math.abs(score) / 400 }}
+				/>
+				<div className="relative mx-auto w-[172px]">
+					<Gauge score={score} size={172} />
+					<div className="absolute inset-0 flex flex-col items-center justify-center pt-1">
+						<span className="text-2xs text-fg-muted">{name}</span>
+						<span
+							className="text-[44px] leading-none font-semibold tabular-nums transition-colors duration-500"
+							style={{ color: moodColor(score) }}
+						>
+							{signedScore(score)}
+						</span>
+						<span className="mt-1.5 text-sm font-medium">{moodLabel(score)}</span>
+					</div>
+					<div className="absolute inset-x-0 bottom-1 flex justify-between px-3 text-2xs tabular-nums text-fg-muted">
+						<span>−100</span>
+						<span>+100</span>
 					</div>
 				</div>
-			</div>
-			<div>
-				<div className="mb-1.5 flex justify-between text-xs text-fg-muted">
-					<span>Last 24h</span>
-					<span className="tabular-nums">
-						{signedScore(first)} → {signedScore(coin.score)}
+				<div className="relative mt-3 flex items-center justify-center gap-2 text-xs">
+					<span className="text-fg-muted">
+						{holders} of {MOOD_POOL_SIZE} traders hold {name}
+					</span>
+					<span className="size-0.5 rounded-full bg-fg-muted" />
+					<span className="tabular-nums" style={{ color: moodColor(delta * 3) }}>
+						{signedScore(delta)} in 24h
 					</span>
 				</div>
-				<div className="rounded-8 bg-surface p-2">
-					<Spark history={coin.history} width={352} height={56} color={moodColor(coin.score)} />
+				<History history={coin.history} />
+			</section>
+
+			<section className="rounded-12 bg-surface p-4">
+				<SectionTitle>How the score is built</SectionTitle>
+				<Driver
+					label="Positions"
+					weight={0.6}
+					value={coin.posScore}
+					detail={<NotionalSplit long={coin.long} short={coin.short} />}
+				/>
+				<div className="my-3 h-px bg-stroke-faint" />
+				<Driver
+					label="Order flow 24h"
+					weight={0.4}
+					value={coin.flowScore}
+					detail={
+						<div className="text-2xs text-fg-muted">
+							Net {coin.flow24h < 0 ? "sold" : "bought"}{" "}
+							<span className="text-fg-secondary tabular-nums">{compactUsd(Math.abs(coin.flow24h))}</span> in 24h,{" "}
+							<span className="text-fg-secondary tabular-nums">{compactUsd(Math.abs(coin.flow1h))}</span> in the last
+							hour
+						</div>
+					}
+				/>
+				<div className="mt-4 flex items-center justify-between rounded-8 bg-control px-3 py-2 text-xs">
+					<span className="text-fg-muted tabular-nums">
+						{signedScore(coin.posScore)} × 0.6 + {signedScore(coin.flowScore)} × 0.4
+					</span>
+					<span className="font-semibold tabular-nums" style={{ color: moodColor(coin.score) }}>
+						= {signedScore(coin.score)}
+					</span>
 				</div>
-			</div>
-			<SplitRow
-				label="Positions (60%)"
-				value={coin.posScore}
-				note={`${compactUsd(coin.long)} long, ${compactUsd(coin.short)} short`}
-			/>
-			<SplitRow
-				label="Order flow 24h (40%)"
-				value={coin.flowScore}
-				note={`Net ${compactUsd(coin.flow24h)} bought in 24h`}
-			/>
-			<div className="grid grid-cols-2 gap-2">
-				<div className="rounded-8 bg-control p-2.5">
-					<div className="text-xs text-fg-muted">Traders long</div>
-					<div className="mt-0.5 text-base tabular-nums text-market-up">{coin.tradersLong}</div>
-				</div>
-				<div className="rounded-8 bg-control p-2.5">
-					<div className="text-xs text-fg-muted">Traders short</div>
-					<div className="mt-0.5 text-base tabular-nums text-market-down">{coin.tradersShort}</div>
-				</div>
-			</div>
-			{coin.dominant && coin.dominant.share >= 0.4 && (
-				<div className="rounded-8 bg-warning-soft p-3 text-xs text-fg-secondary">
-					<span className="text-warning">Dominant trader.</span> {shortAddress(coin.dominant.usr)} holds{" "}
-					{Math.round(coin.dominant.share * 100)}% of gross {coinName(coin.coin)} exposure. The score caps each trader
-					at 40%.
-				</div>
-			)}
-			<div className="rounded-8 bg-control p-3">
-				<div className="text-xs text-fg-muted">Auto Trader target</div>
-				<div className="mt-0.5 text-sm">
-					{w === 0
-						? "No position. The score is inside the ±15 flat band."
-						: `${w > 0 ? "Long" : "Short"} ${Math.abs(Math.round(w * 100))}% of equity × leverage`}
-				</div>
-			</div>
+			</section>
+
+			<section className="rounded-12 bg-surface p-4">
+				<SectionTitle
+					aside={
+						<span className="tabular-nums">
+							<span className="text-market-up">{coin.tradersLong} long</span>
+							<span className="text-fg-muted"> · </span>
+							<span className="text-market-down">{coin.tradersShort} short</span>
+							<span className="text-fg-muted"> · {MOOD_POOL_SIZE - holders} flat</span>
+						</span>
+					}
+				>
+					The {MOOD_POOL_SIZE} traders
+				</SectionTitle>
+				<TraderPips long={coin.tradersLong} short={coin.tradersShort} />
+				{coin.dominant && coin.dominant.share >= 0.4 && (
+					<div className="mt-3 flex gap-2.5 rounded-8 bg-warning-soft p-3 text-xs">
+						<WarningIcon weight="fill" className="mt-px size-4 flex-none text-warning" />
+						<div className="text-fg-secondary">
+							<span className="font-medium text-fg">One trader dominates {name}.</span>{" "}
+							<span className="tabular-nums">{shortAddress(coin.dominant.usr)}</span> holds{" "}
+							{Math.round(coin.dominant.share * 100)}% of gross exposure. The score counts each trader up to 40%.
+						</div>
+					</div>
+				)}
+			</section>
+
+			<AutoTraderCard score={coin.score} name={name} />
 		</div>
 	);
 }
 
-function SplitRow({ label, value, note }: { label: string; value: number; note: string }) {
+function SectionTitle({ children, aside }: { children: React.ReactNode; aside?: React.ReactNode }) {
+	return (
+		<div className="mb-3 flex items-baseline justify-between gap-2 text-xs">
+			<span className="font-medium text-fg">{children}</span>
+			{aside && <span className="text-2xs">{aside}</span>}
+		</div>
+	);
+}
+
+function Driver({
+	label,
+	weight,
+	value,
+	detail,
+}: {
+	label: string;
+	weight: number;
+	value: number;
+	detail: React.ReactNode;
+}) {
+	const w = Math.abs(value) / 2;
 	return (
 		<div>
-			<div className="flex justify-between text-xs">
-				<span className="text-fg-muted">{label}</span>
-				<ScoreNumber score={value} className="font-normal" />
+			<div className="flex items-baseline justify-between text-xs">
+				<span>
+					<span className="text-fg-secondary">{label}</span>
+					<span className="ml-1.5 text-2xs text-fg-muted">{Math.round(weight * 100)}% weight</span>
+				</span>
+				<span className="text-sm font-semibold tabular-nums" style={{ color: moodColor(value) }}>
+					{signedScore(value)}
+				</span>
 			</div>
-			<DivergingBar value={value} className="mt-1.5" />
-			<div className="mt-1 text-2xs text-fg-muted">{note}</div>
+			<div className="relative mt-2 h-2 rounded-full bg-control">
+				<div className="absolute inset-y-[-3px] left-1/2 w-0.5 -translate-x-1/2 rounded-full bg-fg-muted" />
+				<div
+					className="absolute inset-y-0 rounded-full transition-[width,left] duration-500"
+					style={{ background: moodColor(value), width: `${w}%`, left: value >= 0 ? "50%" : `${50 - w}%` }}
+				/>
+			</div>
+			<div className="mt-2">{detail}</div>
 		</div>
 	);
 }
 
-function AllTab({ signal, marketName }: { signal: MoodSignal; marketName: string }) {
-	const sorted = [...signal.coins].sort((a, b) => b.score - a.score);
+function NotionalSplit({ long, short }: { long: number; short: number }) {
+	const total = long + short || 1;
+	const pl = (long / total) * 100;
 	return (
-		<div className="flex-1 overflow-y-auto p-4">
-			<div className="mb-3 flex items-baseline justify-between">
-				<span className="text-xs text-fg-muted">Pool mood, all markets</span>
-				<span className="text-base font-medium tabular-nums" style={{ color: moodColor(signal.overall.score) }}>
-					{signedScore(signal.overall.score)} {moodLabel(signal.overall.score)}
+		<div>
+			<div className="flex h-1 gap-0.5 overflow-hidden rounded-full">
+				<div className="rounded-full bg-market-up" style={{ width: `${pl}%` }} />
+				<div className="flex-1 rounded-full bg-market-down" />
+			</div>
+			<div className="mt-1.5 flex justify-between text-2xs tabular-nums">
+				<span className="text-fg-muted">
+					<span className="text-market-up">{compactUsd(long)}</span> long · {Math.round(pl)}%
+				</span>
+				<span className="text-fg-muted">
+					{Math.round(100 - pl)}% · <span className="text-market-down">{compactUsd(short)}</span> short
 				</span>
 			</div>
-			{sorted.map((c) => (
+		</div>
+	);
+}
+
+function TraderPips({ long, short }: { long: number; short: number }) {
+	return (
+		<div className="grid grid-cols-[repeat(19,minmax(0,1fr))] gap-1">
+			{Array.from({ length: MOOD_POOL_SIZE }, (_, i) => {
+				const cls = i < long ? "bg-market-up" : i < long + short ? "bg-market-down" : "bg-control";
+				// biome-ignore lint/suspicious/noArrayIndexKey: fixed-length decorative grid
+				return <span key={i} className={cn("aspect-square rounded-full", cls)} />;
+			})}
+		</div>
+	);
+}
+
+function History({ history }: { history: [number, number][] }) {
+	const id = useId();
+	if (history.length < 2) return null;
+	const W = 340;
+	const H = 64;
+	const y = (s: number) => (1 - (s + 100) / 200) * H;
+	const pts = history.map(([, s], i) => `${((i / (history.length - 1)) * W).toFixed(1)},${y(s).toFixed(1)}`);
+	const area = `M0,${H / 2} L${pts.join(" L")} L${W},${H / 2} Z`;
+	return (
+		<div className="relative mt-4">
+			<svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="block h-16 w-full" aria-hidden="true">
+				<defs>
+					<clipPath id={`${id}-up`}>
+						<rect x="0" y="0" width={W} height={H / 2} />
+					</clipPath>
+					<clipPath id={`${id}-down`}>
+						<rect x="0" y={H / 2} width={W} height={H / 2} />
+					</clipPath>
+				</defs>
+				<path d={area} fill={moodTile(80)} clipPath={`url(#${id}-up)`} />
+				<path d={area} fill={moodTile(-80)} clipPath={`url(#${id}-down)`} />
+				<line x1="0" x2={W} y1={H / 2} y2={H / 2} stroke="var(--color-stroke-weak)" strokeDasharray="2 3" />
+				<polyline
+					points={pts.join(" ")}
+					fill="none"
+					stroke="var(--color-fg-secondary)"
+					strokeWidth="1.25"
+					vectorEffect="non-scaling-stroke"
+				/>
+			</svg>
+			<div className="mt-1 flex justify-between text-2xs text-fg-muted">
+				<span>24h ago</span>
+				<span>Now</span>
+			</div>
+		</div>
+	);
+}
+
+function AutoTraderCard({ score, name }: { score: number; name: string }) {
+	const w = targetWeight(score);
+	const pct = Math.abs(Math.round(w * 100));
+	const half = Math.abs(w) * 50;
+	return (
+		<section className="rounded-12 bg-surface p-4">
+			<SectionTitle aside={<span className="text-fg-muted">Weight = score ÷ 100</span>}>
+				<span className="inline-flex items-center gap-1.5">
+					<RobotIcon className="size-3.5 text-fg-muted" />
+					Auto Trader target
+				</span>
+			</SectionTitle>
+			<div className="flex items-baseline gap-2">
+				<span className="text-xl font-semibold tabular-nums" style={{ color: w === 0 ? undefined : moodColor(score) }}>
+					{w === 0 ? "Flat" : `${w > 0 ? "Long" : "Short"} ${pct}%`}
+				</span>
+				<span className="text-xs text-fg-muted">
+					{w === 0 ? `Score is inside ±${MOOD_DEADBAND}, so no ${name} position` : `of equity × leverage on ${name}`}
+				</span>
+			</div>
+			<div className="relative mt-3 h-2 rounded-full bg-control">
 				<div
-					key={c.coin}
-					className={cn(
-						"flex items-center gap-3 rounded-8 px-2 py-2",
-						coinName(c.coin) === coinName(marketName) && "bg-control",
-					)}
-				>
-					<ScoreArc value={c.score} size={20} stroke={3} />
-					<span className="flex-1 text-xs font-medium">{coinName(c.coin)}</span>
-					<span className="text-xs text-fg-muted">{moodLabel(c.score)}</span>
-					<span className="w-9 text-right text-xs tabular-nums" style={{ color: moodColor(c.score) }}>
-						{signedScore(c.score)}
+					className="absolute inset-y-0 rounded-full bg-control-hover"
+					style={{ left: `${50 - MOOD_DEADBAND / 2}%`, width: `${MOOD_DEADBAND}%` }}
+				/>
+				{w !== 0 && (
+					<div
+						className="absolute inset-y-0 rounded-full"
+						style={{ background: moodColor(score), width: `${half}%`, left: w > 0 ? "50%" : `${50 - half}%` }}
+					/>
+				)}
+				<div className="absolute inset-y-[-3px] left-1/2 w-0.5 -translate-x-1/2 rounded-full bg-fg-muted" />
+			</div>
+			<div className="mt-1.5 flex justify-between text-2xs tabular-nums text-fg-muted">
+				<span>Short 100%</span>
+				<span>Flat band ±{MOOD_DEADBAND}</span>
+				<span>Long 100%</span>
+			</div>
+		</section>
+	);
+}
+
+function AllTab({
+	signal,
+	current,
+	onPick,
+}: {
+	signal: MoodSignal;
+	current: string | undefined;
+	onPick: (coin: string) => void;
+}) {
+	const { overall } = signal;
+	const sorted = [...signal.coins].sort((a, b) => b.score - a.score);
+	return (
+		<div className="space-y-3">
+			<section className="relative overflow-hidden rounded-12 bg-surface p-4">
+				<span
+					className="pointer-events-none absolute -top-6 -left-6 size-28 rounded-full"
+					style={{ background: moodColor(overall.score), filter: "blur(44px)", opacity: 0.3 }}
+				/>
+				<div className="relative flex items-center gap-4">
+					<div className="relative">
+						<ScoreArc value={overall.score} size={64} stroke={6} />
+						<span
+							className="absolute inset-0 grid place-items-center text-base font-semibold tabular-nums"
+							style={{ color: moodColor(overall.score) }}
+						>
+							{signedScore(overall.score)}
+						</span>
+					</div>
+					<div className="min-w-0 flex-1">
+						<div className="text-xs text-fg-muted">All markets</div>
+						<div className="text-base font-medium">{moodLabel(overall.score)}</div>
+						<div className="text-2xs text-fg-muted">Mean of {signal.coins.length} markets, weighted by 24h volume</div>
+					</div>
+				</div>
+				<div className="relative mt-4 flex h-1.5 gap-0.5 overflow-hidden rounded-full">
+					<div className="rounded-full bg-market-up" style={{ flex: overall.bullish }} />
+					<div className="rounded-full bg-control-hover" style={{ flex: overall.neutral }} />
+					<div className="rounded-full bg-market-down" style={{ flex: overall.bearish }} />
+				</div>
+				<div className="relative mt-1.5 flex justify-between text-2xs tabular-nums text-fg-muted">
+					<span>
+						<span className="text-market-up">{overall.bullish}</span> bullish
+					</span>
+					<span>{overall.neutral} neutral</span>
+					<span>
+						<span className="text-market-down">{overall.bearish}</span> bearish
 					</span>
 				</div>
-			))}
+			</section>
+
+			<section className="rounded-12 bg-surface p-1.5">
+				{sorted.map((c) => {
+					const w = Math.abs(c.score) / 2;
+					return (
+						<button
+							key={c.coin}
+							type="button"
+							onClick={() => onPick(c.coin)}
+							className={cn(
+								"group grid w-full grid-cols-[76px_1fr_36px_12px] items-center gap-3 rounded-8 px-2.5 py-2 text-left transition-colors hover:bg-fill-hover",
+								c.coin === current && "bg-control",
+							)}
+						>
+							<span className="flex items-center gap-1.5 truncate text-xs font-medium">
+								{coinName(c.coin)}
+								{c.coin === current && <span className="size-1 flex-none rounded-full bg-fg" />}
+							</span>
+							<span className="relative h-1.5 rounded-full bg-control">
+								<span className="absolute inset-y-[-2px] left-1/2 w-px bg-fg-muted" />
+								<span
+									className="absolute inset-y-0 rounded-full"
+									style={{ background: moodColor(c.score), width: `${w}%`, left: c.score >= 0 ? "50%" : `${50 - w}%` }}
+								/>
+							</span>
+							<span className="text-right text-xs font-medium tabular-nums" style={{ color: moodColor(c.score) }}>
+								{signedScore(c.score)}
+							</span>
+							<CaretRightIcon className="size-3 text-fg-muted opacity-0 transition-opacity group-hover:opacity-100" />
+						</button>
+					);
+				})}
+			</section>
 		</div>
 	);
 }
