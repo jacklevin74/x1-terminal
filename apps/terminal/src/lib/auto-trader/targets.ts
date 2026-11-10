@@ -3,6 +3,7 @@ import type { AutoTraderSettings } from "./types";
 // Advisory only: selection is not limited by this snapshot of executor support.
 export const EXECUTOR_MARKETS = ["BTC","ETH","SOL","HYPE","ZEC","NEAR","XRP","xyz:GOOGL","xyz:NVDA","xyz:BRENTOIL","xyz:GOLD","xyz:MU","xyz:INTC"] as const;
 export function validateSettings(settings:AutoTraderSettings, markets:readonly string[]){
+ if(settings.flowPct!==undefined&&(!Number.isInteger(settings.flowPct)||settings.flowPct<0||settings.flowPct>40))throw new Error("Flow weight must be a whole number from 0 to 40%.");
  if(!Number.isInteger(settings.leverage)||settings.leverage<1||settings.leverage>5)throw new Error("Leverage must be an integer from 1 to 5.");
  if(!Number.isFinite(settings.killPct)||settings.killPct<=0||settings.killPct>0.5)throw new Error("Daily loss stop must be above 0% and at most 50%.");
  if(!Number.isFinite(settings.minOrderUsd)||settings.minOrderUsd<10)throw new Error("Minimum order must be at least $10.");
@@ -22,6 +23,6 @@ export function allowedMarkets(settings:Pick<AutoTraderSettings,"include"|"exclu
 // Inputs are live snapshots; missing values remain unavailable, never fabricated zero.
 export function accountEquity(mode:string|undefined,main:{marginSummary:{accountValue:string};assetPositions:{position:{unrealizedPnl:string}}[]}|undefined,xyz:typeof main,spot:{balances:{coin:string;total:string}[]}|undefined):number|null{
  if(!mode||!main||!xyz||!["disabled","default","dexAbstraction","unifiedAccount"].includes(mode))return null;
- const value=mode==="unifiedAccount"?spot?Number(spot.balances.find(b=>b.coin==="USDC")?.total??"0")+[...main.assetPositions,...xyz.assetPositions].reduce((n,p)=>n+Number(p.position.unrealizedPnl),0):NaN:Number(main.marginSummary.accountValue)+Number(xyz.marginSummary.accountValue);
+ const value=mode==="unifiedAccount"?spot?Number(spot.balances.find(b=>b.coin==="USDC")?.total??"0"):NaN:Number(main.marginSummary.accountValue)+Number(xyz.marginSummary.accountValue);
  return Number.isFinite(value)?value:null;
 }

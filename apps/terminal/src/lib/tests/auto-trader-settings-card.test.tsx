@@ -30,3 +30,15 @@ it("keeps fieldset-level in-flight protection",async()=>{
  const {node,checkbox,changed}=await setup(true);expect(node.querySelector('fieldset')?.disabled).toBe(true);
  await act(async()=>checkbox("xyz:SOXL").click());expect(changed).not.toHaveBeenCalled();
 });
+
+it("shows the default blend and updates only flowPct from the slider",async()=>{
+ const {node,changed}=await setup();
+ const slider=node.querySelector<HTMLInputElement>('[aria-label="Auto Trader flow weight"]')!;
+ expect(slider.value).toBe("40");expect(slider.min).toBe("0");expect(slider.max).toBe("40");expect(slider.step).toBe("1");
+ const set=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"value")!.set!;
+ await act(async()=>{set.call(slider,"20");slider.dispatchEvent(new Event("input",{bubbles:true}));slider.dispatchEvent(new Event("change",{bubbles:true}));});
+ expect(changed.mock.calls.at(-1)![0]).toMatchObject({...AUTO_TRADER_DEFAULTS,flowPct:20,include:["BTC","xyz:SAVED"]});
+ expect(slider.getAttribute("aria-valuetext")).toBe("80% positions, 20% six-hour flow");
+ const reset=[...node.querySelectorAll('button')].find(b=>b.textContent==='Reset to 60 / 40')!;
+ await act(async()=>reset.click());expect(slider.value).toBe("40");
+});

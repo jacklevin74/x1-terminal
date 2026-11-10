@@ -1,3 +1,4 @@
+import { t } from "@lingui/core/macro";
 import { noBalanceValidator } from "../definitions/balance";
 import {
 	signerNotReadyValidator,
@@ -32,6 +33,7 @@ import { type TwapContext, twapMinNotionalValidator, twapMinutesRangeValidator }
 import { runValidators, type ValidationError, type Validator } from "../types";
 
 export interface PerpOrderContext extends OrderInputContext, TpSlContext, TriggerContext, ScaleContext, TwapContext {
+ reduceOnly?: boolean;
 	isConnected: boolean;
 	isWalletLoading: boolean;
 	isReadyToTrade: boolean;
@@ -52,7 +54,7 @@ export interface PerpOrderValidationResult {
 const perpOrderValidators: Validator<PerpOrderContext>[] = [
 	walletNotConnectedValidator,
 	walletLoadingValidator,
-	noBalanceValidator,
+ { ...noBalanceValidator, validate: ctx => !!ctx.reduceOnly || noBalanceValidator.validate(ctx) },
 	noMarketValidator,
 	marketNotReadyValidator,
 	signerNotReadyValidator,
@@ -61,7 +63,11 @@ const perpOrderValidators: Validator<PerpOrderContext>[] = [
 	enterTriggerPriceValidator,
 	enterSizeValidator,
 	minOrderNotionalValidator,
-	exceedsMaxSizeValidator,
+ {
+  ...exceedsMaxSizeValidator,
+  validate: ctx => ctx.reduceOnly ? ctx.maxSize > 0 && ctx.sizeValue <= ctx.maxSize : exceedsMaxSizeValidator.validate(ctx),
+  getMessage: ctx => ctx.reduceOnly ? ctx.maxSize <= 0 ? t`No position to reduce on this side` : t`Exceeds held position size` : exceedsMaxSizeValidator.getMessage(ctx),
+ },
 	enterTpSlPriceValidator,
 	tpPriceValidator,
 	slPriceValidator,

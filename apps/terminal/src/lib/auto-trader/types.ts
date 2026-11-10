@@ -1,5 +1,5 @@
 import type { Address } from "viem";
-export interface AutoTraderSettings {leverage:number;killPct:number;include:string[]|null;exclude:string[]|null;minOrderUsd:number}
+export interface AutoTraderSettings {targetLev?:number;flowPct?:number;leverage:number;killPct:number;include:string[]|null;exclude:string[]|null;minOrderUsd:number}
 export interface PlanRow {coin:string;weight?:number;curNtl:number;tgtNtl:number;acts:string[]}
 export interface PlanOrder {coin:string;asset?:number;tag:string;isBuy:boolean;sz:number;px:number;ntl:number;reduceOnly:boolean;tif?:string}
 export interface PlanFill {coin:string;tag:string;side:string;sz:number;filled?:number;avgPx?:number;error?:string|null}
@@ -8,4 +8,5 @@ export interface AutoTraderStatus {registered:boolean;master?:Address;owner?:Add
 export function autoTraderCanSign(status:Pick<AutoTraderStatus,"hasKey"|"signer">|undefined){return status?.hasKey===true||status?.signer?.toLowerCase()==="kms";}
 export interface SealedAgentKey {epk:string;nonce:string;ct:string}
 export type AutoTraderAction="register"|"settings"|"pause"|"resume"|"flatten"|"remove";
-export interface Signal {coins:{coin:string;score:number|null;label?:string}[];timestamp:number|null}
+export interface SignalCoin {coin:string;score:number|null;label?:string;posScore?:number;flowScore?:number;flowPct?:number;tradersLong?:number;tradersShort?:number;activeWallets?:number;breadthFullWallets?:number;flowScoreShare?:number;flowScoreOi?:number;flow24h?:number;flowNorm?:string}
+export interface Signal {coins:SignalCoin[];timestamp:number|null}

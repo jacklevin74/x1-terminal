@@ -9,9 +9,9 @@ it("validates settings and filters supported markets without calculating targets
  expect(()=>validateSettings({...settings,leverage:6},coins)).toThrow();expect(()=>validateSettings({...settings,killPct:0},coins)).toThrow();expect(()=>validateSettings({...settings,minOrderUsd:9},coins)).toThrow();expect(()=>validateSettings({...settings,include:[]},coins)).toThrow();
  expect(()=>validateSettings({...settings,include:["xyz:MU"]},coins)).not.toThrow();expect(()=>validateSettings({...settings,include:["xyz:REMOVED"]},coins)).not.toThrow();expect(()=>validateSettings({...settings,include:["bad market"]},coins)).toThrow("identifiers");
 });
-it("uses spot USDC plus all included unrealized PNL for unified equity without double counting margin",()=>{
+it("uses unified spot USDC equity without adding unrealized PNL twice",()=>{
  const main={marginSummary:{accountValue:"500"},assetPositions:[{position:{unrealizedPnl:"5"}}]},xyz={marginSummary:{accountValue:"200"},assetPositions:[{position:{unrealizedPnl:"-2"}}]},spot={balances:[{coin:"USDC",total:"100"}]};
- expect(accountEquity("unifiedAccount",main,xyz,spot)).toBe(103);expect(accountEquity("disabled",main,xyz,spot)).toBe(700);expect(accountEquity("unifiedAccount",main,xyz,undefined)).toBeNull();expect(accountEquity("portfolioMargin",main,xyz,spot)).toBeNull();
+ expect(accountEquity("unifiedAccount",main,xyz,spot)).toBe(100);expect(accountEquity("disabled",main,xyz,spot)).toBe(700);expect(accountEquity("unifiedAccount",main,xyz,undefined)).toBeNull();expect(accountEquity("portfolioMargin",main,xyz,spot)).toBeNull();
 });
 it("never calls a resumed or active account live without a live executor cycle",()=>{
  expect(executionLabel({registered:true,state:"active",dryRun:false})).toBe("WAITING FOR CYCLE");

@@ -78,9 +78,11 @@ export function TradePanel() {
 	const markPx = toNumberOrZero(market?.markPx);
 	const sizeMode = useSizeMode();
 	const sizeInput = useOrderSize();
+ const reduceOnly = useReduceOnly();
 
 	const {
 		isSpotMarket,
+  isReducing,
 		baseToken,
 		quoteToken,
 		spotBalance,
@@ -103,12 +105,11 @@ export function TradePanel() {
 		applyMarginAndLeverage,
 		isSwitchingMode,
 		switchModeError,
-	} = useOrderEntryData({ market, side, markPx, sizeMode, sizeInput });
+	} = useOrderEntryData({ market, side, markPx, sizeMode, sizeInput, reduceOnly });
 
 	const { takerRate, makerRate } = useFeeRates(market?.kind);
 	const selectedPrice = useSelectedPrice();
 	const orderType = useOrderType();
-	const reduceOnly = useReduceOnly();
 	const limitPriceInput = useLimitPrice();
 	const triggerPriceInput = useTriggerPrice();
 	const scaleStartPriceInput = useScaleStart();
@@ -175,8 +176,12 @@ export function TradePanel() {
 	const feeRate = isTakerOrderType(orderType) ? takerRate : makerRate;
 	const feeRatePercent = `${(feeRate * 100).toFixed(4)}%`;
 
-	const { marginRequired, estimatedFee } = getOrderMetrics({ sizeValue, price, leverage, feeRate });
-	const { liqPrice, liqWarning } = getLiquidationInfo({ price, sizeValue, leverage, side });
+	const { marginRequired: openingMarginRequired, estimatedFee } = getOrderMetrics({ sizeValue, price, leverage, feeRate });
+	const marginRequired = isReducing ? 0 : openingMarginRequired;
+ const { liqPrice: openingLiqPrice, liqWarning: openingLiqWarning } = getLiquidationInfo({ price, sizeValue, leverage, side });
+
+ const liqPrice = isReducing ? null : openingLiqPrice;
+ const liqWarning = !isReducing && openingLiqWarning;
 
 	const needsAgentApproval = !isAgentReady;
 	const isReadyToTrade = isAgentReady;
@@ -207,6 +212,7 @@ export function TradePanel() {
 				})
 			: perpInput(baseInput, {
 					orderType,
+     reduceOnly: isReducing,
 					markPx,
 					maxSize,
 					usesTriggerPrice: usesLimitPriceForOrder(orderType) ? false : isTriggerOrderType(orderType),
@@ -288,6 +294,7 @@ export function TradePanel() {
 	}
 
 	const buttonContent = useButtonContent({
+  reduceOnly: isReducing,
 		isConnected,
 		needsChainSwitch,
 		isSwitchingChain: switchChain.isPending,

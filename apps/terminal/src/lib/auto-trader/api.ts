@@ -71,10 +71,11 @@ export async function signedCall(action:AutoTraderAction,body:object|((serverPub
  if(action==="remove"&&result.removed!==true)throw new Error("Auto Trader did not confirm this action. Refresh status before retrying.");
  return result;
 }
-export async function getStatus(master:Address,signal?:AbortSignal,fetcher=fetch):Promise<AutoTraderStatus>{const result=await json(endpoint(AUTO_TRADER_API,"status",master),{signal},fetcher);if(typeof result.registered!=="boolean"||result.registered&&result.master?.toLowerCase()!==master.toLowerCase())throw new Error("Invalid Auto Trader account response.");return result;}
+export async function getStatus(master:Address,signal?:AbortSignal,fetcher=fetch):Promise<AutoTraderStatus>{const statusUrl=new URL(endpoint(AUTO_TRADER_API,"status",master));statusUrl.searchParams.set("_ts",String(Date.now()));const result=await json(statusUrl.href,{signal},fetcher);if(typeof result.registered!=="boolean"||result.registered&&result.master?.toLowerCase()!==master.toLowerCase())throw new Error("Invalid Auto Trader account response.");return result;}
 export async function getSignal(signal?:AbortSignal,fetcher=fetch):Promise<Signal>{
  const data=await json(AUTO_TRADER_SIGNAL,{signal},fetcher);if(!Array.isArray(data.coins))throw new Error("Signal data unavailable.");
  const coins:{coin:string;score:number|null;label?:string}[]=data.coins.filter((c:unknown):c is {coin:string;score:number|null}=>!!c&&typeof c==="object"&&"coin" in c&&typeof c.coin==="string"&&/^(?:[a-zA-Z0-9_-]+:)?[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(c.coin)&&"score" in c&&(c.score===null||typeof c.score==="number"&&Number.isFinite(c.score)&&Math.abs(c.score)<=100));
- const unique=[...new Map(coins.map(c=>[c.coin,{coin:c.coin,score:c.score,...(typeof c.label==="string"&&c.label.trim()?{label:c.label.trim().slice(0,48)}:{})}])).values()];if(!unique.length)throw new Error("Signal market list unavailable.");
+ const metrics=["posScore","flowScore","flowPct","tradersLong","tradersShort","activeWallets","breadthFullWallets","flowScoreShare","flowScoreOi","flow24h"];
+ const unique=[...new Map(coins.map(c=>{const raw=c as unknown as Record<string,unknown>;return [c.coin,{coin:c.coin,score:c.score,...Object.fromEntries(metrics.filter(key=>typeof raw[key]==="number"&&Number.isFinite(raw[key])).map(key=>[key,raw[key]])),...(typeof raw.flowNorm==="string"?{flowNorm:raw.flowNorm}:{}),...(typeof c.label==="string"&&c.label.trim()?{label:c.label.trim().slice(0,48)}:{})}] as const;})).values()];if(!unique.length)throw new Error("Signal market list unavailable.");
  const stamp=data.ts??data.timestamp??data.now;return {coins:unique,timestamp:typeof stamp==="number"?stamp:null};
 }

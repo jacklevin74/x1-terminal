@@ -1,0 +1,34 @@
+// @vitest-environment jsdom
+import {act} from "react";
+import {createRoot} from "react-dom/client";
+import {afterEach,expect,it,vi} from "vitest";
+vi.mock("@hypeterminal/ui",()=>({Tooltip:({children}:{children:import("react").ReactNode})=>children}));
+const test=vi.hoisted(()=>({action:"ADD",reason:"Rebalance",error:false}));
+vi.mock("@/hooks/trade/use-account-balances",()=>({useAllDexsAccountState:()=>({clearinghouseStates:[],spotBalances:[],isLoading:false,hasError:test.error})}));
+vi.mock("@/lib/hyperliquid",()=>({useMarkets:()=>({getMarket:()=>({kind:"perp",szDecimals:3})}),useSubscription:()=>({data:mids,status:"success"})}));
+const mids={mids:{BTC:"100"}};
+vi.mock("@/lib/auto-trader/targets",()=>({accountEquity:()=>100,EXECUTOR_MARKETS:["BTC"]}));
+vi.mock("@/lib/auto-trader/forecast",()=>({forecastScore:()=>20,forecastTargets:()=>({equity:100,k:1,gross:100,rows:[{market:"BTC",score:20,currentUsd:50,targetUsd:100,gapUsd:50,action:test.action,reason:test.reason}]})}));
+vi.mock("@/components/auto-trader/market-label",()=>({AutoTraderMarketLabel:()=>"BTC"}));
+vi.mock("@/components/auto-trader/status-card",()=>({money:(v:number)=>`$${v}`}));
+import {ForecastPreview} from "@/components/auto-trader/forecast-preview";
+let dispose:(()=>Promise<void>)|undefined;
+afterEach(async()=>{await dispose?.();test.error=false;});
+it("keeps rows fixed and retains the last table through a failed refresh without leaking across accounts",async()=>{
+ const node=document.createElement("div"),root=createRoot(node);document.body.append(node);
+ dispose=async()=>{await act(async()=>root.unmount());node.remove();};
+ const props={account:"a",settings:{leverage:3,killPct:.1,include:["BTC"],exclude:[],minOrderUsd:500},signal:{timestamp:Date.now(),coins:[{coin:"BTC",score:20}]}};
+ await act(async()=>root.render(<ForecastPreview {...props}/>));
+ expect(node.querySelector('tbody tr')?.className).toContain("h-10");
+ test.action="skip ADD $49.99";test.reason="A long explanation ".repeat(30);
+ await act(async()=>root.render(<ForecastPreview {...props}/>));
+ expect(node.querySelector('tbody tr')?.className).toContain("h-10");
+ expect(node.querySelector('button[aria-label^="Why BTC:"]')?.getAttribute("aria-label")).toContain(test.reason);
+ expect(node.querySelector('thead')?.textContent).not.toContain("Reason");
+ test.error=true;
+ await act(async()=>root.render(<ForecastPreview {...props}/>));
+ expect(node.querySelectorAll('tbody tr')).toHaveLength(1);
+ expect(node.textContent).toContain("last successful forecast");
+ await act(async()=>root.render(<ForecastPreview {...props} account="b"/>));
+ expect(node.querySelector('table')).toBeNull();
+});

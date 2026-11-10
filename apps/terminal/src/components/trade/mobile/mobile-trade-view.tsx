@@ -100,6 +100,7 @@ export function MobileTradeView({ className }: Props) {
 
 	const {
 		isSpotMarket,
+  isReducing,
 		baseToken,
 		quoteToken,
 		capabilities,
@@ -124,7 +125,7 @@ export function MobileTradeView({ className }: Props) {
 		applyMarginAndLeverage,
 		isSwitchingMode,
 		switchModeError,
-	} = useOrderEntryData({ market, side, markPx, sizeMode, sizeInput });
+	} = useOrderEntryData({ market, side, markPx, sizeMode, sizeInput, reduceOnly });
 
 	useEffect(() => {
 		if (selectedPrice !== null) {
@@ -138,9 +139,9 @@ export function MobileTradeView({ className }: Props) {
 	const feeRate = isMarketExecution ? takerRate : makerRate;
 	const feeRatePercent = `${(feeRate * 100).toFixed(4)}%`;
 	const estimatedFee = orderValue * feeRate;
-	const marginRequired = capabilities.isLeveraged && leverage > 0 ? orderValue / leverage : 0;
+	const marginRequired = !isReducing && capabilities.isLeveraged && leverage > 0 ? orderValue / leverage : 0;
 
-	const liqPrice = capabilities.isLeveraged ? getLiquidationInfo({ price, sizeValue, leverage, side }).liqPrice : null;
+	const liqPrice = !isReducing && capabilities.isLeveraged ? getLiquidationInfo({ price, sizeValue, leverage, side }).liqPrice : null;
 
 	const baseInput = {
 		isConnected,
@@ -167,6 +168,7 @@ export function MobileTradeView({ className }: Props) {
 				})
 			: perpInput(baseInput, {
 					orderType,
+     reduceOnly: isReducing,
 					markPx,
 					maxSize,
 					usesTriggerPrice: false,
@@ -253,6 +255,7 @@ export function MobileTradeView({ className }: Props) {
 	const sliderValue = isDraggingSlider ? dragSliderValue : getSliderValue(sizeValue, maxSize);
 
 	const buttonContent = getMobileOrderButtonContent({
+  reduceOnly: isReducing,
 		isConnected,
 		needsChainSwitch,
 		isSwitchingChain,
@@ -271,11 +274,11 @@ export function MobileTradeView({ className }: Props) {
 		onSubmit: handleSubmit,
 	});
 
-	const isFormDisabled = !isConnected || availableBalance <= 0;
+	const isFormDisabled = !isConnected || (!isReducing && availableBalance <= 0);
 
 	function formatAvailableBalance(): string {
 		if (!isConnected) return FALLBACK_VALUE_PLACEHOLDER;
-		const decimals = isSpotMarket && side === "sell" ? szDecimals : 2;
+		const decimals = isReducing || isSpotMarket && side === "sell" ? szDecimals : 2;
 		return formatToken(availableBalance, decimals);
 	}
 
@@ -334,7 +337,7 @@ export function MobileTradeView({ className }: Props) {
 					/>
 
 					<div className="flex items-center justify-end text-xs">
-						<span className="text-fg-muted uppercase text-2xs font-medium">{ORDER_TEXT.AVAILABLE_LABEL} </span>
+						<span className="text-fg-muted uppercase text-2xs font-medium">{isReducing ? "Reducible" : ORDER_TEXT.AVAILABLE_LABEL} </span>
 						<span className={cn("tabular-nums font-semibold text-xs ml-1", getValueColorClass(availableBalance))}>
 							{formatAvailableBalance()}
 						</span>
@@ -421,7 +424,7 @@ export function MobileTradeView({ className }: Props) {
 								<Checkbox
 									checked={reduceOnly}
 									onCheckedChange={(checked: boolean | "indeterminate") => setReduceOnly(checked === true)}
-									disabled={isFormDisabled}
+									disabled={!isConnected}
 									label={ORDER_TEXT.REDUCE_ONLY_LABEL}
 								/>
 							)}
@@ -518,6 +521,7 @@ function SummaryRow({ label, value, valueClass }: { label: string; value: string
 }
 
 interface MobileButtonContentInput {
+ reduceOnly?: boolean;
 	isConnected: boolean;
 	needsChainSwitch: boolean;
 	isSwitchingChain: boolean;
@@ -553,7 +557,7 @@ function getMobileOrderButtonContent(input: MobileButtonContentInput): ButtonCon
 			variant: "cyan",
 		};
 	}
-	if (input.availableBalance <= 0) {
+	if (input.availableBalance <= 0 && !input.reduceOnly) {
 		return {
 			text: ORDER_TEXT.BUTTON_DEPOSIT,
 			action: input.onDeposit,

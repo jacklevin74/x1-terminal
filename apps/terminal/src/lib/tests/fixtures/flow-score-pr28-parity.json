@@ -1,0 +1,722 @@
+[
+  {
+    "name": "oi flow 0 wallets 0",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 0,
+      "tradersShort": 0,
+      "activeWallets": 2,
+      "breadthFullWallets": 5,
+      "flowNorm": "oi"
+    },
+    "flowPct": 0,
+    "expected": 0
+  },
+  {
+    "name": "oi flow 0 wallets 2",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": 0,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 2,
+      "tradersShort": 0,
+      "activeWallets": 4,
+      "breadthFullWallets": 5,
+      "flowNorm": "oi"
+    },
+    "flowPct": 0,
+    "expected": 25
+  },
+  {
+    "name": "oi flow 0 wallets 5",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 5,
+      "tradersShort": 0,
+      "activeWallets": 7,
+      "breadthFullWallets": 5,
+      "flowNorm": "oi"
+    },
+    "flowPct": 0,
+    "expected": 62
+  },
+  {
+    "name": "oi flow 20 wallets 0",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 0,
+      "tradersShort": 0,
+      "activeWallets": 2,
+      "breadthFullWallets": 5,
+      "flowNorm": "oi"
+    },
+    "flowPct": 20,
+    "expected": 0
+  },
+  {
+    "name": "oi flow 20 wallets 2",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": 0,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 2,
+      "tradersShort": 0,
+      "activeWallets": 4,
+      "breadthFullWallets": 5,
+      "flowNorm": "oi"
+    },
+    "flowPct": 20,
+    "expected": 40
+  },
+  {
+    "name": "oi flow 20 wallets 5",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 5,
+      "tradersShort": 0,
+      "activeWallets": 7,
+      "breadthFullWallets": 5,
+      "flowNorm": "oi"
+    },
+    "flowPct": 20,
+    "expected": 45
+  },
+  {
+    "name": "oi flow 40 wallets 0",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 0,
+      "tradersShort": 0,
+      "activeWallets": 2,
+      "breadthFullWallets": 5,
+      "flowNorm": "oi"
+    },
+    "flowPct": 40,
+    "expected": 17
+  },
+  {
+    "name": "oi flow 40 wallets 2",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": 0,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 2,
+      "tradersShort": 0,
+      "activeWallets": 4,
+      "breadthFullWallets": 5,
+      "flowNorm": "oi"
+    },
+    "flowPct": 40,
+    "expected": 17
+  },
+  {
+    "name": "oi flow 40 wallets 5",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 5,
+      "tradersShort": 0,
+      "activeWallets": 7,
+      "breadthFullWallets": 5,
+      "flowNorm": "oi"
+    },
+    "flowPct": 40,
+    "expected": 17
+  },
+  {
+    "name": "share flow 0 wallets 0",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 0,
+      "tradersShort": 0,
+      "activeWallets": 2,
+      "breadthFullWallets": 5,
+      "flowNorm": "share"
+    },
+    "flowPct": 0,
+    "expected": 0
+  },
+  {
+    "name": "share flow 0 wallets 2",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": 0,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 2,
+      "tradersShort": 0,
+      "activeWallets": 4,
+      "breadthFullWallets": 5,
+      "flowNorm": "share"
+    },
+    "flowPct": 0,
+    "expected": 25
+  },
+  {
+    "name": "share flow 0 wallets 5",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 5,
+      "tradersShort": 0,
+      "activeWallets": 7,
+      "breadthFullWallets": 5,
+      "flowNorm": "share"
+    },
+    "flowPct": 0,
+    "expected": 62
+  },
+  {
+    "name": "share flow 20 wallets 0",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 0,
+      "tradersShort": 0,
+      "activeWallets": 2,
+      "breadthFullWallets": 5,
+      "flowNorm": "share"
+    },
+    "flowPct": 20,
+    "expected": -28
+  },
+  {
+    "name": "share flow 20 wallets 2",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": 0,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 2,
+      "tradersShort": 0,
+      "activeWallets": 4,
+      "breadthFullWallets": 5,
+      "flowNorm": "share"
+    },
+    "flowPct": 20,
+    "expected": 29
+  },
+  {
+    "name": "share flow 20 wallets 5",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 5,
+      "tradersShort": 0,
+      "activeWallets": 7,
+      "breadthFullWallets": 5,
+      "flowNorm": "share"
+    },
+    "flowPct": 20,
+    "expected": 36
+  },
+  {
+    "name": "share flow 40 wallets 0",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 0,
+      "tradersShort": 0,
+      "activeWallets": 2,
+      "breadthFullWallets": 5,
+      "flowNorm": "share"
+    },
+    "flowPct": 40,
+    "expected": 17
+  },
+  {
+    "name": "share flow 40 wallets 2",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": 0,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 2,
+      "tradersShort": 0,
+      "activeWallets": 4,
+      "breadthFullWallets": 5,
+      "flowNorm": "share"
+    },
+    "flowPct": 40,
+    "expected": 17
+  },
+  {
+    "name": "share flow 40 wallets 5",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 5,
+      "tradersShort": 0,
+      "activeWallets": 7,
+      "breadthFullWallets": 5,
+      "flowNorm": "share"
+    },
+    "flowPct": 40,
+    "expected": 17
+  },
+  {
+    "name": "legacy flow 0 wallets 0",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 0,
+      "tradersShort": 0,
+      "activeWallets": 2,
+      "breadthFullWallets": 5
+    },
+    "flowPct": 0,
+    "expected": 0
+  },
+  {
+    "name": "legacy flow 0 wallets 2",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": 0,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 2,
+      "tradersShort": 0,
+      "activeWallets": 4,
+      "breadthFullWallets": 5
+    },
+    "flowPct": 0,
+    "expected": 25
+  },
+  {
+    "name": "legacy flow 0 wallets 5",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 5,
+      "tradersShort": 0,
+      "activeWallets": 7,
+      "breadthFullWallets": 5
+    },
+    "flowPct": 0,
+    "expected": 62
+  },
+  {
+    "name": "legacy flow 20 wallets 0",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 0,
+      "tradersShort": 0,
+      "activeWallets": 2,
+      "breadthFullWallets": 5
+    },
+    "flowPct": 20,
+    "expected": -10
+  },
+  {
+    "name": "legacy flow 20 wallets 2",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": 0,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 2,
+      "tradersShort": 0,
+      "activeWallets": 4,
+      "breadthFullWallets": 5
+    },
+    "flowPct": 20,
+    "expected": 40
+  },
+  {
+    "name": "legacy flow 20 wallets 5",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 5,
+      "tradersShort": 0,
+      "activeWallets": 7,
+      "breadthFullWallets": 5
+    },
+    "flowPct": 20,
+    "expected": 45
+  },
+  {
+    "name": "legacy flow 40 wallets 0",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 0,
+      "tradersShort": 0,
+      "activeWallets": 2,
+      "breadthFullWallets": 5
+    },
+    "flowPct": 40,
+    "expected": 17
+  },
+  {
+    "name": "legacy flow 40 wallets 2",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": 0,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 2,
+      "tradersShort": 0,
+      "activeWallets": 4,
+      "breadthFullWallets": 5
+    },
+    "flowPct": 40,
+    "expected": 17
+  },
+  {
+    "name": "legacy flow 40 wallets 5",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 5,
+      "tradersShort": 0,
+      "activeWallets": 7,
+      "breadthFullWallets": 5
+    },
+    "flowPct": 40,
+    "expected": 17
+  },
+  {
+    "name": "unknown flow 0 wallets 0",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 0,
+      "tradersShort": 0,
+      "activeWallets": 2,
+      "breadthFullWallets": 5,
+      "flowNorm": "unknown"
+    },
+    "flowPct": 0,
+    "expected": 17
+  },
+  {
+    "name": "unknown flow 0 wallets 2",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": 0,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 2,
+      "tradersShort": 0,
+      "activeWallets": 4,
+      "breadthFullWallets": 5,
+      "flowNorm": "unknown"
+    },
+    "flowPct": 0,
+    "expected": 17
+  },
+  {
+    "name": "unknown flow 0 wallets 5",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 5,
+      "tradersShort": 0,
+      "activeWallets": 7,
+      "breadthFullWallets": 5,
+      "flowNorm": "unknown"
+    },
+    "flowPct": 0,
+    "expected": 17
+  },
+  {
+    "name": "unknown flow 20 wallets 0",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 0,
+      "tradersShort": 0,
+      "activeWallets": 2,
+      "breadthFullWallets": 5,
+      "flowNorm": "unknown"
+    },
+    "flowPct": 20,
+    "expected": 17
+  },
+  {
+    "name": "unknown flow 20 wallets 2",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": 0,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 2,
+      "tradersShort": 0,
+      "activeWallets": 4,
+      "breadthFullWallets": 5,
+      "flowNorm": "unknown"
+    },
+    "flowPct": 20,
+    "expected": 17
+  },
+  {
+    "name": "unknown flow 20 wallets 5",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 5,
+      "tradersShort": 0,
+      "activeWallets": 7,
+      "breadthFullWallets": 5,
+      "flowNorm": "unknown"
+    },
+    "flowPct": 20,
+    "expected": 17
+  },
+  {
+    "name": "unknown flow 40 wallets 0",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 0,
+      "tradersShort": 0,
+      "activeWallets": 2,
+      "breadthFullWallets": 5,
+      "flowNorm": "unknown"
+    },
+    "flowPct": 40,
+    "expected": 17
+  },
+  {
+    "name": "unknown flow 40 wallets 2",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": 0,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 2,
+      "tradersShort": 0,
+      "activeWallets": 4,
+      "breadthFullWallets": 5,
+      "flowNorm": "unknown"
+    },
+    "flowPct": 40,
+    "expected": 17
+  },
+  {
+    "name": "unknown flow 40 wallets 5",
+    "coin": {
+      "coin": "BTC",
+      "score": 17,
+      "flowPct": 40,
+      "posScore": 62,
+      "flowScore": -23,
+      "flowScoreShare": -70,
+      "flowScoreOi": -22.9,
+      "flow24h": 10,
+      "tradersLong": 5,
+      "tradersShort": 0,
+      "activeWallets": 7,
+      "breadthFullWallets": 5,
+      "flowNorm": "unknown"
+    },
+    "flowPct": 40,
+    "expected": 17
+  },
+  {
+    "name": "missing legs retains API score",
+    "coin": {
+      "coin": "BTC",
+      "score": 17
+    },
+    "flowPct": 20,
+    "expected": 17
+  }
+]

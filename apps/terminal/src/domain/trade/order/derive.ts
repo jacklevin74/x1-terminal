@@ -13,6 +13,8 @@ import type { UnifiedMarketInfo } from "@/lib/hyperliquid/hooks/useMarketsInfo";
 import type { Side, SizeMode } from "@/lib/trade/types";
 
 export interface OrderEntryInputs {
+ reduceOnly?: boolean;
+ positionSize?: string | number | null;
 	isConnected: boolean;
 	market: UnifiedMarketInfo | undefined;
 	side: Side;
@@ -28,6 +30,7 @@ export interface OrderEntryInputs {
 }
 
 export interface OrderEntryDerived {
+ isReducing: boolean;
 	isSpotMarket: boolean;
 	baseToken: string;
 	quoteToken: string;
@@ -66,10 +69,10 @@ export function deriveOrderEntry(inputs: OrderEntryInputs): OrderEntryDerived {
 		? getBaseQuoteFromPairName(inputs.market.pairName, inputs.market.kind)
 		: { baseToken: "", quoteToken: "" };
 	const spotBalance = getSpotBalanceData(inputs.spotBalances, inputs.market, inputs.spotAvailableAfterMaintenance);
-	const availableBalanceToken = getAvailableBalanceToken(inputs.market, inputs.side);
+	let availableBalanceToken = getAvailableBalanceToken(inputs.market, inputs.side);
 
 	const [availableLong, availableShort] = inputs.availableToTrade ?? [0, 0];
-	const availableBalance = getAvailableBalance(isSpotMarket, isBuy, spotBalance, availableLong, availableShort);
+	let availableBalance = getAvailableBalance(isSpotMarket, isBuy, spotBalance, availableLong, availableShort);
 
 	const maxSize = getMaxSizeForOrderEntry({
 		isConnected: inputs.isConnected,
@@ -79,7 +82,12 @@ export function deriveOrderEntry(inputs: OrderEntryInputs): OrderEntryDerived {
 		spotBalance,
 		szDecimals,
 		maxTradeSzs: inputs.maxTradeSzs,
+  reduceOnly: inputs.reduceOnly,
+  positionSize: inputs.positionSize,
 	});
+
+ const isReducing = !isSpotMarket && !!inputs.reduceOnly;
+ if (isReducing) { availableBalance = maxSize; availableBalanceToken = baseToken; }
 
 	const sizeValue = getSizeValueFromInput({
 		sizeInput: inputs.sizeInput,
@@ -93,6 +101,7 @@ export function deriveOrderEntry(inputs: OrderEntryInputs): OrderEntryDerived {
 	const sizeModeLabel = getSizeModeLabel(inputs.sizeMode, baseToken, quoteToken);
 
 	return {
+  isReducing,
 		isSpotMarket,
 		baseToken,
 		quoteToken,
