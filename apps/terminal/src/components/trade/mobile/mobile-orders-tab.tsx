@@ -1,4 +1,4 @@
-import { canAmendRestingOrder } from "@/lib/trade/amend-order";
+import { canAmendRestingOrder, canAmendOrderPrice } from "@/lib/trade/amend-order";
 import { EditOrderModal } from "../positions/edit-order-modal";
 import {useTradingAccount} from "@/hooks/use-trading-account";
 import { Badge, Button } from "@hypeterminal/ui";
@@ -59,7 +59,7 @@ export function MobileOrdersTab({ className }: Props) {
 
 	const { mutate: cancelOrders, error: cancelError, reset: resetCancelError } = useExchange("cancel");
 
-	const [editing, setEditing] = useState<{oid:number;field:"amount"|"value"}|null>(null);
+	const [editing, setEditing] = useState<{oid:number;field:"amount"|"value"|"price"}|null>(null);
  const [cancellingOids, setCancellingOids] = useState<Set<number>>(() => new Set());
 	const [pendingScopes, setPendingScopes] = useState<Set<CancelScope>>(() => new Set());
 
@@ -191,7 +191,7 @@ export function MobileOrdersTab({ className }: Props) {
 }
 
 interface MobileOrderCardProps {
- onEdit: (field: "amount" | "value") => void;
+ onEdit: (field: "amount" | "value" | "price") => void;
 	order: OpenOrder;
 	szDecimals: number;
 	kind: MarketKind | undefined;
@@ -247,7 +247,7 @@ function MobileOrderCard({ order, szDecimals, kind, isCancelling, onCancel, onSe
 				<MetricCell label={t`Trigger`} value={order.triggerCondition || FALLBACK_VALUE_PLACEHOLDER} />
 			</div>
 
-   {canAmendRestingOrder(order) && <div className="flex gap-4 px-3 pt-2 text-xs text-brand"><button type="button" disabled={isCancelling} onClick={() => onEdit("amount")}>Edit amount</button><button type="button" disabled={isCancelling} onClick={() => onEdit("value")}>Edit value</button></div>}
+   {canAmendOrderPrice(order) && <div className="flex gap-4 px-3 pt-2 text-xs text-brand">{canAmendRestingOrder(order)&&<><button type="button" disabled={isCancelling} onClick={() => onEdit("amount")}>Edit amount</button><button type="button" disabled={isCancelling} onClick={() => onEdit("value")}>Edit value</button></>}<button type="button" disabled={isCancelling} onClick={() => onEdit("price")}>Edit price</button></div>}
 			<div className="flex items-center justify-between px-3 py-1.5">
 				<span className="text-xs text-fg-muted tabular-nums">
 					{formatDateTime(order.timestamp, { dateStyle: "short", timeStyle: "short" })}

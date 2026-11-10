@@ -40,3 +40,13 @@ it("leaves the editor open and displays exchange rejection",async()=>{
  await act(async()=>[...node.querySelectorAll("button")].find(b=>b.textContent==="Update order")!.click());
  expect(node.querySelector('[role="alert"]')?.textContent).toBe("insufficient margin");expect(state.close).not.toHaveBeenCalled();
 });
+
+it("edits limit price through modify while keeping remaining size",async()=>{
+ const node=document.createElement("div");root=createRoot(node);state.modify.mockResolvedValue({status:"ok"});
+ await act(async()=>root.render(createElement(EditOrderModal,{order,field:"price",onClose:state.close})));
+ const input=node.querySelector('input[aria-label="New limit price"]')!;
+ await act(async()=>{Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"value")!.set!.call(input,"101.5");input.dispatchEvent(new Event("input",{bubbles:true}));});
+ await act(async()=>[...node.querySelectorAll("button")].find(b=>b.textContent==="Update order")!.click());
+ expect(state.modify).toHaveBeenCalledWith({oid:1,order:{a:0,b:false,p:"101.5",s:"2",r:false,t:{limit:{tif:"Alo"}}}});
+ expect(state.close).toHaveBeenCalledOnce();
+});
