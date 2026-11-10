@@ -352,8 +352,8 @@ function AutoTraderCard({ score, name }: { score: number; name: string }) {
 					Auto Trader target
 				</span>
 			</SectionTitle>
-			<div className="flex items-baseline gap-2">
-				<span className="text-xl font-semibold tabular-nums" style={{ color: w === 0 ? undefined : moodColor(score) }}>
+			<div className="flex items-baseline gap-1.5">
+				<span className="text-sm font-medium tabular-nums" style={{ color: w === 0 ? undefined : moodColor(score) }}>
 					{w === 0 ? "Flat" : `${w > 0 ? "Long" : "Short"} ${pct}%`}
 				</span>
 				<span className="text-xs text-fg-muted">
