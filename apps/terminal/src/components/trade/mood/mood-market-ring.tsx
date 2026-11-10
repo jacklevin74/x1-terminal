@@ -227,12 +227,17 @@ function ScoreBreakdown({ children }: { children: React.ReactNode }) {
 				type="button"
 				onClick={() => setOpen(!open)}
 				aria-expanded={open}
-				className="flex w-full items-center gap-2 rounded-12 p-4 text-left text-xs transition-colors hover:bg-fill-hover"
+				className="group flex w-full items-center gap-2 rounded-12 p-4 text-left text-xs"
 			>
 				<span className="flex-1 font-medium">How the score is built</span>
-				<span className="text-2xs text-fg-muted">Positions 60% · Flow 40%</span>
+				<span className="text-2xs text-fg-muted transition-colors group-hover:text-fg-secondary">
+					Positions 60% · Flow 40%
+				</span>
 				<CaretDownIcon
-					className={cn("size-3.5 text-fg-muted transition-transform duration-200", open && "rotate-180")}
+					className={cn(
+						"size-3.5 text-fg-muted transition-[transform,color] duration-200 group-hover:text-fg",
+						open && "rotate-180",
+					)}
 				/>
 			</button>
 			<div
