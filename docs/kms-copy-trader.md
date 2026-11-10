@@ -24,7 +24,7 @@ The code lives in `jacklevin74/hl-ws`, branch `claude/bb-ec2-planner` (commit `4
 
 ## Permissions (least privilege)
 
-The instance role's only permissions are:
+At the initial rollout, the instance role's direct KMS permissions were:
 - `kms:Sign` on this one key ARN, with the conditions `kms:SigningAlgorithm = ECDSA_SHA_256` and `kms:MessageType = DIGEST`;
 - `kms:GetPublicKey` and `kms:DescribeKey` on the same ARN.
 
@@ -93,3 +93,13 @@ To retire the KMS key:
 - **The key alias still says "shadow"** although the key is now used live. A dedicated `alias/copybot-live` would be clearer.
 - **No owner-facing management.** Owner-authenticated creation and registration through `/keys`, the backend in wxnt-sale-deploy PR #10, is not deployed. The localhost demo still only simulates approval and registration.
 - **Audit:** CloudTrail coverage of KMS `Sign` events in this account has not been checked yet.
+
+## Local key-management addition (2026-11-10)
+
+The instance profile now also permits `sts:AssumeRole` into the isolated
+`x1-ec2-key-registrar` role for the localhost `/api_keys` creation service.
+Its existing single-key Sign/GetPublicKey/DescribeKey policy is unchanged.
+The registrar role can create tagged secp256k1 keys and read their public keys;
+it explicitly denies Sign and Decrypt. This does not add new keys to the live
+Copy trader or change its signing path. See
+[`tools/ec2-key-registrar/README.md`](../tools/ec2-key-registrar/README.md).
