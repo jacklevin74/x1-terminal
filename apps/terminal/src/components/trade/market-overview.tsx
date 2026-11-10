@@ -167,7 +167,7 @@ export function MarketOverview() {
 					}
 				/>
 			)}
-			<MoodSlot slot="market" />
+			<MoodSlot />
 		</div>
 	);
 }
