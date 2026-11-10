@@ -1,3 +1,4 @@
+import { closeRemovedSettingsRequest, removedMarketsForSave } from "@/lib/auto-trader/removed-markets";
 import { ForecastPreview } from "./forecast-preview";
 import {useTradingAccount} from "@/hooks/use-trading-account";
 import {HelpTip} from "./help-tip";
@@ -57,8 +58,10 @@ function AutoTraderAccount({master}:{master:Address}){
  const targetAgent=selectedAgent||pendingAddress||status.data?.agent;
  const agentApproved=!agents.isError&&!!targetAgent&&!!agents.data?.some(row=>row.address.toLowerCase()===targetAgent.toLowerCase()&&row.validUntil>Date.now());
  const feeApproved=!fee.isError&&fee.data!==undefined&&fee.data>=50;
+ const removedForSave=status.data?.settings?removedMarketsForSave(status.data.settings,settings,markets):[];
+ const validationSettings={...settings,closeMarkets:[...new Set([...(settings.closeMarkets??[]),...removedForSave])]};
  const hasChanges=!!status.data?.settings&&JSON.stringify(normalize(settings))!==JSON.stringify(normalize(status.data.settings));
- let validationError:string|null=null;try{validateSettings(settings,markets);}catch(e){validationError=e instanceof Error?e.message:"Invalid settings.";}
+ let validationError:string|null=null;try{validateSettings(validationSettings,markets);if(settings.closeRemovedPositions&&!status.data?.capabilities?.closeRemovedPositions)throw Error("Close removed positions requires updated API and executor support.");}catch(e){validationError=e instanceof Error?e.message:"Invalid settings.";}
  function check(){if(!alive.current||identity.current.address?.toLowerCase()!==address?.toLowerCase()||identity.current.target?.toLowerCase()!==master.toLowerCase()||identity.current.env!=="Mainnet")throw new Error("Wallet or network changed. Reconnect the intended owner account.");if(!wallet)throw new Error("Unlock and connect your owner wallet to continue.");}
  async function run(job:()=>Promise<void>){if(locked.current)return;locked.current=true;setBusy(true);setError(null);setMessage(null);try{check();await job();}catch(e){if(alive.current)setError(e instanceof Error?e.message:"Auto Trader request failed. Refresh status before retrying.");}finally{locked.current=false;if(alive.current){setBusy(false);setProgress("");}}}
  async function refreshChecks(){
@@ -114,10 +117,15 @@ function AutoTraderAccount({master}:{master:Address}){
    const list=await refreshChecks(),current=await status.refetch();check();
    if(current.isError||!current.data?.registered||!current.data.hasKey||!list.some(row=>row.address.toLowerCase()===current.data?.agent?.toLowerCase()&&row.validUntil>Date.now()))throw new Error("A registered, approved Auto Trader API wallet with a stored key is required.");
   }
-  if(op==="settings")validateSettings(settings,markets);
-  setProgress(`Sign Auto Trader ${op}.`);await control.mutateAsync({action:op,body:op==="settings"?normalize(settings):{}});check();
+  if(op==="settings"){validateSettings(validationSettings,markets);if(settings.closeRemovedPositions&&!status.data?.capabilities?.closeRemovedPositions)throw Error("Close removed positions requires updated API and executor support.");}
+  setProgress(`Sign Auto Trader ${op}.`);await control.mutateAsync({action:op,body:op==="settings"?closeRemovedSettingsRequest(status.data?.settings??settings,normalize(settings),markets):{}});check();
   const updated=await status.refetch();check();
-  if(op==="settings"&&updated.data?.settings)setSettings(normalize(updated.data.settings));
+  if(op==="settings"&&(updated.isError||!updated.data?.settings))throw Error("Settings submitted, but their saved status could not be verified. Refresh before retrying.");
+  if(op==="settings"&&updated.data?.settings){
+   if(settings.closeRemovedPositions!==undefined&&updated.data.settings.closeRemovedPositions!==settings.closeRemovedPositions)throw Error("The backend did not confirm the close-removed setting. No closes are confirmed.");
+   if(removedForSave.some(c=>!updated.data!.settings!.closeMarkets?.includes(c)))throw Error("The backend did not confirm the removed-market close intents. Refresh status before retrying.");
+   setSettings(normalize(updated.data.settings));
+  }
   if(op==="remove"){if(pending.current)pending.current.key="0x";pending.current=null;setPendingAddress(null);}
   setMessage(op==="flatten"?"Close request accepted and queued. Positions remain open until the next executor cycle (normally within five minutes), then trading pauses. Check cycle orders and fills below.":op==="remove"?"Auto Trader registration and stored service key removed. Existing positions remain open.":op==="resume"?"Enabled. Check the next cycle for live or dry-run execution.":op==="pause"?"Paused. Existing positions remain open.":"Settings saved for the next cycle.");
  }
@@ -141,7 +149,7 @@ function AutoTraderAccount({master}:{master:Address}){
    <div className="block space-y-2 text-sm"><span>API wallet<HelpTip label="API wallet" /></span><select aria-label="Auto Trader API wallet" className="w-full rounded-lg border border-stroke-weak bg-background px-3 py-2" disabled={busy} value={selectedAgent} onChange={e=>{setSelectedAgent(e.target.value);setImportKey("");setError(null);}}><option value="">{status.data?.agent?`Registered wallet · ${status.data.agent}`:"Create a new API wallet"}</option>{agents.data?.map(row=><option key={row.address} value={row.address}>{(row.name??"").replace(/ valid_until \d+$/, "")||"Unnamed"} · {row.address}{row.validUntil<=Date.now()?" · Expired":""}</option>)}</select></div>
    <p className="rounded-lg border border-warning/30 bg-warning/5 p-3 text-xs leading-relaxed"><strong className="text-warning">Fund the selected trading account, not this API wallet.</strong> Auto Trader uses only the selected account’s Hyperliquid balance. API wallets only sign trades and need no separate funding; choosing a different API wallet does not create a separate balance.</p>
    {selectedAgent&&(!selectedMatches||!status.data?.hasKey)&&<div className="space-y-3"><p className="text-xs text-fg-muted">One Auto Trader registration is shown per selected trading account. Registering this wallet replaces the current registration and pauses execution. The settings below will be saved for this wallet.</p><label className="block text-xs">API private key (if unavailable on this device)<input aria-label="Selected API wallet private key" type="password" autoComplete="off" value={importKey} disabled={busy} onChange={e=>setImportKey(e.target.value)} className="mt-2 w-full rounded-lg border border-stroke-weak bg-background px-3 py-2" /></label><button type="button" className={autoButton} disabled={busy||!funded||!feeApproved||!configured||status.isError||!status.data||!!validationError} onClick={()=>void run(useExisting)}>Register selected API wallet</button></div>}
-   <SettingsCard markets={markets} value={settings} onChange={setSettings} disabled={busy||status.isLoading} />
+   <SettingsCard closeRemovedSupported={status.data?.capabilities?.closeRemovedPositions===true} markets={markets} value={settings} onChange={setSettings} disabled={busy||status.isLoading} />
    {!markets.length&&<p role="status" className="text-xs text-fg-muted">{signal.isError?"Market list unavailable. Refresh to retry.":"Loading markets from the signal API…"}</p>}
    {validationError&&<p role="alert" className="text-xs text-error">{validationError}</p>}
    <div className="flex flex-wrap gap-3">
@@ -152,6 +160,7 @@ function AutoTraderAccount({master}:{master:Address}){
     {hasChanges&&<button type="button" className="text-xs text-fg-muted" disabled={busy} onClick={()=>{if(status.data?.settings)setSettings(normalize(status.data.settings));}}><Trans>Reset to saved</Trans></button>}
    </div>
    {pendingAddress&&<p className="text-xs text-warning"><Trans>This setup key exists only in this page's memory. Register it before leaving. It is encrypted for the service; it is not saved to browser storage.</Trans></p>}
+   {!!removedForSave.length&&<p className="text-xs text-warning">Saving will schedule reduce-only closes for: {removedForSave.join(", ")}. Longs are sold; shorts are bought back. No other markets or spot balances are closed.</p>}
    {hasChanges&&<p className="text-xs text-warning"><Trans>Unsaved settings. Save before enabling. Changes to an active trader apply on its next cycle.</Trans></p>}
    <p className="text-xs text-fg-muted"><Trans>Creating the dedicated API wallet does not start trading. Register, review your saved settings, then explicitly enable. Renewal replaces the previous Auto Trader key and registration pauses execution.</Trans></p>
   </section>

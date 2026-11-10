@@ -4,12 +4,14 @@ import type { AutoTraderSettings } from "./types";
 export const EXECUTOR_MARKETS = ["BTC","ETH","SOL","HYPE","ZEC","NEAR","XRP","xyz:GOOGL","xyz:NVDA","xyz:BRENTOIL","xyz:GOLD","xyz:MU","xyz:INTC"] as const;
 export function validateSettings(settings:AutoTraderSettings, markets:readonly string[]){
  if(settings.flowPct!==undefined&&(!Number.isInteger(settings.flowPct)||settings.flowPct<0||settings.flowPct>40))throw new Error("Flow weight must be a whole number from 0 to 40%.");
+ if(settings.closeRemovedPositions!==undefined&&typeof settings.closeRemovedPositions!=="boolean")throw new Error("Close removed positions must be on or off.");
+ if(settings.closeMarkets!==undefined&&(!Array.isArray(settings.closeMarkets)||settings.closeMarkets.length>50||!settings.closeMarkets.every(validMarket)))throw new Error("Invalid pending market closes.");
  if(!Number.isInteger(settings.leverage)||settings.leverage<1||settings.leverage>5)throw new Error("Leverage must be an integer from 1 to 5.");
  if(!Number.isFinite(settings.killPct)||settings.killPct<=0||settings.killPct>0.5)throw new Error("Daily loss stop must be above 0% and at most 50%.");
  if(!Number.isFinite(settings.minOrderUsd)||settings.minOrderUsd<10)throw new Error("Minimum order must be at least $10.");
  for(const list of [settings.include,settings.exclude])if(list!==null&&(!Array.isArray(list)||list.some(m=>!validMarket(m))))throw new Error("Select valid Auto Trader market identifiers.");
  if(!markets.length)throw new Error("Market list unavailable. Refresh to retry.");
- if(!allowedMarkets(settings,markets).length)throw new Error("Select at least one market.");
+ if(!allowedMarkets(settings,markets).length&&!(settings.closeRemovedPositions&&settings.closeMarkets?.length))throw new Error("Select at least one market.");
  return settings;
 }
 const validMarket=(value:unknown):value is string=>typeof value==="string"&&/^(?:[a-zA-Z0-9_-]+:)?[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(value);
