@@ -141,3 +141,12 @@ it.each([{hasKey:false},{state:"active"},{owner:undefined},{agent:undefined}])("
 it("does not accept an explicit unregistered acknowledgement",async()=>{
  const fixture=registrationResponseFixture({registered:false});await expect(fixture.run()).rejects.toThrow("different registration account, owner or agent");expect(fixture.counts()).toEqual({posts:1,reads:0});
 });
+
+it("requests uncached status with a fresh URL while retaining cancellation",async()=>{
+ const {getStatus}=await import("@/lib/auto-trader/api");const account=privateKeyToAccount(generatePrivateKey()).address;
+ const fetcher=vi.fn(async()=>Response.json({registered:true,master:account}));const controller=new AbortController();
+ await getStatus(account,controller.signal,fetcher);
+ const [url,options]=fetcher.mock.calls[0] as unknown as [string,RequestInit];
+ expect(new URL(url).searchParams.has("_ts")).toBe(true);expect(new URL(url).searchParams.get("addr")).toBe(account);
+ expect(options.cache).toBe("no-store");expect(options.signal).toBe(controller.signal);
+});

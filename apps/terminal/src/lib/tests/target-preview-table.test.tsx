@@ -30,3 +30,16 @@ it("hides data when unavailable or older than fifteen minutes",async()=>{
  await act(async()=>root.render(<TargetPreviewTable {...props} snapshot={cycle}/>));expect(host.querySelector("table")).toBeNull();
  await act(async()=>root.render(<TargetPreviewTable {...props} snapshot={snapshot(123)} unavailable/>));expect(host.querySelector("table")).toBeNull();expect(host.textContent).toContain("No recent executor cycle");
 });
+
+it("does not replace a newer cycle with a late older response",async()=>{
+ const {host,root}=setup();const newer=snapshot(200),older=snapshot(100);older.cycleTs=newer.cycleTs-300000;
+ await act(async()=>root.render(<TargetPreviewTable {...props} snapshot={newer}/>));
+ await act(async()=>root.render(<TargetPreviewTable {...props} snapshot={older}/>));
+ expect(host.querySelector("table")?.textContent).toContain("$200.00");
+ expect(host.querySelectorAll("tbody td")[2].textContent).toBe("$200.00");
+});
+it("shows a successful API check separately from an old executor timestamp",async()=>{
+ const {host,root}=setup();const old=snapshot(123);old.cycleTs-=7*60*1000;
+ await act(async()=>root.render(<TargetPreviewTable {...props} snapshot={old} checkedAt={Date.now()}/>));
+ expect(host.textContent).toContain("API last checked:");expect(host.textContent).toContain("latest API cycle is 7 minutes old");expect(host.querySelector("table")).not.toBeNull();
+});

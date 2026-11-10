@@ -1,3 +1,5 @@
+import { browserChartTimezone } from "@/lib/chart/timezone";
+import { setChartResolution, useChartIntervalStore } from "@/stores/use-chart-interval-store";
 import { useChartMarksStore, toggleChartMarks, chartMarksLabel } from "@/stores/use-chart-marks-store";
 import { useTradingViewLines } from "./use-tradingview-lines";
 import { useExecutionFills } from "./use-execution-fills";
@@ -20,10 +22,8 @@ import {
 	CHART_LOCALE,
 	CHART_TIME_FRAMES,
 	CHART_WIDGET_DEFAULTS,
-	DEFAULT_CHART_INTERVAL,
 	DEFAULT_CHART_SYMBOL,
 	DEFAULT_CHART_THEME,
-	TIMEZONE,
 } from "./constants";
 import { createDatafeed } from "./datafeed";
 
@@ -38,7 +38,7 @@ interface Props {
 export function TradingViewChart({
  positionDex,
 	symbol = DEFAULT_CHART_SYMBOL,
-	interval = DEFAULT_CHART_INTERVAL,
+	interval,
 	theme = DEFAULT_CHART_THEME,
 	onSwitchToDefault,
 }: Props) {
@@ -60,6 +60,7 @@ export function TradingViewChart({
 	useEffect(() => {
 		if (!containerRef.current) return;
 		let disposed = false;
+  let stopIntervalTracking: (() => void) | undefined;
 		chartReadyRef.current = false;
 
 		const initWidget = async () => {
@@ -93,12 +94,12 @@ export function TradingViewChart({
 					library_path: CHART_LIBRARY_PATH,
 					datafeed: createDatafeed(() => fillsRef.current),
 					symbol: symbol,
-					interval: interval as ResolutionString,
+					interval: (interval ?? useChartIntervalStore.getState().resolution) as ResolutionString,
 					locale: CHART_LOCALE,
 					fullscreen: CHART_WIDGET_DEFAULTS.FULLSCREEN,
 					autosize: CHART_WIDGET_DEFAULTS.AUTOSIZE,
 					theme: theme,
-					timezone: TIMEZONE,
+					timezone: browserChartTimezone() as import("@/types/charting_library").Timezone,
 					debug: CHART_WIDGET_DEFAULTS.DEBUG,
 					custom_font_family: CHART_CUSTOM_FONT_FAMILY,
 					time_frames: CHART_TIME_FRAMES,
@@ -122,6 +123,10 @@ export function TradingViewChart({
 				widget.onChartReady(() => {
 					if (disposed || widgetRef.current !== widget) return;
 					chartReadyRef.current = true;
+     const chart = widget.activeChart();
+     const intervalChanged = (resolution: ResolutionString) => setChartResolution(resolution);
+     chart.onIntervalChanged().subscribe(null, intervalChanged);
+     stopIntervalTracking = () => chart.onIntervalChanged().unsubscribe(null, intervalChanged);
      widget.activeChart().clearMarks();
      widget.activeChart().refreshMarks();
      setReadyWidget({ widget, key: `${symbol}:${interval}:${theme}` });
@@ -172,6 +177,7 @@ export function TradingViewChart({
 
 		return () => {
 			disposed = true;
+   stopIntervalTracking?.();
    setReadyWidget(null);
 			if (widgetRef.current) {
 				widgetRef.current.remove();
