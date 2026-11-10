@@ -1,0 +1,78 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "kms:CreateKey"
+      ],
+      "Resource": [
+        "*"
+      ],
+      "Sid": "CreateTaggedSecp256k1KeysOnly",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-east-2",
+          "kms:KeySpec": "ECC_SECG_P256K1",
+          "kms:KeyUsage": "SIGN_VERIFY",
+          "aws:RequestTag/app": "x1-terminal",
+          "aws:RequestTag/purpose": "ec2-api-key",
+          "aws:RequestTag/env": "dev"
+        },
+        "Bool": {
+          "kms:MultiRegion": "false"
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "kms:GetPublicKey",
+        "kms:PutKeyPolicy"
+      ],
+      "Resource": [
+        "arn:aws:kms:us-east-2:938952892987:key/*"
+      ],
+      "Sid": "ManageOnlyCreatedRegistrarKeys",
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/app": "x1-terminal",
+          "aws:ResourceTag/purpose": "ec2-api-key",
+          "aws:ResourceTag/env": "dev",
+          "aws:RequestedRegion": "us-east-2"
+        }
+      }
+    },
+    {
+      "Sid": "TagOnlyRegistrarKeys",
+      "Effect": "Allow",
+      "Action": [
+        "kms:TagResource"
+      ],
+      "Resource": "arn:aws:kms:us-east-2:938952892987:key/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestTag/app": "x1-terminal",
+          "aws:RequestTag/purpose": "ec2-api-key",
+          "aws:RequestTag/env": "dev",
+          "aws:RequestedRegion": "us-east-2"
+        }
+      }
+    },
+    {
+      "Sid": "NeverSignDecryptOrDelete",
+      "Effect": "Deny",
+      "Action": [
+        "kms:Sign",
+        "kms:Decrypt",
+        "kms:Encrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*",
+        "kms:CreateGrant",
+        "kms:DisableKey",
+        "kms:ScheduleKeyDeletion"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

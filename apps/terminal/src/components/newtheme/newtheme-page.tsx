@@ -1,19 +1,11 @@
-import { useLayoutEffect, useId } from "react";
+import { useId } from "react";
 import { Link } from "@tanstack/react-router";
 import { TradeTerminalPage } from "@/components/trade/trade-terminal-page";
 import { TerminalBrandContext } from "@/components/trade/header/terminal-brand";
-import "./newtheme.css";
+import { useNewtheme } from "./use-newtheme";
 
 export function NewthemePage() {
- useLayoutEffect(() => {
-  const root = document.documentElement;
-  const previous = root.getAttribute("data-terminal-theme");
-  root.setAttribute("data-terminal-theme", "newtheme");
-  return () => {
-   if (previous === null) root.removeAttribute("data-terminal-theme");
-   else root.setAttribute("data-terminal-theme", previous);
-  };
- }, []);
+ useNewtheme();
  return <TerminalBrandContext value={<NewthemeBrand />}><TradeTerminalPage /></TerminalBrandContext>;
 }
 

@@ -1,3 +1,5 @@
+import { Ec2KmsKeys } from "./ec2-kms-keys";
+import { ApiKeysView } from "./api-keys-view";
 import {useTradingAccount} from "@/hooks/use-trading-account";
 import {SubaccountsSection} from "./subaccounts-section";
 import { CopyIcon, CheckIcon } from "@phosphor-icons/react";
@@ -19,7 +21,7 @@ const builderFee=DEFAULT_BUILDER_CONFIG?.f??50;
 const builderFeeRate=`${Number(builderFee)/1000}%`;
 const field="rounded-lg border border-stroke-weak bg-background px-3 py-2.5 text-sm text-fg outline-none focus:border-brand";
 const button="rounded-lg bg-brand px-4 py-2.5 text-sm font-medium text-fg-inverse disabled:opacity-40";
-export function ApiWalletsPage(){
+export function ApiWalletsPage({managementOnly=false}:{managementOnly?:boolean}){
  const {address:tradingAddress}=useTradingAccount();
  const {address,connector}=useConnection();const {data:wallet}=useWalletClient();const {env}=useHyperliquid();
  const ownerRef=useRef(address);ownerRef.current=address;const envRef=useRef(env);envRef.current=env;
@@ -76,22 +78,24 @@ export function ApiWalletsPage(){
     if(readAgentFromStorage(env,owner)?.publicKey.toLowerCase()===remove.address.toLowerCase())removeAgentFromStorage(env,owner);
     setPendingRemove(null);setRemoveFeedback(null);setMessage("API wallet removed.");
    }else{
-    if(!BUILDER_CONFIGURED)throw new Error("The terminal builder address is not configured.");
+    if(!managementOnly&&!BUILDER_CONFIGURED)throw new Error("The terminal builder address is not configured.");
     if(secret&&!saved)throw new Error("Save your generated API key before authorizing.");
     const publicKey=validateApiWalletAddress(agent.trim(),owner),agentName=apiWalletName(name,days);
     const current=await agents.refetch();check();if(!current.data)throw new Error("Could not check existing API wallets. Refresh and retry.");
     if(current.data.some(row=>apiWalletBaseName(row.name).toLowerCase()===apiWalletBaseName(agentName).toLowerCase()))throw new Error("That name is already authorized. Choose a new name or remove the old API wallet first.");
     if(current.data.some(row=>row.address.toLowerCase()===publicKey.toLowerCase()))throw new Error("That API wallet address is already authorized. Generate a new key for a new authorization.");
-    const fees=await fee.refetch();check();if(fees.data===undefined)throw new Error("Could not check fee approval. Refresh and retry.");
-    if(fees.data<Number(builderFee)){setMessage("Confirm the 0.05% builder fee in your wallet.");await approveFee.mutateAsync({builder:builderAddress,maxFeeRate:builderFeeRate});check();}
+    if(!managementOnly){const fees=await fee.refetch();check();if(fees.data===undefined)throw new Error("Could not check fee approval. Refresh and retry.");
+    if(fees.data<Number(builderFee)){setMessage("Confirm the 0.05% builder fee in your wallet.");await approveFee.mutateAsync({builder:builderAddress,maxFeeRate:builderFeeRate});check();}}
     setMessage("Confirm API wallet authorization in your wallet.");await approve.mutateAsync({agentAddress:publicKey,agentName});check();setMessage("API wallet authorized. Use its key with the local trading script.");
    }
    await agents.refetch();await fee.refetch();
   }catch(e){if(ownerRef.current===owner&&envRef.current===startEnv){setMessage(null);if(remove)setRemoveFeedback({address:remove.address,error:e instanceof Error?e.message:"Removal failed."});else setError(e instanceof Error?e.message:"Authorization failed.");}}
   finally{lock.current=false;setBusy(false);}
  }
+ const backup=secret&&<div className="mt-4 space-y-3 rounded-lg border border-stroke-weak bg-background p-3"><p className="text-xs text-warning">Save this trading key before leaving. Anyone with it can trade this account and cause losses. It cannot be recovered from the terminal.</p><div className="flex flex-wrap items-center gap-3"><input aria-label="Generated API private key" type="password" value={secret} readOnly autoComplete="off" className={`${field} min-w-0 flex-1 font-mono`} /><button type="button" className="text-sm text-brand" onClick={()=>setExportTarget(agent as Address)}>Export private key</button><button type="button" className={button} onClick={download}>Save .env.agent</button></div></div>;
+ if(managementOnly)return <><ApiKeysView owner={address} network={env} agents={agents.data} loading={agents.isLoading} failed={agents.isError} name={name} agent={agent} days={days} busy={busy} canAuthorize={!busy&&!!address&&!!agent&&(!secret||saved)} onName={setName} onAgent={value=>{setAgent(value);setSecret(null);setSaved(false);}} onDays={setDays} onGenerate={generate} onAuthorize={()=>void authorize()} onRefresh={()=>void agents.refetch()} onRemove={row=>void authorize({name:row.name,address:row.address})} onRequestRemove={value=>{setPendingRemove(value);setRemoveFeedback(null);}} pendingRemove={pendingRemove} feedback={removeFeedback} error={error} message={message} backup={backup} remoteKeys={<Ec2KmsKeys key={`${address}:${env}`} onAuthorized={()=>void agents.refetch()} />}/>{exportTarget&&address&&<ApiKeyExport key={`${address}:${env}:${exportTarget}`} owner={address} agent={exportTarget} network={env} resolveKey={()=>localKey(exportTarget)} onClose={()=>setExportTarget(null)} onSaved={()=>{if(exportTarget.toLowerCase()===agent.toLowerCase())setSaved(true);}} />}</>;
  return <main className="min-h-dvh bg-background p-4 text-fg sm:p-8"><div className="mx-auto max-w-7xl space-y-5">
-  <header className="flex items-center justify-between gap-4"><a href="/" className="text-sm text-brand">← X1 Terminal</a><UserMenu /></header>
+  <header className="flex items-center justify-between gap-4"><a href="/" className="text-sm text-brand">← X1 Terminal</a><div className="flex items-center gap-4"><a href="/api_keys" className="text-sm text-brand">Manage API keys ↗</a><UserMenu /></div></header>
   <div><h1 className="text-3xl font-semibold">API</h1><p className="mt-3 max-w-4xl text-sm text-fg-muted">API wallets can trade on behalf of your account without withdrawal permissions. Use your account address for balance, position and order queries.</p><p className="mt-2 break-all font-mono text-xs text-fg-muted">{env} · Account: {address??"Connect your wallet"}</p></div>
   <section id="builder-fee-approval" aria-label="Builder fee approval" className="rounded-xl border border-stroke-weak bg-surface p-4">
    <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-sm font-semibold">X1 trading fee · {builderFeeRate}</h2><p className="mt-1 text-xs text-fg-muted">{connector?.id==="x1"?"Approve with your X1-derived Hyperliquid account.":"Approve with the account owner's wallet."} This is separate from API wallet authorization.</p></div><span role="status" className="text-sm text-brand">{!address?"Wallet not connected":fee.isError?"Status unavailable":fee.data===undefined?"Checking approval…":fee.data>=Number(builderFee)?"Fee approved":"Fee approval required"}</span></div>
@@ -105,7 +109,7 @@ export function ApiWalletsPage(){
     <label className="flex flex-col gap-1 text-xs text-fg-muted">Expires in<select aria-label="API wallet expiry" value={days} disabled={busy} onChange={e=>setDays(Number(e.target.value))} className={field}>{[7,30,90,180].map(value=><option key={value} value={value}>{value} days</option>)}</select></label>
     <div className="flex items-end gap-2"><button type="button" disabled={busy||!address} onClick={generate} className="px-3 py-2.5 text-sm text-brand disabled:opacity-40">Generate</button><button type="button" className={button} disabled={busy||!address||!agent||!BUILDER_CONFIGURED||!!secret&&!saved} onClick={()=>void authorize()}>{busy?"Confirm in wallet…":"Authorize API Wallet"}</button></div>
    </div>
-   {secret&&<div className="mt-4 space-y-3 rounded-lg border border-stroke-weak bg-background p-3"><p className="text-xs text-warning">Save this trading key before leaving. Anyone with it can trade this account and cause losses. It cannot be recovered from the terminal.</p><div className="flex flex-wrap items-center gap-3"><input aria-label="Generated API private key" type="password" value={secret} readOnly autoComplete="off" className={`${field} min-w-0 flex-1 font-mono`} /><button type="button" className="text-sm text-brand" onClick={()=>setExportTarget(agent as Address)}>Export private key</button><button type="button" className={button} onClick={download}>Save .env.agent</button></div></div>}
+   {backup}
    <p className="mt-3 rounded-lg border border-warning/30 bg-warning/5 p-3 text-xs leading-relaxed"><strong className="text-warning">Do not send funds to API wallet addresses.</strong> Fund the intended Hyperliquid trading account instead. API wallets only sign trades using the selected main account or subaccount’s balance; the signing key needs no separate deposit.</p>
    <p className="mt-3 text-xs text-fg-muted">Orders sent through the X1 script include a 0.05% builder fee, in addition to exchange fees. Authorization requires your connected wallet.</p>
    {error&&<p role="alert" className="mt-3 text-sm text-error">{error}</p>}{message&&<p role="status" className="mt-3 text-sm text-brand">{message}</p>}
