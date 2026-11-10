@@ -6,8 +6,9 @@ export interface Forecast {equity:number;k:number;capScale:number;gross:number;r
 export function forecastTargets(input:{settings:AutoTraderSettings;signal:Signal;universe:string[];equity:number;positions:Record<string,number|undefined>;mids:Record<string,string>;decimals:Record<string,number>;dayStart?:number|null}):Forecast {
  const {settings,signal,equity,positions,mids,decimals}=input;
  const selected=[...new Set(input.universe)].filter(coin=>(!settings.include||settings.include.includes(coin)||settings.include.includes(coin.split(":").at(-1)!))&&!(settings.exclude??[]).some(ex=>ex===coin||ex===coin.split(":").at(-1)));
- if(!selected.length||!Number.isFinite(equity)||equity<15)throw Error("Forecast requires selected markets and at least $15 in verified equity.");
- const per=equity*Math.min(5,Math.max(1,settings.leverage||1))/selected.length;
+ const removed=settings.closeRemovedPositions===true?[...new Set(settings.closeMarkets??[])].filter(c=>!selected.includes(c)):[];
+ if((!selected.length&&!removed.length)||!Number.isFinite(equity)||equity<15)throw Error("Forecast requires selected markets and at least $15 in verified equity.");
+ const per=selected.length?equity*Math.min(5,Math.max(1,settings.leverage||1))/selected.length:0;
  const coins=new Map(signal.coins.map(coin=>[coin.coin,coin]));
  const plans=selected.map(market=>{
   const coin=coins.get(market),score=coin?forecastScore(coin,settings.flowPct):null;
@@ -43,6 +44,13 @@ export function forecastTargets(input:{settings:AutoTraderSettings;signal:Signal
   }
   return {market:p.market,score:p.score,targetUsd:p.target,currentUsd:p.currentUsd,gapUsd:p.target-p.currentUsd,action:actions.join(" / ")||"NONE",reason:reasons.join(" ")||"Rebalance toward the signal target; live executor guards still apply."};
  });
+ for(const market of removed){
+  const current=positions[market]??0,mid=Number(mids[market]);
+  if(!current){rows.push({market,score:null,targetUsd:0,currentUsd:0,gapUsd:0,action:"Stay flat (removed)",reason:"Removed-market position is flat. Its close intent remains until the market is reselected or this option is turned off and saved."});continue;}
+  if(!Number.isFinite(current)||!Number.isFinite(mid)||mid<=0||!Number.isInteger(decimals[market])){rows.push({market,score:null,targetUsd:null,currentUsd:null,gapUsd:null,action:"UNAVAILABLE",reason:"Removed-market close waiting for valid position data and market metadata."});continue;}
+  const currentUsd=current*mid,size=Number(Math.abs(current).toFixed(decimals[market]));
+  rows.push({market,score:null,targetUsd:0,currentUsd,gapUsd:-currentUsd,action:size?"CLOSE":"skip CLOSE $0.00",reason:"Explicitly removed market: close the remaining perpetual position reduce-only on an eligible active cycle. No new exposure; full-close minimum exemption applies."});
+ }
  return {equity,k,capScale,gross:plans.filter(p=>p.valid).reduce((sum,p)=>sum+Math.abs(p.target),0),rows,killed};
 }
 // Mirrors hl-ws PR #28 followerScore; unavailable legs retain the API score.

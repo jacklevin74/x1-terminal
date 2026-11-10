@@ -28,7 +28,7 @@ export function ForecastPreview({ account, settings, status, signal, signalError
   scoreHistory.current={account,previous:scoreHistory.current.latest,latest:scores};
  }
  const known=status?.plan?.rows?.map(row=>row.coin).filter(Boolean);
- const universe=known?.length?known:[...EXECUTOR_MARKETS];
+ const universe=[...new Set([...(known?.length?known:[...EXECUTOR_MARKETS]),...(settings.closeMarkets??[])])];
  const configuredMissing=(settings.include??[]).filter(coin=>!universe.some(m=>m===coin||m.split(":").at(-1)===coin));
  const main=state.clearinghouseStates.find(([dex])=>dex==="")?.[1],xyz=state.clearinghouseStates.find(([dex])=>dex==="xyz")?.[1];
  const equity=accountEquity(state.accountAbstraction??undefined,main,xyz,{balances:state.spotBalances});
@@ -39,6 +39,7 @@ export function ForecastPreview({ account, settings, status, signal, signalError
  const dayStart=cycleTs&&new Date(cycleTs).toISOString().slice(0,10)===new Date(now).toISOString().slice(0,10)?status?.plan?.dayStart:null;
  let forecast:Forecast|null=null,error:string|null=null;
  try {
+  if(settings.closeRemovedPositions&&!status?.capabilities?.closeRemovedPositions)throw Error("Removed-market closes require updated API and executor support.");
   if(state.isLoading||state.hasError||equity===null)throw Error("Waiting for live account equity and positions.");
   if(!signal||signalError||!signal.timestamp||now-signal.timestamp>600000||signal.timestamp>now+60000||!signal.coins.some(c=>c.score!==null))throw Error("Waiting for a fresh usable signal; no forecast is shown from stale scores.");
   if(!midEvent.data||midEvent.status==="error"||!quoteAt||now-quoteAt>30000)throw Error("Waiting for live market midpoints.");
