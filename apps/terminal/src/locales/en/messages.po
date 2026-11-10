@@ -3622,3 +3622,19 @@ msgstr "Your transaction is being processed"
 #: src/components/trade/components/mobile-agent-sync-modal.tsx:280
 msgid "Your wallet approves one trading key for this phone. It cannot withdraw funds."
 msgstr "Your wallet approves one trading key for this phone. It cannot withdraw funds."
+
+#: src/components/trade/tradebox/trade-form-fields.tsx:128
+msgid "Current position available to close on this side; no additional opening margin is required."
+msgstr "Current position available to close on this side; no additional opening margin is required."
+
+#: src/lib/errors/stacks/perp-order.ts:69
+msgid "Exceeds held position size"
+msgstr "Exceeds held position size"
+
+#: src/lib/errors/stacks/perp-order.ts:69
+msgid "No position to reduce on this side"
+msgstr "No position to reduce on this side"
+
+#: src/components/trade/tradebox/trade-form-fields.tsx:129
+msgid "Reducible"
+msgstr "Reducible"
