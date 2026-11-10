@@ -1,6 +1,7 @@
 import { cn } from "@/lib/cn";
 import { moodColor, moodLabel, moodTile, signedScore } from "@/lib/mood/signal";
 import type { MoodGauge } from "@/stores/use-mood-variant-store";
+import { MoodGlow } from "./mood-glow";
 import { moodVars } from "./mood-parts";
 
 interface Props {
@@ -41,15 +42,6 @@ export function MoodHeroGauge({ style, score, name }: Props) {
 	return <ArcHero score={score} name={name} />;
 }
 
-function Glow({ score, className }: { score: number; className?: string }) {
-	return (
-		<span
-			className={cn("pointer-events-none absolute rounded-full transition-colors duration-500", className)}
-			style={{ background: moodColor(score), filter: "blur(48px)", opacity: 0.18 + Math.abs(score) / 400 }}
-		/>
-	);
-}
-
 function Readout({ score, name, className }: { score: number; name: string; className?: string }) {
 	return (
 		<div className={cn("flex flex-col items-center", className)}>
@@ -73,11 +65,12 @@ function ArcHero({ score, name }: { score: number; name: string }) {
 	const sweep = (120 * Math.PI) / 180;
 	const a = (clamp(score) / 100) * sweep;
 	const knob = point(c, r, a);
+	const source = point(c, r * 0.4, a / 2);
 	return (
 		<>
-			<Glow score={score} className="top-6 left-1/2 size-32 -translate-x-1/2" />
 			<div className="relative mx-auto w-[172px]">
-				<svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true" className="block">
+				<MoodGlow score={score} size={140} style={{ left: source.x, top: source.y }} />
+				<svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true" className="relative block">
 					<path
 						d={arc(c, r, -sweep, sweep)}
 						fill="none"
@@ -118,10 +111,7 @@ function ArcHero({ score, name }: { score: number; name: string }) {
 function RingHero({ score, name }: { score: number; name: string }) {
 	return (
 		<div className="relative mx-auto grid size-[176px] place-items-center" style={moodVars(score)}>
-			<span
-				className="mood-breathe absolute inset-4 rounded-full"
-				style={{ background: "var(--mood)", filter: "blur(28px)", opacity: 0.2 + Math.abs(score) / 300 }}
-			/>
+			<MoodGlow score={score} size={150} className="top-1/2 left-1/2" />
 			<span
 				className="mood-ring-spin absolute inset-0"
 				style={{
@@ -139,7 +129,6 @@ function SpectrumHero({ score, name }: { score: number; name: string }) {
 	const pos = (clamp(score) + 100) / 2;
 	return (
 		<>
-			<Glow score={score} className="-top-10 -left-10 size-40" />
 			<div className="relative">
 				<div className="flex items-end justify-between">
 					<div>
@@ -154,7 +143,13 @@ function SpectrumHero({ score, name }: { score: number; name: string }) {
 					</span>
 				</div>
 				<div className="relative mt-5">
-					<div className="flex h-3 gap-1">
+					<MoodGlow
+						score={score}
+						size={150}
+						className="top-0 transition-[left] duration-500"
+						style={{ left: `${Math.max(28, Math.min(72, pos))}%` }}
+					/>
+					<div className="relative flex h-3 gap-1">
 						{ZONES.map((z, i) => (
 							<span
 								key={z.from}
@@ -193,11 +188,12 @@ function DialHero({ score, name }: { score: number; name: string }) {
 	const angle = (s: number) => (s / 100) * (Math.PI / 2);
 	const active = zoneOf(score);
 	const tip = point(c, r - stroke - 6, angle(clamp(score)));
+	const source = point(c, r * 0.55, angle(clamp(score)));
 	return (
 		<>
-			<Glow score={score} className="top-4 left-1/2 size-36 -translate-x-1/2" />
 			<div className="relative mx-auto w-[220px]">
-				<svg width={W} height={c + 10} viewBox={`0 0 ${W} ${c + 10}`} aria-hidden="true" className="block">
+				<MoodGlow score={score} size={150} style={{ left: source.x, top: source.y }} />
+				<svg width={W} height={c + 10} viewBox={`0 0 ${W} ${c + 10}`} aria-hidden="true" className="relative block">
 					{ZONES.map((z, i) => (
 						<path
 							key={z.from}

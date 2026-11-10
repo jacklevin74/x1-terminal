@@ -16,8 +16,8 @@ import {
 	signedScore,
 	targetWeight,
 } from "@/lib/mood/signal";
-import { useMoodBack, useMoodGauge } from "@/stores/use-mood-variant-store";
-import { MoodBackNav } from "./mood-back-nav";
+import { useMoodGauge } from "@/stores/use-mood-variant-store";
+import { MoodBackPill, MoodMarketStepper } from "./mood-back-nav";
 import { MoodDrawerOptions } from "./mood-drawer-options";
 import { MoodHeroGauge } from "./mood-hero-gauge";
 import { ScoreArc } from "./mood-parts";
@@ -39,7 +39,6 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 	const shownName = shown ? coinName(shown.coin) : coinName(marketName);
 	const shownScore = focus ? (shown?.score ?? 0) : s;
 	const updated = new Date(signal.now).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-	const back = useMoodBack();
 	const order = [...signal.coins].sort((a, b) => b.score - a.score);
 	const index = order.findIndex((c) => c.coin === focus);
 	function backToAll() {
@@ -50,18 +49,7 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 		const next = order[index + dir];
 		if (next) setFocus(next.coin);
 	}
-	const backNav =
-		focus && tab === "market" ? (
-			<MoodBackNav
-				style={back}
-				name={shownName}
-				score={shownScore}
-				index={index}
-				total={order.length}
-				onBack={backToAll}
-				onStep={step}
-			/>
-		) : null;
+	const focused = focus !== null && tab === "market";
 	return (
 		<Drawer side="right" onOpenChange={(open) => !open && setFocus(null)}>
 			<DrawerTrigger className="flex shrink-0 items-center gap-2.5 rounded-8 px-2 py-1 transition-colors hover:bg-fill-hover">
@@ -76,8 +64,8 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 			<DrawerContent className="w-[420px]">
 				<div className="flex h-14 flex-none items-center gap-3 px-4">
 					<div className="min-w-0 flex-1">
-						{backNav && back === 1 ? (
-							backNav
+						{focused ? (
+							<MoodBackPill onBack={backToAll} />
 						) : (
 							<>
 								<div className="text-sm font-medium">Mood Ring</div>
@@ -85,14 +73,18 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 							</>
 						)}
 					</div>
-					<div className="flex rounded-8 bg-control p-0.5">
-						<SegButton active={tab === "market"} onClick={() => setTab("market")}>
-							{shownName}
-						</SegButton>
-						<SegButton active={tab === "all"} onClick={() => setTab("all")}>
-							All markets
-						</SegButton>
-					</div>
+					{focused ? (
+						<MoodMarketStepper index={index} total={order.length} onStep={step} />
+					) : (
+						<div className="flex rounded-8 bg-control p-0.5">
+							<SegButton active={tab === "market"} onClick={() => setTab("market")}>
+								{coinName(marketName)}
+							</SegButton>
+							<SegButton active={tab === "all"} onClick={() => setTab("all")}>
+								All markets
+							</SegButton>
+						</div>
+					)}
 					<DrawerClose
 						className="grid size-8 place-items-center rounded-8 text-fg-muted transition-colors hover:bg-fill-hover hover:text-fg"
 						aria-label="Close"
@@ -102,13 +94,7 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 				</div>
 				<div className="flex-1 overflow-y-auto px-4 pb-4">
 					{tab === "market" ? (
-						<MarketTab
-							coin={shown}
-							name={shownName}
-							score={shownScore}
-							topNav={back === 2 || back === 3 ? backNav : null}
-							heroNav={back === 4 ? backNav : null}
-						/>
+						<MarketTab coin={shown} name={shownName} score={shownScore} />
 					) : (
 						<AllTab
 							signal={signal}
@@ -141,19 +127,7 @@ function SegButton({ active, onClick, children }: { active: boolean; onClick: ()
 	);
 }
 
-function MarketTab({
-	coin,
-	name,
-	score,
-	topNav,
-	heroNav,
-}: {
-	coin: MoodCoin | undefined;
-	name: string;
-	score: number;
-	topNav: React.ReactNode;
-	heroNav: React.ReactNode;
-}) {
+function MarketTab({ coin, name, score }: { coin: MoodCoin | undefined; name: string; score: number }) {
 	const gauge = useMoodGauge();
 	if (!coin) {
 		return (
@@ -170,10 +144,7 @@ function MarketTab({
 	const holders = coin.tradersLong + coin.tradersShort;
 	return (
 		<div className="space-y-3">
-			{topNav}
-
 			<section className="relative overflow-hidden rounded-12 bg-surface px-5 pt-5 pb-4">
-				{heroNav}
 				<MoodHeroGauge style={gauge} score={score} name={name} />
 				<div className="relative mt-3 flex items-center justify-center gap-2 text-xs">
 					<span className="text-fg-muted">
@@ -421,10 +392,6 @@ function AllTab({
 	return (
 		<div className="space-y-3">
 			<section className="relative overflow-hidden rounded-12 bg-surface p-4">
-				<span
-					className="pointer-events-none absolute -top-6 -left-6 size-28 rounded-full"
-					style={{ background: moodColor(overall.score), filter: "blur(44px)", opacity: 0.3 }}
-				/>
 				<div className="relative flex items-center gap-4">
 					<div className="relative">
 						<ScoreArc value={overall.score} size={64} stroke={6} />

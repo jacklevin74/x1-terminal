@@ -655,3 +655,11 @@ html[data-input="pointer"] :focus-visible:not(input, textarea, [contenteditable=
 @media (prefers-reduced-motion: reduce) {
   .mood-ring-spin, .mood-breathe, .mood-spin-slow, .mood-stone > span { animation: none; }
 }
+:root {
+  --mood-bear-rim: oklch(0.36 0.14 355);
+  --mood-bear-mid: oklch(0.62 0.2 22);
+  --mood-bear-core: oklch(0.9 0.06 35);
+  --mood-bull-rim: oklch(0.36 0.08 205);
+  --mood-bull-mid: oklch(0.72 0.15 165);
+  --mood-bull-core: oklch(0.95 0.06 170);
+}
