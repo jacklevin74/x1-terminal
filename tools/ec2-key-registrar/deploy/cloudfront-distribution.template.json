@@ -1,0 +1,47 @@
+{
+  "CallerReference": "CALLER_REFERENCE",
+  "Comment": "x1-ec2-keys: HTTPS front for the X1 EC2 KMS key service (Vercel proxy only)",
+  "Enabled": true,
+  "PriceClass": "PriceClass_100",
+  "HttpVersion": "http2and3",
+  "IsIPV6Enabled": true,
+  "DefaultRootObject": "",
+  "Origins": {
+    "Quantity": 1,
+    "Items": [
+      {
+        "Id": "x1-ec2-keys-origin",
+        "DomainName": "ORIGIN_DOMAIN",
+        "OriginPath": "",
+        "CustomHeaders": {
+          "Quantity": 1,
+          "Items": [{ "HeaderName": "X-Origin-Verify", "HeaderValue": "ORIGIN_VERIFY_VALUE" }]
+        },
+        "CustomOriginConfig": {
+          "HTTPPort": 80,
+          "HTTPSPort": 443,
+          "OriginProtocolPolicy": "http-only",
+          "OriginSslProtocols": { "Quantity": 1, "Items": ["TLSv1.2"] },
+          "OriginReadTimeout": 30,
+          "OriginKeepaliveTimeout": 5
+        },
+        "ConnectionAttempts": 3,
+        "ConnectionTimeout": 10
+      }
+    ]
+  },
+  "DefaultCacheBehavior": {
+    "TargetOriginId": "x1-ec2-keys-origin",
+    "ViewerProtocolPolicy": "https-only",
+    "AllowedMethods": {
+      "Quantity": 7,
+      "Items": ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"],
+      "CachedMethods": { "Quantity": 2, "Items": ["GET", "HEAD"] }
+    },
+    "Compress": false,
+    "CachePolicyId": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
+    "OriginRequestPolicyId": "ORIGIN_REQUEST_POLICY_ID"
+  },
+  "ViewerCertificate": { "CloudFrontDefaultCertificate": true, "MinimumProtocolVersion": "TLSv1" },
+  "Restrictions": { "GeoRestriction": { "RestrictionType": "none", "Quantity": 0 } }
+}

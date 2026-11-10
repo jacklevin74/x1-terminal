@@ -1,116 +1,135 @@
-# EC2 KMS key creation for `/api_keys`
+# EC2 KMS keys for `/api_keys`
 
-The terminal's compact key-management page can create a real, non-exportable
-`ECC_SECG_P256K1` / `SIGN_VERIFY` AWS KMS key through an isolated EC2 service in
-`us-east-2`. It then offers a separate owner-wallet Hyperliquid authorization.
+`/api_keys` lets a connected owner wallet create and manage non-exportable
+`ECC_SECG_P256K1` / `SIGN_VERIFY` AWS KMS keys through a service on EC2 (`us-east-2`).
+The service never signs, approves on Hyperliquid, registers bots or trades
+(`capabilities: {sign:false, register:false}`). Hyperliquid approval stays in the
+browser, through `approveAgent` signed by the owner.
 
-This service **creates keys only**. It has no signing, exchange, bot registration,
-or execution route. Its AWS role explicitly denies Sign, Decrypt, CreateGrant
-and key deletion. Creating or authorizing a key does not start a bot. Existing
-executors and their key handling are unchanged. The public Vercel KMS handler
-continues to report disabled; this localhost connection does not turn it on.
+## Architecture
 
-## Installed connection
-
-- EC2 instance: `i-0aa2a040d308a7e9d`, selected Region `us-east-2`.
-- Dedicated OS user / unit: `x1-ec2-keys`, `x1-ec2-keys.service`.
-- Code: `/opt/x1-ec2-keys`; durable SQLite metadata:
-  `/var/lib/x1-ec2-keys/keys.sqlite` (service-owned, mode restricted by UMask 0077).
-- Service binds **only** `127.0.0.1:8790` on EC2. No security-group ingress added.
-- Workstation tunnel: `127.0.0.1:18790` forwards to that EC2 loopback port.
-- Vite dev/preview proxies `/api/ec2-keys` through this tunnel. AWS SDKs,
-  credentials, and key ARNs are never part of the browser interface.
-- Only localhost origins on port 4173 are accepted for mutations. No CORS grant.
-
-If the tunnel disconnects, run from the terminal repository:
-
-```sh
-tools/ec2-key-registrar/scripts/tunnel.sh
+```
+Browser (/api_keys) ── same-origin /api/ec2-keys?op=…&owner=… ──▶ Vercel function api/ec2-keys.js
+  (no AWS access; HMAC-signs each request) ── HTTPS ──▶ CloudFront <id>.cloudfront.net (caching disabled)
+  ── HTTP :80 + X-Origin-Verify ──▶ Caddy on EC2 (port 80 open only to the CloudFront origin-facing prefix list)
+  ──▶ x1-ec2-keys on 127.0.0.1:8790 ──▶ AWS KMS (assumed registrar or lifecycle role, temporary credentials)
 ```
 
-Then open `http://127.0.0.1:4173/api_keys` and click **Refresh KMS**.
-The foreground tunnel can be stopped with Ctrl-C. For an existing background
-SSH tunnel, identify its PID by its local listening port before stopping it.
+- CloudFront: viewer HTTPS only (default `*.cloudfront.net` certificate), PriceClass_100,
+  managed `CachingDisabled` cache policy, origin request policy `x1-ec2-keys-origin` that forwards
+  all query strings and only `content-type`, `x-auth`, `x-proxy-ts`, `x-proxy-auth`, `origin`.
+  It adds the custom origin header `X-Origin-Verify: v1:<secret>`; Caddy answers 403 without it and
+  strips it before proxying. The secret lives in `/etc/caddy/origin-verify.env` (0600); Caddy runs
+  without `--environ` and with its admin API off so the value never reaches logs or a local endpoint.
+- Origin hop CloudFront → EC2 is plain HTTP. Its contents are protected by the proxy HMAC (replay-checked)
+  and owner signatures (single-use nonces); the origin-verify value is visible on that hop, which is why
+  the security group still admits only CloudFront.
+- `X-Forwarded-For` arrives as `browser, vercel-egress, cloudfront-edge`. With `X1_TRUSTED_HOPS=1` the
+  service keys unauthenticated limits on `vercel-egress` (what CloudFront saw) and, after the HMAC
+  verifies, per-client limits on `browser` (set by the Vercel proxy).
+- Optional: AWS WAF on the distribution (rate-based rule, ~$5/month + $1/rule + per-request) is not needed
+  for this traffic level because unauthenticated requests stop at Caddy or the HMAC check.
+- Later custom domain: request an ACM certificate in **us-east-1** for e.g. `keys-api.<domain>`, add it
+  as an Alternate domain (CNAME) on the distribution with `sni-only`, create a CNAME/alias record to the
+  `*.cloudfront.net` name, then change `EC2_KEYS_URL`. Nothing changes on EC2.
 
-## Owner workflow
+No SSH tunnel is in the request path. Local `vite dev` proxies `/api/ec2-keys` to the
+deployed Vercel function (`EC2_KEYS_DEV_TARGET` overrides the target); the function
+refuses a cross-origin POST, so local dev can read status but not change keys.
 
-1. Connect the intended owner wallet. Mainnet is required by this UI.
-2. Enter a key name and 7/30/90-day approval duration. Click **Create KMS key**.
-3. Confirm the `X1Ec2KeyCreation/1` EIP-712 consent in the owner wallet. This
-   creates a billable KMS key; no private key download is possible or needed.
-4. Click **Authorize on Hyperliquid** and confirm a separate `approveAgent`.
-   The unique HL name is `X1K` plus 12 address characters, avoiding replacement
-   of an unrelated named API wallet. The UI verifies the owner’s `extraAgents`.
-5. The authorized address appears in the normal API-wallet table. **Remove**
-   there revokes Hyperliquid access; it does not delete the billable KMS key.
+### Proxy authentication
 
-Trading execution still needs a separately configured signer and registration.
-This service cannot be used with a local private-key import.
+`X-Proxy-Auth = hex(HMAC-SHA256(secret, method + "\n" + pathAndQuery + "\n" + ts + "\n" + hex(sha256(body))))`,
+with `X-Proxy-Ts = ts` (ms). The service checks it with a constant-time compare, allows
+±60 s of skew, and refuses a repeated `(ts, mac)` for 120 s. Anything else gets 401,
+including `/health`.
 
-## AWS identity and policy
+There are two secrets. Vercel **Production** holds `proxy.secret`, Vercel **Preview** holds
+`proxy-preview.secret`. The secret that verifies decides the tier:
 
-The instance keeps its existing `copybot-kms-shadow-signer` profile. Its existing
-single-key Sign policy is not modified. One additional inline policy permits
-AssumeRole into `x1-ec2-key-registrar`; the registrar assumes that role using
-IMDSv2 temporary credentials. No static AWS credentials are installed.
+| Tier | Accepted `Origin` | Operations |
+|---|---|---|
+| production | `https://x1-terminal-20261029.vercel.app` (+ `X1_EXTRA_ORIGINS`) | all |
+| preview | `https://x1-terminal-20261029-*-jacklevin74s-projects.vercel.app` | `status` only, unless `X1_PREVIEW_MUTATIONS=1` |
 
-The registrar’s baseline policy was generated with IAM Policy Autopilot from
-`src/kms.js`, then scoped to Region, key spec, usage and required tags. The checked
-policy artifacts are in `deploy/`. AWS requires the creator to retain PutKeyPolicy
-permission for the key-lockout safety check; this is restricted to the registrar’s
-own tagged keys. The HTTP service exposes no policy-management route. Sign,
-decryption, grants and deletion remain explicitly denied.
+`http://localhost:4173` is accepted only when `NODE_ENV` is not `production`.
+Rate limits: 30 requests/min per client, 120 failed-auth requests/min per peer,
+5 creates/hour and 30 changes/hour per owner, plus the 3-active-keys-per-owner quota.
 
-```sh
-uvx iam-policy-autopilot@latest generate-policies \
- "$PWD/tools/ec2-key-registrar/src/kms.js" \
- --region us-east-2 --account 938952892987 --service-hints kms sts --pretty
-```
+### Operations
 
-Identity policies simulate tagged CreateKey as allowed, untagged CreateKey as
-denied, and Sign/Decrypt/ScheduleKeyDeletion as explicitly denied. No real KMS
-key is created by installation or by the mocked unit tests.
+| op | Method | Effect |
+|---|---|---|
+| `status` | GET | Public metadata: `awaiting_approval`, `disabled`, `pending_deletion` (+`deletionDate`). The page shows "Authorized on Hyperliquid" from Hyperliquid's own `extraAgents`. |
+| `nonce` | GET | Single-use, 5-minute nonce. |
+| `create` | POST | `{owner,name,days}`. Idempotent: the same owner, nonce and body returns the original result; an uncertain `CreateKey` is never retried. A definite AWS refusal (e.g. validation) frees the owner to try again. |
+| `rename` | POST | `{id,name,owner}`. Display name only. |
+| `disable` / `enable` | POST | `{id,owner}` → `DisableKey` / `EnableKey`. |
+| `delete` | POST | `{id,owner[,days]}` → `ScheduleKeyDeletion` (default 30, 7–30). The page tells the owner to also remove the Hyperliquid API wallet. |
+| `cancel-delete` | POST | `{id,owner}` → `CancelKeyDeletion`. KMS leaves the key disabled. |
 
-## Persistence, retries and recovery
+Every POST carries the `X1Ec2KeyCreation/1` EIP-712 envelope with `action` = op name,
+`target` = owner, the nonce, a timestamp (±120 s) and `keccak256(body)`; the signer must
+equal the record's owner. Each create and change is appended to
+`/var/lib/x1-ec2-keys/audit.jsonl` (`ts, owner, op, id, agent, result`). No ARNs,
+credentials or signatures appear in responses or logs.
 
-Creation requires a one-use, owner-bound five-minute nonce and an EIP-712
-signature over the operation, owner, nonce, timestamp and exact request-body hash.
-Timestamp skew is limited to two minutes. The SQLite transaction consumes the
-nonce and saves a durable intent **before** calling AWS. The CreateKey client has
-`maxAttempts: 1`. An identical creation body returns the existing key rather than
-creating another. Per-owner and global quotas are three and thirty requests.
+## AWS permissions (templates in `deploy/`, `ACCOUNT_ID` filled in by the gate scripts)
 
-If CreateKey has an ambiguous outcome, that request is quarantined and further
-new creation for the owner stops. Do not delete its database row or retry AWS
-creation. An operator must reconcile the saved record ID/request tag against KMS
-and CloudTrail. If a known ARN was persisted but GetPublicKey failed, repeating
-the exact same owner/name/duration request only recovers public metadata. Do not
-change the name or duration to try to bypass a pending request.
+- **Instance role** `copybot-kms-shadow-signer`: unchanged. It may assume the two roles below.
+- **`x1-ec2-key-registrar`** (`registrar-policy.json`): `CreateKey` only for tagged,
+  single-Region secp256k1 `SIGN_VERIFY` keys with `env=prod`; `TagResource` only with those tags;
+  `GetPublicKey`/`DescribeKey` only on its tagged keys. Explicit Deny on Sign, Decrypt, grants,
+  `PutKeyPolicy`, untagging, aliases and all lifecycle actions. The key policy is set by
+  `CreateKey` itself (`src/kms.js` → `keyPolicy`).
+- **`x1-ec2-key-lifecycle`** (`lifecycle-policy.json`): its IAM policy contains **no Allow**.
+  The only grant is in each key's own key policy, written at creation:
+  Disable/Enable/CancelKeyDeletion/DescribeKey and ScheduleKeyDeletion with a 7–30 day window.
+  IAM additionally denies every other action, any key without `app=x1-terminal` and
+  `purpose=ec2-api-key`, and any Region but us-east-2. Because no IAM Allow exists, adding
+  tags to some other key (for example the copy trader's) grants this role nothing.
+- The previous registrar policy is kept in `registrar-policy.previous.json` for rollback.
 
-The SQLite database includes public identities and server-only key ARNs, never
-private key material. Protect and back up it together with its WAL using SQLite’s
-backup facility; copying the main file during writes alone is insufficient.
-No existing Postgres or Redis database is read or changed by this service.
+## Deploy / rollout
 
-## Verification
+Gate scripts in `deploy/gates/`, each run by a person, in order (each has a verify step and a rollback):
+`1-iam.sh` → `2-security-group.sh` (dedicated group `x1-ec2-keys-cloudfront`, TCP 80 from
+`com.amazonaws.global.cloudfront.origin-facing` only; a separate group because that prefix list counts as
+~55 of the 60 inbound rules) → on EC2 `3-ec2-cutover.sh` → `4-cloudfront.sh` → `5-vercel-env.sh` →
+on EC2 `6-preview-mutations.sh on|off` around the one real test.
+
+## Rollback
+
+Fastest: `npx vercel env rm EC2_KEYS_URL production` (page shows "EC2 key service unavailable"; keys already
+approved on Hyperliquid keep working), or `sudo systemctl stop caddy` on EC2. Full, in reverse order:
+`4-cloudfront.sh rollback`, `3-ec2-cutover.sh rollback` (restores the previous code/unit, stops Caddy),
+`2-security-group.sh rollback`, and for IAM re-apply `deploy/registrar-policy.previous.json` (fill in
+`ACCOUNT_ID`) and delete `x1-ec2-key-lifecycle` (`delete-role-policy`, then `delete-role`).
+
+## Rotate the proxy secret
+
+On EC2: `openssl rand -hex 32 | sudo tee /etc/x1-ec2-keys/proxy.secret >/dev/null` (same for
+`proxy-preview.secret`), then from the Mac `vercel env rm EC2_KEYS_PROXY_SECRET production`
+and re-run the matching line of `5-vercel-env.sh`; restart `x1-ec2-keys` and redeploy.
+Requests fail with 401 between the two steps; nothing else is affected.
+The origin-verify secret: write a new `/etc/caddy/origin-verify.env`, update the distribution's
+`X-Origin-Verify` custom header to `v1:<new>` (get/update-distribution-config), wait for deploy, then
+`systemctl restart caddy`; requests get 403 in between.
+
+## Revoke a key
+
+1. On `/api_keys`, **Remove** the API wallet (revokes Hyperliquid access; owner-signed).
+2. **Disable** (reversible) or **Delete** (schedules KMS deletion, 30 days, cancellable) the KMS key.
+3. Emergency, without the page: an AWS admin can run `aws kms disable-key --key-id <id>` in us-east-2.
+
+## Tests
 
 ```sh
 npm ci --prefix tools/ec2-key-registrar --ignore-scripts
 npm test --prefix tools/ec2-key-registrar
 ```
 
-Tests use an in-process fake KMS adapter and generated throwaway local keys only.
-They cover owner consent, replay, tampering, quota, ambiguous creation, duplicate
-requests, public-key address recovery and metadata isolation. The same suite ran
-on EC2. Health checks resolve temporary credentials without CreateKey or Sign.
-An explicit AWS integration check also created one disposable test identity through
-the authenticated EC2 HTTP flow. Its tags/spec were verified and the test key was
-scheduled for deletion with the administrative role (seven-day waiting period).
-It was never approved on Hyperliquid or used for signing. The service retains its
-audit record as test_pending_deletion. User key creation requires owner-wallet
-consent in the UI.
-
-Only the newly installed service is enabled/restarted by its installation.
-Existing trading-service PIDs and start timestamps were checked before and after
-and remained unchanged. Vercel deployment is not configured for this tunnel; a
-production connection needs a separately authenticated HTTPS service/proxy.
+Offline only: fake KMS adapter and throwaway keys. They cover the proxy HMAC
+(missing/bad/stale/replayed), method and op checks, body caps, origin tiers, rate limits,
+owner signatures, nonces, idempotent create, ownership (403), AWS refusals, audit records,
+the startup identity check and database migration.

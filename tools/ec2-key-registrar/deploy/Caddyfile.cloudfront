@@ -1,0 +1,54 @@
+# /etc/caddy/Caddyfile — plain HTTP origin for the CloudFront distribution (no TLS, no ACME on EC2).
+# Port 80 is reachable only from the CloudFront origin-facing prefix list (security group x1-ec2-keys-cloudfront).
+# X1_ORIGIN_VERIFY comes from /etc/caddy/origin-verify.env (0600, loaded by a systemd drop-in); it is never
+# written into this file. The literal "v1:" prefix means an unset variable can never match an absent header.
+# Admin API off: it would expose the adapted config (including the origin secret) on localhost:2019.
+# Apply changes with `systemctl restart caddy` (reload needs the admin API).
+{
+	auto_https off
+	admin off
+}
+
+:80 {
+	request_body {
+		max_size 8KB
+	}
+	@api path /api/ec2-keys /health
+	handle @api {
+		@unverified not header X-Origin-Verify "v1:{$X1_ORIGIN_VERIFY}"
+		respond @unverified 403
+		reverse_proxy 127.0.0.1:8790 {
+			header_up -X-Origin-Verify
+			# Keep the incoming X-Forwarded-For (browser, Vercel) and append the CloudFront edge.
+			trusted_proxies 0.0.0.0/0 ::/0
+			transport http {
+				dial_timeout 2s
+				response_header_timeout 25s
+			}
+		}
+	}
+	handle {
+		respond 404
+	}
+	header {
+		X-Content-Type-Options nosniff
+		-Server
+	}
+	log {
+		output file /var/log/caddy/keys-api.log {
+			roll_size 10MiB
+			roll_keep 10
+		}
+		# Never log the origin secret, owner signatures or proxy MACs.
+		format filter {
+			wrap json
+			fields {
+				request>headers>X-Origin-Verify delete
+				request>headers>X-Auth delete
+				request>headers>X-Proxy-Auth delete
+				request>headers>X-Proxy-Ts delete
+				request>headers>Cookie delete
+			}
+		}
+	}
+}

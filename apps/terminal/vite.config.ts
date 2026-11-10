@@ -8,7 +8,9 @@ import { visualizer } from 'rollup-plugin-visualizer'
 
 const isAnalyze = process.env.ANALYZE === 'true'
 const autoTraderProxy = {
-  '/api/ec2-keys': { target: 'http://127.0.0.1:18790', changeOrigin: true },
+  // EC2 KMS keys: local dev goes through the deployed Vercel proxy over HTTPS (no SSH tunnel).
+  // The proxy refuses a localhost Origin on POST, so local dev can read key status but not change keys.
+  '/api/ec2-keys': { target: process.env.EC2_KEYS_DEV_TARGET ?? 'https://x1-terminal-20261029.vercel.app', changeOrigin: true },
   '/api/copybot': { target: 'https://wxnt-sale-sim.vercel.app', changeOrigin: true },
   '/api/auto-trader-signal': {
     target: 'https://wxnt-sale-sim.vercel.app', changeOrigin: true,

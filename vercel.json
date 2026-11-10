@@ -72,6 +72,9 @@
     },
     "api/analytics-update.js": {
       "maxDuration": 60
+    },
+    "api/ec2-keys.js": {
+      "maxDuration": 30
     }
   }
 }

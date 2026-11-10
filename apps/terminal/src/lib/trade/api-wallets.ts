@@ -1,6 +1,6 @@
 import { isAddress, zeroAddress, type Address, type Hex } from "viem";
 export function apiWalletBaseName(name:string){return name.replace(/ valid_until \d+$/,"").trim();}
-/** Null or omitted expiry denotes a non-expiring Hyperliquid approval. */
+/** Null means a non-expiring Hyperliquid approval. A timestamp must still be in the future. */
 export function agentApprovalCurrent(validUntil:number|null|undefined){return validUntil==null||validUntil>Date.now();}
 export function apiWalletName(name:string,days:number,now=Date.now()){
  const base=apiWalletBaseName(name);
