@@ -1,5 +1,5 @@
 import { Button, Drawer, DrawerClose, DrawerContent, DrawerTrigger } from "@hypeterminal/ui";
-import { ArrowRightIcon, CaretDownIcon, CaretRightIcon, RobotIcon, XIcon } from "@phosphor-icons/react";
+import { CaretDownIcon, CaretRightIcon, RobotIcon, XIcon } from "@phosphor-icons/react";
 import { useId, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { useMarketsInfo } from "@/lib/hyperliquid";
@@ -142,10 +142,9 @@ function TradeMarketBar({ coin }: { coin: string }) {
 		<div key={coin} className="mood-fade-in flex-none px-4 pt-2 pb-4">
 			<DrawerClose
 				onClick={() => setSelectedMarket(scope, name)}
-				render={<Button variant="filled" intent="brand" size="lg" className="w-full gap-1.5 text-sm font-semibold" />}
+				render={<Button variant="filled" intent="brand" size="lg" className="w-full text-sm font-semibold" />}
 			>
 				Trade {coinName(coin)}
-				<ArrowRightIcon weight="bold" className="size-3.5" />
 			</DrawerClose>
 		</div>
 	);
