@@ -183,6 +183,8 @@ function MarketTab({ coin, name, score }: { coin: MoodCoin | undefined; name: st
 				)}
 			</section>
 
+			<AutoTraderCard score={coin.score} name={name} />
+
 			<ScoreBreakdown>
 				<Driver
 					label="Positions"
@@ -213,8 +215,6 @@ function MarketTab({ coin, name, score }: { coin: MoodCoin | undefined; name: st
 					</span>
 				</div>
 			</ScoreBreakdown>
-
-			<AutoTraderCard score={coin.score} name={name} />
 		</div>
 	);
 }
