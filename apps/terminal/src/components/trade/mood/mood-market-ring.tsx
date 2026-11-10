@@ -1,5 +1,5 @@
 import { Drawer, DrawerClose, DrawerContent, DrawerTrigger } from "@hypeterminal/ui";
-import { CaretRightIcon, RobotIcon, XIcon } from "@phosphor-icons/react";
+import { CaretDownIcon, CaretRightIcon, RobotIcon, XIcon } from "@phosphor-icons/react";
 import { useId, useState } from "react";
 import { cn } from "@/lib/cn";
 import {
@@ -159,7 +159,31 @@ function MarketTab({ coin, name, score }: { coin: MoodCoin | undefined; name: st
 			</section>
 
 			<section className="rounded-12 bg-surface p-4">
-				<SectionTitle>How the score is built</SectionTitle>
+				<SectionTitle
+					aside={
+						<span className="tabular-nums">
+							<span className="text-market-up">{coin.tradersLong} long</span>
+							<span className="text-fg-muted"> · </span>
+							<span className="text-market-down">{coin.tradersShort} short</span>
+							<span className="text-fg-muted"> · {MOOD_POOL_SIZE - holders} flat</span>
+						</span>
+					}
+				>
+					The {MOOD_POOL_SIZE} traders
+				</SectionTitle>
+				<TraderPips long={coin.tradersLong} short={coin.tradersShort} />
+				{coin.dominant && coin.dominant.share >= 0.4 && (
+					<div className="mt-3 flex items-center justify-between text-2xs text-fg-muted">
+						<span>Largest trader</span>
+						<span className="tabular-nums">
+							<span className="text-fg-secondary">{shortAddress(coin.dominant.usr)}</span> ·{" "}
+							{Math.round(coin.dominant.share * 100)}% of exposure
+						</span>
+					</div>
+				)}
+			</section>
+
+			<ScoreBreakdown>
 				<Driver
 					label="Positions"
 					weight={0.6}
@@ -188,35 +212,40 @@ function MarketTab({ coin, name, score }: { coin: MoodCoin | undefined; name: st
 						= {signedScore(coin.score)}
 					</span>
 				</div>
-			</section>
-
-			<section className="rounded-12 bg-surface p-4">
-				<SectionTitle
-					aside={
-						<span className="tabular-nums">
-							<span className="text-market-up">{coin.tradersLong} long</span>
-							<span className="text-fg-muted"> · </span>
-							<span className="text-market-down">{coin.tradersShort} short</span>
-							<span className="text-fg-muted"> · {MOOD_POOL_SIZE - holders} flat</span>
-						</span>
-					}
-				>
-					The {MOOD_POOL_SIZE} traders
-				</SectionTitle>
-				<TraderPips long={coin.tradersLong} short={coin.tradersShort} />
-				{coin.dominant && coin.dominant.share >= 0.4 && (
-					<div className="mt-3 flex items-center justify-between text-2xs text-fg-muted">
-						<span>Largest trader</span>
-						<span className="tabular-nums">
-							<span className="text-fg-secondary">{shortAddress(coin.dominant.usr)}</span> ·{" "}
-							{Math.round(coin.dominant.share * 100)}% of exposure
-						</span>
-					</div>
-				)}
-			</section>
+			</ScoreBreakdown>
 
 			<AutoTraderCard score={coin.score} name={name} />
 		</div>
+	);
+}
+
+function ScoreBreakdown({ children }: { children: React.ReactNode }) {
+	const [open, setOpen] = useState(false);
+	return (
+		<section className="rounded-12 bg-surface">
+			<button
+				type="button"
+				onClick={() => setOpen(!open)}
+				aria-expanded={open}
+				className="flex w-full items-center gap-2 rounded-12 p-4 text-left text-xs transition-colors hover:bg-fill-hover"
+			>
+				<span className="flex-1 font-medium">How the score is built</span>
+				<span className="text-2xs text-fg-muted">Positions 60% · Flow 40%</span>
+				<CaretDownIcon
+					className={cn("size-3.5 text-fg-muted transition-transform duration-200", open && "rotate-180")}
+				/>
+			</button>
+			<div
+				className={cn(
+					"grid transition-[grid-template-rows] duration-300 ease-out",
+					open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+				)}
+			>
+				<div className="overflow-hidden">
+					<div className="px-4 pb-4">{children}</div>
+				</div>
+			</div>
+		</section>
 	);
 }
 
