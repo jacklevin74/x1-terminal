@@ -1,3 +1,6 @@
+import { PencilIcon } from "@phosphor-icons/react";
+import { canAmendRestingOrder } from "@/lib/trade/amend-order";
+import { EditOrderModal } from "./edit-order-modal";
 import {useTradingAccount} from "@/hooks/use-trading-account";
 import { AccountTableToolbar } from "./account-table-toolbar";
 import {
@@ -52,7 +55,8 @@ export function OrdersTab() {
 		{ enabled: isConnected && !!address },
 	);
 	const markets = useMarkets();
-	const [typeFilter, setTypeFilter] = useState("");
+	const [editing, setEditing] = useState<{ oid: number; field: "amount" | "value" } | null>(null);
+ const [typeFilter, setTypeFilter] = useState("");
  const [sideFilter, setSideFilter] = useState("");
  const [marketFilter, setMarketFilter] = useState("");
  const [sortValue, setSortValue] = useState(false);
@@ -65,6 +69,7 @@ export function OrdersTab() {
 	const { mutate: cancelOrders, error: cancelError, reset: resetCancelError } = useExchange("cancel");
 
 	const openOrders = openOrdersEvent?.orders ?? [];
+ const editingOrder = editing ? openOrders.find(order => order.oid === editing.oid) : undefined;
 
 	const openIds = new Set(openOrders.map((order) => order.oid));
 	const validSelectedIds = new Set<number>();
@@ -201,15 +206,15 @@ export function OrdersTab() {
    <TableBody className={positionViewBodyClass}>{visibleOrders.map(order => {
     const market = markets.getMarket(order.coin); const spot = market?.kind === "spot"; const detail = orderHistoryDetails({ order, status: "open", statusTimestamp: order.timestamp }, spot);
     const quote = spot ? market.tokensInfo[1]?.displayName ?? "USDC" : market?.kind === "builderPerp" ? market.quoteToken?.displayName ?? "USDC" : "USDC";
-    const decimals = markets.getSzDecimals(order.coin); const cell = cn(positionViewCellClass, "pr-5"); const cancelling = cancellingOids.has(order.oid); const buy = order.side === "B";
+    const decimals = markets.getSzDecimals(order.coin); const cell = cn(positionViewCellClass, "pr-5"); const cancelling = cancellingOids.has(order.oid); const buy = order.side === "B"; const editable = canAmendRestingOrder(order) && !cancelling;
     return <TableRow key={order.oid} className={positionViewRowClass}>
      <TableCell size="dense" className={cell}><span className="inline-flex items-center gap-1"><Checkbox checked={validSelectedIds.has(order.oid)} onCheckedChange={value => handleToggleOrder(order.oid, value)} disabled={cancelling} aria-label={`Select order ${order.coin}`} />{formatDateTime(order.timestamp, { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false })}</span></TableCell>
      <TableCell size="dense" className={cell}>{order.orderType}</TableCell>
      <TableCell size="dense" className={cell}><AssetBadge appearance="position" coin={order.coin} side={buy ? "buy" : "sell"} onClick={() => handleSelectMarket(order.coin, buy ? "buy" : "sell")} aria-label={`Switch to ${order.coin} market`} /></TableCell>
      <TableCell size="dense" className={cn(cell, buy ? "text-success" : "text-error")}>{detail.direction}</TableCell>
-     <TableCell size="dense" className={cell}>{isClosePositionOrder(order) ? "Close Position" : formatToken(order.sz, decimals)}</TableCell>
+     <TableCell size="dense" className={cell}>{editable ? <button type="button" aria-label={`Edit amount for ${order.coin}`} className="inline-flex items-center gap-1 hover:text-brand" onClick={() => setEditing({oid:order.oid,field:"amount"})}>{formatToken(order.sz, decimals)}<PencilIcon className="size-3" /></button> : isClosePositionOrder(order) ? "Close Position" : formatToken(order.sz, decimals)}</TableCell>
      <TableCell size="dense" className={cell}>{isClosePositionOrder(order) ? "--" : formatToken(order.origSz, decimals)}</TableCell>
-     <TableCell size="dense" className={cell}>{detail.market ? "Market" : detail.value ? formatToken(detail.value, { decimals: 2, symbol: quote, compact: false }) : "--"}</TableCell>
+     <TableCell size="dense" className={cell}>{editable && detail.value ? <button type="button" aria-label={`Edit value for ${order.coin}`} className="inline-flex items-center gap-1 hover:text-brand" onClick={() => setEditing({oid:order.oid,field:"value"})}>{formatToken(detail.value, {decimals:2,symbol:quote,compact:false})}<PencilIcon className="size-3" /></button> : detail.market ? "Market" : detail.value ? formatToken(detail.value, { decimals: 2, symbol: quote, compact: false }) : "--"}</TableCell>
      <TableCell size="dense" className={cell}>{detail.market ? "Market" : formatPrice(order.limitPx, { szDecimals: decimals, style: "decimal", compact: false })}</TableCell>
      <TableCell size="dense" className={cell}>{spot ? "--" : order.reduceOnly ? "Yes" : "No"}</TableCell><TableCell size="dense" className={cell}>{detail.trigger}</TableCell><TableCell size="dense" className={cell}>{detail.tpsl}</TableCell>
      <TableCell size="dense" className={cell}><button type="button" aria-label="Cancel order" onClick={() => handleCancelRow([order])} disabled={cancelling} className="text-brand hover:underline disabled:opacity-40">{cancelling ? "Canceling…" : "Cancel"}</button></TableCell>
@@ -218,5 +223,6 @@ export function OrdersTab() {
   </Table><ScrollBar orientation="horizontal" /></ScrollArea>}</div>
   {!placeholder && filteredOrders.length > 15 && <div className="shrink-0 px-1.5 py-1 text-xs text-brand"><button type="button" onClick={() => setViewAll(v => !v)} className="hover:underline">{viewAll ? "Show Less" : "View All"}</button></div>}
   {!placeholder && !filteredOrders.length && <p className="px-1.5 py-3 text-xs text-fg-muted">No open orders match these filters.</p>}
+ {editing && editingOrder && <EditOrderModal key={`${address}:${editing.oid}`} order={editingOrder} field={editing.field} onClose={() => setEditing(null)} />}
  </div>;
 }

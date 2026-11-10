@@ -1,13 +1,15 @@
+import { browserChartTimezone } from "@/lib/chart/timezone";
+import { setChartResolution, useChartIntervalStore } from "@/stores/use-chart-interval-store";
+import { RESOLUTIONS } from "@/lib/chart/resolution";
 import { ChartMarksMenu } from "./chart-marks-menu";
 import { useKlineExecutions } from "./use-kline-executions";
 import type { Chart, KLineData } from "klinecharts";
 import { dispose, FormatDateType, init, LoadDataType } from "klinecharts";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { type ChartTypeConfig, DEFAULT_CHART_TYPE, INITIAL_CANDLE_COUNT, VOLUME_INDICATOR_NAME } from "@/config/chart";
 import { MS_PER_DAY, TAB_RESTORE_THRESHOLD_MS } from "@/config/time";
 import { candleEventToKLineData, candlesToKLineData } from "@/lib/chart/candle";
 import { formatShortDate, formatTime, formatTooltipDate } from "@/lib/chart/format";
-import { DEFAULT_INTERVAL } from "@/lib/chart/kline-config";
 import { buildKlineStyles } from "@/lib/chart/kline-styles";
 import { registerLiquidationLineOverlay } from "@/lib/chart/liquidation-line-overlay";
 import { registerOrderLineOverlay } from "@/lib/chart/order-line-overlay";
@@ -70,7 +72,8 @@ export function KlineChart({
 }: Props) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const chartRef = useRef<Chart | null>(null);
-	const [activeInterval, setActiveInterval] = useState(DEFAULT_INTERVAL);
+	const resolution = useChartIntervalStore(state => state.resolution);
+ const activeInterval = useMemo(() => ({...RESOLUTIONS[resolution], resolution}), [resolution]);
 	const [activeChartType, setActiveChartType] = useState<ChartTypeConfig>(DEFAULT_CHART_TYPE);
 	const activeCandleType = activeChartType.type;
 	const intervalRef = useRef(activeInterval);
@@ -91,6 +94,7 @@ export function KlineChart({
 		registerLiquidationLineOverlay();
 
 		const chart = init(container, {
+            timezone: browserChartTimezone(),
 			customApi: {
 				formatDate: (_dateTimeFormat, timestamp, _format, type) => {
 					const date = new Date(timestamp);
@@ -261,7 +265,7 @@ export function KlineChart({
 		<div className="flex flex-col h-full">
 			<KlineToolbar
 				activeInterval={activeInterval}
-				onIntervalChange={setActiveInterval}
+				onIntervalChange={interval => setChartResolution(interval.resolution)}
 				activeChartType={activeChartType}
 				onChartTypeChange={setActiveChartType}
 				onChartSourceChange={onChartSourceChange}

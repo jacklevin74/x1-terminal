@@ -1,0 +1,725 @@
+[
+  {
+    "name": "signed active targets",
+    "input": {
+      "settings": {
+        "leverage": 5,
+        "killPct": 0.1,
+        "include": null,
+        "exclude": [],
+        "minOrderUsd": 10
+      },
+      "signal": {
+        "timestamp": 1,
+        "coins": [
+          {
+            "coin": "BTC",
+            "score": 50
+          },
+          {
+            "coin": "ETH",
+            "score": -40
+          },
+          {
+            "coin": "SOL",
+            "score": 15
+          },
+          {
+            "coin": "HYPE",
+            "score": -15
+          }
+        ]
+      },
+      "universe": [
+        "BTC",
+        "ETH",
+        "SOL",
+        "HYPE"
+      ],
+      "equity": 1000,
+      "positions": {},
+      "mids": {
+        "BTC": "100",
+        "ETH": "100",
+        "SOL": "100",
+        "HYPE": "100"
+      },
+      "decimals": {
+        "BTC": 3,
+        "ETH": 3,
+        "SOL": 3,
+        "HYPE": 3
+      }
+    },
+    "expected": {
+      "k": 1,
+      "gross": null,
+      "rows": [
+        {
+          "market": "BTC",
+          "target": 625,
+          "current": 0,
+          "actions": [
+            "OPEN"
+          ]
+        },
+        {
+          "market": "ETH",
+          "target": -500,
+          "current": 0,
+          "actions": [
+            "OPEN"
+          ]
+        },
+        {
+          "market": "SOL",
+          "target": 187.5,
+          "current": 0,
+          "actions": [
+            "OPEN"
+          ]
+        },
+        {
+          "market": "HYPE",
+          "target": -187.5,
+          "current": 0,
+          "actions": [
+            "OPEN"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "neutral holds",
+    "input": {
+      "settings": {
+        "leverage": 5,
+        "killPct": 0.1,
+        "include": null,
+        "exclude": [],
+        "minOrderUsd": 10
+      },
+      "signal": {
+        "timestamp": 1,
+        "coins": [
+          {
+            "coin": "BTC",
+            "score": 0
+          },
+          {
+            "coin": "ETH",
+            "score": 14
+          },
+          {
+            "coin": "SOL",
+            "score": -14
+          },
+          {
+            "coin": "HYPE",
+            "score": null
+          }
+        ]
+      },
+      "universe": [
+        "BTC",
+        "ETH",
+        "SOL",
+        "HYPE"
+      ],
+      "equity": 1000,
+      "positions": {
+        "BTC": 2,
+        "ETH": -3
+      },
+      "mids": {
+        "BTC": "100",
+        "ETH": "100",
+        "SOL": "100",
+        "HYPE": "100"
+      },
+      "decimals": {
+        "BTC": 3,
+        "ETH": 3,
+        "SOL": 3,
+        "HYPE": 3
+      }
+    },
+    "expected": {
+      "k": 1,
+      "gross": null,
+      "rows": [
+        {
+          "market": "BTC",
+          "target": 200,
+          "current": 200,
+          "actions": [
+            "HOLD (neutral)"
+          ]
+        },
+        {
+          "market": "ETH",
+          "target": -300,
+          "current": -300,
+          "actions": [
+            "HOLD (neutral)"
+          ]
+        },
+        {
+          "market": "SOL",
+          "target": 0,
+          "current": 0,
+          "actions": []
+        },
+        {
+          "market": "HYPE",
+          "target": 0,
+          "current": 0,
+          "actions": []
+        }
+      ]
+    }
+  },
+  {
+    "name": "normalized target leverage",
+    "input": {
+      "settings": {
+        "leverage": 5,
+        "killPct": 0.1,
+        "include": null,
+        "exclude": [],
+        "minOrderUsd": 10,
+        "targetLev": 2
+      },
+      "signal": {
+        "timestamp": 1,
+        "coins": [
+          {
+            "coin": "BTC",
+            "score": 20
+          },
+          {
+            "coin": "ETH",
+            "score": -30
+          },
+          {
+            "coin": "SOL",
+            "score": 50
+          },
+          {
+            "coin": "HYPE",
+            "score": 0
+          }
+        ]
+      },
+      "universe": [
+        "BTC",
+        "ETH",
+        "SOL",
+        "HYPE"
+      ],
+      "equity": 1000,
+      "positions": {
+        "HYPE": 2
+      },
+      "mids": {
+        "BTC": "100",
+        "ETH": "100",
+        "SOL": "100",
+        "HYPE": "100"
+      },
+      "decimals": {
+        "BTC": 3,
+        "ETH": 3,
+        "SOL": 3,
+        "HYPE": 3
+      }
+    },
+    "expected": {
+      "k": 1.44,
+      "gross": 2000,
+      "rows": [
+        {
+          "market": "BTC",
+          "target": 360,
+          "current": 0,
+          "actions": [
+            "OPEN"
+          ]
+        },
+        {
+          "market": "ETH",
+          "target": -540,
+          "current": 0,
+          "actions": [
+            "OPEN"
+          ]
+        },
+        {
+          "market": "SOL",
+          "target": 900,
+          "current": 0,
+          "actions": [
+            "OPEN"
+          ]
+        },
+        {
+          "market": "HYPE",
+          "target": 200,
+          "current": 200,
+          "actions": [
+            "HOLD (neutral)"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "hard cap scales neutral exposure",
+    "input": {
+      "settings": {
+        "leverage": 5,
+        "killPct": 0.1,
+        "include": null,
+        "exclude": [],
+        "minOrderUsd": 10,
+        "targetLev": 2
+      },
+      "signal": {
+        "timestamp": 1,
+        "coins": [
+          {
+            "coin": "BTC",
+            "score": 0
+          },
+          {
+            "coin": "ETH",
+            "score": 0
+          },
+          {
+            "coin": "SOL",
+            "score": 20
+          },
+          {
+            "coin": "HYPE",
+            "score": -20
+          }
+        ]
+      },
+      "universe": [
+        "BTC",
+        "ETH",
+        "SOL",
+        "HYPE"
+      ],
+      "equity": 1000,
+      "positions": {
+        "BTC": 30,
+        "ETH": -20
+      },
+      "mids": {
+        "BTC": "100",
+        "ETH": "100",
+        "SOL": "100",
+        "HYPE": "100"
+      },
+      "decimals": {
+        "BTC": 3,
+        "ETH": 3,
+        "SOL": 3,
+        "HYPE": 3
+      }
+    },
+    "expected": {
+      "k": 0,
+      "gross": 2000,
+      "rows": [
+        {
+          "market": "BTC",
+          "target": 1200,
+          "current": 3000,
+          "actions": [
+            "HOLD-SCALED (neutral, gross cap)",
+            "REDUCE"
+          ]
+        },
+        {
+          "market": "ETH",
+          "target": -800,
+          "current": -2000,
+          "actions": [
+            "HOLD-SCALED (neutral, gross cap)",
+            "REDUCE"
+          ]
+        },
+        {
+          "market": "SOL",
+          "target": 0,
+          "current": 0,
+          "actions": []
+        },
+        {
+          "market": "HYPE",
+          "target": 0,
+          "current": 0,
+          "actions": []
+        }
+      ]
+    }
+  },
+  {
+    "name": "per-coin caps",
+    "input": {
+      "settings": {
+        "leverage": 5,
+        "killPct": 0.1,
+        "include": null,
+        "exclude": [],
+        "minOrderUsd": 10,
+        "targetLev": 4
+      },
+      "signal": {
+        "timestamp": 1,
+        "coins": [
+          {
+            "coin": "BTC",
+            "score": 100
+          },
+          {
+            "coin": "ETH",
+            "score": 1
+          },
+          {
+            "coin": "SOL",
+            "score": 1
+          },
+          {
+            "coin": "HYPE",
+            "score": 1
+          }
+        ]
+      },
+      "universe": [
+        "BTC",
+        "ETH",
+        "SOL",
+        "HYPE"
+      ],
+      "equity": 1000,
+      "positions": {},
+      "mids": {
+        "BTC": "100",
+        "ETH": "100",
+        "SOL": "100",
+        "HYPE": "100"
+      },
+      "decimals": {
+        "BTC": 3,
+        "ETH": 3,
+        "SOL": 3,
+        "HYPE": 3
+      }
+    },
+    "expected": {
+      "k": 3.2,
+      "gross": 1250,
+      "rows": [
+        {
+          "market": "BTC",
+          "target": 1250,
+          "current": 0,
+          "actions": [
+            "OPEN"
+          ]
+        },
+        {
+          "market": "ETH",
+          "target": 0,
+          "current": 0,
+          "actions": []
+        },
+        {
+          "market": "SOL",
+          "target": 0,
+          "current": 0,
+          "actions": []
+        },
+        {
+          "market": "HYPE",
+          "target": 0,
+          "current": 0,
+          "actions": []
+        }
+      ]
+    }
+  },
+  {
+    "name": "opposing signal flip",
+    "input": {
+      "settings": {
+        "leverage": 5,
+        "killPct": 0.1,
+        "include": null,
+        "exclude": [],
+        "minOrderUsd": 10
+      },
+      "signal": {
+        "timestamp": 1,
+        "coins": [
+          {
+            "coin": "BTC",
+            "score": -50
+          },
+          {
+            "coin": "ETH",
+            "score": 50
+          },
+          {
+            "coin": "SOL",
+            "score": 0
+          },
+          {
+            "coin": "HYPE",
+            "score": 0
+          }
+        ]
+      },
+      "universe": [
+        "BTC",
+        "ETH",
+        "SOL",
+        "HYPE"
+      ],
+      "equity": 1000,
+      "positions": {
+        "BTC": 2,
+        "ETH": -3
+      },
+      "mids": {
+        "BTC": "100",
+        "ETH": "100",
+        "SOL": "100",
+        "HYPE": "100"
+      },
+      "decimals": {
+        "BTC": 3,
+        "ETH": 3,
+        "SOL": 3,
+        "HYPE": 3
+      }
+    },
+    "expected": {
+      "k": 1,
+      "gross": null,
+      "rows": [
+        {
+          "market": "BTC",
+          "target": -625,
+          "current": 200,
+          "actions": [
+            "FLIP-CLOSE",
+            "FLIP-OPEN"
+          ]
+        },
+        {
+          "market": "ETH",
+          "target": 625,
+          "current": -300,
+          "actions": [
+            "FLIP-CLOSE",
+            "FLIP-OPEN"
+          ]
+        },
+        {
+          "market": "SOL",
+          "target": 0,
+          "current": 0,
+          "actions": []
+        },
+        {
+          "market": "HYPE",
+          "target": 0,
+          "current": 0,
+          "actions": []
+        }
+      ]
+    }
+  },
+  {
+    "name": "daily loss only reduces",
+    "input": {
+      "settings": {
+        "leverage": 5,
+        "killPct": 0.1,
+        "include": null,
+        "exclude": [],
+        "minOrderUsd": 10
+      },
+      "signal": {
+        "timestamp": 1,
+        "coins": [
+          {
+            "coin": "BTC",
+            "score": -50
+          },
+          {
+            "coin": "ETH",
+            "score": 50
+          },
+          {
+            "coin": "SOL",
+            "score": 80
+          },
+          {
+            "coin": "HYPE",
+            "score": 0
+          }
+        ]
+      },
+      "universe": [
+        "BTC",
+        "ETH",
+        "SOL",
+        "HYPE"
+      ],
+      "equity": 1000,
+      "positions": {
+        "BTC": 2,
+        "ETH": 1,
+        "SOL": 1
+      },
+      "mids": {
+        "BTC": "100",
+        "ETH": "100",
+        "SOL": "100",
+        "HYPE": "100"
+      },
+      "decimals": {
+        "BTC": 3,
+        "ETH": 3,
+        "SOL": 3,
+        "HYPE": 3
+      },
+      "dayStart": 2000
+    },
+    "expected": {
+      "k": 1,
+      "gross": null,
+      "rows": [
+        {
+          "market": "BTC",
+          "target": 0,
+          "current": 200,
+          "actions": [
+            "CLOSE"
+          ]
+        },
+        {
+          "market": "ETH",
+          "target": 100,
+          "current": 100,
+          "actions": []
+        },
+        {
+          "market": "SOL",
+          "target": 100,
+          "current": 100,
+          "actions": []
+        },
+        {
+          "market": "HYPE",
+          "target": 0,
+          "current": 0,
+          "actions": []
+        }
+      ]
+    }
+  },
+  {
+    "name": "minimum-order skips",
+    "input": {
+      "settings": {
+        "leverage": 5,
+        "killPct": 0.1,
+        "include": null,
+        "exclude": [],
+        "minOrderUsd": 500
+      },
+      "signal": {
+        "timestamp": 1,
+        "coins": [
+          {
+            "coin": "BTC",
+            "score": 16
+          },
+          {
+            "coin": "ETH",
+            "score": -16
+          },
+          {
+            "coin": "SOL",
+            "score": 0
+          },
+          {
+            "coin": "HYPE",
+            "score": 0
+          }
+        ]
+      },
+      "universe": [
+        "BTC",
+        "ETH",
+        "SOL",
+        "HYPE"
+      ],
+      "equity": 1000,
+      "positions": {},
+      "mids": {
+        "BTC": "100",
+        "ETH": "100",
+        "SOL": "100",
+        "HYPE": "100"
+      },
+      "decimals": {
+        "BTC": 3,
+        "ETH": 3,
+        "SOL": 3,
+        "HYPE": 3
+      }
+    },
+    "expected": {
+      "k": 1,
+      "gross": null,
+      "rows": [
+        {
+          "market": "BTC",
+          "target": 200,
+          "current": 0,
+          "actions": [
+            "skip OPEN $200.00"
+          ]
+        },
+        {
+          "market": "ETH",
+          "target": -200,
+          "current": 0,
+          "actions": [
+            "skip OPEN $200.00"
+          ]
+        },
+        {
+          "market": "SOL",
+          "target": 0,
+          "current": 0,
+          "actions": []
+        },
+        {
+          "market": "HYPE",
+          "target": 0,
+          "current": 0,
+          "actions": []
+        }
+      ]
+    }
+  }
+]

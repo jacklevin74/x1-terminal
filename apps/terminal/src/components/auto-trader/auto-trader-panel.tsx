@@ -1,5 +1,4 @@
-import {parseExecutorCycle} from "@/lib/auto-trader/executor-cycle";
-import {TargetPreviewTable} from "./target-preview-table";
+import { ForecastPreview } from "./forecast-preview";
 import {useTradingAccount} from "@/hooks/use-trading-account";
 import {HelpTip} from "./help-tip";
 import { closeNow } from "@/lib/auto-trader/close-now";
@@ -122,7 +121,6 @@ function AutoTraderAccount({master}:{master:Address}){
   if(op==="remove"){if(pending.current)pending.current.key="0x";pending.current=null;setPendingAddress(null);}
   setMessage(op==="flatten"?"Close request accepted and queued. Positions remain open until the next executor cycle (normally within five minutes), then trading pauses. Check cycle orders and fills below.":op==="remove"?"Auto Trader registration and stored service key removed. Existing positions remain open.":op==="resume"?"Enabled. Check the next cycle for live or dry-run execution.":op==="pause"?"Paused. Existing positions remain open.":"Settings saved for the next cycle.");
  }
- const executorCycle=parseExecutorCycle(status.data,master);
  const registered=status.data?.registered===true;
  return <>
   {!configured&&<p role="alert" className="text-sm text-error">The terminal builder must match {AUTO_TRADER_BUILDER} to use this service.</p>}
@@ -170,8 +168,10 @@ function AutoTraderAccount({master}:{master:Address}){
   {error&&<p role="alert" className="rounded-lg border border-error/30 bg-error/5 p-3 text-sm text-error">{error}</p>}
   {message&&<p role="status" className="rounded-lg border border-stroke-weak p-3 text-sm text-brand">{message}</p>}
   {status.data?<StatusCard status={{...status.data,isSubaccount:!!subaccount||status.data.isSubaccount}} />:status.isLoading?<p className="text-sm text-fg-muted"><Trans>Loading Auto Trader status…</Trans></p>:null}
-  <section aria-label="Auto Trader preview" className="space-y-3 rounded-xl border border-stroke-weak bg-surface p-4"><h3 className="text-sm font-semibold">Target preview · last executor cycle</h3><p className="text-xs text-fg-muted">Targets and actions come directly from the selected account’s executor status API. Form edits do not change this table; saved changes appear after the executor reports a new cycle. Cycles older than 15 minutes are not shown.</p>
-   <TargetPreviewTable snapshot={executorCycle} account={master} refreshing={status.isFetching} unavailable={status.isError} />
+  <section aria-label="Auto Trader preview" className="space-y-3 rounded-xl border border-stroke-weak bg-surface p-4"><h3 className="text-sm font-semibold">Target preview · live forecast</h3>
+   <ForecastPreview account={master} settings={status.data?.settings??settings} status={status.data} signal={signal.data} signalError={signal.isError}/>
+   {hasChanges&&<p className="text-xs text-warning">Unsaved form edits are not included. Save settings to update this forecast.</p>}
+
   </section>
   <Modal open={confirm!==null} onOpenChange={open=>{if(!open&&!busy)setConfirm(null);}}><ModalPopup size="md"><ModalHeader><ModalTitle>{confirm==="resume"?"Enable Auto Trader?":confirm==="flatten"?"Close all perpetual positions?":confirm==="renew"?"Renew Auto Trader API wallet?":"Remove Auto Trader?"}</ModalTitle></ModalHeader><ModalContent className="space-y-4">
    <p className="break-all font-mono text-xs">Signing owner: {address}</p><p className="break-all font-mono text-xs text-brand">Trading account: {subaccount?.name??"Main account"} · {master}</p>

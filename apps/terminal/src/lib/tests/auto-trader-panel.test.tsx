@@ -1,3 +1,4 @@
+vi.mock("@/components/auto-trader/forecast-preview",()=>({ForecastPreview:()=>null}));
 import {useTradingAccountStore} from "@/stores/use-trading-account-store";
 import {getNetwork} from "@/lib/network";
 // @vitest-environment jsdom

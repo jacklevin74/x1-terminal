@@ -25,6 +25,7 @@ export interface SpotOrderFields {
 }
 
 export interface PerpOrderFields {
+ reduceOnly?: boolean;
 	orderType: string;
 	markPx: number;
 	maxSize: number;

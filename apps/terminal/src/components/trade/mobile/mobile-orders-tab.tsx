@@ -1,3 +1,5 @@
+import { canAmendRestingOrder } from "@/lib/trade/amend-order";
+import { EditOrderModal } from "../positions/edit-order-modal";
 import {useTradingAccount} from "@/hooks/use-trading-account";
 import { Badge, Button } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
@@ -57,10 +59,12 @@ export function MobileOrdersTab({ className }: Props) {
 
 	const { mutate: cancelOrders, error: cancelError, reset: resetCancelError } = useExchange("cancel");
 
-	const [cancellingOids, setCancellingOids] = useState<Set<number>>(() => new Set());
+	const [editing, setEditing] = useState<{oid:number;field:"amount"|"value"}|null>(null);
+ const [cancellingOids, setCancellingOids] = useState<Set<number>>(() => new Set());
 	const [pendingScopes, setPendingScopes] = useState<Set<CancelScope>>(() => new Set());
 
 	const openOrders = openOrdersEvent?.orders ?? [];
+ const editingOrder = editing ? openOrders.find(order => order.oid === editing.oid) : undefined;
 
 	function handleCancel(ordersToCancel: OpenOrder[], nextScope: CancelScope) {
 		if (ordersToCancel.length === 0) return;
@@ -176,15 +180,18 @@ export function MobileOrdersTab({ className }: Props) {
 							isCancelling={cancellingOids.has(order.oid)}
 							onCancel={handleCancelRow}
 							onSelectMarket={handleSelectMarket}
+       onEdit={field => setEditing({oid:order.oid,field})}
 						/>
 					))}
 				</div>
 			</div>
+   {editing && editingOrder && <EditOrderModal key={`${address}:${editing.oid}`} order={editingOrder} field={editing.field} onClose={() => setEditing(null)} />}
 		</Skeleton>
 	);
 }
 
 interface MobileOrderCardProps {
+ onEdit: (field: "amount" | "value") => void;
 	order: OpenOrder;
 	szDecimals: number;
 	kind: MarketKind | undefined;
@@ -193,7 +200,7 @@ interface MobileOrderCardProps {
 	onSelectMarket: (marketName: string, side: Side) => void;
 }
 
-function MobileOrderCard({ order, szDecimals, kind, isCancelling, onCancel, onSelectMarket }: MobileOrderCardProps) {
+function MobileOrderCard({ order, szDecimals, kind, isCancelling, onCancel, onSelectMarket, onEdit }: MobileOrderCardProps) {
 	const typeConfig = getOrderTypeConfig(order);
 	const sideLabel = getSideLabel(order.side, kind);
 	const isLong = order.side === "B";
@@ -240,6 +247,7 @@ function MobileOrderCard({ order, szDecimals, kind, isCancelling, onCancel, onSe
 				<MetricCell label={t`Trigger`} value={order.triggerCondition || FALLBACK_VALUE_PLACEHOLDER} />
 			</div>
 
+   {canAmendRestingOrder(order) && <div className="flex gap-4 px-3 pt-2 text-xs text-brand"><button type="button" disabled={isCancelling} onClick={() => onEdit("amount")}>Edit amount</button><button type="button" disabled={isCancelling} onClick={() => onEdit("value")}>Edit value</button></div>}
 			<div className="flex items-center justify-between px-3 py-1.5">
 				<span className="text-xs text-fg-muted tabular-nums">
 					{formatDateTime(order.timestamp, { dateStyle: "short", timeStyle: "short" })}
