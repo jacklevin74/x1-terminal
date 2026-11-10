@@ -16,8 +16,13 @@ export function DivergingBar({ value, className }: { value: number; className?: 
 		<div className={cn("relative h-1.5 w-full rounded-full bg-control", className)}>
 			<div className="absolute inset-y-0 left-1/2 w-px bg-fg-muted" />
 			<div
-				className="absolute inset-y-0 rounded-full transition-[width,left] duration-300"
-				style={{ background: moodColor(value), width: `${w}%`, left: value >= 0 ? "50%" : `${50 - w}%` }}
+				className="absolute inset-y-0 transition-[width,left] duration-300"
+				style={{
+					background: moodColor(value),
+					width: `${w}%`,
+					left: value >= 0 ? "50%" : `${50 - w}%`,
+					borderRadius: value >= 0 ? "0 9999px 9999px 0" : "9999px 0 0 9999px",
+				}}
 			/>
 		</div>
 	);

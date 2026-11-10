@@ -255,8 +255,13 @@ function Driver({
 			<div className="relative mt-2 h-2 rounded-full bg-control">
 				<div className="absolute inset-y-[-3px] left-1/2 w-0.5 -translate-x-1/2 rounded-full bg-fg-muted" />
 				<div
-					className="absolute inset-y-0 rounded-full transition-[width,left] duration-500"
-					style={{ background: moodColor(value), width: `${w}%`, left: value >= 0 ? "50%" : `${50 - w}%` }}
+					className="absolute inset-y-0 transition-[width,left] duration-500"
+					style={{
+						background: moodColor(value),
+						width: `${w}%`,
+						left: value >= 0 ? "50%" : `${50 - w}%`,
+						borderRadius: value >= 0 ? "0 9999px 9999px 0" : "9999px 0 0 9999px",
+					}}
 				/>
 			</div>
 			<div className="mt-2">{detail}</div>
@@ -362,8 +367,13 @@ function AutoTraderCard({ score, name }: { score: number; name: string }) {
 				/>
 				{w !== 0 && (
 					<div
-						className="absolute inset-y-0 rounded-full"
-						style={{ background: moodColor(score), width: `${half}%`, left: w > 0 ? "50%" : `${50 - half}%` }}
+						className="absolute inset-y-0"
+						style={{
+							background: moodColor(score),
+							width: `${half}%`,
+							left: w > 0 ? "50%" : `${50 - half}%`,
+							borderRadius: w > 0 ? "0 9999px 9999px 0" : "9999px 0 0 9999px",
+						}}
 					/>
 				)}
 				<div className="absolute inset-y-[-3px] left-1/2 w-0.5 -translate-x-1/2 rounded-full bg-fg-muted" />
@@ -443,8 +453,13 @@ function AllTab({
 							<span className="relative h-1.5 rounded-full bg-control">
 								<span className="absolute inset-y-[-2px] left-1/2 w-px bg-fg-muted" />
 								<span
-									className="absolute inset-y-0 rounded-full"
-									style={{ background: moodColor(c.score), width: `${w}%`, left: c.score >= 0 ? "50%" : `${50 - w}%` }}
+									className="absolute inset-y-0"
+									style={{
+										background: moodColor(c.score),
+										width: `${w}%`,
+										left: c.score >= 0 ? "50%" : `${50 - w}%`,
+										borderRadius: c.score >= 0 ? "0 9999px 9999px 0" : "9999px 0 0 9999px",
+									}}
 								/>
 							</span>
 							<span className="text-right text-xs font-medium tabular-nums" style={{ color: moodColor(c.score) }}>
