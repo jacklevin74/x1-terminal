@@ -1,4 +1,3 @@
-import { useId } from "react";
 import { moodColor, moodLabel, signedScore } from "@/lib/mood/signal";
 import type { MoodGauge } from "@/stores/use-mood-variant-store";
 import { MoodGlow } from "./mood-glow";
@@ -34,15 +33,13 @@ function arc(r: number, a0: number, a1: number) {
 }
 
 export function MoodHeroGauge({ style, score, from, name }: Props) {
-	const id = useId();
 	const a = toAngle(score);
 	const lo = Math.min(0, a);
 	const hi = Math.max(0, a);
 	const color = moodColor(score);
 	const end = point(R, SWEEP);
-	const side = score < 0 ? "bear" : "bull";
-	const h0 = point(INNER + 0.75, lo);
-	const h1 = point(INNER + 0.75, hi);
+	const zone = zoneRange(score);
+	const glow = style === 3 ? zone : { lo, hi };
 	return (
 		<div className="relative mx-auto" style={{ width: W, height: H + 18 }}>
 			<svg
@@ -52,51 +49,13 @@ export function MoodHeroGauge({ style, score, from, name }: Props) {
 				aria-hidden="true"
 				className="relative block overflow-visible"
 			>
-				<defs>
-					<linearGradient id={`${id}-hl`} gradientUnits="userSpaceOnUse" x1={h0.x} y1={h0.y} x2={h1.x} y2={h1.y}>
-						<stop offset="0" stopColor={`var(--mood-${side}-core)`} stopOpacity="0" />
-						<stop offset="0.5" stopColor={`var(--mood-${side}-core)`} />
-						<stop offset="1" stopColor={`var(--mood-${side}-core)`} stopOpacity="0" />
-					</linearGradient>
-				</defs>
-				<MoodGlow score={score} center={C} radius={R} inner={INNER} lo={lo} hi={hi} />
-				{style === 2 ? (
-					<TickScale score={score} />
-				) : (
-					<>
-						<path
-							d={arc(R, -SWEEP, SWEEP)}
-							fill="none"
-							stroke="var(--color-control-hover)"
-							strokeWidth={STROKE}
-							strokeLinecap="round"
-						/>
-						{hi > lo && (
-							<path
-								d={arc(R, lo, hi)}
-								fill="none"
-								stroke={color}
-								strokeWidth={STROKE}
-								className="transition-[stroke] duration-500"
-							/>
-						)}
-						{a !== 0 && <circle cx={point(R, a).x} cy={point(R, a).y} r={STROKE / 2} fill={color} />}
-						{style === 3 &&
-							BOUNDS.map((b) => {
-								const p0 = point(INNER - 1, toAngle(b));
-								const p1 = point(OUTER + 1, toAngle(b));
-								return (
-									<line key={b} x1={p0.x} y1={p0.y} x2={p1.x} y2={p1.y} stroke="var(--color-surface)" strokeWidth={3} />
-								);
-							})}
-					</>
-				)}
-				{style !== 2 && Math.abs(score) >= 3 && (
-					<path d={arc(INNER + 0.75, lo, hi)} fill="none" stroke={`url(#${id}-hl)`} strokeWidth={1.5} />
-				)}
+				<MoodGlow score={score} center={C} radius={R} inner={INNER} lo={glow.lo} hi={glow.hi} />
+				{style === 2 && <TickScale score={score} />}
+				{style === 3 && <ZoneTrack score={score} />}
+				{(style === 1 || style === 4) && <PlainTrack score={score} />}
 				{style === 4 && <Trail from={from} score={score} />}
-				<ZeroTick />
-				<Knob score={score} />
+				{style !== 4 && <ZeroTick />}
+				{style !== 2 && <Knob score={score} />}
 			</svg>
 			<div className="absolute inset-x-0 flex flex-col items-center" style={{ top: C - 44 }}>
 				<span className="text-2xs text-fg-muted">{name}</span>
@@ -124,6 +83,16 @@ export function MoodHeroGauge({ style, score, from, name }: Props) {
 	);
 }
 
+function zoneRange(score: number) {
+	const edges = [-100, ...BOUNDS, 100];
+	const s = clamp(score);
+	const i = Math.max(
+		0,
+		edges.findIndex((_, k) => k < edges.length - 1 && s <= (edges[k + 1] ?? 100)),
+	);
+	return { lo: toAngle(edges[i] ?? -100), hi: toAngle(edges[i + 1] ?? 100) };
+}
+
 function ZeroTick() {
 	return (
 		<line
@@ -140,21 +109,74 @@ function ZeroTick() {
 
 function Knob({ score }: { score: number }) {
 	const p = point(R, toAngle(score));
-	return <circle cx={p.x} cy={p.y} r={2.75} fill="var(--color-fg)" className="transition-all duration-500" />;
+	return <circle cx={p.x} cy={p.y} r={2.5} fill="var(--color-fg)" />;
+}
+
+function Track({ a0, a1 }: { a0: number; a1: number }) {
+	return (
+		<path
+			d={arc(R, a0, a1)}
+			fill="none"
+			stroke="var(--color-control-hover)"
+			strokeWidth={STROKE}
+			strokeLinecap="round"
+		/>
+	);
+}
+
+function Fill({ a0, a1, color }: { a0: number; a1: number; color: string }) {
+	if (a1 - a0 < 0.001) {
+		const p = point(R, a0);
+		return <circle cx={p.x} cy={p.y} r={STROKE / 2} fill={color} />;
+	}
+	return <path d={arc(R, a0, a1)} fill="none" stroke={color} strokeWidth={STROKE} strokeLinecap="round" />;
+}
+
+function PlainTrack({ score }: { score: number }) {
+	const a = toAngle(score);
+	return (
+		<>
+			<Track a0={-SWEEP} a1={SWEEP} />
+			<Fill a0={Math.min(0, a)} a1={Math.max(0, a)} color={moodColor(score)} />
+		</>
+	);
+}
+
+function ZoneTrack({ score }: { score: number }) {
+	const trim = (STROKE / 2 + 2.5) / R;
+	const edges = [-100, ...BOUNDS, 100];
+	const s = clamp(score);
+	const active = edges.findIndex((e, i) => i < edges.length - 1 && s >= e && s <= (edges[i + 1] ?? 100));
+	return (
+		<>
+			{edges.slice(0, -1).map((e, i) => {
+				const a0 = toAngle(e) + (i === 0 ? 0 : trim);
+				const a1 = toAngle(edges[i + 1] ?? 100) - (i === edges.length - 2 ? 0 : trim);
+				return i === active ? (
+					<Fill key={e} a0={a0} a1={a1} color={moodColor(score)} />
+				) : (
+					<Track key={e} a0={a0} a1={a1} />
+				);
+			})}
+		</>
+	);
 }
 
 function TickScale({ score }: { score: number }) {
 	const s = clamp(score);
 	const lo = Math.min(0, s);
 	const hi = Math.max(0, s);
+	const marker = toAngle(s);
+	const m0 = point(INNER - 4, marker);
+	const m1 = point(OUTER + 4, marker);
 	return (
 		<>
 			{Array.from({ length: 41 }, (_, i) => {
 				const v = -100 + i * 5;
 				const major = v === 0 || v === -100 || v === 100 || BOUNDS.includes(v);
 				const lit = s !== 0 && v >= lo && v <= hi;
-				const p0 = point(major ? INNER - 2 : INNER + 1, toAngle(v));
-				const p1 = point(major ? OUTER + 2 : OUTER - 1, toAngle(v));
+				const p0 = point(major ? INNER - 1 : INNER + 1.5, toAngle(v));
+				const p1 = point(major ? OUTER + 1 : OUTER - 1.5, toAngle(v));
 				return (
 					<line
 						key={v}
@@ -165,11 +187,10 @@ function TickScale({ score }: { score: number }) {
 						stroke={lit ? moodColor(score) : "var(--color-control-hover)"}
 						strokeWidth={2}
 						strokeLinecap="round"
-						className="transition-[stroke] duration-500"
 					/>
 				);
 			})}
-			<circle cx={point(R, toAngle(s)).x} cy={point(R, toAngle(s)).y} r={6} fill={moodColor(score)} />
+			<line x1={m0.x} y1={m0.y} x2={m1.x} y2={m1.y} stroke="var(--color-fg)" strokeWidth={3} strokeLinecap="round" />
 		</>
 	);
 }
@@ -177,19 +198,19 @@ function TickScale({ score }: { score: number }) {
 function Trail({ from, score }: { from: number; score: number }) {
 	const a0 = toAngle(from);
 	const a1 = toAngle(score);
-	const r = INNER - 6;
+	if (Math.abs(clamp(score) - clamp(from)) < 6) return null;
+	const r = OUTER + 6;
 	const ghost = point(r, a0);
-	if (Math.abs(a1 - a0) < 0.02) return null;
 	return (
 		<>
 			<path
 				d={arc(r, Math.min(a0, a1), Math.max(a0, a1))}
 				fill="none"
-				stroke="var(--color-fg-secondary)"
+				stroke="var(--color-fg-muted)"
 				strokeWidth={1.5}
 				strokeLinecap="round"
 			/>
-			<circle cx={ghost.x} cy={ghost.y} r={2.5} fill="var(--color-fg-secondary)" />
+			<circle cx={ghost.x} cy={ghost.y} r={2.5} fill="var(--color-fg-muted)" />
 		</>
 	);
 }

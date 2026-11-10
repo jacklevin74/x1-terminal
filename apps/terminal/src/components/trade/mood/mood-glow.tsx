@@ -26,9 +26,9 @@ export function MoodGlow({ score, center, radius, inner, lo, hi }: Props) {
 	const layer = (side: "bear" | "bull", on: boolean) => (
 		<g opacity={on ? strength(score) : 0} className="transition-opacity duration-500">
 			<path
-				d={arc(radius - 6, lo - span * 0.1, hi + span * 0.1)}
+				d={arc(radius - 14, lo - span * 0.1, hi + span * 0.1)}
 				stroke={`var(--mood-${side}-rim)`}
-				strokeWidth={32}
+				strokeWidth={52}
 				strokeLinecap="round"
 				fill="none"
 			/>
@@ -52,10 +52,21 @@ export function MoodGlow({ score, center, radius, inner, lo, hi }: Props) {
 		<g style={{ mixBlendMode: "screen" }} mask={`url(#${id}-floor)`}>
 			<defs>
 				<filter id={`${id}-blur`} filterUnits="userSpaceOnUse" x={0} y={0} width={center * 2} height={center * 2}>
-					<feGaussianBlur stdDeviation="12" />
+					<feGaussianBlur stdDeviation="20" />
 				</filter>
+				<linearGradient
+					id={`${id}-fade`}
+					gradientUnits="userSpaceOnUse"
+					x1={0}
+					x2={0}
+					y1={center + radius * 0.2}
+					y2={center + radius * 0.5}
+				>
+					<stop offset="0" stopColor="#fff" />
+					<stop offset="1" stopColor="#000" />
+				</linearGradient>
 				<mask id={`${id}-floor`} maskUnits="userSpaceOnUse">
-					<circle cx={center} cy={center} r={inner} fill="#fff" />
+					<circle cx={center} cy={center} r={inner} fill={`url(#${id}-fade)`} />
 				</mask>
 			</defs>
 			<g filter={`url(#${id}-blur)`}>
