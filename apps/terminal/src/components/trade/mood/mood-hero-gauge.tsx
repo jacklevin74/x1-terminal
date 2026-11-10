@@ -1,5 +1,6 @@
 import { moodColor, moodLabel, signedScore } from "@/lib/mood/signal";
 import { MoodGlow } from "./mood-glow";
+import { useRevealValue } from "./use-reveal-value";
 
 interface Props {
 	score: number;
@@ -23,7 +24,9 @@ function point(r: number, a: number) {
 	return { x: C + r * Math.sin(a), y: C - r * Math.cos(a) };
 }
 
-export function MoodHeroGauge({ score, name }: Props) {
+export function MoodHeroGauge({ score: target, name }: Props) {
+	const { value: score, settled } = useRevealValue(target);
+	const shown = Math.round(score);
 	const a = toAngle(score);
 	const lo = Math.min(0, a);
 	const hi = Math.max(0, a);
@@ -43,13 +46,15 @@ export function MoodHeroGauge({ score, name }: Props) {
 			</svg>
 			<div className="absolute inset-x-0 flex flex-col items-center" style={{ top: C - 44 }}>
 				<span className="text-2xs text-fg-muted">{name}</span>
-				<span
-					className="text-[44px] leading-none font-semibold tabular-nums transition-colors duration-500"
-					style={{ color }}
-				>
-					{signedScore(score)}
+				<span className="text-[44px] leading-none font-semibold tabular-nums" style={{ color }}>
+					{signedScore(shown)}
 				</span>
-				<span className="mt-1.5 text-sm font-medium">{moodLabel(score)}</span>
+				<span
+					className="mt-1.5 text-sm font-medium transition-opacity duration-300"
+					style={{ opacity: settled ? 1 : 0 }}
+				>
+					{moodLabel(target)}
+				</span>
 			</div>
 			<span
 				className="absolute -translate-x-1/2 text-2xs tabular-nums text-fg-muted"
