@@ -117,10 +117,15 @@ export function signedScore(score: number) {
 
 const MOOD_NEUTRAL = "oklch(0.64 0 0)";
 
+function moodStrength(abs: number) {
+	if (abs < 20) return abs * 1.5;
+	return 70 + (abs - 20) * 0.375;
+}
+
 export function moodColor(score: number) {
-	const t = Math.max(-100, Math.min(100, score)) / 100;
-	if (t >= 0) return `color-mix(in oklab, var(--color-success) ${Math.round(t * 100)}%, ${MOOD_NEUTRAL})`;
-	return `color-mix(in oklab, var(--color-error) ${Math.round(-t * 100)}%, ${MOOD_NEUTRAL})`;
+	const s = Math.max(-100, Math.min(100, score));
+	const side = s >= 0 ? "var(--color-success)" : "var(--color-error)";
+	return `color-mix(in oklab, ${side} ${Math.round(moodStrength(Math.abs(s)))}%, ${MOOD_NEUTRAL})`;
 }
 
 export function moodTile(score: number) {

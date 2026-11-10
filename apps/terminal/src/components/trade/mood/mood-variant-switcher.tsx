@@ -1,9 +1,9 @@
 import { cn } from "@/lib/cn";
 import { signedScore } from "@/lib/mood/signal";
-import { MOOD_VARIANTS, useMoodVariantStore } from "@/stores/use-mood-variant-store";
+import { MOOD_BACKS, MOOD_VARIANTS, useMoodVariantStore } from "@/stores/use-mood-variant-store";
 
 export function MoodVariantSwitcher() {
-	const { variant, preview, setVariant, setPreview } = useMoodVariantStore();
+	const { variant, preview, back, setVariant, setPreview, setBack } = useMoodVariantStore();
 	const current = MOOD_VARIANTS.find((v) => v.id === variant);
 	return (
 		<div className="flex items-center gap-1.5" title="Mood Ring exploration. Pick a variant.">
@@ -23,6 +23,26 @@ export function MoodVariantSwitcher() {
 				</button>
 			))}
 			<span className="text-fg-secondary">{current?.label}</span>
+			{variant === 2 && (
+				<>
+					<span className="ml-2 text-fg-muted">Back</span>
+					{MOOD_BACKS.map((b) => (
+						<button
+							key={b.id}
+							type="button"
+							onClick={() => setBack(b.id)}
+							title={b.label}
+							className={cn(
+								"grid h-4 min-w-4 place-items-center rounded-4 px-1 tabular-nums",
+								back === b.id ? "bg-fill text-fg-inverse" : "text-fg-muted hover:bg-fill-hover hover:text-fg",
+							)}
+						>
+							{b.id}
+						</button>
+					))}
+					<span className="text-fg-secondary">{MOOD_BACKS.find((b) => b.id === back)?.label}</span>
+				</>
+			)}
 			<input
 				type="range"
 				min={-100}

@@ -16,6 +16,8 @@ import {
 	signedScore,
 	targetWeight,
 } from "@/lib/mood/signal";
+import { useMoodBack } from "@/stores/use-mood-variant-store";
+import { MoodBackNav } from "./mood-back-nav";
 import { ScoreArc } from "./mood-parts";
 
 interface Props {
@@ -35,6 +37,29 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 	const shownName = shown ? coinName(shown.coin) : coinName(marketName);
 	const shownScore = focus ? (shown?.score ?? 0) : s;
 	const updated = new Date(signal.now).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+	const back = useMoodBack();
+	const order = [...signal.coins].sort((a, b) => b.score - a.score);
+	const index = order.findIndex((c) => c.coin === focus);
+	function backToAll() {
+		setFocus(null);
+		setTab("all");
+	}
+	function step(dir: -1 | 1) {
+		const next = order[index + dir];
+		if (next) setFocus(next.coin);
+	}
+	const backNav =
+		focus && tab === "market" ? (
+			<MoodBackNav
+				style={back}
+				name={shownName}
+				score={shownScore}
+				index={index}
+				total={order.length}
+				onBack={backToAll}
+				onStep={step}
+			/>
+		) : null;
 	return (
 		<Drawer side="right" onOpenChange={(open) => !open && setFocus(null)}>
 			<DrawerTrigger className="flex shrink-0 items-center gap-2.5 rounded-8 px-2 py-1 transition-colors hover:bg-fill-hover">
@@ -49,10 +74,14 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 			<DrawerContent className="w-[420px]">
 				<div className="flex h-14 flex-none items-center gap-3 px-4">
 					<div className="min-w-0 flex-1">
-						<div className="text-sm font-medium">Mood Ring</div>
-						<div className="text-2xs text-fg-muted">
-							{MOOD_POOL_SIZE} traders · updated {updated}
-						</div>
+						{backNav && back === 1 ? (
+							backNav
+						) : (
+							<>
+								<div className="text-sm font-medium">Mood Ring</div>
+								<div className="text-2xs text-fg-muted">Updated {updated}</div>
+							</>
+						)}
 					</div>
 					<div className="flex rounded-8 bg-control p-0.5">
 						<SegButton active={tab === "market"} onClick={() => setTab("market")}>
@@ -75,10 +104,8 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 							coin={shown}
 							name={shownName}
 							score={shownScore}
-							isFocus={focus !== null}
-							onBack={() => {
-								setFocus(null);
-							}}
+							topNav={back === 2 || back === 3 ? backNav : null}
+							heroNav={back === 4 ? backNav : null}
 						/>
 					) : (
 						<AllTab
@@ -160,14 +187,14 @@ function MarketTab({
 	coin,
 	name,
 	score,
-	isFocus,
-	onBack,
+	topNav,
+	heroNav,
 }: {
 	coin: MoodCoin | undefined;
 	name: string;
 	score: number;
-	isFocus: boolean;
-	onBack: () => void;
+	topNav: React.ReactNode;
+	heroNav: React.ReactNode;
 }) {
 	if (!coin) {
 		return (
@@ -184,13 +211,10 @@ function MarketTab({
 	const holders = coin.tradersLong + coin.tradersShort;
 	return (
 		<div className="space-y-3">
-			{isFocus && (
-				<button type="button" onClick={onBack} className="text-xs text-fg-muted transition-colors hover:text-fg">
-					← Back to the current market
-				</button>
-			)}
+			{topNav}
 
 			<section className="relative overflow-hidden rounded-12 bg-surface px-5 pt-5 pb-4">
+				{heroNav}
 				<span
 					className="pointer-events-none absolute top-6 left-1/2 size-32 -translate-x-1/2 rounded-full transition-colors duration-500"
 					style={{ background: moodColor(score), filter: "blur(48px)", opacity: 0.18 + Math.abs(score) / 400 }}
@@ -276,7 +300,7 @@ function MarketTab({
 						<div className="text-fg-secondary">
 							<span className="font-medium text-fg">One trader dominates {name}.</span>{" "}
 							<span className="tabular-nums">{shortAddress(coin.dominant.usr)}</span> holds{" "}
-							{Math.round(coin.dominant.share * 100)}% of gross exposure. The score counts each trader up to 40%.
+							{Math.round(coin.dominant.share * 100)}% of gross exposure.
 						</div>
 					</div>
 				)}
