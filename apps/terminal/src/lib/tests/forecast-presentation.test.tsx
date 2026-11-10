@@ -15,5 +15,5 @@ it("distinguishes buy, sell, hold and skipped actions",()=>{
  const hold=renderToStaticMarkup(<ForecastAction label="Hold short (neutral)"/>);
  expect(hold).toContain("HOLD");expect(hold).toContain("text-warning");
  const skip=renderToStaticMarkup(<ForecastAction label="Skip reduce short (buy) · $423"/>);
- expect(skip).toContain("SKIP ");expect(skip).not.toContain("text-success");
+ expect(skip).toContain("SKIP ");expect(skip).toContain("bg-success-soft");expect(skip).toContain("text-success");
 });
