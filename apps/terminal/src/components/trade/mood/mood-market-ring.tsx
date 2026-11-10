@@ -1,7 +1,8 @@
 import { Drawer, DrawerClose, DrawerContent, DrawerTrigger } from "@hypeterminal/ui";
-import { CaretDownIcon, CaretRightIcon, RobotIcon, XIcon } from "@phosphor-icons/react";
+import { ArrowRightIcon, CaretDownIcon, CaretRightIcon, RobotIcon, XIcon } from "@phosphor-icons/react";
 import { useId, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
+import { useMarketsInfo } from "@/lib/hyperliquid";
 import {
 	coinName,
 	compactUsd,
@@ -16,6 +17,8 @@ import {
 	signedScore,
 	targetWeight,
 } from "@/lib/mood/signal";
+import { useExchangeScope } from "@/providers/exchange-scope";
+import { useMarketActions } from "@/stores/use-market-store";
 import { MoodBackPill, MoodMarketStepper } from "./mood-back-nav";
 import { MoodHeroGauge } from "./mood-hero-gauge";
 import { ScoreArc } from "./mood-parts";
@@ -122,8 +125,29 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 						)}
 					</div>
 				</div>
+				{focused && shown && <TradeMarketBar coin={shown.coin} />}
 			</DrawerContent>
 		</Drawer>
+	);
+}
+
+function TradeMarketBar({ coin }: { coin: string }) {
+	const { getMarketInfo } = useMarketsInfo();
+	const { scope } = useExchangeScope();
+	const { setSelectedMarket } = useMarketActions();
+	const market = getMarketInfo(coin);
+	if (!market) return null;
+	const name = market.name;
+	return (
+		<div key={coin} className="mood-fade-in flex-none px-4 pt-2 pb-4">
+			<DrawerClose
+				onClick={() => setSelectedMarket(scope, name)}
+				className="flex h-10 w-full items-center justify-center gap-1.5 rounded-full bg-fill text-sm font-medium text-fg-inverse transition-colors hover:bg-fill-inverse-hover"
+			>
+				Trade {coinName(coin)}
+				<ArrowRightIcon weight="bold" className="size-3.5" />
+			</DrawerClose>
+		</div>
 	);
 }
 
