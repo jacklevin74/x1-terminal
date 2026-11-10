@@ -1,47 +1,67 @@
-import { cn } from "@/lib/cn";
+import { useId } from "react";
 
 interface Props {
 	score: number;
-	size: number;
-	className?: string;
-	style?: React.CSSProperties;
+	center: number;
+	radius: number;
+	inner: number;
+	lo: number;
+	hi: number;
 }
 
 function strength(score: number) {
 	const a = Math.min(100, Math.abs(score));
-	if (a < 20) return 0.1;
-	return 0.2 + ((a - 20) / 80) * 0.25;
+	if (a < 20) return 0.3;
+	return 0.4 + ((a - 20) / 80) * 0.3;
 }
 
-export function MoodGlow({ score, size, className, style }: Props) {
-	const s = strength(score);
-	return (
-		<span
-			aria-hidden="true"
-			className={cn("pointer-events-none absolute -translate-x-1/2 -translate-y-1/2", className)}
-			style={{ width: size, height: size * 0.7, mixBlendMode: "screen", ...style }}
-		>
-			<Shapes side="bear" opacity={score < 0 ? s : 0} />
-			<Shapes side="bull" opacity={score >= 0 ? s : 0} />
-		</span>
+export function MoodGlow({ score, center, radius, inner, lo, hi }: Props) {
+	const id = useId();
+	if (hi - lo < 0.02) return null;
+	const span = hi - lo;
+	const arc = (r: number, a0: number, a1: number) => {
+		const p = (a: number) => `${(center + r * Math.sin(a)).toFixed(2)} ${(center - r * Math.cos(a)).toFixed(2)}`;
+		return `M${p(a0)} A${r} ${r} 0 ${a1 - a0 > Math.PI ? 1 : 0} 1 ${p(a1)}`;
+	};
+	const layer = (side: "bear" | "bull", on: boolean) => (
+		<g opacity={on ? strength(score) : 0} className="transition-opacity duration-500">
+			<path
+				d={arc(radius - 6, lo - span * 0.1, hi + span * 0.1)}
+				stroke={`var(--mood-${side}-rim)`}
+				strokeWidth={32}
+				strokeLinecap="round"
+				fill="none"
+			/>
+			<path
+				d={arc(radius - 4, lo + span * 0.08, hi - span * 0.08)}
+				stroke={`var(--mood-${side}-mid)`}
+				strokeWidth={18}
+				strokeLinecap="round"
+				fill="none"
+			/>
+			<path
+				d={arc(radius - 2, lo + span * 0.3, hi - span * 0.3)}
+				stroke={`var(--mood-${side}-core)`}
+				strokeWidth={8}
+				strokeLinecap="round"
+				fill="none"
+			/>
+		</g>
 	);
-}
-
-function Shapes({ side, opacity }: { side: "bear" | "bull"; opacity: number }) {
 	return (
-		<span className="absolute inset-0 transition-opacity duration-700" style={{ opacity, filter: "blur(28px)" }}>
-			<span
-				className="absolute inset-x-0 top-[6%] bottom-0 rounded-[50%]"
-				style={{ background: `var(--mood-${side}-rim)` }}
-			/>
-			<span
-				className="absolute top-[18%] right-[18%] bottom-[14%] left-[16%] rounded-[50%]"
-				style={{ background: `var(--mood-${side}-mid)` }}
-			/>
-			<span
-				className="absolute top-[30%] right-[34%] bottom-[34%] left-[32%] rounded-[50%]"
-				style={{ background: `var(--mood-${side}-core)` }}
-			/>
-		</span>
+		<g style={{ mixBlendMode: "screen" }} mask={`url(#${id}-floor)`}>
+			<defs>
+				<filter id={`${id}-blur`} filterUnits="userSpaceOnUse" x={0} y={0} width={center * 2} height={center * 2}>
+					<feGaussianBlur stdDeviation="12" />
+				</filter>
+				<mask id={`${id}-floor`} maskUnits="userSpaceOnUse">
+					<circle cx={center} cy={center} r={inner} fill="#fff" />
+				</mask>
+			</defs>
+			<g filter={`url(#${id}-blur)`}>
+				{layer("bear", score < 0)}
+				{layer("bull", score > 0)}
+			</g>
+		</g>
 	);
 }
