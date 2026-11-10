@@ -23,10 +23,10 @@ export const MOOD_VARIANTS: { id: MoodVariant; label: string }[] = [
 ];
 
 export const MOOD_GAUGES: { id: MoodGauge; label: string }[] = [
-	{ id: 1, label: "Arc with knob" },
-	{ id: 2, label: "Mood ring" },
-	{ id: 3, label: "Spectrum bar" },
-	{ id: 4, label: "Zone dial" },
+	{ id: 1, label: "Arc, refined" },
+	{ id: 2, label: "Arc, tick scale" },
+	{ id: 3, label: "Arc, zone segments" },
+	{ id: 4, label: "Arc, 24h trail" },
 ];
 
 export const useMoodVariantStore = create<MoodVariantState>()(

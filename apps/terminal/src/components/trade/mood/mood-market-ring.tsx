@@ -76,7 +76,7 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 					{focused ? (
 						<MoodMarketStepper index={index} total={order.length} onStep={step} />
 					) : (
-						<div className="flex rounded-8 bg-control p-0.5">
+						<div className="flex rounded-full bg-control p-0.5">
 							<SegButton active={tab === "market"} onClick={() => setTab("market")}>
 								{coinName(marketName)}
 							</SegButton>
@@ -118,7 +118,7 @@ function SegButton({ active, onClick, children }: { active: boolean; onClick: ()
 			type="button"
 			onClick={onClick}
 			className={cn(
-				"h-7 rounded-[6px] px-3 text-xs transition-colors",
+				"h-7 rounded-full px-3 text-xs transition-colors",
 				active ? "bg-control-hover font-medium text-fg" : "text-fg-muted hover:text-fg",
 			)}
 		>
@@ -145,7 +145,7 @@ function MarketTab({ coin, name, score }: { coin: MoodCoin | undefined; name: st
 	return (
 		<div className="space-y-3">
 			<section className="relative overflow-hidden rounded-12 bg-surface px-5 pt-5 pb-4">
-				<MoodHeroGauge style={gauge} score={score} name={name} />
+				<MoodHeroGauge style={gauge} score={score} from={first} name={name} />
 				<div className="relative mt-3 flex items-center justify-center gap-2 text-xs">
 					<span className="text-fg-muted">
 						{holders} of {MOOD_POOL_SIZE} traders hold {name}
