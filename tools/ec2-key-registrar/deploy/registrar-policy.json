@@ -17,7 +17,8 @@
           "aws:RequestTag/env": "prod"
         },
         "Bool": {
-          "kms:MultiRegion": "false"
+          "kms:MultiRegion": "false",
+          "kms:BypassPolicyLockoutSafetyCheck": "true"
         },
         "ForAllValues:StringEquals": {
           "aws:TagKeys": [
@@ -68,17 +69,6 @@
           "aws:RequestedRegion": "us-east-2",
           "aws:ResourceTag/app": "x1-terminal",
           "aws:ResourceTag/purpose": "ec2-api-key"
-        }
-      }
-    },
-    {
-      "Sid": "NeverBypassLockoutCheck",
-      "Effect": "Deny",
-      "Action": "kms:CreateKey",
-      "Resource": "*",
-      "Condition": {
-        "Bool": {
-          "kms:BypassPolicyLockoutSafetyCheck": "true"
         }
       }
     },

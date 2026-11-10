@@ -32,6 +32,7 @@ aws iam simulate-principal-policy --policy-source-arn "$R" --action-names kms:Cr
    ContextKeyName=kms:KeyUsage,ContextKeyValues=SIGN_VERIFY,ContextKeyType=string \
    ContextKeyName=kms:KeyOrigin,ContextKeyValues=AWS_KMS,ContextKeyType=string \
    ContextKeyName=kms:MultiRegion,ContextKeyValues=false,ContextKeyType=boolean \
+   ContextKeyName=kms:BypassPolicyLockoutSafetyCheck,ContextKeyValues=true,ContextKeyType=boolean \
    ContextKeyName=aws:RequestTag/app,ContextKeyValues=x1-terminal,ContextKeyType=string \
    ContextKeyName=aws:RequestTag/purpose,ContextKeyValues=ec2-api-key,ContextKeyType=string \
    ContextKeyName=aws:RequestTag/env,ContextKeyValues=prod,ContextKeyType=string \

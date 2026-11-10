@@ -87,7 +87,7 @@ export function createService({file,kms,now=Date.now,maxOwner=3,maxTotal=30,audi
     if(!/^arn:aws:kms:us-east-2:\d{12}:key\/[a-f0-9-]{36}$/.test(created.arn??''))throw Error('Invalid key metadata');
     db.prepare("UPDATE requests SET arn=?,aws_request=?,state='created',updated=? WHERE id=?").run(created.arn,created.requestId??null,now(),row.id);row.arn=created.arn;
    }catch(error){
-    if(error instanceof KmsRejected){db.prepare("UPDATE requests SET state='rejected',updated=? WHERE id=?").run(now(),row.id);record({owner,op:'create',id:row.id,agent:null,result:'aws_rejected'});fail(502,'AWS refused key creation. No key was created and nothing was billed.');}
+    if(error instanceof KmsRejected){db.prepare("UPDATE requests SET state='rejected',updated=? WHERE id=?").run(now(),row.id);record({owner,op:'create',id:row.id,agent:null,result:'aws_rejected',awsError:String(error.message).slice(0,80)});fail(502,'AWS refused key creation. No key was created and nothing was billed.');}
     db.prepare("UPDATE requests SET state='uncertain',updated=? WHERE id=?").run(now(),row.id);record({owner,op:'create',id:row.id,agent:null,result:'uncertain'});fail(503,'KMS creation was not confirmed. No retry was sent. An operator must reconcile this request before another key is created.');}
   }
   try{

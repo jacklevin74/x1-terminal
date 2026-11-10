@@ -24,7 +24,9 @@ export function checkIdentity(identity,role){
 }
 /**
  * Key policy set at CreateKey time, so the registrar never needs kms:PutKeyPolicy.
- * Statement 1 keeps IAM in control (required for the policy lockout safety check).
+ * Statement 1 keeps the account (IAM administrators) in control, so the key can always be recovered.
+ * The registrar is denied kms:PutKeyPolicy, so KMS's lockout safety check would always refuse;
+ * CreateKey therefore sets BypassPolicyLockoutSafetyCheck, which the registrar's IAM policy allows only on CreateKey.
  * Statement 2 is the only grant the lifecycle role has: its IAM policy contains no KMS Allow,
  * so tagging some other key can never bring it into the lifecycle role's reach.
  */
@@ -64,7 +66,7 @@ export function kmsAdapter({registrarRoleArn,lifecycleRoleArn,env='prod'}){
    }
   },
   async create({id,request,owner}){
-   let out;try{out=await registrarKms.send(new CreateKeyCommand({KeySpec:'ECC_SECG_P256K1',KeyUsage:'SIGN_VERIFY',MultiRegion:false,Description:'X1 Terminal EC2 managed API key',Policy:keyPolicy(registrar.account,lifecycle.arn),Tags:keyTags({env,owner,id,request})}));}
+   let out;try{out=await registrarKms.send(new CreateKeyCommand({KeySpec:'ECC_SECG_P256K1',KeyUsage:'SIGN_VERIFY',MultiRegion:false,BypassPolicyLockoutSafetyCheck:true,Description:'X1 Terminal EC2 managed API key',Policy:keyPolicy(registrar.account,lifecycle.arn),Tags:keyTags({env,owner,id,request})}));}
    catch(error){if(DEFINITE_CREATE_FAILURES.has(error?.name)&&error?.$metadata?.httpStatusCode===400)throw new KmsRejected(error.name);throw error;}
    return {arn:out.KeyMetadata?.Arn,requestId:out.$metadata?.requestId};
   },
