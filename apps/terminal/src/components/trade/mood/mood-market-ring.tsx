@@ -16,8 +16,10 @@ import {
 	signedScore,
 	targetWeight,
 } from "@/lib/mood/signal";
-import { useMoodBack } from "@/stores/use-mood-variant-store";
+import { useMoodBack, useMoodGauge } from "@/stores/use-mood-variant-store";
 import { MoodBackNav } from "./mood-back-nav";
+import { MoodDrawerOptions } from "./mood-drawer-options";
+import { MoodHeroGauge } from "./mood-hero-gauge";
 import { ScoreArc } from "./mood-parts";
 
 interface Props {
@@ -118,6 +120,7 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 						/>
 					)}
 				</div>
+				<MoodDrawerOptions />
 			</DrawerContent>
 		</Drawer>
 	);
@@ -138,51 +141,6 @@ function SegButton({ active, onClick, children }: { active: boolean; onClick: ()
 	);
 }
 
-const SWEEP = (120 * Math.PI) / 180;
-
-function arc(c: number, r: number, a0: number, a1: number) {
-	const p = (a: number) => `${(c + r * Math.sin(a)).toFixed(2)} ${(c - r * Math.cos(a)).toFixed(2)}`;
-	return `M${p(a0)} A${r} ${r} 0 ${a1 - a0 > Math.PI ? 1 : 0} 1 ${p(a1)}`;
-}
-
-function Gauge({ score, size }: { score: number; size: number }) {
-	const stroke = 10;
-	const c = size / 2;
-	const r = c - stroke / 2 - 2;
-	const a = (Math.max(-100, Math.min(100, score)) / 100) * SWEEP;
-	const knob = { x: c + r * Math.sin(a), y: c - r * Math.cos(a) };
-	return (
-		<svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true" className="block">
-			<path
-				d={arc(c, r, -SWEEP, SWEEP)}
-				fill="none"
-				stroke="var(--color-control-hover)"
-				strokeWidth={stroke}
-				strokeLinecap="round"
-			/>
-			{a !== 0 && (
-				<path
-					d={arc(c, r, Math.min(0, a), Math.max(0, a))}
-					fill="none"
-					stroke={moodColor(score)}
-					strokeWidth={stroke}
-					strokeLinecap="round"
-				/>
-			)}
-			<line
-				x1={c}
-				x2={c}
-				y1={c - r - stroke / 2 - 4}
-				y2={c - r + stroke / 2 + 4}
-				stroke="var(--color-fg-muted)"
-				strokeWidth={1.5}
-			/>
-			<circle cx={knob.x} cy={knob.y} r={stroke / 2 + 2.5} fill="var(--color-fg)" />
-			<circle cx={knob.x} cy={knob.y} r={stroke / 2 - 1} fill={moodColor(score)} />
-		</svg>
-	);
-}
-
 function MarketTab({
 	coin,
 	name,
@@ -196,6 +154,7 @@ function MarketTab({
 	topNav: React.ReactNode;
 	heroNav: React.ReactNode;
 }) {
+	const gauge = useMoodGauge();
 	if (!coin) {
 		return (
 			<div className="mt-2 rounded-12 bg-surface p-5 text-center">
@@ -215,27 +174,7 @@ function MarketTab({
 
 			<section className="relative overflow-hidden rounded-12 bg-surface px-5 pt-5 pb-4">
 				{heroNav}
-				<span
-					className="pointer-events-none absolute top-6 left-1/2 size-32 -translate-x-1/2 rounded-full transition-colors duration-500"
-					style={{ background: moodColor(score), filter: "blur(48px)", opacity: 0.18 + Math.abs(score) / 400 }}
-				/>
-				<div className="relative mx-auto w-[172px]">
-					<Gauge score={score} size={172} />
-					<div className="absolute inset-0 flex flex-col items-center justify-center pt-1">
-						<span className="text-2xs text-fg-muted">{name}</span>
-						<span
-							className="text-[44px] leading-none font-semibold tabular-nums transition-colors duration-500"
-							style={{ color: moodColor(score) }}
-						>
-							{signedScore(score)}
-						</span>
-						<span className="mt-1.5 text-sm font-medium">{moodLabel(score)}</span>
-					</div>
-					<div className="absolute inset-x-0 bottom-1 flex justify-between px-3 text-2xs tabular-nums text-fg-muted">
-						<span>−100</span>
-						<span>+100</span>
-					</div>
-				</div>
+				<MoodHeroGauge style={gauge} score={score} name={name} />
 				<div className="relative mt-3 flex items-center justify-center gap-2 text-xs">
 					<span className="text-fg-muted">
 						{holders} of {MOOD_POOL_SIZE} traders hold {name}
