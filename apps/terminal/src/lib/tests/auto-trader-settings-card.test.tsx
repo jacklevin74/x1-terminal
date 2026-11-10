@@ -9,9 +9,9 @@ vi.mock("@lingui/react/macro",()=>({Trans:({children}:{children:ReactNode})=>chi
 vi.mock("@hypeterminal/ui",()=>({Tooltip:({children}:{children:ReactNode})=>children}));
 let cleanup:(()=>Promise<void>)|undefined;
 afterEach(async()=>{await cleanup?.();cleanup=undefined;});
-async function setup(disabled=false){
+async function setup(disabled=false,closeRemovedSupported=false){
  const node=document.createElement("div");document.body.append(node);const root=createRoot(node),changed=vi.fn();
- function Form(){const [value,setValue]=useState<AutoTraderSettings>({...AUTO_TRADER_DEFAULTS,include:["BTC","xyz:SAVED"]});return <SettingsCard markets={["BTC","xyz:SOXL"]} value={value} disabled={disabled} onChange={next=>{changed(next);setValue(next);}} />;}
+ function Form(){const [value,setValue]=useState<AutoTraderSettings>({...AUTO_TRADER_DEFAULTS,include:["BTC","xyz:SAVED"]});return <SettingsCard closeRemovedSupported={closeRemovedSupported} markets={["BTC","xyz:SOXL"]} value={value} disabled={disabled} onChange={next=>{changed(next);setValue(next);}} />;}
  cleanup=async()=>{await act(async()=>root.unmount());node.remove();};await act(async()=>root.render(<Form/>));
  const checkbox=(coin:string)=>[...node.querySelectorAll('label')].find(l=>l.textContent?.startsWith(coin))!.querySelector<HTMLInputElement>('input')!;
  return {node,checkbox,changed};
@@ -41,4 +41,13 @@ it("shows the default blend and updates only flowPct from the slider",async()=>{
  expect(slider.getAttribute("aria-valuetext")).toBe("80% positions, 20% six-hour flow");
  const reset=[...node.querySelectorAll('button')].find(b=>b.textContent==='Reset to 60 / 40')!;
  await act(async()=>reset.click());expect(slider.value).toBe("40");
+});
+
+it("keeps close-removed off and unavailable until backend rollout readiness is advertised",async()=>{
+ const {node,changed}=await setup();const toggle=node.querySelector<HTMLButtonElement>('button[role="switch"][aria-label="Close removed positions"]')!;
+ expect(toggle.getAttribute("aria-checked")).toBe("false");expect(toggle.disabled).toBe(true);await act(async()=>toggle.click());expect(changed).not.toHaveBeenCalled();expect(node.textContent).toContain("Requires updated API and executor support");
+});
+it("enables explicit removal closing without changing selected assets",async()=>{
+ const {node,changed}=await setup(false,true);const toggle=node.querySelector<HTMLButtonElement>('button[role="switch"]')!;
+ expect(toggle.disabled).toBe(false);await act(async()=>toggle.click());expect(toggle.getAttribute("aria-checked")).toBe("true");expect(changed.mock.calls.at(-1)![0]).toMatchObject({closeRemovedPositions:true,include:["BTC","xyz:SAVED"]});
 });
