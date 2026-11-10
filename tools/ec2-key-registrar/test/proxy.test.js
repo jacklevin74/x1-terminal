@@ -126,3 +126,10 @@ test('existing databases from the creation-only service migrate in place',t=>{
  const old=new DatabaseSync(file);old.exec("CREATE TABLE requests(id TEXT PRIMARY KEY,idem TEXT NOT NULL UNIQUE,owner TEXT NOT NULL,name TEXT NOT NULL,days INTEGER NOT NULL,state TEXT NOT NULL,arn TEXT,agent TEXT,created INTEGER NOT NULL,aws_request TEXT);");old.close();
  const service=createService({file,kms:{}});assert.equal(service.status(OWNER).agents.length,0);service.close();
 });
+test('behind CloudFront (one trusted hop) unauthenticated limits key on the address CloudFront saw, not the edge',async t=>{
+ const {url}=await upstream(t,{trustedHops:1,unauthLimit:(()=>{const seen=new Map();return k=>{seen.set(k,(seen.get(k)??0)+1);return seen.get(k)<=2;};})()});
+ const hit=xff=>fetch(url+'/health',{headers:{'x-forwarded-for':xff}}).then(r=>r.status);
+ assert.equal(await hit('1.1.1.1, 198.51.100.1, 130.176.0.1'),401);assert.equal(await hit('2.2.2.2, 198.51.100.1, 130.176.0.2'),401);
+ assert.equal(await hit('3.3.3.3, 198.51.100.1, 130.176.0.3'),429); // same CloudFront viewer, different edges and spoofed first entries
+ assert.equal(await hit('9.9.9.9, 198.51.100.2, 130.176.0.1'),401); // another viewer through the same edge is not penalized
+});

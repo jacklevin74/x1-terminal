@@ -1,5 +1,6 @@
 #!/bin/sh
-# GATE 5 helper, ON EC2. 'on' lets the PREVIEW deployment create/manage keys for the one real test; 'off' reverts.
+# GATE 6 helper, ON EC2. 'on' lets the PREVIEW deployment create/manage keys for the single real test;
+# 'off' reverts to status-only previews. Verify: systemctl show x1-ec2-keys -p Environment | grep -c PREVIEW
 set -eu
 case "${1:?on|off}" in
  on)  sudo install -d /etc/systemd/system/x1-ec2-keys.service.d

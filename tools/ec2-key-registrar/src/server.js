@@ -14,7 +14,7 @@ const audit=entry=>appendFileSync(auditFile,JSON.stringify({ts:entry.ts,owner:en
 const service=createService({file:env.X1_KEYS_DB??'/var/lib/x1-ec2-keys/keys.sqlite',kms,audit});
 const verify=createProxyVerifier({keys:loadProxyKeys()});
 const extraOrigins=(env.X1_EXTRA_ORIGINS??'').split(',').map(v=>v.trim()).filter(v=>/^https:\/\/[a-z0-9.-]+$/.test(v));
-const server=createServer(createApp({service,verify,production:env.NODE_ENV==='production',extraOrigins,allowPreviewMutations:env.X1_PREVIEW_MUTATIONS==='1'}));
+const server=createServer(createApp({service,verify,production:env.NODE_ENV==='production',extraOrigins,allowPreviewMutations:env.X1_PREVIEW_MUTATIONS==='1',trustedHops:Math.min(Math.max(Number.parseInt(env.X1_TRUSTED_HOPS??'0',10)||0,0),3)}));
 server.requestTimeout=15000;server.headersTimeout=10000;
 server.listen(Number(env.X1_PORT??8790),'127.0.0.1',()=>console.log('EC2 key service ready on loopback; owner-signed create and lifecycle only; no signing or exchange routes.'));
 process.on('SIGTERM',()=>server.close(()=>{service.close();process.exit(0);}));

@@ -1,2 +1,3 @@
 node_modules/
 deploy/*.live-backup.json
+deploy/cloudfront.local.env

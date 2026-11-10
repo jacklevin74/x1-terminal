@@ -15,14 +15,16 @@ const forwarded=req=>(header(req,'x-forwarded-for')??'').split(',').map(v=>v.tri
  * HTTP handler. Order: size cap → proxy HMAC → origin/tier → per-client limit → route.
  * Nothing reaches the KMS code without a valid, unreplayed proxy signature.
  */
-export function createApp({service,verify,production=process.env.NODE_ENV==='production',extraOrigins=[],allowPreviewMutations=false,now=Date.now,
+export function createApp({service,verify,production=process.env.NODE_ENV==='production',extraOrigins=[],allowPreviewMutations=false,trustedHops=0,now=Date.now,
  unauthLimit=createRateLimiter({limit:120,windowMs:60_000,now}),clientLimit=createRateLimiter({limit:30,windowMs:60_000,now})}){
  const productionOrigins=new Set([...PRODUCTION_ORIGINS,...extraOrigins]);
  const devOrigins=new Set(production?[]:DEV_ORIGINS);
  return async function handle(req,res){
   try{
-   // Caddy appends the connecting address, so the last entry is the real peer (Vercel or an attacker).
-   const peer=forwarded(req).at(-1)??req.socket.remoteAddress??'unknown';
+   // X-Forwarded-For: [browser (set by the Vercel proxy), …, peer seen by the first trusted hop, trusted hops…].
+   // Caddy appends its peer; with CloudFront in front that peer is an edge (trustedHops=1), so the address
+   // CloudFront itself saw (Vercel, or an attacker) is the entry just before the trusted hops.
+   const hops=forwarded(req),peer=hops.at(-1-trustedHops)??hops[0]??req.socket.remoteAddress??'unknown';
    const chunks=[];let size=0;
    for await(const part of req){size+=part.length;if(size>MAX_BODY)throw new RequestError(413,'Request too large.');chunks.push(part);}
    const body=Buffer.concat(chunks);

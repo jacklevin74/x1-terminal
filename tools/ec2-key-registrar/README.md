@@ -9,11 +9,29 @@ browser, through `approveAgent` signed by the owner.
 ## Architecture
 
 ```
-Browser (/api_keys)  ── same-origin /api/ec2-keys?op=…&owner=… ──▶  Vercel function api/ec2-keys.js
-   (no AWS access; signs each request with EC2_KEYS_PROXY_SECRET)  ── HTTPS ──▶  Caddy :443 on EC2
-   (Let's Encrypt via TLS-ALPN, 8 KB body cap)  ──▶  x1-ec2-keys on 127.0.0.1:8790  ──▶  AWS KMS
-   (assumes x1-ec2-key-registrar or x1-ec2-key-lifecycle per operation; temporary credentials only)
+Browser (/api_keys) ── same-origin /api/ec2-keys?op=…&owner=… ──▶ Vercel function api/ec2-keys.js
+  (no AWS access; HMAC-signs each request) ── HTTPS ──▶ CloudFront <id>.cloudfront.net (caching disabled)
+  ── HTTP :80 + X-Origin-Verify ──▶ Caddy on EC2 (port 80 open only to the CloudFront origin-facing prefix list)
+  ──▶ x1-ec2-keys on 127.0.0.1:8790 ──▶ AWS KMS (assumed registrar or lifecycle role, temporary credentials)
 ```
+
+- CloudFront: viewer HTTPS only (default `*.cloudfront.net` certificate), PriceClass_100,
+  managed `CachingDisabled` cache policy, origin request policy `x1-ec2-keys-origin` that forwards
+  all query strings and only `content-type`, `x-auth`, `x-proxy-ts`, `x-proxy-auth`, `origin`.
+  It adds the custom origin header `X-Origin-Verify: v1:<secret>`; Caddy answers 403 without it and
+  strips it before proxying. The secret lives in `/etc/caddy/origin-verify.env` (0600); Caddy runs
+  without `--environ` and with its admin API off so the value never reaches logs or a local endpoint.
+- Origin hop CloudFront → EC2 is plain HTTP. Its contents are protected by the proxy HMAC (replay-checked)
+  and owner signatures (single-use nonces); the origin-verify value is visible on that hop, which is why
+  the security group still admits only CloudFront.
+- `X-Forwarded-For` arrives as `browser, vercel-egress, cloudfront-edge`. With `X1_TRUSTED_HOPS=1` the
+  service keys unauthenticated limits on `vercel-egress` (what CloudFront saw) and, after the HMAC
+  verifies, per-client limits on `browser` (set by the Vercel proxy).
+- Optional: AWS WAF on the distribution (rate-based rule, ~$5/month + $1/rule + per-request) is not needed
+  for this traffic level because unauthenticated requests stop at Caddy or the HMAC check.
+- Later custom domain: request an ACM certificate in **us-east-1** for e.g. `keys-api.<domain>`, add it
+  as an Alternate domain (CNAME) on the distribution with `sni-only`, create a CNAME/alias record to the
+  `*.cloudfront.net` name, then change `EC2_KEYS_URL`. Nothing changes on EC2.
 
 No SSH tunnel is in the request path. Local `vite dev` proxies `/api/ec2-keys` to the
 deployed Vercel function (`EC2_KEYS_DEV_TARGET` overrides the target); the function
@@ -74,26 +92,29 @@ credentials or signatures appear in responses or logs.
 
 ## Deploy / rollout
 
-Gate scripts live in `deploy/gates/` (each one is run by a person, in order):
-`1-iam.sh` → `2-eip-dns.sh <host>` → `3-security-group.sh` → on EC2 `4-ec2-cutover.sh <host>`
-→ `5-vercel-secrets.sh <host>` → `6-preview-mutations.sh on|off` around the one real test.
+Gate scripts in `deploy/gates/`, each run by a person, in order (each has a verify step and a rollback):
+`1-iam.sh` → `2-security-group.sh` (dedicated group `x1-ec2-keys-cloudfront`, TCP 80 from
+`com.amazonaws.global.cloudfront.origin-facing` only; a separate group because that prefix list counts as
+~55 of the 60 inbound rules) → on EC2 `3-ec2-cutover.sh` → `4-cloudfront.sh` → `5-vercel-env.sh` →
+on EC2 `6-preview-mutations.sh on|off` around the one real test.
 
 ## Rollback
 
-1. `sudo systemctl disable --now caddy` on EC2, or revoke the 443 rule
-   (see `3-security-group.sh`). The page then shows "EC2 key service unavailable";
-   keys already approved on Hyperliquid keep working.
-2. Restore code: copy `/opt/x1-ec2-keys.prev-<stamp>` back to `/opt/x1-ec2-keys`, restore its
-   `x1-ec2-keys.service.installed` unit, `daemon-reload`, restart `x1-ec2-keys`.
-3. IAM: `aws iam put-role-policy --role-name x1-ec2-key-registrar --policy-name create-ec2-api-keys-only --policy-document file://…registrar-policy.previous.json`
-   (after replacing `ACCOUNT_ID`), and delete `x1-ec2-key-lifecycle` (`delete-role-policy`, `delete-role`).
+Fastest: `npx vercel env rm EC2_KEYS_URL production` (page shows "EC2 key service unavailable"; keys already
+approved on Hyperliquid keep working), or `sudo systemctl stop caddy` on EC2. Full, in reverse order:
+`4-cloudfront.sh rollback`, `3-ec2-cutover.sh rollback` (restores the previous code/unit, stops Caddy),
+`2-security-group.sh rollback`, and for IAM re-apply `deploy/registrar-policy.previous.json` (fill in
+`ACCOUNT_ID`) and delete `x1-ec2-key-lifecycle` (`delete-role-policy`, then `delete-role`).
 
 ## Rotate the proxy secret
 
 On EC2: `openssl rand -hex 32 | sudo tee /etc/x1-ec2-keys/proxy.secret >/dev/null` (same for
 `proxy-preview.secret`), then from the Mac `vercel env rm EC2_KEYS_PROXY_SECRET production`
-and re-run the matching line of `5-vercel-secrets.sh`; restart `x1-ec2-keys` and redeploy.
+and re-run the matching line of `5-vercel-env.sh`; restart `x1-ec2-keys` and redeploy.
 Requests fail with 401 between the two steps; nothing else is affected.
+The origin-verify secret: write a new `/etc/caddy/origin-verify.env`, update the distribution's
+`X-Origin-Verify` custom header to `v1:<new>` (get/update-distribution-config), wait for deploy, then
+`systemctl restart caddy`; requests get 403 in between.
 
 ## Revoke a key
 

@@ -1,0 +1,10 @@
+{
+  "Name": "x1-ec2-keys-origin",
+  "Comment": "X1 EC2 key service: all query strings, only the headers the service needs",
+  "HeadersConfig": {
+    "HeaderBehavior": "whitelist",
+    "Headers": { "Quantity": 5, "Items": ["content-type", "x-auth", "x-proxy-ts", "x-proxy-auth", "origin"] }
+  },
+  "CookiesConfig": { "CookieBehavior": "none" },
+  "QueryStringsConfig": { "QueryStringBehavior": "all" }
+}
