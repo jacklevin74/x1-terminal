@@ -253,7 +253,6 @@ function Driver({
 				</span>
 			</div>
 			<div className="relative mt-2 h-2 rounded-full bg-control">
-				<div className="absolute inset-y-[-3px] left-1/2 w-0.5 -translate-x-1/2 rounded-full bg-fg-muted" />
 				<div
 					className="absolute inset-y-0 transition-[width,left] duration-500"
 					style={{
@@ -263,6 +262,7 @@ function Driver({
 						borderRadius: value >= 0 ? "0 9999px 9999px 0" : "9999px 0 0 9999px",
 					}}
 				/>
+				<div className="absolute inset-y-[-3px] left-1/2 w-0.5 -translate-x-1/2 rounded-full bg-fg-muted" />
 			</div>
 			<div className="mt-2">{detail}</div>
 		</div>
@@ -451,7 +451,6 @@ function AllTab({
 								{c.coin === current && <span className="size-1 flex-none rounded-full bg-fg" />}
 							</span>
 							<span className="relative h-1.5 rounded-full bg-control">
-								<span className="absolute inset-y-[-2px] left-1/2 w-px bg-fg-muted" />
 								<span
 									className="absolute inset-y-0"
 									style={{
@@ -461,6 +460,7 @@ function AllTab({
 										borderRadius: c.score >= 0 ? "0 9999px 9999px 0" : "9999px 0 0 9999px",
 									}}
 								/>
+								<span className="absolute inset-y-[-2px] left-1/2 w-px -translate-x-1/2 bg-fg-muted" />
 							</span>
 							<span className="text-right text-xs font-medium tabular-nums" style={{ color: moodColor(c.score) }}>
 								{signedScore(c.score)}

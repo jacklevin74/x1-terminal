@@ -14,7 +14,6 @@ export function DivergingBar({ value, className }: { value: number; className?: 
 	const w = Math.abs(value) / 2;
 	return (
 		<div className={cn("relative h-1.5 w-full rounded-full bg-control", className)}>
-			<div className="absolute inset-y-0 left-1/2 w-px bg-fg-muted" />
 			<div
 				className="absolute inset-y-0 transition-[width,left] duration-300"
 				style={{
@@ -24,6 +23,7 @@ export function DivergingBar({ value, className }: { value: number; className?: 
 					borderRadius: value >= 0 ? "0 9999px 9999px 0" : "9999px 0 0 9999px",
 				}}
 			/>
+			<div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-fg-muted" />
 		</div>
 	);
 }
