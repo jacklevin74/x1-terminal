@@ -1,5 +1,5 @@
 import { PencilIcon } from "@phosphor-icons/react";
-import { canAmendRestingOrder } from "@/lib/trade/amend-order";
+import { canAmendRestingOrder, canAmendOrderPrice } from "@/lib/trade/amend-order";
 import { EditOrderModal } from "./edit-order-modal";
 import {useTradingAccount} from "@/hooks/use-trading-account";
 import { AccountTableToolbar } from "./account-table-toolbar";
@@ -55,7 +55,7 @@ export function OrdersTab() {
 		{ enabled: isConnected && !!address },
 	);
 	const markets = useMarkets();
-	const [editing, setEditing] = useState<{ oid: number; field: "amount" | "value" } | null>(null);
+	const [editing, setEditing] = useState<{ oid: number; field: "amount" | "value" | "price" } | null>(null);
  const [typeFilter, setTypeFilter] = useState("");
  const [sideFilter, setSideFilter] = useState("");
  const [marketFilter, setMarketFilter] = useState("");
@@ -215,7 +215,7 @@ export function OrdersTab() {
      <TableCell size="dense" className={cell}>{editable ? <button type="button" aria-label={`Edit amount for ${order.coin}`} className="inline-flex items-center gap-1 hover:text-brand" onClick={() => setEditing({oid:order.oid,field:"amount"})}>{formatToken(order.sz, decimals)}<PencilIcon className="size-3" /></button> : isClosePositionOrder(order) ? "Close Position" : formatToken(order.sz, decimals)}</TableCell>
      <TableCell size="dense" className={cell}>{isClosePositionOrder(order) ? "--" : formatToken(order.origSz, decimals)}</TableCell>
      <TableCell size="dense" className={cell}>{editable && detail.value ? <button type="button" aria-label={`Edit value for ${order.coin}`} className="inline-flex items-center gap-1 hover:text-brand" onClick={() => setEditing({oid:order.oid,field:"value"})}>{formatToken(detail.value, {decimals:2,symbol:quote,compact:false})}<PencilIcon className="size-3" /></button> : detail.market ? "Market" : detail.value ? formatToken(detail.value, { decimals: 2, symbol: quote, compact: false }) : "--"}</TableCell>
-     <TableCell size="dense" className={cell}>{detail.market ? "Market" : formatPrice(order.limitPx, { szDecimals: decimals, style: "decimal", compact: false })}</TableCell>
+     <TableCell size="dense" className={cell}>{canAmendOrderPrice(order) && !cancelling ? <button type="button" aria-label={`Edit price for ${order.coin}`} className="inline-flex items-center gap-1 hover:text-brand" onClick={() => setEditing({oid:order.oid,field:"price"})}>{formatPrice(order.limitPx, {szDecimals:decimals,style:"decimal",compact:false})}<PencilIcon className="size-3" /></button> : detail.market ? "Market" : formatPrice(order.limitPx, { szDecimals: decimals, style: "decimal", compact: false })}</TableCell>
      <TableCell size="dense" className={cell}>{spot ? "--" : order.reduceOnly ? "Yes" : "No"}</TableCell><TableCell size="dense" className={cell}>{detail.trigger}</TableCell><TableCell size="dense" className={cell}>{detail.tpsl}</TableCell>
      <TableCell size="dense" className={cell}><button type="button" aria-label="Cancel order" onClick={() => handleCancelRow([order])} disabled={cancelling} className="text-brand hover:underline disabled:opacity-40">{cancelling ? "Canceling…" : "Cancel"}</button></TableCell>
     </TableRow>;
