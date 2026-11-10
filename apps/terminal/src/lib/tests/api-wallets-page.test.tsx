@@ -1,3 +1,4 @@
+vi.mock("@/components/api-wallets/ec2-kms-keys",()=>({Ec2KmsKeys:()=>null}));
 vi.mock("@/components/api-wallets/subaccounts-section",()=>({SubaccountsSection:()=>null}));
 // @vitest-environment jsdom
 import {act,createElement} from "react";
@@ -62,4 +63,39 @@ it("reports removal only after the selected wallet disappears from Hyperliquid's
  state.approve.mockImplementationOnce(async()=>{state.agents=[];return {status:"ok"};});
  const node=document.createElement("div"),root=createRoot(node);await act(async()=>root.render(createElement(ApiWalletsPage)));
  await act(async()=>button(node,"Remove").click());await act(async()=>button(node,"Confirm removal").click());expect(node.querySelector('article[data-api-wallet]')).toBeNull();expect(node.textContent).toContain("API wallet removed.");await act(async()=>root.unmount());
+});
+
+it("renders compact key management with sorted wallet rows and Remove on expired/external keys",async()=>{
+ state.agents=[{name:"Zulu Bot",address:`0x${"cd".repeat(20)}`,validUntil:Date.now()-60000},{name:"Alpha Bot",address:`0x${"12".repeat(20)}`,validUntil:Date.now()+60000}];
+ const node=document.createElement("div"),root=createRoot(node);await act(async()=>root.render(createElement(ApiWalletsPage,{managementOnly:true})));
+ expect(document.documentElement.getAttribute("data-terminal-theme")).toBe("newtheme");
+ const rows=[...node.querySelectorAll('tbody tr[data-api-wallet]')];
+ expect(rows).toHaveLength(2);expect(rows[0].textContent).toContain("Alpha Bot");expect(rows[1].textContent).toContain("Expired");
+ expect(rows.every(row=>!row.querySelector<HTMLButtonElement>('button[aria-label^="Remove API wallet"]')!.disabled)).toBe(true);
+ expect(rows.every(row=>row.querySelector('button[aria-label^="Copy API wallet address"]'))).toBe(true);
+ expect(node.querySelector('[aria-label="Builder fee approval"]')).toBeNull();expect(node.textContent).not.toContain("Start Auto Trader");
+ expect(node.textContent).toContain(`0x${"ab".repeat(20)}`);
+ await act(async()=>[...node.querySelectorAll('button')].find(b=>b.textContent?.startsWith('API Wallet Name'))!.click());
+ expect(node.querySelector('tbody tr')?.textContent).toContain("Zulu Bot");
+ await act(async()=>root.unmount());
+});
+it("authorizes a backed-up compact-page key without asking for a builder-fee signature",async()=>{
+ downloads();state.fee=0;const node=document.createElement("div"),root=createRoot(node);
+ await act(async()=>root.render(createElement(ApiWalletsPage,{managementOnly:true})));
+ await act(async()=>button(node,"Generate").click());expect(button(node,"Authorize API Wallet").disabled).toBe(true);
+ await act(async()=>button(node,"Save .env.agent").click());await act(async()=>button(node,"Authorize API Wallet").click());
+ expect(state.approve).toHaveBeenCalledTimes(1);expect(state.approve.mock.calls[0][0]).toHaveProperty("agentAddress");expect(state.approve.mock.calls[0][0]).not.toHaveProperty("builder");
+ expect(node.querySelector<HTMLInputElement>('[aria-label="Generated API private key"]')?.type).toBe("password");
+ await act(async()=>root.unmount());state.fee=50;
+});
+it("opens a compact-page removal confirmation without signing automatically",async()=>{
+ state.agents=[{name:"External Bot",address:`0x${"cd".repeat(20)}`,validUntil:Date.now()+60000}];
+ const node=document.createElement("div");document.body.append(node);const root=createRoot(node);
+ await act(async()=>root.render(createElement(ApiWalletsPage,{managementOnly:true})));
+ await act(async()=>button(node,"Remove").click());expect(state.approve).not.toHaveBeenCalled();
+ const confirm=[...document.body.querySelectorAll('button')].find(b=>b.textContent==="Confirm removal");expect(confirm).toBeDefined();
+ state.approve.mockImplementationOnce(async()=>{state.agents=[];return {status:"ok"};});
+ await act(async()=>confirm!.click());expect(state.approve).toHaveBeenCalledWith({agentAddress:`0x${"00".repeat(20)}`,agentName:"External Bot"});
+ expect(node.textContent).toContain("API wallet removed.");
+ await act(async()=>root.unmount());node.remove();
 });

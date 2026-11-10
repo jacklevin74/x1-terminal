@@ -1,0 +1,79 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "OnlyLifecycleActionsGrantComesFromEachKeyPolicy",
+      "Effect": "Deny",
+      "NotAction": [
+        "kms:DisableKey",
+        "kms:EnableKey",
+        "kms:ScheduleKeyDeletion",
+        "kms:CancelKeyDeletion",
+        "kms:DescribeKey"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "DenyAnyKeyWithoutAppTag",
+      "Effect": "Deny",
+      "Action": [
+        "kms:DisableKey",
+        "kms:EnableKey",
+        "kms:ScheduleKeyDeletion",
+        "kms:CancelKeyDeletion",
+        "kms:DescribeKey"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:ResourceTag/app": "x1-terminal"
+        }
+      }
+    },
+    {
+      "Sid": "DenyAnyKeyWithoutPurposeTag",
+      "Effect": "Deny",
+      "Action": [
+        "kms:DisableKey",
+        "kms:EnableKey",
+        "kms:ScheduleKeyDeletion",
+        "kms:CancelKeyDeletion",
+        "kms:DescribeKey"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:ResourceTag/purpose": "ec2-api-key"
+        }
+      }
+    },
+    {
+      "Sid": "DenyOutsideUsEast2",
+      "Effect": "Deny",
+      "Action": [
+        "kms:DisableKey",
+        "kms:EnableKey",
+        "kms:ScheduleKeyDeletion",
+        "kms:CancelKeyDeletion",
+        "kms:DescribeKey"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:RequestedRegion": "us-east-2"
+        }
+      }
+    },
+    {
+      "Sid": "DeletionWindow7To30Days",
+      "Effect": "Deny",
+      "Action": "kms:ScheduleKeyDeletion",
+      "Resource": "*",
+      "Condition": {
+        "NumericLessThan": {
+          "kms:ScheduleKeyDeletionPendingWindowInDays": "7"
+        }
+      }
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 import { isAddress, zeroAddress, type Address, type Hex } from "viem";
 export function apiWalletBaseName(name:string){return name.replace(/ valid_until \d+$/,"").trim();}
+/** Null means a non-expiring Hyperliquid approval. A timestamp must still be in the future. */
+export function agentApprovalCurrent(validUntil:number|null|undefined){return validUntil==null||validUntil>Date.now();}
 export function apiWalletName(name:string,days:number,now=Date.now()){
  const base=apiWalletBaseName(name);
  if(!/^[a-zA-Z0-9 _-]{1,16}$/.test(base))throw new Error("Use 1–16 letters, numbers, spaces, dashes or underscores.");

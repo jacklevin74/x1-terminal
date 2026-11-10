@@ -1,0 +1,111 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "CreateTaggedSecp256k1KeysOnly",
+      "Effect": "Allow",
+      "Action": "kms:CreateKey",
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-east-2",
+          "kms:KeySpec": "ECC_SECG_P256K1",
+          "kms:KeyUsage": "SIGN_VERIFY",
+          "kms:KeyOrigin": "AWS_KMS",
+          "aws:RequestTag/app": "x1-terminal",
+          "aws:RequestTag/purpose": "ec2-api-key",
+          "aws:RequestTag/env": "prod"
+        },
+        "Bool": {
+          "kms:MultiRegion": "false"
+        },
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "app",
+            "purpose",
+            "env",
+            "owner",
+            "record",
+            "request"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "TagOnlyAtCreationWithRegistrarTags",
+      "Effect": "Allow",
+      "Action": "kms:TagResource",
+      "Resource": "arn:aws:kms:us-east-2:ACCOUNT_ID:key/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-east-2",
+          "aws:RequestTag/app": "x1-terminal",
+          "aws:RequestTag/purpose": "ec2-api-key",
+          "aws:RequestTag/env": "prod"
+        },
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "app",
+            "purpose",
+            "env",
+            "owner",
+            "record",
+            "request"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "ReadPublicMetadataOfRegistrarKeysOnly",
+      "Effect": "Allow",
+      "Action": [
+        "kms:GetPublicKey",
+        "kms:DescribeKey"
+      ],
+      "Resource": "arn:aws:kms:us-east-2:ACCOUNT_ID:key/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-east-2",
+          "aws:ResourceTag/app": "x1-terminal",
+          "aws:ResourceTag/purpose": "ec2-api-key"
+        }
+      }
+    },
+    {
+      "Sid": "NeverBypassLockoutCheck",
+      "Effect": "Deny",
+      "Action": "kms:CreateKey",
+      "Resource": "*",
+      "Condition": {
+        "Bool": {
+          "kms:BypassPolicyLockoutSafetyCheck": "true"
+        }
+      }
+    },
+    {
+      "Sid": "NeverSignDecryptManageOrRepolicy",
+      "Effect": "Deny",
+      "Action": [
+        "kms:Sign",
+        "kms:Verify",
+        "kms:Decrypt",
+        "kms:Encrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*",
+        "kms:GenerateMac",
+        "kms:CreateGrant",
+        "kms:PutKeyPolicy",
+        "kms:UntagResource",
+        "kms:DisableKey",
+        "kms:EnableKey",
+        "kms:ScheduleKeyDeletion",
+        "kms:CancelKeyDeletion",
+        "kms:CreateAlias",
+        "kms:UpdateAlias",
+        "kms:DeleteAlias",
+        "kms:ImportKeyMaterial"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
