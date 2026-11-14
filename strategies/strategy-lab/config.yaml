@@ -1,0 +1,90 @@
+# Hyperliquid AI Trader configuration.
+# Every value here is validated at startup (app/config.py). Changing risk or
+# safety values is an operator decision; the application never edits this file.
+
+account:
+  starting_balance: 100
+  currency: USDC
+
+trading:
+  mode: paper                 # paper | testnet   (mainnet is not available in v1)
+  allowed_assets: [BTC, ETH]
+  margin_mode: isolated
+  max_leverage: 2
+  max_open_positions: 1
+
+risk:
+  risk_per_trade: 0.005       # 0.5% of equity = $0.50 on $100
+  max_weekly_loss: 0.02       # stop opening trades after -2% in a UTC week
+  max_drawdown: 0.05          # persistent halt after -5% from peak equity
+  max_trades_per_week: 3
+  max_correlated_positions: 1 # BTC and ETH are treated as one correlated group
+  max_cost_fraction_of_risk: 0.35  # fees+slippage+funding may use at most 35% of the risk budget
+  min_liquidation_buffer: 2.0      # liquidation distance must be >= 2x the stop distance
+  funding_hold_hours: 72           # hours of adverse funding assumed when sizing
+  max_api_errors: 5                # consecutive exchange/API errors before a halt
+  max_ws_reconnects_per_hour: 6
+
+fees:
+  taker: 0.00045              # Hyperliquid base tier perp taker fee (verify for your tier)
+  maker: 0.00015
+  assume_taker_entries: true  # conservative: entries and exits pay taker
+
+strategy:
+  trend_timeframe: 1d
+  setup_timeframe: 4h
+  confirmation_timeframe: 1h
+  daily_ema_fast: 50
+  daily_ema_slow: 200
+  setup_ema_fast: 20
+  setup_ema_slow: 50
+  atr_period: 14
+  pullback_lookback_bars: 6   # 4H bars in which price must have touched the EMA20 zone
+  pullback_atr_tolerance: 0.25
+  swing_lookback: 5           # 1H bars on each side used to define the confirmation swing
+  volume_period: 20
+  volume_multiplier: 1.0      # 1H volume must exceed this x its 20-bar average
+  stop_atr_buffer: 0.25       # stop placed this many 4H ATRs beyond the pullback extreme
+  target_r: 2.0               # target = entry +/- target_r * stop distance
+  minimum_reward_risk: 2.0
+  minimum_net_reward_risk: 1.5
+  max_stop_atr: 3.0           # reject setups whose stop is wider than this many 4H ATRs
+  signal_ttl_minutes: 60
+  max_hold_hours: 240         # time stop: exit after 10 days
+  cooldown_hours: 24          # no new entry on a market for this long after an exit
+  exit_mode: fixed            # fixed | trailing | trailing_trend   (see docs/experiments.md EXP-001)
+  trail_atr_mult: 3.0         # chandelier distance in 4H ATRs
+  trail_activate_r: 1.0       # trailing starts once price has moved this many R in favor
+  trailing_max_hold_hours: 1440
+
+execution:
+  require_protective_stop: true
+  require_reduce_only_exit: true
+  max_slippage_bps: 10
+  assumed_slippage_bps: 5     # used for sizing and paper/backtest fills
+  reject_stale_data: true
+  stale_after_seconds: 120    # live price data older than this is stale
+  max_spread_bps: 5
+
+ai:
+  enabled: true
+  required_for_entry: true    # if Claude is unavailable, no trade (fail closed)
+  model: claude-opus-5-5
+  effort: medium
+  max_tokens: 16000
+
+paper:
+  poll_seconds: 15
+  evaluation_minute: 1        # evaluate one minute after each hourly candle closes
+
+alerts:
+  telegram_enabled: false
+
+safety:
+  live_trading_enabled: false
+  require_owner_authorization: true
+  withdrawals_enabled: false
+  automatic_leverage_increases: false
+
+storage:
+  database: data/trader.db

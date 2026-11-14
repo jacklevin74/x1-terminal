@@ -300,3 +300,7 @@ Immediate Auto Trader Close pauses the service, then uses the terminal's browser
 trading client and Hyperliquid's standard public Info/Exchange API directly.
 The approved terminal agent signs locally. Close submits reduce-only IOC orders
 immediately and verifies remaining positions; no order retries are automatic.
+
+## Strategy Lab (Python, paper trading)
+
+[`strategies/strategy-lab/`](strategies/strategy-lab/) holds two Hyperliquid perp strategies with their backtester, a live paper-trading lab and a Streamlit dashboard: **Firefly** (BTC/ETH trend trades gated by a Kuramoto market-synchrony index) and **Relative Strength** (weekly long/short momentum across 30 coins). It is a standalone Python 3.12 project with its own `requirements.txt` and tests; it is not part of the pnpm workspace or the terminal build, and it places no real orders. See its README for setup, backtest results and caveats.

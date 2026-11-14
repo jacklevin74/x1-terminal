@@ -1,0 +1,14 @@
+.env
+*.key
+*.pem
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+data/*.db
+data/*.db-*
+data/historical/*
+!data/historical/.gitkeep
+*.csv
+data/*.log
+data/*.pid
