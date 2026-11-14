@@ -1,4 +1,3 @@
-import { NativeWithdrawForm } from "./native-withdraw-form";
 import {
 	Button,
 	Modal,
@@ -12,9 +11,9 @@ import {
 } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { PaperPlaneTiltIcon, SpinnerGapIcon, WarningCircleIcon } from "@phosphor-icons/react";
-import { type ChangeEvent, useCallback, useMemo, useState } from "react";
-import { useConnection } from "wagmi";
+import { type ChangeEvent, useCallback, useMemo, useRef, useState } from "react";
 import { isAddress } from "viem";
+import { useConnection } from "wagmi";
 import { NumberInput } from "@/components/ui/number-input";
 import { DEFAULT_QUOTE_TOKEN } from "@/config/app";
 import { exceedsBalance, getTokenTransferDecimals, isAmountWithinBalance } from "@/domain/market";
@@ -25,6 +24,7 @@ import { useExchange } from "@/lib/hyperliquid";
 import { useSpotTokens } from "@/lib/hyperliquid/markets/use-spot-tokens";
 import { floorToString, limitDecimalInput } from "@/lib/trade/numbers";
 import { formatTokenId } from "@/lib/trade/token-id";
+import { NativeWithdrawForm } from "./native-withdraw-form";
 
 type AccountType = "perp" | "spot";
 
@@ -63,12 +63,16 @@ interface BodyProps {
 
 function SendModalBody({ onOpenChange, initialAsset, initialAccountType }: BodyProps) {
 	const [destination, setDestination] = useState("");
- const [withdrawSol, setWithdrawSol] = useState(false);
- const { address: connectedAddress, connector } = useConnection();
+	const [withdrawSol, setWithdrawSol] = useState(false);
+	const { address: connectedAddress, connector } = useConnection();
 	const [accountType, setAccountType] = useState<AccountType>(initialAccountType);
 	const [selectedToken, setSelectedToken] = useState(initialAsset);
 	const [amount, setAmount] = useState("");
 	const [error, setError] = useState<string | null>(null);
+	// Sends are irreversible. X1-derived accounts sign without a wallet prompt, so this
+	// in-app review is the only confirmation the user sees before funds leave.
+	const [review, setReview] = useState(false);
+	const reviewedFrom = useRef<string | undefined>(undefined);
 
 	const { getToken } = useSpotTokens();
 	const { mutateAsync: sendAsset, isPending: isSendAssetPending } = useExchange("sendAsset");
@@ -122,6 +126,7 @@ function SendModalBody({ onOpenChange, initialAsset, initialAccountType }: BodyP
 	function handleAccountTypeChange(value: string | null) {
 		if (!value) return;
 		const v = value as AccountType;
+		setReview(false);
 		setAccountType(v);
 		if (v === "perp") {
 			setSelectedToken(DEFAULT_QUOTE_TOKEN);
@@ -133,15 +138,18 @@ function SendModalBody({ onOpenChange, initialAsset, initialAccountType }: BodyP
 
 	function handleTokenChange(value: string | null) {
 		if (!value) return;
+		setReview(false);
 		setSelectedToken(value);
 		setAmount("");
 	}
 
 	function handleAmountChange(value: string) {
+		setReview(false);
 		setAmount(limitDecimalInput(value, decimals));
 	}
 
 	function handleMaxClick() {
+		setReview(false);
 		setAmount(floorToString(availableBalance, decimals));
 	}
 
@@ -149,7 +157,16 @@ function SendModalBody({ onOpenChange, initialAsset, initialAccountType }: BodyP
 		if (!canSend) return;
 
 		setError(null);
+		if (!review) {
+			reviewedFrom.current = connectedAddress;
+			setReview(true);
+			return;
+		}
 		try {
+			if (!connectedAddress || reviewedFrom.current !== connectedAddress) {
+				setReview(false);
+				throw new Error(t`Account changed. Review the send again.`);
+			}
 			if (accountType === "perp") {
 				await sendAsset({
 					destination,
@@ -167,12 +184,13 @@ function SendModalBody({ onOpenChange, initialAsset, initialAccountType }: BodyP
 			}
 			setDestination("");
 			setAmount("");
+			setReview(false);
 			onOpenChange(false);
 		} catch (err) {
 			const message = err instanceof Error ? err.message : t`Send failed`;
 			setError(message);
 		}
-	}, [accountType, amount, canSend, destination, onOpenChange, sendAsset, spotSend, tokenId]);
+	}, [accountType, amount, canSend, connectedAddress, destination, onOpenChange, review, sendAsset, spotSend, tokenId]);
 
 	const accountTypeOptions = [
 		{ value: "perp", label: t`Perps Account` },
@@ -184,7 +202,14 @@ function SendModalBody({ onOpenChange, initialAsset, initialAccountType }: BodyP
 		label: tokenName,
 	}));
 
-	if (withdrawSol) return <NativeWithdrawForm key={`${connectedAddress}:${connector?.id}`} asset={selectedToken === "UETH" ? "ETH" : "SOL"} onBack={() => setWithdrawSol(false)} />;
+	if (withdrawSol)
+		return (
+			<NativeWithdrawForm
+				key={`${connectedAddress}:${connector?.id}`}
+				asset={selectedToken === "UETH" ? "ETH" : "SOL"}
+				onBack={() => setWithdrawSol(false)}
+			/>
+		);
 	return (
 		<>
 			<ModalHeader>
@@ -194,11 +219,18 @@ function SendModalBody({ onOpenChange, initialAsset, initialAccountType }: BodyP
 
 			<ModalContent>
 				<div className="space-y-4">
-     {accountType === "spot" && (selectedToken === "USOL" || selectedToken === "UETH") && <Button variant="outline" className="w-full" onClick={() => setWithdrawSol(true)}>Withdraw {selectedToken === "USOL" ? "SOL to connected wallet" : "ETH to Ethereum"}</Button>}
+					{accountType === "spot" && (selectedToken === "USOL" || selectedToken === "UETH") && (
+						<Button variant="outline" className="w-full" onClick={() => setWithdrawSol(true)}>
+							Withdraw {selectedToken === "USOL" ? "SOL to connected wallet" : "ETH to Ethereum"}
+						</Button>
+					)}
 					<TextInput
 						placeholder={t`Destination address`}
 						value={destination}
-						onChange={(e: ChangeEvent<HTMLInputElement>) => setDestination(e.target.value)}
+						onChange={(e: ChangeEvent<HTMLInputElement>) => {
+							setReview(false);
+							setDestination(e.target.value);
+						}}
 						autoComplete="off"
 						spellCheck={false}
 						className={cn(
@@ -244,6 +276,26 @@ function SendModalBody({ onOpenChange, initialAsset, initialAccountType }: BodyP
 						)}
 					/>
 
+					{review && (
+						<div className="space-y-1.5 rounded-8 border border-stroke-weak p-3 text-xs">
+							<p className="font-medium">{t`Review before sending. This cannot be undone.`}</p>
+							<p>
+								<span className="text-fg-muted">{t`Amount`}: </span>
+								<span className="tabular-nums">
+									{amount} {selectedToken}
+								</span>
+							</p>
+							<p>
+								<span className="text-fg-muted">{t`From`}: </span>
+								{accountType === "perp" ? t`Perps Account` : t`Spot Account`}
+							</p>
+							<p>
+								<span className="text-fg-muted">{t`To`}: </span>
+								<span className="break-all font-mono">{destination}</span>
+							</p>
+						</div>
+					)}
+
 					{error && (
 						<div className="flex items-center gap-2 p-2.5 rounded-8 bg-error-soft border border-stroke-error-strong/20 text-xs text-error">
 							<WarningCircleIcon className="size-3.5 shrink-0" />
@@ -254,8 +306,13 @@ function SendModalBody({ onOpenChange, initialAsset, initialAccountType }: BodyP
 					<Button variant="filled" intent="neutral" onClick={handleSend} disabled={!canSend} className="w-full">
 						{isPending && <SpinnerGapIcon className="size-3.5 animate-spin mr-2" />}
 						<PaperPlaneTiltIcon className="size-3.5 mr-2" />
-						{isPending ? t`Sending...` : t`Send`}
+						{isPending ? t`Sending...` : review ? t`Confirm send` : t`Review send`}
 					</Button>
+					{review && !isPending && (
+						<button type="button" className="w-full text-xs text-fg-muted" onClick={() => setReview(false)}>
+							{t`Edit`}
+						</button>
+					)}
 				</div>
 			</ModalContent>
 		</>

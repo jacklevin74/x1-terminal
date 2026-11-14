@@ -96,6 +96,10 @@ msgstr "7 days"
 msgid "Account Balances"
 msgstr "Account Balances"
 
+#: src/components/trade/positions/send-modal.tsx:168
+msgid "Account changed. Review the send again."
+msgstr "Account changed. Review the send again."
+
 #: src/components/trade/tradebox/account-panel.tsx:124
 #~ msgid "Account Equity"
 #~ msgstr "Account Equity"
@@ -104,7 +108,7 @@ msgstr "Account Balances"
 msgid "Account Leverage"
 msgstr "Account Leverage"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:131
+#: src/components/auto-trader/auto-trader-panel.tsx:137
 msgid "Account readiness"
 msgstr "Account readiness"
 
@@ -190,7 +194,8 @@ msgstr "All cross positions share the same cross margin as collateral. In the ev
 msgid "ALO (Add Liquidity Only)"
 msgstr "ALO (Add Liquidity Only)"
 
-#: src/components/trade/positions/send-modal.tsx:228
+#: src/components/trade/positions/send-modal.tsx:260
+#: src/components/trade/positions/send-modal.tsx:283
 #: src/components/trade/positions/transfer-modal.tsx:163
 #: src/components/trade/tradebox/deposit/deposit-form.tsx:31
 msgid "Amount"
@@ -212,7 +217,7 @@ msgstr "Any portion that is not immediately filled will be canceled."
 #~ msgid "Appearance"
 #~ msgstr "Appearance"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:139
+#: src/components/auto-trader/auto-trader-panel.tsx:145
 msgid "Approve 0.05% fee"
 msgstr "Approve 0.05% fee"
 
@@ -237,14 +242,14 @@ msgstr "Asset"
 msgid "Auto Trader"
 msgstr "Auto Trader"
 
-#: src/components/auto-trader/settings-card.tsx:11
+#: src/components/auto-trader/settings-card.tsx:12
 msgid "Auto Trader settings"
 msgstr "Auto Trader settings"
 
 #: src/components/trade/mobile/mobile-balances-tab.tsx:150
 #: src/components/trade/positions/position-limit-close-modal.tsx:163
 #: src/components/trade/positions/transfer-modal.tsx:166
-#: src/components/trade/tradebox/trade-form-fields.tsx:128
+#: src/components/trade/tradebox/trade-form-fields.tsx:129
 msgid "Available"
 msgstr "Available"
 
@@ -278,7 +283,7 @@ msgstr "Back online"
 #~ msgid "Balance"
 #~ msgstr "Balance"
 
-#: src/components/trade/tradebox/trade-form-fields.tsx:127
+#: src/components/trade/tradebox/trade-form-fields.tsx:128
 msgid "Balance available to trade"
 msgstr "Balance available to trade"
 
@@ -376,8 +381,8 @@ msgstr "Buy"
 #~ msgid "Camera permission was denied."
 #~ msgstr "Camera permission was denied."
 
-#: src/components/auto-trader/auto-trader-panel.tsx:179
-#: src/components/trade/mobile/mobile-orders-tab.tsx:256
+#: src/components/auto-trader/auto-trader-panel.tsx:188
+#: src/components/trade/mobile/mobile-orders-tab.tsx:264
 #: src/components/trade/mobile/mobile-position-card.tsx:191
 #: src/components/trade/mobile/mobile-twap-tab.tsx:110
 #: src/components/trade/positions/position-limit-close-modal.tsx:200
@@ -393,7 +398,7 @@ msgstr "Cancel"
 #~ msgid "Cancel all"
 #~ msgstr "Cancel all"
 
-#: src/components/trade/mobile/mobile-orders-tab.tsx:165
+#: src/components/trade/mobile/mobile-orders-tab.tsx:169
 msgid "Cancel All"
 msgstr "Cancel All"
 
@@ -417,7 +422,7 @@ msgstr "Cancel All"
 msgid "Cancel TWAP order"
 msgstr "Cancel TWAP order"
 
-#: src/components/trade/mobile/mobile-orders-tab.tsx:165
+#: src/components/trade/mobile/mobile-orders-tab.tsx:169
 msgid "Canceling..."
 msgstr "Canceling..."
 
@@ -437,7 +442,7 @@ msgstr "Change leverage"
 #~ msgid "Chart"
 #~ msgstr "Chart"
 
-#: src/components/trade/chart/kline-toolbar.tsx:80
+#: src/components/trade/chart/kline-toolbar.tsx:82
 msgid "Chart type"
 msgstr "Chart type"
 
@@ -465,7 +470,7 @@ msgstr "Choose a deposit route"
 msgid "Close"
 msgstr "Close"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:165
+#: src/components/auto-trader/auto-trader-panel.tsx:172
 msgid "Close & pause"
 msgstr "Close & pause"
 
@@ -473,11 +478,11 @@ msgstr "Close & pause"
 #~ msgid "Close position"
 #~ msgstr "Close position"
 
-#: src/components/trade/mobile/mobile-orders-tab.tsx:236
+#: src/components/trade/mobile/mobile-orders-tab.tsx:243
 msgid "Close Position"
 msgstr "Close Position"
 
-#: src/components/trade/positions/history-tab.tsx:39
+#: src/components/trade/positions/history-tab.tsx:40
 msgid "Closed PNL"
 msgstr "Closed PNL"
 
@@ -498,7 +503,7 @@ msgstr "Closing..."
 #~ msgid "completed"
 #~ msgstr "completed"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:179
+#: src/components/auto-trader/auto-trader-panel.tsx:188
 #: src/components/trade/positions/position-tpsl-modal.tsx:192
 #: src/components/trade/tradebox/bridge/confirmation-screen.tsx:162
 #: src/components/trade/tradebox/leverage-control.tsx:213
@@ -518,6 +523,10 @@ msgstr "Confirm Close"
 #: src/components/trade/tradebox/deposit-modal.tsx:143
 msgid "Confirm in wallet"
 msgstr "Confirm in wallet"
+
+#: src/components/trade/positions/send-modal.tsx:309
+msgid "Confirm send"
+msgstr "Confirm send"
 
 #: src/components/trade/tradebox/bridge/executing-screen.tsx:73
 msgid "Confirm transaction in your wallet"
@@ -567,7 +576,7 @@ msgstr "Connect Rabby, X1 Wallet or Phantom above to configure Auto Trader."
 #: src/components/trade/mobile/mobile-account-view.tsx:67
 #: src/components/trade/mobile/mobile-account-view.tsx:73
 #: src/components/trade/mobile/mobile-nav-drawer.tsx:142
-#: src/lib/trade/use-button-content.ts:48
+#: src/lib/trade/use-button-content.ts:49
 msgid "Connect Wallet"
 msgstr "Connect Wallet"
 
@@ -609,8 +618,8 @@ msgstr "Connect your wallet to view balances."
 msgid "Connect your wallet to view funding payments."
 msgstr "Connect your wallet to view funding payments."
 
-#: src/components/trade/mobile/mobile-orders-tab.tsx:125
-#: src/components/trade/positions/orders-tab.tsx:172
+#: src/components/trade/mobile/mobile-orders-tab.tsx:129
+#: src/components/trade/positions/orders-tab.tsx:177
 msgid "Connect your wallet to view open orders."
 msgstr "Connect your wallet to view open orders."
 
@@ -619,12 +628,12 @@ msgid "Connect your wallet to view order history."
 msgstr "Connect your wallet to view order history."
 
 #: src/components/trade/mobile/mobile-positions-tab.tsx:123
-#: src/components/trade/positions/positions-tab.tsx:150
+#: src/components/trade/positions/positions-tab.tsx:158
 msgid "Connect your wallet to view positions."
 msgstr "Connect your wallet to view positions."
 
-#: src/components/trade/mobile/mobile-history-tab.tsx:44
-#: src/components/trade/positions/history-tab.tsx:35
+#: src/components/trade/mobile/mobile-history-tab.tsx:39
+#: src/components/trade/positions/history-tab.tsx:37
 msgid "Connect your wallet to view trade history."
 msgstr "Connect your wallet to view trade history."
 
@@ -751,7 +760,7 @@ msgstr "Created"
 msgid "Creating link..."
 msgstr "Creating link..."
 
-#: src/components/auto-trader/auto-trader-panel.tsx:158
+#: src/components/auto-trader/auto-trader-panel.tsx:165
 msgid "Creating the dedicated API wallet does not start trading. Register, review your saved settings, then explicitly enable. Renewal replaces the previous Auto Trader key and registration pauses execution."
 msgstr "Creating the dedicated API wallet does not start trading. Register, review your saved settings, then explicitly enable. Renewal replaces the previous Auto Trader key and registration pauses execution."
 
@@ -790,6 +799,10 @@ msgstr "Cross-perpetual exposure divided by the value of balances used as perpet
 msgid "Current"
 msgstr "Current"
 
+#: src/components/trade/tradebox/trade-form-fields.tsx:128
+msgid "Current position available to close on this side; no additional opening margin is required."
+msgstr "Current position available to close on this side; no additional opening margin is required."
+
 #: src/components/trade/order-entry/tp-sl-section.tsx:
 #~ msgid "Custom SL percentage"
 #~ msgstr "Custom SL percentage"
@@ -810,7 +823,7 @@ msgstr "Current"
 msgid "Cycle orders and fills"
 msgstr "Cycle orders and fills"
 
-#: src/components/auto-trader/settings-card.tsx:13
+#: src/components/auto-trader/settings-card.tsx:14
 msgid "Daily loss stop (%)"
 msgstr "Daily loss stop (%)"
 
@@ -826,7 +839,7 @@ msgstr "Daily loss stop reached. Opens and adds are blocked; the executor can on
 msgid "Default"
 msgstr "Default"
 
-#: src/components/trade/header/top-nav.tsx:99
+#: src/components/trade/header/top-nav.tsx:102
 #: src/components/trade/mobile/mobile-nav-drawer.tsx:131
 #: src/components/trade/tradebox/account-panel.tsx:33
 #: src/components/trade/tradebox/account-panel.tsx:33
@@ -834,8 +847,8 @@ msgstr "Default"
 #: src/components/trade/tradebox/deposit-modal.tsx:120
 #: src/components/trade/tradebox/deposit-modal.tsx:141
 #: src/components/trade/tradebox/deposit/deposit-form.tsx:96
-#: src/components/trade/tradebox/trade-form-fields.tsx:146
-#: src/lib/trade/use-button-content.ts:72
+#: src/components/trade/tradebox/trade-form-fields.tsx:147
+#: src/lib/trade/use-button-content.ts:73
 msgid "Deposit"
 msgstr "Deposit"
 
@@ -873,7 +886,7 @@ msgstr "Deposit successful"
 msgid "Destination"
 msgstr "Destination"
 
-#: src/components/trade/positions/send-modal.tsx:199
+#: src/components/trade/positions/send-modal.tsx:228
 msgid "Destination address"
 msgstr "Destination address"
 
@@ -889,7 +902,7 @@ msgstr "Destination address"
 msgid "Direct USDC deposits use Arbitrum. To deposit native ETH from Ethereum, choose the ETH deposit route."
 msgstr "Direct USDC deposits use Arbitrum. To deposit native ETH from Ethereum, choose the ETH deposit route."
 
-#: src/components/trade/positions/history-tab.tsx:39
+#: src/components/trade/positions/history-tab.tsx:40
 msgid "Direction"
 msgstr "Direction"
 
@@ -950,6 +963,10 @@ msgstr "Done"
 msgid "Each position uses only its allocated margin. If the margin ratio reaches 100%, the position is liquidated. Margin can be added or removed individually."
 msgstr "Each position uses only its allocated margin. If the margin ratio reaches 100%, the position is liquidated. Margin can be added or removed individually."
 
+#: src/components/trade/positions/send-modal.tsx:313
+msgid "Edit"
+msgstr "Edit"
+
 #: src/components/trade/positions/position-row.tsx:246
 #~ msgid "Edit TP/SL"
 #~ msgstr "Edit TP/SL"
@@ -958,7 +975,7 @@ msgstr "Each position uses only its allocated margin. If the margin ratio reache
 msgid "Enable"
 msgstr "Enable"
 
-#: src/lib/trade/use-button-content.ts:31
+#: src/lib/trade/use-button-content.ts:32
 msgid "Enable Trading"
 msgstr "Enable Trading"
 
@@ -1049,6 +1066,10 @@ msgstr "Est. P&L at Limit"
 msgid "Estimated time"
 msgstr "Estimated time"
 
+#: src/lib/errors/stacks/perp-order.ts:69
+msgid "Exceeds held position size"
+msgstr "Exceeds held position size"
+
 #: src/lib/errors/definitions/order-input.ts:57
 msgid "Exceeds max size"
 msgstr "Exceeds max size"
@@ -1078,11 +1099,11 @@ msgstr "Executor status"
 #~ msgid "Expires {expiresAtLabel}."
 #~ msgstr "Expires {expiresAtLabel}."
 
-#: src/components/trade/mobile/mobile-history-tab.tsx:131
+#: src/components/trade/mobile/mobile-history-tab.tsx:119
 msgid "Explorer"
 msgstr "Explorer"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:140
+#: src/components/auto-trader/auto-trader-panel.tsx:146
 msgid "Fail-safe guards block trading on stale signals, expired agents, missing approvals or low equity. The daily loss stop blocks increases in exposure; it cannot guarantee a loss limit."
 msgstr "Fail-safe guards block trading on stale signals, expired agents, missing approvals or low equity. The daily loss stop blocks increases in exposure; it cannot guarantee a loss limit."
 
@@ -1091,7 +1112,7 @@ msgid "failed"
 msgstr "failed"
 
 #: src/components/trade/mobile/mobile-positions-tab.tsx:92
-#: src/components/trade/positions/positions-tab.tsx:92
+#: src/components/trade/positions/positions-tab.tsx:100
 msgid "Failed to close position"
 msgstr "Failed to close position"
 
@@ -1125,8 +1146,8 @@ msgstr "Failed to load balances."
 msgid "Failed to load funding history."
 msgstr "Failed to load funding history."
 
-#: src/components/trade/mobile/mobile-orders-tab.tsx:133
-#: src/components/trade/positions/orders-tab.tsx:177
+#: src/components/trade/mobile/mobile-orders-tab.tsx:137
+#: src/components/trade/positions/orders-tab.tsx:182
 msgid "Failed to load open orders."
 msgstr "Failed to load open orders."
 
@@ -1139,14 +1160,14 @@ msgid "Failed to load order history."
 msgstr "Failed to load order history."
 
 #: src/components/trade/mobile/mobile-positions-tab.tsx:131
-#: src/components/trade/positions/positions-tab.tsx:155
+#: src/components/trade/positions/positions-tab.tsx:163
 msgid "Failed to load positions."
 msgstr "Failed to load positions."
 
 #: src/components/trade/mobile/mobile-history-tab.tsx:52
 #: src/components/trade/positions/history-tab.tsx:37
-msgid "Failed to load trade history."
-msgstr "Failed to load trade history."
+#~ msgid "Failed to load trade history."
+#~ msgstr "Failed to load trade history."
 
 #: src/components/trade/orderbook/trades-panel.tsx:85
 msgid "Failed to load trades."
@@ -1164,7 +1185,7 @@ msgstr "Failed to place limit close order"
 #~ msgid "Failed to register builder code"
 #~ msgstr "Failed to register builder code"
 
-#: src/components/trade/positions/positions-tab.tsx:92
+#: src/components/trade/positions/positions-tab.tsx:100
 msgid "Failed to reverse position"
 msgstr "Failed to reverse position"
 
@@ -1176,8 +1197,8 @@ msgstr "Failed to reverse position"
 #~ msgid "Failed to update TP/SL orders"
 #~ msgstr "Failed to update TP/SL orders"
 
-#: src/components/trade/mobile/mobile-history-tab.tsx:116
-#: src/components/trade/positions/history-tab.tsx:39
+#: src/components/trade/mobile/mobile-history-tab.tsx:104
+#: src/components/trade/positions/history-tab.tsx:40
 msgid "Fee"
 msgstr "Fee"
 
@@ -1235,6 +1256,7 @@ msgstr "Follow the Mood Ring signal with a trading-only API wallet. You control 
 msgid "Frequency"
 msgstr "Frequency"
 
+#: src/components/trade/positions/send-modal.tsx:289
 #: src/components/trade/tradebox/deposit/deposit-form.tsx:27
 msgid "From"
 msgstr "From"
@@ -1353,7 +1375,7 @@ msgstr "Insufficient {0} balance"
 
 #: src/lib/errors/definitions/deposit.ts:42
 #: src/lib/errors/definitions/deposit.ts:60
-#: src/lib/hyperliquid/use-deposit.ts:57
+#: src/lib/hyperliquid/use-deposit.ts:62
 #: src/lib/trade/withdraw-validation.ts:15
 msgid "Insufficient balance"
 msgstr "Insufficient balance"
@@ -1366,7 +1388,7 @@ msgstr "Insufficient balance"
 msgid "Insufficient funds for gas"
 msgstr "Insufficient funds for gas"
 
-#: src/lib/hyperliquid/use-deposit.ts:60
+#: src/lib/hyperliquid/use-deposit.ts:65
 #: src/lib/trade/withdraw-validation.ts:13
 msgid "Invalid amount"
 msgstr "Invalid amount"
@@ -1402,7 +1424,7 @@ msgstr "Leaderboard"
 #~ msgid "Learn more"
 #~ msgstr "Learn more"
 
-#: src/components/auto-trader/settings-card.tsx:12
+#: src/components/auto-trader/settings-card.tsx:13
 #: src/components/trade/tradebox/leverage-control.tsx:38
 #: src/components/trade/tradebox/leverage-control.tsx:131
 #: src/components/trade/tradebox/margin-mode-modal.tsx:203
@@ -1434,7 +1456,7 @@ msgid "Limit close order placed"
 msgstr "Limit close order placed"
 
 #: src/components/trade/positions/position-limit-close-modal.tsx:146
-#: src/components/trade/tradebox/trade-form-fields.tsx:189
+#: src/components/trade/tradebox/trade-form-fields.tsx:190
 msgid "Limit Price"
 msgstr "Limit Price"
 
@@ -1462,8 +1484,8 @@ msgstr "Liq"
 msgid "Liq. Price"
 msgstr "Liq. Price"
 
-#: src/components/trade/mobile/mobile-history-tab.tsx:102
-#: src/components/trade/positions/history-tab.tsx:70
+#: src/components/trade/mobile/mobile-history-tab.tsx:90
+#: src/components/trade/positions/history-tab.tsx:72
 msgid "Liquidated"
 msgstr "Liquidated"
 
@@ -1471,7 +1493,7 @@ msgstr "Liquidated"
 msgid "Loading"
 msgstr "Loading"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:172
+#: src/components/auto-trader/auto-trader-panel.tsx:179
 msgid "Loading Auto Trader status…"
 msgstr "Loading Auto Trader status…"
 
@@ -1491,7 +1513,7 @@ msgstr "Loading funding history..."
 msgid "Loading markets..."
 msgstr "Loading markets..."
 
-#: src/components/trade/positions/orders-tab.tsx:173
+#: src/components/trade/positions/orders-tab.tsx:178
 msgid "Loading open orders..."
 msgstr "Loading open orders..."
 
@@ -1499,11 +1521,11 @@ msgstr "Loading open orders..."
 msgid "Loading order history..."
 msgstr "Loading order history..."
 
-#: src/components/trade/positions/positions-tab.tsx:151
+#: src/components/trade/positions/positions-tab.tsx:159
 msgid "Loading positions..."
 msgstr "Loading positions..."
 
-#: src/components/trade/positions/history-tab.tsx:36
+#: src/components/trade/positions/history-tab.tsx:38
 msgid "Loading trade history..."
 msgstr "Loading trade history..."
 
@@ -1515,8 +1537,8 @@ msgstr "Loading TWAP orders..."
 msgid "Loading wallet..."
 msgstr "Loading wallet..."
 
-#: src/lib/trade/use-button-content.ts:27
 #: src/lib/trade/use-button-content.ts:28
+#: src/lib/trade/use-button-content.ts:29
 msgid "Loading..."
 msgstr "Loading..."
 
@@ -1556,7 +1578,7 @@ msgstr "Mainnet"
 msgid "Maintenance Margin"
 msgstr "Maintenance Margin"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:167
+#: src/components/auto-trader/auto-trader-panel.tsx:174
 msgid "Manage / revoke API wallets"
 msgstr "Manage / revoke API wallets"
 
@@ -1637,8 +1659,8 @@ msgstr "Mark Price"
 
 #: src/components/trade/chart/token-selector-columns.ts:50
 #: src/components/trade/chart/token-selector-content.tsx:179
-#: src/components/trade/mobile/mobile-orders-tab.tsx:230
-#: src/components/trade/positions/history-tab.tsx:39
+#: src/components/trade/mobile/mobile-orders-tab.tsx:237
+#: src/components/trade/positions/history-tab.tsx:40
 #: src/components/trade/positions/position-row.tsx:169
 #: src/components/trade/tradebox/trade-header.tsx:43
 #: src/components/trade/tradebox/trade-header.tsx:48
@@ -1665,7 +1687,7 @@ msgstr "Market not ready"
 msgid "markets"
 msgstr "markets"
 
-#: src/components/auto-trader/settings-card.tsx:16
+#: src/components/auto-trader/settings-card.tsx:28
 #: src/components/trade/chart/token-selector-content.tsx:235
 #: src/components/trade/mobile/mobile-nav-drawer.tsx:80
 msgid "Markets"
@@ -1724,11 +1746,11 @@ msgstr "Minimum"
 msgid "Minimum deposit is {0} USDC"
 msgstr "Minimum deposit is {0} USDC"
 
-#: src/lib/hyperliquid/use-deposit.ts:56
+#: src/lib/hyperliquid/use-deposit.ts:61
 msgid "Minimum deposit is 5 USDC"
 msgstr "Minimum deposit is 5 USDC"
 
-#: src/components/auto-trader/settings-card.tsx:14
+#: src/components/auto-trader/settings-card.tsx:15
 msgid "Minimum order (USD)"
 msgstr "Minimum order (USD)"
 
@@ -1757,7 +1779,7 @@ msgstr "Minute(s)"
 msgid "More details"
 msgstr "More details"
 
-#: src/components/trade/chart/kline-toolbar.tsx:65
+#: src/components/trade/chart/kline-toolbar.tsx:66
 msgid "More intervals"
 msgstr "More intervals"
 
@@ -1810,7 +1832,7 @@ msgid "No"
 msgstr "No"
 
 #: src/components/trade/mobile/mobile-positions-tab.tsx:142
-#: src/components/trade/positions/positions-tab.tsx:159
+#: src/components/trade/positions/positions-tab.tsx:167
 msgid "No active positions."
 msgstr "No active positions."
 
@@ -1840,8 +1862,8 @@ msgstr "No balances found. Deposit funds to start trading."
 #~ msgid "No camera was found on this device."
 #~ msgstr "No camera was found on this device."
 
-#: src/components/trade/mobile/mobile-history-tab.tsx:60
-#: src/components/trade/positions/history-tab.tsx:38
+#: src/components/trade/mobile/mobile-history-tab.tsx:46
+#: src/components/trade/positions/history-tab.tsx:39
 msgid "No fills found."
 msgstr "No fills found."
 
@@ -1866,8 +1888,8 @@ msgstr "No markets found."
 #~ msgid "No mobile link found."
 #~ msgstr "No mobile link found."
 
-#: src/components/trade/mobile/mobile-orders-tab.tsx:145
-#: src/components/trade/positions/orders-tab.tsx:182
+#: src/components/trade/mobile/mobile-orders-tab.tsx:149
+#: src/components/trade/positions/orders-tab.tsx:187
 msgid "No open orders."
 msgstr "No open orders."
 
@@ -1875,6 +1897,10 @@ msgstr "No open orders."
 #: src/components/trade/positions/orders-history-tab.tsx:56
 #~ msgid "No order history found."
 #~ msgstr "No order history found."
+
+#: src/lib/errors/stacks/perp-order.ts:69
+msgid "No position to reduce on this side"
+msgstr "No position to reduce on this side"
 
 #: src/hooks/trade/use-order-submit.ts:162
 #~ msgid "No response from exchange"
@@ -1979,7 +2005,7 @@ msgstr "OPEN INT"
 msgid "Open Interest"
 msgstr "Open Interest"
 
-#: src/components/trade/mobile/mobile-orders-tab.tsx:155
+#: src/components/trade/mobile/mobile-orders-tab.tsx:159
 msgid "Open Orders"
 msgstr "Open Orders"
 
@@ -2157,7 +2183,8 @@ msgstr "Perpetuals"
 #~ msgid "Perps"
 #~ msgstr "Perps"
 
-#: src/components/trade/positions/send-modal.tsx:178
+#: src/components/trade/positions/send-modal.tsx:196
+#: src/components/trade/positions/send-modal.tsx:290
 msgid "Perps Account"
 msgstr "Perps Account"
 
@@ -2206,7 +2233,7 @@ msgid "Phone link ready"
 msgstr "Phone link ready"
 
 #. placeholder {0}: input.sideLabel
-#: src/lib/trade/use-button-content.ts:79
+#: src/lib/trade/use-button-content.ts:80
 msgid "Place {0} Order"
 msgstr "Place {0} Order"
 
@@ -2265,7 +2292,7 @@ msgid "Portfolio Value"
 msgstr "Portfolio Value"
 
 #: src/components/trade/mobile/mobile-funding-tab.tsx:100
-#: src/components/trade/tradebox/trade-form-fields.tsx:154
+#: src/components/trade/tradebox/trade-form-fields.tsx:155
 msgid "Position"
 msgstr "Position"
 
@@ -2283,7 +2310,7 @@ msgstr "Position close actions"
 #~ msgstr "Position closed"
 
 #: src/components/trade/mobile/mobile-positions-tab.tsx:88
-#: src/components/trade/positions/positions-tab.tsx:91
+#: src/components/trade/positions/positions-tab.tsx:99
 msgid "Position closed — {coin}"
 msgstr "Position closed — {coin}"
 
@@ -2291,7 +2318,7 @@ msgstr "Position closed — {coin}"
 #~ msgid "Position reversed"
 #~ msgstr "Position reversed"
 
-#: src/components/trade/positions/positions-tab.tsx:91
+#: src/components/trade/positions/positions-tab.tsx:99
 msgid "Position reversed — {coin}"
 msgstr "Position reversed — {coin}"
 
@@ -2313,11 +2340,11 @@ msgstr "Preparing your quote..."
 
 #: src/components/trade/chart/token-selector-columns.ts:56
 #: src/components/trade/chart/token-selector-content.tsx:15
-#: src/components/trade/mobile/mobile-history-tab.tsx:113
-#: src/components/trade/mobile/mobile-orders-tab.tsx:229
+#: src/components/trade/mobile/mobile-history-tab.tsx:101
+#: src/components/trade/mobile/mobile-orders-tab.tsx:236
 #: src/components/trade/orderbook/orderbook-panel.tsx:112
 #: src/components/trade/orderbook/trades-panel.tsx:71
-#: src/components/trade/positions/history-tab.tsx:39
+#: src/components/trade/positions/history-tab.tsx:40
 #: src/components/trade/tradebox/price-input-with-percent.tsx:57
 msgid "Price"
 msgstr "Price"
@@ -2388,12 +2415,16 @@ msgstr "Recent Trades"
 #~ msgstr "Reduce"
 
 #: src/components/trade/positions/twap-tab.tsx:104
-#: src/components/trade/tradebox/trade-form-fields.tsx:288
-#: src/components/trade/tradebox/trade-form-fields.tsx:292
+#: src/components/trade/tradebox/trade-form-fields.tsx:289
+#: src/components/trade/tradebox/trade-form-fields.tsx:293
 msgid "Reduce Only"
 msgstr "Reduce Only"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:138
+#: src/components/trade/tradebox/trade-form-fields.tsx:129
+msgid "Reducible"
+msgstr "Reducible"
+
+#: src/components/auto-trader/auto-trader-panel.tsx:144
 msgid "Refresh checks"
 msgstr "Refresh checks"
 
@@ -2401,7 +2432,7 @@ msgstr "Refresh checks"
 #~ msgid "Register Another"
 #~ msgstr "Register Another"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:151
+#: src/components/auto-trader/auto-trader-panel.tsx:157
 msgid "Register Auto Trader"
 msgstr "Register Auto Trader"
 
@@ -2419,7 +2450,7 @@ msgstr "Remove {0} from favorites"
 msgid "Remove {displayName} from favorites"
 msgstr "Remove {displayName} from favorites"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:166
+#: src/components/auto-trader/auto-trader-panel.tsx:173
 msgid "Remove Auto Trader"
 msgstr "Remove Auto Trader"
 
@@ -2427,7 +2458,7 @@ msgstr "Remove Auto Trader"
 #~ msgid "Remove from favorites"
 #~ msgstr "Remove from favorites"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:152
+#: src/components/auto-trader/auto-trader-panel.tsx:158
 msgid "Renew API wallet"
 msgstr "Renew API wallet"
 
@@ -2447,7 +2478,7 @@ msgstr "Reset"
 msgid "Reset phone access"
 msgstr "Reset phone access"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:154
+#: src/components/auto-trader/auto-trader-panel.tsx:160
 msgid "Reset to saved"
 msgstr "Reset to saved"
 
@@ -2470,11 +2501,19 @@ msgstr "Retry"
 msgid "Reverse"
 msgstr "Reverse"
 
+#: src/components/trade/positions/send-modal.tsx:281
+msgid "Review before sending. This cannot be undone."
+msgstr "Review before sending. This cannot be undone."
+
+#: src/components/trade/positions/send-modal.tsx:309
+msgid "Review send"
+msgstr "Review send"
+
 #: src/components/trade/tradebox/tp-sl-section.tsx:144
 msgid "Risk/Reward"
 msgstr "Risk/Reward"
 
-#: src/components/trade/mobile/mobile-orders-tab.tsx:223
+#: src/components/trade/mobile/mobile-orders-tab.tsx:230
 #: src/components/trade/mobile/mobile-twap-tab.tsx:96
 msgid "RO"
 msgstr "RO"
@@ -2492,7 +2531,7 @@ msgstr "Running Time ({TWAP_MINUTES_MIN}m - {0}h)"
 msgid "Runtime"
 msgstr "Runtime"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:153
+#: src/components/auto-trader/auto-trader-panel.tsx:159
 msgid "Save settings"
 msgstr "Save settings"
 
@@ -2624,23 +2663,22 @@ msgstr "Sell"
 #~ msgstr "Sell Short"
 
 #: src/components/trade/mobile/mobile-balances-tab.tsx:189
-#: src/components/trade/positions/send-modal.tsx:257
 msgid "Send"
 msgstr "Send"
 
-#: src/components/trade/positions/send-modal.tsx:172
+#: src/components/trade/positions/send-modal.tsx:190
 msgid "Send failed"
 msgstr "Send failed"
 
-#: src/components/trade/positions/send-modal.tsx:191
+#: src/components/trade/positions/send-modal.tsx:216
 msgid "Send Tokens"
 msgstr "Send Tokens"
 
-#: src/components/trade/positions/send-modal.tsx:192
+#: src/components/trade/positions/send-modal.tsx:217
 msgid "Send tokens to another account on the Hyperliquid L1."
 msgstr "Send tokens to another account on the Hyperliquid L1."
 
-#: src/components/trade/positions/send-modal.tsx:257
+#: src/components/trade/positions/send-modal.tsx:309
 msgid "Sending..."
 msgstr "Sending..."
 
@@ -2677,7 +2715,7 @@ msgstr "Set to {p}%"
 #~ msgstr "Set TP/SL for {0}"
 
 #: src/components/trade/components/global-settings-modal.tsx:76
-#: src/components/trade/header/top-nav.tsx:116
+#: src/components/trade/header/top-nav.tsx:119
 msgid "Settings"
 msgstr "Settings"
 
@@ -2749,7 +2787,7 @@ msgstr "Show QR"
 #~ msgid "Sidebar"
 #~ msgstr "Sidebar"
 
-#: src/lib/trade/use-button-content.ts:29
+#: src/lib/trade/use-button-content.ts:30
 msgid "Sign in wallet..."
 msgstr "Sign in wallet..."
 
@@ -2761,19 +2799,19 @@ msgstr "Signer not ready"
 #~ msgid "Signing..."
 #~ msgstr "Signing..."
 
-#: src/components/trade/mobile/mobile-history-tab.tsx:114
-#: src/components/trade/mobile/mobile-orders-tab.tsx:233
+#: src/components/trade/mobile/mobile-history-tab.tsx:102
+#: src/components/trade/mobile/mobile-orders-tab.tsx:240
 #: src/components/trade/mobile/mobile-position-card.tsx:153
 #: src/components/trade/mobile/mobile-twap-tab.tsx:116
 #: src/components/trade/orderbook/orderbook-panel.tsx:132
 #: src/components/trade/orderbook/trades-panel.tsx:77
-#: src/components/trade/positions/history-tab.tsx:39
+#: src/components/trade/positions/history-tab.tsx:40
 #: src/components/trade/positions/position-limit-close-modal.tsx:114
 #: src/components/trade/positions/position-limit-close-modal.tsx:160
 #: src/components/trade/positions/position-tpsl-modal.tsx:129
 #: src/components/trade/positions/twap-tab.tsx:84
 #: src/components/trade/tradebox/order-toast.tsx:103
-#: src/components/trade/tradebox/trade-form-fields.tsx:211
+#: src/components/trade/tradebox/trade-form-fields.tsx:212
 msgid "Size"
 msgstr "Size"
 
@@ -2864,7 +2902,8 @@ msgstr "Source"
 msgid "Spot"
 msgstr "Spot"
 
-#: src/components/trade/positions/send-modal.tsx:179
+#: src/components/trade/positions/send-modal.tsx:197
+#: src/components/trade/positions/send-modal.tsx:290
 msgid "Spot Account"
 msgstr "Spot Account"
 
@@ -2939,7 +2978,7 @@ msgstr "Successful"
 
 #: src/components/trade/components/spot-swap-modal.tsx:225
 #: src/components/trade/mobile/mobile-balances-tab.tsx:177
-#: src/components/trade/tradebox/trade-form-fields.tsx:141
+#: src/components/trade/tradebox/trade-form-fields.tsx:142
 msgid "Swap"
 msgstr "Swap"
 
@@ -2966,7 +3005,7 @@ msgstr "Swap failed"
 #. placeholder {0}: fill.coin
 #. placeholder {0}: update.coin
 #: src/components/trade/mobile/mobile-funding-tab.tsx:90
-#: src/components/trade/positions/history-tab.tsx:69
+#: src/components/trade/positions/history-tab.tsx:71
 msgid "Switch to {0} market"
 msgstr "Switch to {0} market"
 
@@ -3009,7 +3048,7 @@ msgid "Switch to {displayName} market, short position"
 msgstr "Switch to {displayName} market, short position"
 
 #: src/components/trade/tradebox/deposit/wrong-network-screen.tsx:46
-#: src/lib/trade/use-button-content.ts:56
+#: src/lib/trade/use-button-content.ts:57
 msgid "Switch to Arbitrum"
 msgstr "Switch to Arbitrum"
 
@@ -3030,7 +3069,7 @@ msgid "Switch to Mainnet"
 msgstr "Switch to Mainnet"
 
 #: src/components/trade/tradebox/deposit/wrong-network-screen.tsx:43
-#: src/lib/trade/use-button-content.ts:56
+#: src/lib/trade/use-button-content.ts:57
 msgid "Switching..."
 msgstr "Switching..."
 
@@ -3051,7 +3090,7 @@ msgstr "Switching..."
 msgid "Take Profit"
 msgstr "Take Profit"
 
-#: src/components/trade/tradebox/trade-form-fields.tsx:297
+#: src/components/trade/tradebox/trade-form-fields.tsx:298
 msgid "Take Profit / Stop Loss"
 msgstr "Take Profit / Stop Loss"
 
@@ -3137,7 +3176,7 @@ msgstr "The page you are looking for does not exist."
 #~ msgid "This phone link is not approved on Hyperliquid."
 #~ msgstr "This phone link is not approved on Hyperliquid."
 
-#: src/components/auto-trader/auto-trader-panel.tsx:156
+#: src/components/auto-trader/auto-trader-panel.tsx:162
 msgid "This setup key exists only in this page's memory. Register it before leaving. It is encrypted for the service; it is not saved to browser storage."
 msgstr "This setup key exists only in this page's memory. Register it before leaving. It is encrypted for the service; it is not saved to browser storage."
 
@@ -3147,7 +3186,7 @@ msgstr "TIF"
 
 #: src/components/trade/mobile/mobile-funding-tab.tsx:108
 #: src/components/trade/orderbook/trades-panel.tsx:70
-#: src/components/trade/positions/history-tab.tsx:39
+#: src/components/trade/positions/history-tab.tsx:40
 msgid "Time"
 msgstr "Time"
 
@@ -3163,10 +3202,9 @@ msgstr "Time / Total"
 msgid "Time In Force"
 msgstr "Time In Force"
 
-#: src/components/trade/components/spot-swap-modal.tsx:245
-#: src/components/trade/tradebox/deposit/withdraw-form.tsx:40
-#~ msgid "To"
-#~ msgstr "To"
+#: src/components/trade/positions/send-modal.tsx:293
+msgid "To"
+msgstr "To"
 
 #: src/components/trade/mobile/mobile-balances-tab.tsx:128
 msgid "To Perp"
@@ -3182,7 +3220,7 @@ msgstr "To Spot"
 #~ msgid "Toggle Sidebar"
 #~ msgstr "Toggle Sidebar"
 
-#: src/components/trade/tradebox/trade-form-fields.tsx:240
+#: src/components/trade/tradebox/trade-form-fields.tsx:241
 msgid "Toggle size mode"
 msgstr "Toggle size mode"
 
@@ -3240,7 +3278,7 @@ msgstr "TP Price"
 #~ msgstr "TP trigger price"
 
 #: src/components/trade/mobile/mobile-position-card.tsx:228
-#: src/components/trade/tradebox/trade-form-fields.tsx:301
+#: src/components/trade/tradebox/trade-form-fields.tsx:302
 msgid "TP/SL"
 msgstr "TP/SL"
 
@@ -3256,11 +3294,11 @@ msgstr "Track on LI.FI Explorer"
 #~ msgid "Trade ClockCounterClockwise"
 #~ msgstr "Trade ClockCounterClockwise"
 
-#: src/components/trade/mobile/mobile-history-tab.tsx:69
+#: src/components/trade/mobile/mobile-history-tab.tsx:55
 msgid "Trade History"
 msgstr "Trade History"
 
-#: src/components/trade/positions/history-tab.tsx:39
+#: src/components/trade/positions/history-tab.tsx:40
 msgid "Trade Value"
 msgstr "Trade Value"
 
@@ -3326,12 +3364,12 @@ msgstr "Transfer USDC"
 msgid "Transferring..."
 msgstr "Transferring..."
 
-#: src/components/trade/mobile/mobile-orders-tab.tsx:240
+#: src/components/trade/mobile/mobile-orders-tab.tsx:247
 #: src/components/trade/tradebox/advanced-order-dropdown.tsx:86
 msgid "Trigger"
 msgstr "Trigger"
 
-#: src/components/trade/tradebox/trade-form-fields.tsx:167
+#: src/components/trade/tradebox/trade-form-fields.tsx:168
 msgid "Trigger Price"
 msgstr "Trigger Price"
 
@@ -3397,7 +3435,7 @@ msgstr "Unified Account Summary"
 msgid "Unknown error"
 msgstr "Unknown error"
 
-#: src/components/trade/chart/datafeed.ts:152
+#: src/components/trade/chart/datafeed.ts:159
 msgid "Unknown symbol: {symbolName}"
 msgstr "Unknown symbol: {symbolName}"
 
@@ -3410,12 +3448,12 @@ msgstr "Unrealized P&L"
 msgid "Unrealized PNL"
 msgstr "Unrealized PNL"
 
-#: src/components/auto-trader/auto-trader-panel.tsx:157
+#: src/components/auto-trader/auto-trader-panel.tsx:164
 msgid "Unsaved settings. Save before enabling. Changes to an active trader apply on its next cycle."
 msgstr "Unsaved settings. Save before enabling. Changes to an active trader apply on its next cycle."
 
 #. placeholder {0}: String(resolution)
-#: src/components/trade/chart/datafeed.ts:192
+#: src/components/trade/chart/datafeed.ts:199
 msgid "Unsupported resolution: {0}"
 msgstr "Unsupported resolution: {0}"
 
@@ -3441,6 +3479,10 @@ msgstr "Updated live"
 msgid "USDC"
 msgstr "USDC"
 
+#: src/lib/hyperliquid/use-deposit.ts:54
+msgid "USDC deposits use the mainnet bridge. Switch to mainnet to deposit."
+msgstr "USDC deposits use the mainnet bridge. Switch to mainnet to deposit."
+
 #: src/routes/mobile-agent-sync.tsx:375
 #~ msgid "Use a different phone link"
 #~ msgstr "Use a different phone link"
@@ -3461,7 +3503,7 @@ msgstr "Using"
 msgid "Vaults"
 msgstr "Vaults"
 
-#: src/lib/trade/use-button-content.ts:30
+#: src/lib/trade/use-button-content.ts:31
 msgid "Verifying..."
 msgstr "Verifying..."
 
@@ -3599,7 +3641,7 @@ msgstr "Your agent expires within 14 days. Renew its API wallet, register the ne
 msgid "Your bridge is still processing. Funds are safe."
 msgstr "Your bridge is still processing. Funds are safe."
 
-#: src/components/trade/tradebox/trade-form-fields.tsx:153
+#: src/components/trade/tradebox/trade-form-fields.tsx:154
 msgid "Your current open position on this market"
 msgstr "Your current open position on this market"
 
@@ -3622,19 +3664,3 @@ msgstr "Your transaction is being processed"
 #: src/components/trade/components/mobile-agent-sync-modal.tsx:280
 msgid "Your wallet approves one trading key for this phone. It cannot withdraw funds."
 msgstr "Your wallet approves one trading key for this phone. It cannot withdraw funds."
-
-#: src/components/trade/tradebox/trade-form-fields.tsx:128
-msgid "Current position available to close on this side; no additional opening margin is required."
-msgstr "Current position available to close on this side; no additional opening margin is required."
-
-#: src/lib/errors/stacks/perp-order.ts:69
-msgid "Exceeds held position size"
-msgstr "Exceeds held position size"
-
-#: src/lib/errors/stacks/perp-order.ts:69
-msgid "No position to reduce on this side"
-msgstr "No position to reduce on this side"
-
-#: src/components/trade/tradebox/trade-form-fields.tsx:129
-msgid "Reducible"
-msgstr "Reducible"
