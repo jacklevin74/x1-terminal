@@ -11,6 +11,7 @@ import {
 	useWriteContract,
 } from "wagmi";
 import { ARBITRUM_CHAIN_ID, CONTRACTS, MIN_DEPOSIT_USDC, USDC_DECIMALS } from "@/config/contracts";
+import { isTestnet } from "@/lib/network";
 
 export type DepositStatus = "idle" | "pending" | "confirming" | "success" | "error";
 
@@ -47,6 +48,10 @@ function deriveStatus(
 }
 
 function validateAmount(amount: string, balanceRaw: bigint | undefined): ValidationResult {
+	// The bridge below is Hyperliquid's MAINNET Bridge2 on Arbitrum One, paid in real USDC.
+	// On testnet it would credit the mainnet account while the UI shows testnet balances.
+	if (isTestnet())
+		return { valid: false, error: t`USDC deposits use the mainnet bridge. Switch to mainnet to deposit.` };
 	const trimmed = amount.trim();
 	if (!trimmed) return { valid: false, error: null };
 
@@ -105,7 +110,7 @@ export function useDeposit(): UseDepositResult {
 
 	const deposit = useCallback(
 		(amount: string) => {
-			if (!address) return;
+			if (!address || isTestnet()) return;
 			write(
 				{
 					address: CONTRACTS.arbitrum.usdc,
