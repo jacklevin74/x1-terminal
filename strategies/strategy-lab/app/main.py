@@ -214,6 +214,9 @@ def cmd_research(cfg: Config, a: argparse.Namespace) -> None:
             print(f"{out['variants'][k]:38} {s.get('trades', 0):>6} {f(s.get('expectancy_r')):>7} "
                   f"{(s.get('profit_factor') or 0):>5.2f} {f(seg('validation (next 20%)')):>7} "
                   f"{f(seg('out-of-sample (last 20%)')):>7}")
+        if "_swarm_coins" in d["results"]:
+            print(f"  swarm traded {len(d['results']['_swarm_coins'])} coins; trades/year: " + ", ".join(
+                f"{k} {d['results'][k]['trades_per_year']:.0f}" for k in ("S1", "S0", "S2")))
         b = d["results"]["F0"].get("sync_buckets")
         if b:
             print("  control trades by synchrony at entry (exploratory):")
@@ -336,8 +339,8 @@ def main(argv: list[str] | None = None) -> None:
     sg = sub.add_parser("signals")
     sg.add_argument("--ai", action="store_true", help="also ask Claude to review any candidate")
     sub.add_parser("paper")
-    sub.add_parser("lab", help="paper-trade Firefly (+ control/placebo) and Relative Strength on live data")
-    sub.add_parser("research", help="recompute synchrony index and backtest the Firefly variants")
+    sub.add_parser("lab", help="paper-trade all strategy books side by side on live data")
+    sub.add_parser("research", help="recompute synchrony index and backtest all variants")
     sub.add_parser("xs", help="EXP-005: cross-sectional momentum/reversal backtests")
     sub.add_parser("testnet")
     for name in ("status", "report"):
