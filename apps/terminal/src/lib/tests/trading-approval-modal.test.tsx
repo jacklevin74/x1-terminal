@@ -4,7 +4,7 @@ import { createRoot } from "react-dom/client";
 import { it, expect, vi } from "vitest";
 import { X1Setup } from "@/components/trade/components/x1-setup";
 const state=vi.hoisted(()=>({wallet:true,register:vi.fn().mockResolvedValue("0xagent")}));
-vi.mock("wagmi",()=>({useConnection:()=>({address:"0x123",connector:{id:"x1"}}),useWalletClient:()=>({data:state.wallet?{}:undefined})}));
+vi.mock("wagmi",()=>({useConnection:()=>({address:"0x123",connector: { id: "phantom" }}),useWalletClient:()=>({data:state.wallet?{}:undefined})}));
 vi.mock("@/lib/hyperliquid",()=>({useAgentStatus:()=>({isReady:false,needsAgent:true,needsBuilderFee:true,isLoading:false}),useAgentRegistration:()=>({register:state.register,status:"idle",error:null})}));
 vi.mock("@/config/hyperliquid",()=>({BUILDER_CONFIGURED:true}));
 vi.mock("@/stores/use-global-settings-store",()=>({useIsTestnet:()=>false}));

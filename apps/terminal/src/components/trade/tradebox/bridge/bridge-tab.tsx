@@ -15,7 +15,7 @@ import { SuccessScreen } from "./success-screen";
 import type { BridgeScreen } from "./types";
 
 export function BridgeTab() {
-	const { address, connector } = useConnection();
+	const { address } = useConnection();
  const isTestnet = useIsTestnet();
 	const [screen, setScreen] = useState<BridgeScreen>("select");
 	const [selectedToken, setSelectedToken] = useState<BridgeToken | null>(null);
@@ -29,7 +29,6 @@ export function BridgeTab() {
 	}, []);
 
 	if (isTestnet) return <p className="p-4 text-sm">Ethereum bridge deposits are available on mainnet only.</p>;
- if (connector?.id === "x1") return <p className="p-4 text-sm">Connect Phantom to deposit from Ethereum. X1’s derived account supports Hyperliquid signatures, but cannot send Ethereum transactions.</p>;
  if (!address) {
 		return <BridgeWalletNotConnected />;
 	}

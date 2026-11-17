@@ -44,7 +44,7 @@ export function getRootProviderContext() {
 function HyperliquidBridge({ children }: { children: React.ReactNode }) {
  useEffect(() => {
   const resume = () => { void reconnect(config); };
-  const events = ["x1Wallet#initialized", "ethereum#initialized", "solana#initialized"];
+  const events = ["ethereum#initialized", "solana#initialized"];
   for (const event of events) window.addEventListener(event, resume);
   return () => { for (const event of events) window.removeEventListener(event, resume); };
  }, []);

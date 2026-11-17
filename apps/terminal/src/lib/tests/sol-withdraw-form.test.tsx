@@ -5,7 +5,7 @@ import { createRoot } from "react-dom/client";
 import { expect, it, vi } from "vitest";
 import { NativeWithdrawForm } from "@/components/trade/positions/native-withdraw-form";
 const state = vi.hoisted(() => ({ feeFailures: 0, feeCalls: 0, usdc: "0", mode: "disabled", assetSend: vi.fn(async () => {}), fee: "0", destination: "9SLPTL41SPsYkgdsMzdfJsxymEANKr5bYoBsQzJyKpKS", route: vi.fn(async () => `0x${"ab".repeat(20)}`), send: vi.fn(async () => {}) }));
-vi.mock("wagmi", () => ({ useConnection: () => ({ address: `0x${"cd".repeat(20)}`, isConnected: true, connector: { id: "x1" } }) }));
+vi.mock("wagmi", () => ({ useConnection: () => ({ address: `0x${"cd".repeat(20)}`, isConnected: true, connector: { id: "phantom" } }) }));
 vi.mock("@/lib/network", () => ({ isTestnet: () => false }));
 vi.mock("@/lib/solana/source-wallet", () => ({ getSolSourceWallet: () => wallet, connectSolSource: async () => { wallet.isConnected = true; } }));
 const wallet = { isConnected: true, publicKey: { toBase58: () => state.destination }, on: vi.fn(), removeListener: vi.fn() };

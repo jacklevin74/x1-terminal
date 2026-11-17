@@ -27,7 +27,7 @@ export function AutoTraderPanel(){
  return <section id="auto-trader" className="space-y-4 scroll-mt-4" aria-label="Auto Trader">
   <div><h2 className="text-2xl font-semibold"><Trans>Auto Trader</Trans></h2><p className="mt-2 max-w-4xl text-sm text-fg-muted"><Trans>Follow the Mood Ring signal with a trading-only API wallet. You control leverage, markets, minimum order size and the daily loss stop. Loss controls do not guarantee a maximum loss. No returns are promised.</Trans></p></div>
   <p className="rounded-lg border border-stroke-weak bg-surface p-3 text-xs text-fg-muted"><Trans>Your funds stay in your Hyperliquid account. A separate agent can trade but cannot withdraw. Its key is sealed in your browser and stored encrypted by the existing execution service. Your owner key stays in your wallet. Auto Trader manages positions in the selected trading account, including markets you also trade manually there.</Trans></p>
-  {env!=="Mainnet"?<p role="status" className="text-sm text-warning"><Trans>The hosted Auto Trader service supports Mainnet only. Switch the terminal to Mainnet to configure it.</Trans></p>:!isConnected||!address?<p className="rounded-xl border border-stroke-weak bg-surface p-4 text-sm"><Trans>Connect Rabby, X1 Wallet or Phantom above to configure Auto Trader.</Trans></p>:<AutoTraderAccount key={address.toLowerCase()} master={address} />}
+  {env!=="Mainnet"?<p role="status" className="text-sm text-warning"><Trans>The hosted Auto Trader service supports Mainnet only. Switch the terminal to Mainnet to configure it.</Trans></p>:!isConnected||!address?<p className="rounded-xl border border-stroke-weak bg-surface p-4 text-sm"><Trans>Connect Rabby or Phantom above to configure Auto Trader.</Trans></p>:<AutoTraderAccount key={address.toLowerCase()} master={address} />}
  </section>;
 }
 function AutoTraderAccount({master}:{master:Address}){
@@ -135,7 +135,7 @@ function AutoTraderAccount({master}:{master:Address}){
   {subaccount&&!status.data?.lastCycle&&<p role="status" className="rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm text-warning">Waiting for the executor to report a cycle for this subaccount. Registration or an active state alone does not confirm trading. Your main account registration is separate.</p>}
   <div className="grid gap-4 lg:grid-cols-[1fr_2fr]">
    <section className="space-y-4 rounded-xl border border-stroke-weak bg-surface p-4"><h3 className="text-sm font-semibold"><Trans>Account readiness</Trans></h3><p className="break-all font-mono text-xs text-fg-muted">Signing owner: {address}</p><p className="break-all font-mono text-xs text-brand">Trading account: {subaccount?.name??"Main account"} · {master}</p><ul className="space-y-3">
-    <Check label="Owner wallet" ok={!!wallet} detail={wallet?"Connected — signs control requests locally":"Connect or unlock Rabby / X1 Wallet / Phantom"} />
+    <Check label="Owner wallet" ok={!!wallet} detail={wallet?"Connected — signs control requests locally":"Connect or unlock Rabby / Phantom"} />
     <Check label="Account equity" ok={funded} detail={equity===null?mode.data==="portfolioMargin"?"Portfolio margin is not supported by this integration":"Waiting for verified account balances":`${money(equity)} · minimum $15`} />
     <Check label="Auto Trader API wallet" ok={agentApproved} detail={targetAgent??"Separate trading-only key; never uses the owner's private key"} />
     <Check label="Builder fee" ok={feeApproved} detail={fee.isError?"Approval status unavailable":"0.05% per fill, plus exchange fees"} />

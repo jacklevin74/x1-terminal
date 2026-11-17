@@ -7,7 +7,7 @@ import { BUILDER_CONFIGURED } from "@/config/hyperliquid";
 import { useIsTestnet } from "@/stores/use-global-settings-store";
 
 export function X1Setup() {
- const { address, connector } = useConnection();
+ const { address } = useConnection();
  const { isReady, needsAgent, needsBuilderFee, isLoading } = useAgentStatus();
  const { data: walletClient } = useWalletClient();
  const [walletOpen, setWalletOpen] = useState(false);
@@ -33,7 +33,6 @@ export function X1Setup() {
    {address && <p className="my-4 break-all font-mono text-xs">Hyperliquid account: {address}</p>}
    {!walletClient && <p role="status" className="my-3 text-sm text-fg-muted">Unlock and connect your wallet to approve trading. Your saved trading key will be reused when its approval is valid.</p>}
    {busy && <p role="status" className="my-3 text-sm text-fg-muted">{status === "verifying" ? "Checking approval…" : "Open your wallet and confirm the approval request."}</p>}
-   {connector?.id === "x1" && <p className="mb-4 text-sm text-warning">Derived from your X1 signature. Withdrawals are signed by this derived key. Reconnect with the same X1 wallet to recover this account.</p>}
    {!BUILDER_CONFIGURED && <p role="alert" className="text-sm text-warning">Trading setup is unavailable for this deployment. Please contact support.</p>}
    {(localError || error) && <p role="alert" className="my-3 text-sm text-error">{localError ?? error?.message}</p>}
    <button className="mt-4 w-full rounded bg-brand p-3 text-fg-inverse disabled:opacity-40"

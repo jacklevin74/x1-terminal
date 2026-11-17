@@ -30,7 +30,7 @@ export function NativeDepositModal({ open, onClose }: { open: boolean; onClose: 
    <ModalHeader className="sr-only" divider={false}><ModalTitle>Deposit {asset} from {chain}</ModalTitle></ModalHeader>
    <ModalContent className="space-y-5 px-5 pb-5 pt-10 sm:px-6 sm:pb-6">
     <NativeDepositIntro asset={asset} chain={chain} fee={fees.data?.fee} eta={fees.data?.eta} />
-    {!address ? <p className="text-center text-sm text-fg-muted">Connect Phantom or X1 Wallet to get your deposit address.</p>
+    {!address ? <p className="text-center text-sm text-fg-muted">Connect Phantom to get your deposit address.</p>
      : testnet ? <p className="text-center text-sm text-fg-muted">Native asset deposits are available on mainnet.</p>
      : <>
       <label className="flex h-12 items-center justify-between rounded-lg border border-stroke-weak px-3 text-sm"><span className="text-fg-muted">Asset</span><select aria-label="Deposit asset" value={asset} onChange={e => setAsset(e.target.value as "ETH" | "SOL")} className="bg-transparent py-2 pl-4 text-right text-fg outline-none"><option value="ETH">ETH</option><option value="SOL">SOL</option></select></label>

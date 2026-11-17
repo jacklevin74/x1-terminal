@@ -6,7 +6,7 @@ import { afterEach, expect, it, vi } from "vitest";
 import { SolDeposit } from "@/components/trade/tradebox/deposit/sol-deposit";
 const state = vi.hoisted(() => ({ address: `0x${"ab".repeat(20)}`, testnet: false, readBalance: vi.fn(async () => ({ address: "9SLPTL41SPsYkgdsMzdfJsxymEANKr5bYoBsQzJyKpKS", lamports: 1_000_000_000n, feeLamports: 5000n, maxLamports: 999_990_000n })), send: vi.fn(), fetchAddress: vi.fn(async (recipient: string) => recipient === `0x${"ab".repeat(20)}` ? "9SLPTL41SPsYkgdsMzdfJsxymEANKr5bYoBsQzJyKpKS" : "So11111111111111111111111111111111111111112") }));
 vi.mock("wagmi", () => ({
- useConnection: () => ({ address: state.address, connector: { id: "x1" }, chainId: 1 }),
+ useConnection: () => ({ address: state.address, connector: { id: "phantom" }, chainId: 1 }),
  useSendTransaction: () => ({ mutateAsync: state.send, isPending: false }),
  useSwitchChain: () => ({ mutateAsync: vi.fn(), isPending: false }),
  useWaitForTransactionReceipt: () => ({}),
@@ -58,6 +58,6 @@ it("automatically loads X1 balance, then allows Max and Deposit", async () => {
  expect(node.textContent).not.toContain("Read SOL balance");
  await act(async () => button("Max").click()); expect(node.querySelector("input")?.value).toBe("0.99999");
  await act(async () => button("Deposit").click());
- expect(state.send).toHaveBeenCalledWith("9SLPTL41SPsYkgdsMzdfJsxymEANKr5bYoBsQzJyKpKS", "0.99999", expect.any(Function), expect.any(Function), { kind: "x1", expectedAddress: "9SLPTL41SPsYkgdsMzdfJsxymEANKr5bYoBsQzJyKpKS" });
+ expect(state.send).toHaveBeenCalledWith("9SLPTL41SPsYkgdsMzdfJsxymEANKr5bYoBsQzJyKpKS", "0.99999", expect.any(Function), expect.any(Function), { kind: "phantom", expectedAddress: "9SLPTL41SPsYkgdsMzdfJsxymEANKr5bYoBsQzJyKpKS" });
  await act(async () => root.unmount()); node.remove(); client.clear();
 });

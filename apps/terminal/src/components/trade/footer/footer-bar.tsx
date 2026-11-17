@@ -92,6 +92,16 @@ export function FooterBar() {
 					<GithubLogoIcon className="size-2.5" /><span className="ml-1">Built on HypeTerminal</span>
 				</a>
 				<Divider orientation="vertical" className="my-1.5" />
+				{/* CC BY 4.0 attribution for the DB-IP country database used by the self-hosted /api/jurisdiction check */}
+				<a
+					href="https://db-ip.com"
+					target="_blank"
+					rel="noopener noreferrer"
+					className="rounded-6 p-0.5 text-fg-muted transition-colors hover:text-brand"
+				>
+					IP Geolocation by DB-IP
+				</a>
+				<Divider orientation="vertical" className="my-1.5" />
 				<ClientOnly>
 					<FooterClock />
 				</ClientOnly>
