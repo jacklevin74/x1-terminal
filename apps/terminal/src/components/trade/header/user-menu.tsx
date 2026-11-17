@@ -35,7 +35,7 @@ export function UserMenu(){
     {subaccounts.isLoading&&<p role="status" className="px-3 py-2 text-xs text-fg-muted">Loading subaccounts…</p>}
     {subaccounts.isError&&<button type="button" onClick={()=>void subaccounts.refetch()} className="px-3 py-2 text-xs text-warning">Could not refresh accounts · Retry</button>}
    </div>
-   <div className="mt-2 shrink-0 border-t border-stroke-weak pt-2"><button type="button" className="w-full rounded-lg px-3 py-2.5 text-left text-brand hover:bg-fill-hover" disabled={mutating} onClick={()=>{setPickerOpen(false);removeAgentFromStorage("Testnet",address);removeAgentFromStorage("Mainnet",address);select(null);disconnect();}}>Disconnect</button></div>
+   <div className="mt-2 shrink-0 border-t border-stroke-weak pt-2"><a href="/subAccounts" className="block w-full rounded-lg px-3 py-2.5 text-left text-fg hover:bg-fill-hover" onClick={()=>setPickerOpen(false)}>Manage subaccounts</a><button type="button" className="w-full rounded-lg px-3 py-2.5 text-left text-brand hover:bg-fill-hover" disabled={mutating} onClick={()=>{setPickerOpen(false);removeAgentFromStorage("Testnet",address);removeAgentFromStorage("Mainnet",address);select(null);disconnect();}}>Disconnect</button></div>
   </Popover.Popup></Popover.Positioner></Popover.Portal>
  </Popover.Root></>;
 }
