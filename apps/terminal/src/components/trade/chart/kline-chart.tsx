@@ -1,3 +1,4 @@
+import {startChartRefresh} from "@/lib/chart/refresh";
 import { browserChartTimezone } from "@/lib/chart/timezone";
 import { setChartResolution, useChartIntervalStore } from "@/stores/use-chart-interval-store";
 import { RESOLUTIONS } from "@/lib/chart/resolution";
@@ -7,7 +8,7 @@ import type { Chart, KLineData } from "klinecharts";
 import { dispose, FormatDateType, init, LoadDataType } from "klinecharts";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { type ChartTypeConfig, DEFAULT_CHART_TYPE, INITIAL_CANDLE_COUNT, VOLUME_INDICATOR_NAME } from "@/config/chart";
-import { MS_PER_DAY, TAB_RESTORE_THRESHOLD_MS } from "@/config/time";
+import { MS_PER_DAY } from "@/config/time";
 import { candleEventToKLineData, candlesToKLineData } from "@/lib/chart/candle";
 import { formatShortDate, formatTime, formatTooltipDate } from "@/lib/chart/format";
 import { buildKlineStyles } from "@/lib/chart/kline-styles";
@@ -79,7 +80,7 @@ export function KlineChart({
 	const intervalRef = useRef(activeInterval);
 	intervalRef.current = activeInterval;
 	const isHiddenRef = useRef(false);
-	const hiddenAtRef = useRef<number | null>(null);
+	const liveVersion=useRef(0);
 	const candleBufferRef = useRef<KLineData[]>([]);
 	const chartStyleRef = useRef({ candleType: activeCandleType, yAxisInside });
 	chartStyleRef.current = { candleType: activeCandleType, yAxisInside };
@@ -193,13 +194,10 @@ export function KlineChart({
 		function handleVisibility() {
 			if (document.visibilityState === "hidden") {
 				isHiddenRef.current = true;
-				hiddenAtRef.current = Date.now();
 				return;
 			}
 
-			const gapMs = hiddenAtRef.current !== null ? Date.now() - hiddenAtRef.current : 0;
 			isHiddenRef.current = false;
-			hiddenAtRef.current = null;
 
 			const chart = chartRef.current;
 			if (!chart) return;
@@ -211,26 +209,23 @@ export function KlineChart({
 
 			chart.resize();
 
-			if (gapMs >= TAB_RESTORE_THRESHOLD_MS && symbol) {
-				const interval = intervalRef.current;
-				const endTime = Date.now();
-				const startTime = endTime - INITIAL_CANDLE_COUNT * interval.barMs;
-				fetchCandlesWithRetry(
-					{ coin: symbol, interval: interval.candleInterval, startTime, endTime },
-					() => !disposed && chartRef.current === chart,
-				)
-					.then((candles) => {
-						if (chartRef.current === chart) {
-							chart.applyNewData(candlesToKLineData(candles), true);
-						}
-					})
-					.catch((err) => logRecoverableCandleFetchFailure("tab-restore", err));
-			}
+
 		}
 
+  const stopRefresh=startChartRefresh(async()=>{
+   const chart=chartRef.current;if(!chart||!symbol)return;
+   const version=liveVersion.current;
+   const interval=intervalRef.current,endTime=Date.now(),data=chart.getDataList();
+   const startTime=Math.max(0,data.at(-1)?.timestamp??endTime-INITIAL_CANDLE_COUNT*interval.barMs);
+   const candles=await getInfoClient().candleSnapshot({coin:symbol,interval:interval.candleInterval,startTime,endTime});
+   if(disposed||chartRef.current!==chart||intervalRef.current!==interval||liveVersion.current!==version)return;
+   const updates=candlesToKLineData(candles);
+   if(!chart.getDataList().length){chart.applyNewData(updates,true);return;}
+   for(const candle of updates)if(candle.timestamp>=(chart.getDataList().at(-1)?.timestamp??0))chart.updateData(candle);
+  });
 		document.addEventListener("visibilitychange", handleVisibility);
 		return () => {
-			disposed = true;
+			disposed = true;stopRefresh();
 			document.removeEventListener("visibilitychange", handleVisibility);
 			candleBufferRef.current = [];
 		};
@@ -250,6 +245,8 @@ export function KlineChart({
 		const klineData = candleEventToKLineData(event);
 		if (!klineData) return;
 
+		liveVersion.current++;
+  if(klineData.timestamp<(chart.getDataList().at(-1)?.timestamp??0))return;
 		if (isHiddenRef.current) {
 			candleBufferRef.current.push(klineData);
 		} else {

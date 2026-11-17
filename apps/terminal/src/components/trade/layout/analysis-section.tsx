@@ -27,17 +27,18 @@ export function AnalysisSection({ onDesiredHeightChange }: AnalysisSectionProps)
 	const positionsMinHeightPx = isConnected ? positions.minHeightPx : positions.disconnectedMinHeightPx;
 	const [chartHeightPx, setChartHeightPx] = useState<number>(chart.minHeightPx);
 	const [visibleChartMaxHeightPx, setVisibleChartMaxHeightPx] = useState<number>(
-		PANEL_LAYOUT.ANALYSIS.minHeightPx - positionsMinHeightPx,
+		chart.defaultHeightPx,
 	);
-	const maxChartHeightPx = Math.max(chart.minHeightPx, visibleChartMaxHeightPx, chartHeightPx);
+	const maxChartHeightPx = Math.max(chart.minHeightPx, visibleChartMaxHeightPx);
 
 	useLayoutEffect(() => {
 		if (initializedRef.current) return;
 		initializedRef.current = true;
 
 		const storedChartHeight = readStoredChartHeight();
-		const availableHeight = rootRef.current?.getBoundingClientRect().height ?? PANEL_LAYOUT.ANALYSIS.minHeightPx;
-		const initialChartHeight = Math.max(chart.minHeightPx, storedChartHeight ?? availableHeight - positionsMinHeightPx);
+		const visibleMax = getVisibleChartMaxHeight(rootRef.current);
+  // Match the reference chart, including sessions with an oversized legacy saved height.
+  const initialChartHeight = Math.max(chart.minHeightPx, Math.min(storedChartHeight ?? chart.defaultHeightPx, chart.defaultHeightPx, visibleMax));
 
 		setVisibleChartMaxHeightPx(getVisibleChartMaxHeight(rootRef.current));
 		setChartHeightPx(initialChartHeight);
@@ -65,6 +66,10 @@ export function AnalysisSection({ onDesiredHeightChange }: AnalysisSectionProps)
 			observer.disconnect();
 		};
 	}, []);
+
+	useEffect(() => {
+  setChartHeightPx(height=>Math.min(height,maxChartHeightPx));
+ }, [maxChartHeightPx]);
 
 	useLayoutEffect(() => {
 		onDesiredHeightChange?.(chartHeightPx + positionsMinHeightPx);

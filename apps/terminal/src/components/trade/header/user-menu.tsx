@@ -40,6 +40,7 @@ export function UserMenu() {
    {label:subaccounts.isError?"Retry loading subaccounts":"Refresh subaccounts",onSelect:()=>{void subaccounts.refetch();}},
    { label: derived ? "Derived from your X1 signature" : `${walletName} Ethereum account`, onSelect: () => {} },
    { label: `Copy ${active.address??address}`, onSelect: () => { void navigator.clipboard.writeText(active.address??address); } },
+   { label: "Manage subaccounts", onSelect: () => { window.location.assign("/subAccounts"); } },
    { label: "Auto Trader", onSelect: () => { window.location.assign("/API#auto-trader"); } },
    { label: "API wallets", onSelect: () => { window.location.assign("/API"); } },
    { label: "Remote signing keys", onSelect: () => { window.location.assign("/keys"); } },

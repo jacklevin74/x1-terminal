@@ -1,3 +1,4 @@
+import {startChartRefresh} from "@/lib/chart/refresh";
 import { buildExecutionMarkers, type ExecutionFill } from "@/lib/chart/execution-markers";
 import { t } from "@lingui/core/macro";
 import type { AllMidsResponse, MetaResponse } from "@nktkas/hyperliquid";
@@ -130,6 +131,7 @@ const configuration: DatafeedConfiguration = {
 export function createDatafeed(getFills: () => readonly ExecutionFill[] = () => []): IBasicDataFeed {
 	const store = getCandleStore();
 	const listenerToStream = new Map<string, string>();
+ const refreshStops=new Map<string,()=>void>();
 
 	return {
   getMarks: (info, from, to, callback, resolution) => {
@@ -243,7 +245,8 @@ export function createDatafeed(getFills: () => readonly ExecutionFill[] = () => 
 			const interval = resolutionToInterval(resolution);
 			if (!interval) return;
 
-			const existingStreamKey = listenerToStream.get(listenerGuid);
+			refreshStops.get(listenerGuid)?.();
+   const existingStreamKey = listenerToStream.get(listenerGuid);
 			if (existingStreamKey) {
 				store.getState().unsubscribe(existingStreamKey, listenerGuid);
 			}
@@ -254,12 +257,27 @@ export function createDatafeed(getFills: () => readonly ExecutionFill[] = () => 
 
 			listenerToStream.set(listenerGuid, key);
 
-			const wrappedOnTick = (bar: Bar) => {
+			let liveVersion=0;
+   const wrappedOnTick = (bar: Bar) => {
+    const latest=store.getState().getLastBar(symbolCacheKey);if(latest&&bar.time<latest.time)return;
+    liveVersion++;
 				store.getState().setLastBar(symbolCacheKey, bar);
 				onTick(bar);
 			};
 
 			store.getState().subscribe(key, coin, interval, listenerGuid, wrappedOnTick, onResetCacheNeededCallback);
+   let disposed=false;
+   const stop=startChartRefresh(async()=>{
+    const version=liveVersion;
+    const endTime=Date.now(),last=store.getState().getLastBar(symbolCacheKey),barMs=RESOLUTIONS[resolution].barMs;
+    const candles=await getInfoClient().candleSnapshot({coin,interval,startTime:Math.max(0,last?.time??endTime-2*barMs),endTime});
+    if(disposed||version!==liveVersion)return;
+    for(const bar of filterAndSortBars(candles.map(candleSnapshotToBar),0,endTime+barMs)){
+     const current=store.getState().getLastBar(symbolCacheKey);
+     if(!current||bar.time>=current.time){if(!isSameBar(current,bar))wrappedOnTick(bar);}
+    }
+   });
+   refreshStops.set(listenerGuid,()=>{disposed=true;stop();});
 
 			const cached = store.getState().getLastBar(symbolCacheKey);
 			const streamLastBar = store.getState().streams[key]?.lastBar;
@@ -269,6 +287,7 @@ export function createDatafeed(getFills: () => readonly ExecutionFill[] = () => 
 		},
 
 		unsubscribeBars: (listenerGuid: string) => {
+   refreshStops.get(listenerGuid)?.();refreshStops.delete(listenerGuid);
 			const key = listenerToStream.get(listenerGuid);
 			if (key) {
 				store.getState().unsubscribe(key, listenerGuid);

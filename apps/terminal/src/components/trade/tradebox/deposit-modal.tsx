@@ -74,7 +74,7 @@ export function DepositModal() {
 	}
 
  if (!open) return null;
- if (isSubaccount) return <Modal open onOpenChange={handleClose}><ModalPopup size="sm"><ModalHeader><ModalTitle>Subaccount funding</ModalTitle></ModalHeader><ModalContent><p className="text-sm">Select Main account in the top-right account menu for deposits and withdrawals. Funding transfers between the main account and subaccounts are not configured in this terminal yet.</p><Button onClick={handleClose}>Close</Button></ModalContent></ModalPopup></Modal>;
+ if (isSubaccount) return <Modal open onOpenChange={handleClose}><ModalPopup size="sm"><ModalHeader><ModalTitle>Subaccount funding</ModalTitle></ModalHeader><ModalContent><p className="text-sm">Select Main account in the top-right account menu for deposits and withdrawals. Use <a href="/subAccounts" className="text-brand underline">Subaccount management</a> to transfer USDC between your main account and subaccounts.</p><Button onClick={handleClose}>Close</Button></ModalContent></ModalPopup></Modal>;
  if (activeTab === "withdraw") return <NativeWithdrawModal onClose={handleClose} />;
  if (activeTab === "deposit") return <NativeDepositModal open={open} onClose={handleClose} />;
  if (activeTab === "wallet") return <WalletDepositModal open={open} onClose={handleClose} />;

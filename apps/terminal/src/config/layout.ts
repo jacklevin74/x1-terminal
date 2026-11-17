@@ -9,7 +9,7 @@ export const PANEL_LAYOUT = {
 	ANALYSIS: {
 		id: "CHART_WITH_POSITIONS",
 		minHeightPx: 660,
-		chart: { minHeightPx: 260 },
+		chart: { minHeightPx: 260, defaultHeightPx: 563 },
 		positions: { minHeightPx: 400, disconnectedMinHeightPx: 180 },
 	},
 	MARKET: {

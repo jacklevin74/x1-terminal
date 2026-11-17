@@ -63,6 +63,8 @@ export function SpotSwapModalContent({ initialFromToken, initialToToken, onClose
 
 	const [fromToken, setFromToken] = useState(initialFromToken);
 	const [toToken, setToToken] = useState(defaultToToken);
+ // Spot metadata may arrive after opening the modal; fill the default once available.
+ useEffect(()=>{if(!toToken&&defaultToToken)setToToken(defaultToToken);},[defaultToToken,toToken]);
 	const [amount, setAmount] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const { showSuccess, trigger: triggerAutoClose } = useAutoCloseSuccess(onClose, SWAP_SUCCESS_DURATION_MS);

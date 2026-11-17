@@ -24,7 +24,14 @@ export function getAvailablePairTokens(token: string, spotMarkets: SpotMarketInf
 		}
 	}
 
-	return Array.from(tokenMap.values()).sort((a, b) => {
+	const priority=(token:SpotToken)=>{
+  if(token.name===DEFAULT_QUOTE_TOKEN)return 0;
+  if(token.displayName==="SOL"||token.name==="USOL"||token.name==="SOL")return 1;
+  if(token.displayName==="ETH"||token.name==="UETH"||token.name==="ETH")return 2;
+  return 3;
+ };
+ return Array.from(tokenMap.values()).sort((a, b) => {
+  const preferred=priority(a)-priority(b);if(preferred)return preferred;
 		if (a.name === DEFAULT_QUOTE_TOKEN) return -1;
 		if (b.name === DEFAULT_QUOTE_TOKEN) return 1;
 		return a.displayName.localeCompare(b.displayName);

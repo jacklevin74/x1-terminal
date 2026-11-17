@@ -3,15 +3,15 @@ import { act, createElement, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { expect, it, vi } from "vitest";
 import { SpotSwapModalContent } from "@/components/trade/components/spot-swap-modal";
-const state = vi.hoisted(() => ({ submit: vi.fn(async () => ({ ok: true })) }));
+const state = vi.hoisted(() => ({ submit: vi.fn(async () => ({ ok: true })), markets: null as unknown[]|null }));
 vi.mock("@lingui/core/macro", () => ({ t: (strings: TemplateStringsArray, ...values: unknown[]) => strings.reduce((s, part, i) => s + part + (values[i] ?? ""), "") }));
 vi.mock("@lingui/react/macro", () => ({ Trans: ({ children }: { children: ReactNode }) => children }));
-vi.mock("@/lib/hyperliquid/hooks/useMarketsInfo", () => ({ useMarketsInfo: () => ({ spotMarkets: [{ kind: "spot", name: "@1", pairName: "SOL/USDC", assetId: 10001, markPx: "100", szDecimals: 3, tokensInfo: [{ name: "USOL", displayName: "SOL" }, { name: "USDC", displayName: "USDC" }] }] }) }));
+vi.mock("@/lib/hyperliquid/hooks/useMarketsInfo", () => ({ useMarketsInfo: () => ({ spotMarkets: state.markets??[{ kind: "spot", name: "@1", pairName: "SOL/USDC", assetId: 10001, markPx: "100", szDecimals: 3, tokensInfo: [{ name: "USOL", displayName: "SOL" }, { name: "USDC", displayName: "USDC" }] }] }) }));
 vi.mock("@/hooks/trade/use-account-balances", () => ({ useDefaultDexBalances: () => ({ spotBalances: [{ coin: "USDC", total: "100", hold: "0" }], spotAvailableAfterMaintenance: [] }) }));
 vi.mock("@/hooks/trade/use-submit-plan", () => ({ useSubmitPlan: () => ({ submitPlan: state.submit, isSubmitting: false }) }));
 vi.mock("@/stores/use-global-settings-store", () => ({ getResolvedFormatLocale: () => "en-US" }));
 vi.mock("@/components/trade/components/asset-display", () => ({ AssetDisplay: ({ coin }: { coin: string }) => createElement("span", null, coin) }));
-vi.mock("@/components/trade/components/token-selector-dropdown", () => ({ TokenSelectorDropdown: ({ disabled, selectedToken }: { disabled: boolean; selectedToken: string }) => createElement("button", { disabled, "data-token-selector": true }, selectedToken) }));
+vi.mock("@/components/trade/components/token-selector-dropdown", () => ({ TokenSelectorDropdown: ({ disabled, selectedToken, tokens, onSelect }: { disabled: boolean; selectedToken: string; tokens:{name:string}[];onSelect:(name:string)=>void }) => createElement("button", { disabled, "data-token-selector": true, onClick:()=>{const eth=tokens.find(t=>t.name==="UETH");if(eth)onSelect(eth.name);} }, selectedToken) }));
 vi.mock("@/components/trade/components/trading-action-button", () => ({ TradingActionButton: ({ children, ...props }: { children: ReactNode }) => createElement("button", props, children) }));
 vi.mock("@/components/ui/number-input", () => ({ NumberInput: (props: object) => createElement("input", props) }));
 vi.mock("@hypeterminal/ui", () => {
@@ -64,4 +64,19 @@ it("fills half the spendable balance and clears the amount when reversing direct
  expect(node.querySelector('[data-token-selector]')?.textContent).toBe("USOL");
  expect(state.submit).not.toHaveBeenCalled();
  await act(async () => root.unmount());
+});
+
+it("defaults USDC to SOL after metadata loads, permits ETH, and flips ETH back to USDC",async()=>{
+ state.submit.mockClear();state.markets=[];const node=document.createElement("div"),root=createRoot(node);
+ const props={initialFromToken:"USDC",onClose:vi.fn()};
+ try{
+  await act(async()=>root.render(createElement(SpotSwapModalContent,props)));
+  const market=(name:string,displayName:string)=>({kind:"spot",name:`@${name}`,assetId:10001,markPx:"100",szDecimals:3,tokensInfo:[{name,displayName},{name:"USDC",displayName:"USDC"}]});
+  state.markets=[market("AAPL","AAPL"),market("UETH","ETH"),market("USOL","SOL")];
+  await act(async()=>root.render(createElement(SpotSwapModalContent,props)));
+  expect(node.querySelectorAll('[data-token-selector]')[0]?.textContent).toBe("USDC");expect(node.querySelectorAll('[data-token-selector]')[1]?.textContent).toBe("USOL");
+  await act(async()=>node.querySelectorAll<HTMLButtonElement>('[data-token-selector]')[1].click());expect(node.querySelectorAll('[data-token-selector]')[1]?.textContent).toBe("UETH");
+  await act(async()=>node.querySelector<HTMLButtonElement>('[aria-label="Swap direction"]')!.click());
+  expect(node.querySelectorAll('[data-token-selector]')[0]?.textContent).toBe("UETH");expect(node.querySelectorAll('[data-token-selector]')[1]?.textContent).toBe("USDC");expect(state.submit).not.toHaveBeenCalled();
+ }finally{await act(async()=>root.unmount());state.markets=null;}
 });
