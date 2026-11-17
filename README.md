@@ -92,6 +92,8 @@ The main Deposit dialog always displays the verified SOL destination address wit
 
 Vercel deployments check `/api/jurisdiction` before mounting trading providers. The endpoint uses Vercel’s `x-vercel-ip-country` header and blocks US access with the configured restriction message. Additional ISO country codes can be supplied in the server-only `RESTRICTED_COUNTRIES` environment variable (comma-separated); US is always included. Responses are not cached. Existing connected X1 accounts can still export their derived key from the notice screen.
 
+**Fail closed (branch `no-x1-wallet`):** production builds never mount the app unless `/api/jurisdiction` answers `{"restricted": false}` within 4 s. An error, timeout, 404 or malformed response shows a "Location check unavailable" screen with a Try again button. Only dev builds (`import.meta.env.DEV`) fail open. Self-hosted (nginx) deployments must serve `/api/jurisdiction` with the same JSON (`{"country": "<ISO2|null>", "restricted": <bool>}`, `Cache-Control: private, no-store`); the node01 setup uses nginx's GeoIP2 module with the free DB-IP "IP to Country Lite" database (CC BY 4.0, attribution in the footer: "IP Geolocation by DB-IP").
+
 Local Vite does not supply IP-country headers. A missing location endpoint, unknown country, or ordinary fetch failure is not treated as proof of a restricted location; upstream service eligibility restrictions still apply. Deploy the function and frontend together for the country-based notice.
 
 ### Local builder analytics JSON API
