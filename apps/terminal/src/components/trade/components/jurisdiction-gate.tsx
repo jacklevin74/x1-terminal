@@ -30,6 +30,7 @@ export function JurisdictionGate({ children, failOpen = import.meta.env.DEV }: {
    <h1 id="jurisdiction-unavailable-title" className="text-xl font-semibold">Location check unavailable</h1>
    <p role="alert" className="mt-4 text-sm leading-relaxed text-fg-muted">We could not confirm that our services are available in your location. Try again in a moment.</p>
    <button type="button" className="mt-6 rounded bg-brand px-4 py-2 text-sm text-fg-inverse" onClick={() => setAttempt(n => n + 1)}>Try again</button>
+   <p className="mt-6 text-xs text-fg-muted"><a href="https://db-ip.com" target="_blank" rel="noopener noreferrer" className="underline">IP Geolocation by DB-IP</a></p>
   </section>
  </main>;
  return <main className="min-h-dvh bg-background text-fg flex items-center justify-center p-6">
@@ -37,6 +38,7 @@ export function JurisdictionGate({ children, failOpen = import.meta.env.DEV }: {
    <h1 id="jurisdiction-title" className="text-xl font-semibold">Restricted jurisdiction</h1>
    <p role="alert" className="mt-4 text-sm leading-relaxed text-fg-muted">{RESTRICTED_JURISDICTION_MESSAGE}</p>
    <p className="mt-4 text-sm text-fg-muted">Our products and services are unavailable to U.S. users.</p>
+   <p className="mt-6 text-xs text-fg-muted"><a href="https://db-ip.com" target="_blank" rel="noopener noreferrer" className="underline">IP Geolocation by DB-IP</a></p>
   </section>
  </main>;
 }
