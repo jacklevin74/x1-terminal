@@ -1,3 +1,5 @@
+> **Branch `no-x1-wallet`:** the X1 Wallet (signature-derived account) integration recorded below was removed; Phantom and Rabby remain.
+
 # X1 Terminal build report
 
 ## Implemented

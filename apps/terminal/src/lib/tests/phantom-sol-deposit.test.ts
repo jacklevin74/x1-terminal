@@ -1,6 +1,5 @@
 import { readSolDepositBalance } from "../solana/deposit-balance";
-import { encodeSolSignature } from "../solana/source-wallet";
-import { Keypair, PublicKey, SystemInstruction, Transaction } from "@solana/web3.js";
+import { PublicKey, SystemInstruction, Transaction } from "@solana/web3.js";
 import { beforeEach, afterEach, expect, it, vi } from "vitest";
 import { sendSolDeposit } from "../solana/phantom-deposit";
 const state = vi.hoisted(() => ({
@@ -76,57 +75,7 @@ it("preserves submitted transaction state when confirmation is rate-limited", as
  expect(provider.signAndSendTransaction).toHaveBeenCalledOnce();
 });
 
-function installX1() {
- const signer = Keypair.generate();
- const wallet = { publicKey: signer.publicKey, connect: vi.fn(), signAndSendTransaction: vi.fn(), signTransaction: vi.fn(async (transaction: Transaction) => {
-  transaction.partialSign(signer); return { serialize: () => transaction.serialize() };
- }) };
- Object.assign(window, { x1_wallet: wallet });
- state.raw.mockImplementation(async bytes => encodeSolSignature(Transaction.from(bytes).signature!));
- return { wallet, signer };
-}
-it("reads SOL on mainnet from X1's native public key without signing or changing the HL account", async () => {
- const { wallet } = installX1();
- const result = await readSolDepositBalance("x1", destination, vi.fn());
- expect(result).toEqual({ address: wallet.publicKey.toBase58(), lamports: 1_000_000_000n, feeLamports: 5000n, maxLamports: 999_990_000n });
- expect(wallet.connect).not.toHaveBeenCalled(); expect(wallet.signTransaction).not.toHaveBeenCalled();
-});
-it("signs with X1 and broadcasts the verified native SOL transfer through the mainnet RPC", async () => {
- const { wallet } = installX1(); const submitted = vi.fn();
- const signature = await sendSolDeposit(destination, "0.12", submitted, vi.fn(), { kind: "x1", expectedAddress: wallet.publicKey.toBase58() });
- const signed = Transaction.from(state.raw.mock.calls[0][0]);
- const transfer = SystemInstruction.decodeTransfer(signed.instructions[0]);
- expect(transfer.fromPubkey.toBase58()).toBe(wallet.publicKey.toBase58());
- expect(transfer.toPubkey.toBase58()).toBe(destination); expect(transfer.lamports).toBe(120_000_000n);
- expect(signed.verifySignatures()).toBe(true); expect(submitted).toHaveBeenCalledWith(signature);
- expect(wallet.signAndSendTransaction).not.toHaveBeenCalled();
-});
-it("rejects an X1 source change since the balance was read", async () => {
- const { wallet } = installX1();
- await expect(sendSolDeposit(destination, "0.12", vi.fn(), vi.fn(), { kind: "x1", expectedAddress: source.toBase58() })).rejects.toThrow("source account changed");
- expect(wallet.signTransaction).not.toHaveBeenCalled(); expect(state.raw).not.toHaveBeenCalled();
-});
-it("rejects an X1-signed transaction with a changed transfer destination", async () => {
- const { wallet, signer } = installX1();
- wallet.signTransaction.mockImplementation(async transaction => {
-  transaction.instructions[0] = SystemInstruction.decodeTransfer(transaction.instructions[0]).toPubkey.equals(new PublicKey(destination))
-   ? (await import("@solana/web3.js")).SystemProgram.transfer({ fromPubkey: signer.publicKey, toPubkey: source, lamports: 120_000_000n }) : transaction.instructions[0];
-  transaction.partialSign(signer); return { serialize: () => transaction.serialize() };
- });
- await expect(sendSolDeposit(destination, "0.12", vi.fn(), vi.fn(), { kind: "x1" })).rejects.toThrow("changed the deposit transaction");
- expect(state.raw).not.toHaveBeenCalled();
-});
-it("retains the X1 transaction signature if RPC submission is rate-limited", async () => {
- installX1(); state.raw.mockRejectedValueOnce(new Error("429 Too Many Requests")); const submitted = vi.fn();
- await expect(sendSolDeposit(destination, "0.12", submitted, vi.fn(), { kind: "x1" })).rejects.toThrow("confirmation is unavailable");
- expect(submitted).toHaveBeenCalledOnce(); expect(state.raw).toHaveBeenCalledOnce();
-});
-it("does not broadcast if the X1 user rejects signing", async () => {
- const { wallet } = installX1(); wallet.signTransaction.mockRejectedValueOnce(new Error("User rejected"));
- await expect(sendSolDeposit(destination, "0.12", vi.fn(), vi.fn(), { kind: "x1" })).rejects.toThrow("User rejected");
- expect(state.raw).not.toHaveBeenCalled();
-});
 it("offers no spendable maximum when the source has no SOL", async () => {
- installX1(); state.balance.mockResolvedValue(0);
- expect((await readSolDepositBalance("x1", destination, vi.fn())).maxLamports).toBe(0n);
+ state.balance.mockResolvedValue(0);
+ expect((await readSolDepositBalance("phantom", destination, vi.fn())).maxLamports).toBe(0n);
 });

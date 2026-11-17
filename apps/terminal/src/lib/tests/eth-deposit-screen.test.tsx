@@ -6,7 +6,7 @@ import { afterEach, expect, it, vi } from "vitest";
 import { EthDeposit } from "@/components/trade/tradebox/deposit/eth-deposit";
 const state = vi.hoisted(() => ({ address: `0x${"ab".repeat(20)}`, testnet: false, send: vi.fn(), fetchAddress: vi.fn(async (recipient: string) => recipient === `0x${"ab".repeat(20)}` ? `0x${"cd".repeat(20)}` : `0x${"ef".repeat(20)}`) }));
 vi.mock("wagmi", () => ({
- useConnection: () => ({ address: state.address, connector: { id: "x1" }, chainId: 1 }),
+ useConnection: () => ({ address: state.address, connector: { id: "phantom" }, chainId: 1 }),
  useSendTransaction: () => ({ mutateAsync: state.send, isPending: false }),
  useSwitchChain: () => ({ mutateAsync: vi.fn(), isPending: false }),
  useWaitForTransactionReceipt: () => ({}),

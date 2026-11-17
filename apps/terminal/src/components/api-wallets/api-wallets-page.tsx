@@ -23,7 +23,7 @@ const field="rounded-lg border border-stroke-weak bg-background px-3 py-2.5 text
 const button="rounded-lg bg-brand px-4 py-2.5 text-sm font-medium text-fg-inverse disabled:opacity-40";
 export function ApiWalletsPage({managementOnly=false}:{managementOnly?:boolean}){
  const {address:tradingAddress}=useTradingAccount();
- const {address,connector}=useConnection();const {data:wallet}=useWalletClient();const {env}=useHyperliquid();
+ const {address}=useConnection();const {data:wallet}=useWalletClient();const {env}=useHyperliquid();
  const ownerRef=useRef(address);ownerRef.current=address;const envRef=useRef(env);envRef.current=env;
  const agents=useInfo("extraAgents",{user:address??zeroAddress},{enabled:!!address,refetchOnWindowFocus:true});
  const fee=useInfo("maxBuilderFee",{user:address??zeroAddress,builder:builderAddress},{enabled:!!address&&BUILDER_CONFIGURED,refetchOnWindowFocus:true});
@@ -54,7 +54,7 @@ export function ApiWalletsPage({managementOnly=false}:{managementOnly?:boolean})
    if(!BUILDER_CONFIGURED)throw new Error("The terminal builder address is not configured.");
    if(sign){
     if(!wallet)throw new Error("Unlock and connect the account owner's wallet to approve the fee. An API wallet cannot approve it.");
-    setFeeMessage(connector?.id==="x1"?"Submitting approval with your X1-derived Hyperliquid account…":`Confirm the ${builderFeeRate} builder fee approval in your wallet.`);
+    setFeeMessage(`Confirm the ${builderFeeRate} builder fee approval in your wallet.`);
     await approveFee.mutateAsync({builder:builderAddress,maxFeeRate:builderFeeRate});check();
    }
    const result=await fee.refetch();check();
@@ -98,7 +98,7 @@ export function ApiWalletsPage({managementOnly=false}:{managementOnly?:boolean})
   <header className="flex items-center justify-between gap-4"><a href="/" className="text-sm text-brand">← X1 Terminal</a><div className="flex items-center gap-4"><a href="/api_keys" className="text-sm text-brand">Manage API keys ↗</a><UserMenu /></div></header>
   <div><h1 className="text-3xl font-semibold">API</h1><p className="mt-3 max-w-4xl text-sm text-fg-muted">API wallets can trade on behalf of your account without withdrawal permissions. Use your account address for balance, position and order queries.</p><p className="mt-2 break-all font-mono text-xs text-fg-muted">{env} · Account: {address??"Connect your wallet"}</p></div>
   <section id="builder-fee-approval" aria-label="Builder fee approval" className="rounded-xl border border-stroke-weak bg-surface p-4">
-   <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-sm font-semibold">X1 trading fee · {builderFeeRate}</h2><p className="mt-1 text-xs text-fg-muted">{connector?.id==="x1"?"Approve with your X1-derived Hyperliquid account.":"Approve with the account owner's wallet."} This is separate from API wallet authorization.</p></div><span role="status" className="text-sm text-brand">{!address?"Wallet not connected":fee.isError?"Status unavailable":fee.data===undefined?"Checking approval…":fee.data>=Number(builderFee)?"Fee approved":"Fee approval required"}</span></div>
+   <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-sm font-semibold">X1 trading fee · {builderFeeRate}</h2><p className="mt-1 text-xs text-fg-muted">{"Approve with the account owner's wallet."} This is separate from API wallet authorization.</p></div><span role="status" className="text-sm text-brand">{!address?"Wallet not connected":fee.isError?"Status unavailable":fee.data===undefined?"Checking approval…":fee.data>=Number(builderFee)?"Fee approved":"Fee approval required"}</span></div>
    <div className="mt-3 space-y-1 break-all font-mono text-xs text-fg-muted"><p>Account: {address??"—"} · {env}</p><p>Builder: {builderAddress}</p><p>Current approved cap: {fee.data!==undefined&&!fee.isError?`${Number(fee.data)/1000}%`:"—"}</p></div>
    <div className="mt-4 flex flex-wrap gap-3"><button type="button" className={button} disabled={busy||!address||!BUILDER_CONFIGURED} onClick={()=>void updateFeeApproval(true)}>{fee.data!==undefined&&fee.data>=Number(builderFee)?`Reapprove ${builderFeeRate} fee`:`Approve ${builderFeeRate} fee`}</button><button type="button" className="px-3 py-2 text-sm text-brand disabled:opacity-40" disabled={busy||!address||!BUILDER_CONFIGURED} onClick={()=>void updateFeeApproval(false)}>Refresh fee status</button></div>
    {feeMessage&&<p role="status" className="mt-3 text-sm text-brand">{feeMessage}</p>}{feeError&&<p role="alert" className="mt-3 text-sm text-error">{feeError}</p>}

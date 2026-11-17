@@ -23,7 +23,7 @@ import {
 	zkSync,
 } from "wagmi/chains";
 import { injected } from "wagmi/connectors";
-import { getPhantomProvider, getX1Provider } from "@/lib/x1/provider";
+import { getPhantomProvider } from "@/lib/wallet/phantom-provider";
 import type { MockWalletConfig } from "@/lib/wallet-utils";
 
 // All chains supported for LiFi bridging — wagmi requires these upfront
@@ -70,7 +70,6 @@ export function createWagmiConfig(_options: { mockWallets?: MockWalletConfig[]; 
   connectors: [
    injected({ target: () => ({ id: "rabby", name: "Rabby Wallet", provider: () => getRabbyProvider() }), shimDisconnect: true }),
    injected({ target: () => ({ id: "phantom", name: "Phantom", provider: () => getPhantomProvider() }), shimDisconnect: true }),
-   injected({ target: () => ({ id: "x1", name: "X1 Wallet", provider: () => getX1Provider() }), shimDisconnect: true }),
   ],
   transports: BRIDGE_TRANSPORTS,
   ssr: true,

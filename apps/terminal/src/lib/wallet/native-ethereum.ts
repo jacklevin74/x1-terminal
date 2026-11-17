@@ -1,6 +1,6 @@
 import {getRabbyProvider} from "./rabby-provider";
 import { getAddress, isAddress, zeroAddress, type EIP1193Provider } from "viem";
-import { getPhantomProvider } from "@/lib/x1/provider";
+import { getPhantomProvider } from "@/lib/wallet/phantom-provider";
 import type { WithdrawalRecipient } from "./withdrawal-recipient";
 let observing = false;
 const announced = new Set<EIP1193Provider>();

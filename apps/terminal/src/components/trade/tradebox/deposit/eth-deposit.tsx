@@ -11,7 +11,7 @@ import { useIsTestnet } from "@/stores/use-global-settings-store";
 export function EthDeposit() {
  const { address } = useConnection();
  const testnet = useIsTestnet();
- if (!address) return <p className="text-sm py-4">Connect Rabby, Phantom or X1 Wallet to generate an ETH deposit address.</p>;
+ if (!address) return <p className="text-sm py-4">Connect Rabby or Phantom to generate an ETH deposit address.</p>;
  if (testnet) return <p className="text-sm py-4">Native ETH deposits are available on mainnet. Switch the terminal to mainnet to continue.</p>;
  // Remount on account change so address, amount, and transaction state cannot carry over.
  return <EthDepositAccount key={address} recipient={address} />;

@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { expect, it, vi } from "vitest";
 import { NativeDepositModal } from "@/components/trade/tradebox/deposit/native-deposit-modal";
 const state = vi.hoisted(() => ({ send: vi.fn(), readBalance: vi.fn(async () => ({ address: "9SLPTL41SPsYkgdsMzdfJsxymEANKr5bYoBsQzJyKpKS", lamports: 1_900_000_000n, feeLamports: 5000n, maxLamports: 1_899_990_000n })), eth: vi.fn(async () => `0x${"cd".repeat(20)}`), sol: vi.fn(async () => "9SLPTL41SPsYkgdsMzdfJsxymEANKr5bYoBsQzJyKpKS") }));
-vi.mock("wagmi", () => ({ useConnection: () => ({ address: `0x${"ab".repeat(20)}`, connector: { id: "x1" } }) }));
+vi.mock("wagmi", () => ({ useConnection: () => ({ address: `0x${"ab".repeat(20)}`, connector: { id: "phantom" } }) }));
 vi.mock("@/stores/use-global-settings-store", () => ({ useIsTestnet: () => false }));
 vi.mock("@/lib/unit/eth-deposit", () => ({ fetchEthDepositAddress: state.eth, fetchEthDepositFees: async () => ({ fee: 0.0005, eta: "3m" }), MIN_ETH_DEPOSIT: "0.007" }));
 vi.mock("@/lib/unit/sol-deposit", () => ({ fetchSolDepositAddress: state.sol, fetchSolDepositFees: async () => ({ fee: 0.01, eta: "1m" }), MIN_SOL_DEPOSIT: "0.12", parseSolDepositAmount: vi.fn() }));
@@ -41,7 +41,7 @@ it("shows an ETH address and supports entering a SOL amount directly without tra
  expect(node.querySelector("input")?.value).toBe("1.89999");
  expect(node.querySelector("button[aria-label='Copy SOL deposit address']")).not.toBeNull();
  await act(async () => [...node.querySelectorAll("button")].find(b => b.textContent === "Deposit")!.click());
- expect(state.send).toHaveBeenCalledWith("9SLPTL41SPsYkgdsMzdfJsxymEANKr5bYoBsQzJyKpKS", "1.89999", expect.any(Function), expect.any(Function), { kind: "x1", expectedAddress: "9SLPTL41SPsYkgdsMzdfJsxymEANKr5bYoBsQzJyKpKS" });
+ expect(state.send).toHaveBeenCalledWith("9SLPTL41SPsYkgdsMzdfJsxymEANKr5bYoBsQzJyKpKS", "1.89999", expect.any(Function), expect.any(Function), { kind: "phantom", expectedAddress: "9SLPTL41SPsYkgdsMzdfJsxymEANKr5bYoBsQzJyKpKS" });
  await act(async () => root.unmount()); node.remove(); client.clear();
 });
 it("replaces a wrapped Failed to fetch in the deposit address panel with the restriction message", async () => {

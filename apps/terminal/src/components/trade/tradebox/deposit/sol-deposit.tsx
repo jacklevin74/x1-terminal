@@ -13,7 +13,7 @@ import { useIsTestnet } from "@/stores/use-global-settings-store";
 export function SolDeposit({ compact = false }: { compact?: boolean }) {
  const { address } = useConnection();
  const testnet = useIsTestnet();
- if (!address) return <p className="text-sm py-4">Connect Phantom or X1 Wallet to generate a SOL deposit address.</p>;
+ if (!address) return <p className="text-sm py-4">Connect Phantom to generate a SOL deposit address.</p>;
  if (testnet) return <p className="text-sm py-4">Native SOL deposits are available on mainnet. Switch the terminal to mainnet to continue.</p>;
  return <SolDepositAccount key={address} recipient={address} compact={compact} />;
 }
@@ -23,8 +23,8 @@ function SolDepositAccount({ recipient, compact }: { recipient: `0x${string}`; c
  const currentAccount = useRef(address);
  currentAccount.current = address;
  useEffect(() => { active.current = true; return () => { active.current = false; }; }, []);
- const sourceKind: SolSourceKind = connector?.id === "x1" ? "x1" : "phantom";
- const walletName = sourceKind === "x1" ? "X1 Wallet" : "Phantom";
+ const sourceKind: SolSourceKind = "phantom";
+ const walletName = "Phantom";
  const [sourceAddress, setSourceAddress] = useState(() => getSolSourceWallet(sourceKind)?.publicKey?.toBase58() ?? "");
  useEffect(() => {
   const wallet = getSolSourceWallet(sourceKind);
@@ -53,7 +53,7 @@ function SolDepositAccount({ recipient, compact }: { recipient: `0x${string}`; c
  const balanceQuery = useQuery({
   queryKey: ["sol-wallet-balance", "mainnet", sourceKind, recipient, sourceAddress, deposit.data],
   queryFn: () => readSolDepositBalance(sourceKind, deposit.data!, assertCurrentAccount),
-  enabled: !!deposit.data && (connector?.id === "x1" || connector?.id === "phantom"),
+  enabled: !!deposit.data && connector?.id === "phantom",
   retry: false, staleTime: 30_000, refetchOnWindowFocus: false,
  });
  const balance = balanceQuery.data;
@@ -86,7 +86,7 @@ function SolDepositAccount({ recipient, compact }: { recipient: `0x${string}`; c
   {!compact && <NativeDepositIntro asset="SOL" chain="Solana" fee={fees.data?.fee} eta={fees.data?.eta} />}
   {deposit.isPending && <p role="status">Generating and verifying your SOL deposit address…</p>}
   {deposit.error && <div role="alert" className="text-error"><p>{formatDepositAddressError(deposit.error)}</p><Button size="sm" onClick={() => void deposit.refetch()}>Retry address</Button></div>}
-  {(connector?.id === "phantom" || connector?.id === "x1") && deposit.data && !signature && <>
+  {connector?.id === "phantom" && deposit.data && !signature && <>
    <div className="flex items-center justify-between gap-2 text-xs text-fg-muted">
     <span>{walletName}</span><span className="tabular-nums">{balance ? `Available: ${formatSolLamports(balance.lamports)} SOL` : balanceQuery.error ? "Balance unavailable" : "Loading balance…"}</span>
    </div>

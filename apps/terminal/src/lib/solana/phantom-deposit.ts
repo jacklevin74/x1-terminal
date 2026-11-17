@@ -1,5 +1,5 @@
 import { confirmSolDeposit, SolDepositConfirmationPendingError } from "./confirm-deposit";
-import { connectSolSource, encodeSolSignature, getSolSourceWallet, type SolSourceKind } from "./source-wallet";
+import { connectSolSource, getSolSourceWallet, type SolSourceKind } from "./source-wallet";
 import { Connection, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import { isSolDepositAddress, parseSolDepositAmount } from "../unit/sol-deposit";
 
@@ -23,7 +23,7 @@ export async function sendSolDeposit(
  const lamports = parseSolDepositAmount(amount);
  if (!isSolDepositAddress(destination)) throw new Error("Invalid SOL deposit address.");
  const provider = getSolSourceWallet(source.kind);
- if (!provider) throw new Error(`Connect ${source.kind === "x1" ? "X1 Wallet" : "Phantom"} to send SOL.`);
+ if (!provider) throw new Error("Connect Phantom to send SOL.");
  const connection = new Connection(SOLANA_RPC_URL, { commitment: "confirmed", disableRetryOnRateLimit: true });
  const genesis = await connection.getGenesisHash();
  if (!genesis.startsWith("5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp")) throw new Error("SOL deposits require a Solana mainnet RPC.");
@@ -42,27 +42,11 @@ export async function sendSolDeposit(
  assertCurrentAccount();
  if (provider.publicKey?.toBase58() !== publicKey.toBase58()) throw new Error("Wallet source account changed. Read your SOL balance again.");
  let signature: string;
- if (source.kind === "x1") {
-  if (!provider.signTransaction) throw new Error("This X1 wallet does not support transaction signing. Update the wallet or copy the deposit address.");
-  const original = transaction.serializeMessage();
-  const signed = await provider.signTransaction(transaction);
-  assertCurrentAccount();
-  if (provider.publicKey?.toBase58() !== publicKey.toBase58()) throw new Error("Wallet source account changed. No transaction was broadcast.");
-  const verified = Transaction.from(signed.serialize());
-  if (!verified.serializeMessage().equals(original) || !verified.verifySignatures()) throw new Error("Wallet changed the deposit transaction or returned an invalid signature. No transaction was broadcast.");
-  if (!verified.signature) throw new Error("Missing SOL transaction signature.");
-  signature = encodeSolSignature(verified.signature);
-  submitted = true;
-  onSubmitted(signature);
-  const sent = await connection.sendRawTransaction(verified.serialize(), { skipPreflight: false, maxRetries: 0 });
-  if (sent !== signature) throw new Error("RPC returned a different transaction signature. Check the saved transaction before retrying.");
- } else {
-  if (!provider.signAndSendTransaction) throw new Error("Phantom cannot send this SOL transaction.");
-  ({ signature } = await provider.signAndSendTransaction(transaction));
-  if (typeof signature !== "string" || !/^[1-9A-HJ-NP-Za-km-z]{64,88}$/.test(signature)) throw new Error("Wallet returned an invalid transaction signature. Check wallet activity before retrying.");
-  submitted = true;
-  onSubmitted(signature);
- }
+ if (!provider.signAndSendTransaction) throw new Error("Phantom cannot send this SOL transaction.");
+ ({ signature } = await provider.signAndSendTransaction(transaction));
+ if (typeof signature !== "string" || !/^[1-9A-HJ-NP-Za-km-z]{64,88}$/.test(signature)) throw new Error("Wallet returned an invalid transaction signature. Check wallet activity before retrying.");
+ submitted = true;
+ onSubmitted(signature);
 
  await confirmSolDeposit(connection, signature, block);
  return signature;

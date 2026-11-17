@@ -27,11 +27,9 @@ The static output is `apps/terminal/dist`. This fork starts with Vite and TanSta
 
 ## Wallets and approvals
 
-Only Phantom and X1 Wallet are offered. Phantom uses `window.phantom.ethereum`, Ethereum accounts, and EIP-712 signing; Wagmi reconnects previously authorized accounts without an interactive connect prompt. Other injected wallets and WalletConnect are disabled.
+Only Phantom and Rabby are offered (the X1 Wallet integration was removed on this branch). Phantom uses `window.phantom.ethereum`, Ethereum accounts, and EIP-712 signing; Wagmi reconnects previously authorized accounts without an interactive connect prompt. Other injected wallets and WalletConnect are disabled.
 
-X1 is detected at `window.x1_wallet`, falling back to `window.x1Wallet`. Before connecting, the user acknowledges the derived-account model. The wallet signs the UTF-8 message `x1-terminal-hyperliquid-key-v1`. The returned signature may be raw bytes or base64, either directly or inside `{ signature }`. It is normalized to exactly 64 bytes, hashed with keccak256, and used as an Ethereum private key. The account address is displayed in the wallet menu and setup screen. Withdrawals are signed by that derived key. Identical signatures must be returned across reconnects; verify that behavior with the actual X1 extension before funding an account.
-
-The X1-derived wallet key uses sessionStorage only. Trading-only agent keys are saved in localStorage on this device (with sessionStorage fallback) and reused only while their on-chain approvals remain valid. Neither key is sent to a backend. Reloading the page restores the cached X1-derived account without another signature. A native-wallet account mismatch, corrupted cache, or explicit disconnect discards that session. When the tab’s session storage is gone, reconnecting requires signing again. The inherited mobile key-transfer route is disabled.
+Trading-only agent keys are saved in localStorage on this device (with sessionStorage fallback) and reused only while their on-chain approvals remain valid. They are never sent to a backend.
 
 Choose “Trading setup” in the account menu or “Enable Trading” in order entry. One screen explains both approvals, then performs `approveBuilderFee` (0.05%) and `approveAgent` sequentially, skipping existing approvals after checking `maxBuilderFee` and agent status. Every order through the shared exchange hook includes `{ b: VITE_BUILDER_ADDRESS, f: 50 }`, overriding caller-supplied builder parameters. The address is normalized to lowercase.
 
@@ -43,7 +41,7 @@ In Positions, click the share/view icon beside a position’s PNL (also availabl
 
 ## Native ETH deposits inside X1 Terminal
 
-Open **Deposit** and select **ETH** on mainnet. The terminal requests a Unit ETH deposit address for the connected Hyperliquid account and verifies attestations from at least two pinned Unit guardians before displaying it. Copy the displayed Ethereum deposit address. Phantom users can enter an ETH amount and approve the native transfer directly in the terminal. X1-derived accounts can receive funds sent from another Ethereum wallet or exchange to the generated address.
+Open **Deposit** and select **ETH** on mainnet. The terminal requests a Unit ETH deposit address for the connected Hyperliquid account and verifies attestations from at least two pinned Unit guardians before displaying it. Copy the displayed Ethereum deposit address. Phantom users can enter an ETH amount and approve the native transfer directly in the terminal.
 
 Only native ETH on Ethereum mainnet is accepted by this route. The current documented minimum is 0.007 ETH; smaller deposits cannot be processed. Unit processing fees and Ethereum sending gas apply. The UI fetches fee and arrival estimates, and distinguishes an Ethereum receipt from final Hyperliquid credit. ETH arrives in Hyperliquid **spot**; it is not automatically converted to USDC. Use the terminal’s existing spot trading interface to sell ETH if USDC is required.
 
@@ -62,7 +60,6 @@ The optional public build variable `VITE_SOLANA_RPC_URL` configures a browser-ac
 ## Deploy as a separate Vercel project
 
 For the configured mainnet build, run `npm run deploy:vercel` from this checkout on your Mac. It signs in to Vercel if necessary and deploys production to the separate project `x1-terminal-20261029`, supplying the configured public builder address and mainnet selection at build time. It does not upload `.env` or credentials. Successful deployment prints the live URL. The following dashboard steps are the alternative for configuring a new project manually.
-
 
 1. Push this repository to a new GitHub repository.
 2. In Vercel, choose **Add New → Project**, import that repository, and give it a new project name. Do not link an existing project.
@@ -83,10 +80,6 @@ vercel deploy
 
 No X1 deposit bridge, XNT rewards, xDEX, Privy, or copy trading is implemented in this build. Upstream deposit/withdrawal interfaces remain; the proposed X1 bridge is separate future work.
 
-## X1 wallet SOL balance and deposit
-
-With X1 Wallet connected, open the dropdown beside the header **Deposit** button and choose **Deposit from wallet → SOL · Solana**. The SOL balance loads automatically. The terminal reads native SOL at the wallet’s public key from Solana mainnet and displays the source address, balance, and maximum spendable amount. Enter an amount or choose Max, which leaves the estimated network fee plus a 5,000-lamport reserve. Click **Deposit** and approve signing. The wallet signs the transfer; the terminal verifies that the signed transaction still matches the reviewed source, destination, amount, and mainnet blockhash before broadcasting through the validated mainnet RPC. It does not use X1’s chain for broadcast. The receiving account remains the connected derived Hyperliquid address. The flow rechecks source account and balance before sending, and blocks amounts below Unit’s 0.12 SOL minimum. Phantom uses the same balance and amount controls.
-
 ## Desktop positions layout
 
 The desktop Positions table now uses Market, Size, Position Value, Entry Price, Mark Price, PNL (ROE %), Liq. Price, Margin, Funding, and Close All/actions columns. Leverage and DEX tags sit beside the plain market name; PNL and ROE share one line with the PNL-card link. Position Value can be sorted. Limit, Market, and Reverse actions are exposed directly. Close All requires confirmation and processes market closes sequentially, stopping after a failure or account change. Trailing is disabled because a trailing-stop engine is not implemented. TP/SL remains accessible from the market row’s hover/focus control. Narrow screens can scroll the full desktop table horizontally; the dedicated mobile card layout remains available.
@@ -94,8 +87,6 @@ The desktop Positions table now uses Market, Size, Position Value, Entry Price, 
 ## SOL amount entry and refresh reconnect
 
 The main Deposit dialog always displays the verified SOL destination address with a copy button. When SOL is selected, it also automatically loads the connected native wallet’s balance and displays Amount, Max, and Deposit directly in the same dialog. The destination remains visible while an amount is entered. The destination is Unit’s address for the connected Hyperliquid account, not the wallet’s source address.
-
-X1 accounts reconnect across page refreshes from the tab’s existing session key, without a new message signature. The application observes native account changes and discards mismatched or invalid cached sessions. Explicit Disconnect clears the session and stays disconnected after refresh. Wallet initialization events trigger another reconnect check when the extension injects late. Derived private keys remain in sessionStorage only; they are not persisted across closed sessions.
 
 ### Restricted-jurisdiction notice
 
@@ -243,8 +234,8 @@ executor remain unchanged. Browser requests use `/api/copybot` and
 and Vercel rewrites, because the upstream does not provide CORS headers.
 Restart local preview after changing proxy configuration. `VITE_COPYBOT_API`
 can point to a compatible HTTPS instance if that instance supports browser CORS.
-The current integration supports **Mainnet** with X1 Wallet's derived owner
-account and Phantom Ethereum. It blocks the Mainnet service when the terminal is
+The current integration supports **Mainnet** with a Phantom or Rabby
+Ethereum owner account. It blocks the Mainnet service when the terminal is
 on Testnet. Portfolio-margin equity is deliberately unavailable until supported;
 manual and unified equity calculations follow the supplied implementation spec.
 

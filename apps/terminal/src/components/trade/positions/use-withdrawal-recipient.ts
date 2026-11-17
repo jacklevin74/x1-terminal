@@ -26,7 +26,7 @@ export function useWithdrawalRecipient(asset: "SOL" | "ETH", connectorId: string
   const update = () => { if (!connecting.current) void refresh(); };
   const resume = () => { explicitlyLocked.current = false; update(); };
   const clear = () => { explicitlyLocked.current = true; generation.current++; setRecipient({ address: "", status: "locked", message: "Your wallet is locked or disconnected. Unlock it, then reconnect to load your withdrawal address." }); setReading(false); };
-  const source = getSolSourceWallet(connectorId === "x1" ? "x1" : "phantom");
+  const source = getSolSourceWallet("phantom");
   const ethereumProviders = getNativeEthereumProviders();
   const cleanups: (() => void)[] = [];
   for (const [event, listener] of [["accountChanged", update], ["connect", resume], ["disconnect", clear], ["lock", clear], ["unlock", resume]] as const) {

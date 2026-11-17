@@ -550,8 +550,12 @@ msgstr ""
 #~ msgstr "Connectez un portefeuille pour gérer les positions."
 
 #: src/components/auto-trader/auto-trader-panel.tsx:30
-msgid "Connect Rabby, X1 Wallet or Phantom above to configure Auto Trader."
+msgid "Connect Rabby or Phantom above to configure Auto Trader."
 msgstr ""
+
+#: src/components/auto-trader/auto-trader-panel.tsx:30
+#~ msgid "Connect Rabby, X1 Wallet or Phantom above to configure Auto Trader."
+#~ msgstr ""
 
 #: src/routes/mobile-agent-sync.tsx:582
 #~ msgid "Connect the same owner wallet used on desktop before importing phone access."
