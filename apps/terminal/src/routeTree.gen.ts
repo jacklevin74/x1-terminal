@@ -14,6 +14,7 @@ import { Route as SpotRouteImport } from './routes/spot'
 import { Route as PerpRouteImport } from './routes/perp'
 import { Route as NewthemeRouteImport } from './routes/newtheme'
 import { Route as MobileAgentSyncRouteImport } from './routes/mobile-agent-sync'
+import { Route as GuideRouteImport } from './routes/guide'
 import { Route as ClassicRouteImport } from './routes/classic'
 import { Route as BuildersPerpRouteImport } from './routes/builders-perp'
 import { Route as AutoTraderRouteImport } from './routes/auto-trader'
@@ -47,6 +48,11 @@ const NewthemeRoute = NewthemeRouteImport.update({
 const MobileAgentSyncRoute = MobileAgentSyncRouteImport.update({
   id: '/mobile-agent-sync',
   path: '/mobile-agent-sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuideRoute = GuideRouteImport.update({
+  id: '/guide',
+  path: '/guide',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClassicRoute = ClassicRouteImport.update({
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/auto-trader': typeof AutoTraderRoute
   '/builders-perp': typeof BuildersPerpRouteWithChildren
   '/classic': typeof ClassicRoute
+  '/guide': typeof GuideRoute
   '/mobile-agent-sync': typeof MobileAgentSyncRoute
   '/newtheme': typeof NewthemeRoute
   '/perp': typeof PerpRoute
@@ -118,6 +125,7 @@ export interface FileRoutesByTo {
   '/api_keys': typeof Api_keysRoute
   '/auto-trader': typeof AutoTraderRoute
   '/classic': typeof ClassicRoute
+  '/guide': typeof GuideRoute
   '/mobile-agent-sync': typeof MobileAgentSyncRoute
   '/newtheme': typeof NewthemeRoute
   '/perp': typeof PerpRoute
@@ -135,6 +143,7 @@ export interface FileRoutesById {
   '/auto-trader': typeof AutoTraderRoute
   '/builders-perp': typeof BuildersPerpRouteWithChildren
   '/classic': typeof ClassicRoute
+  '/guide': typeof GuideRoute
   '/mobile-agent-sync': typeof MobileAgentSyncRoute
   '/newtheme': typeof NewthemeRoute
   '/perp': typeof PerpRoute
@@ -153,6 +162,7 @@ export interface FileRouteTypes {
     | '/auto-trader'
     | '/builders-perp'
     | '/classic'
+    | '/guide'
     | '/mobile-agent-sync'
     | '/newtheme'
     | '/perp'
@@ -168,6 +178,7 @@ export interface FileRouteTypes {
     | '/api_keys'
     | '/auto-trader'
     | '/classic'
+    | '/guide'
     | '/mobile-agent-sync'
     | '/newtheme'
     | '/perp'
@@ -184,6 +195,7 @@ export interface FileRouteTypes {
     | '/auto-trader'
     | '/builders-perp'
     | '/classic'
+    | '/guide'
     | '/mobile-agent-sync'
     | '/newtheme'
     | '/perp'
@@ -201,6 +213,7 @@ export interface RootRouteChildren {
   AutoTraderRoute: typeof AutoTraderRoute
   BuildersPerpRoute: typeof BuildersPerpRouteWithChildren
   ClassicRoute: typeof ClassicRoute
+  GuideRoute: typeof GuideRoute
   MobileAgentSyncRoute: typeof MobileAgentSyncRoute
   NewthemeRoute: typeof NewthemeRoute
   PerpRoute: typeof PerpRoute
@@ -243,6 +256,13 @@ declare module '@tanstack/react-router' {
       path: '/mobile-agent-sync'
       fullPath: '/mobile-agent-sync'
       preLoaderRoute: typeof MobileAgentSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guide': {
+      id: '/guide'
+      path: '/guide'
+      fullPath: '/guide'
+      preLoaderRoute: typeof GuideRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/classic': {
@@ -333,6 +353,7 @@ const rootRouteChildren: RootRouteChildren = {
   AutoTraderRoute: AutoTraderRoute,
   BuildersPerpRoute: BuildersPerpRouteWithChildren,
   ClassicRoute: ClassicRoute,
+  GuideRoute: GuideRoute,
   MobileAgentSyncRoute: MobileAgentSyncRoute,
   NewthemeRoute: NewthemeRoute,
   PerpRoute: PerpRoute,

@@ -1,7 +1,7 @@
 import { Button, ButtonIcon, Divider, Dropdown } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { DownloadSimpleIcon, GearIcon, TerminalIcon } from "@phosphor-icons/react";
+import { DownloadSimpleIcon, GearIcon, QuestionIcon, TerminalIcon } from "@phosphor-icons/react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { useConnection } from "wagmi";
@@ -135,6 +135,14 @@ export function TopNav() {
 				<Suspense fallback={<UserMenuSkeleton />}>
 					<UserMenu />
 				</Suspense>
+				<Link
+					to="/guide"
+					aria-label={t`Guide`}
+					title={t`Guide`}
+					className="inline-flex size-8 shrink-0 items-center justify-center rounded-8 text-fg-muted transition-colors hover:bg-fill-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-brand"
+				>
+					<QuestionIcon className="size-4" />
+				</Link>
 				<ButtonIcon
 					variant="ghost"
 					intent="neutral"
