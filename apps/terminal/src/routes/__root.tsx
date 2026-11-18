@@ -1,8 +1,9 @@
-import { X1Setup } from "@/components/trade/components/x1-setup";
 import type { QueryClient } from "@tanstack/react-query";
 import { ClientOnly, createRootRouteWithContext, HeadContent, Outlet } from "@tanstack/react-router";
 import { Suspense, useEffect } from "react";
+import { TerminalThemeRoot } from "@/components/newtheme/theme-root";
 import { NotFoundPage } from "@/components/pages/not-found-page";
+import { X1Setup } from "@/components/trade/components/x1-setup";
 import { AppShellSkeleton } from "@/components/trade/layout/app-shell-skeleton";
 import { MarketsInfoProvider } from "@/lib/hyperliquid/hooks/MarketsInfoProvider";
 import { createLazyComponent } from "@/lib/lazy";
@@ -37,18 +38,20 @@ function RootComponent() {
 
 	return (
 		<>
-<HeadContent />
-<ClientOnly fallback={<AppShellSkeleton />}>
-			<ExchangeScopeProvider>
-				<MarketsInfoProvider>
-					<Outlet />
-<X1Setup />
-					<Suspense fallback={null}>
-						<Toaster />
-					</Suspense>
-				</MarketsInfoProvider>
-			</ExchangeScopeProvider>
-		</ClientOnly>
-</>
+			<HeadContent />
+			<ClientOnly fallback={<AppShellSkeleton />}>
+				<ExchangeScopeProvider>
+					<TerminalThemeRoot>
+						<MarketsInfoProvider>
+							<Outlet />
+							<X1Setup />
+							<Suspense fallback={null}>
+								<Toaster />
+							</Suspense>
+						</MarketsInfoProvider>
+					</TerminalThemeRoot>
+				</ExchangeScopeProvider>
+			</ClientOnly>
+		</>
 	);
 }
