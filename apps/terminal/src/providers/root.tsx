@@ -25,6 +25,9 @@ const isServer = typeof document === "undefined";
 if (!isServer) {
 	try {
 		localStorage.removeItem(STORAGE_KEYS.LEGACY_METADATA);
+		// The v1 cache was shared by mainnet and testnet: a testnet allPerpMetas/perpDexs kept serving a mainnet session
+		// (no xyz markets, mismatched names/prices, blank trade view). Drop it; the cache is now per network.
+		localStorage.removeItem(STORAGE_KEYS.RQ_CACHE);
 	} catch {}
 }
 
@@ -32,7 +35,7 @@ const persister = isServer
 	? null
 	: createSyncStoragePersister({
 			storage: window.localStorage,
-			key: STORAGE_KEYS.RQ_CACHE,
+			key: `${STORAGE_KEYS.RQ_CACHE}-${network}`,
 			throttleTime: 1000,
 		});
 

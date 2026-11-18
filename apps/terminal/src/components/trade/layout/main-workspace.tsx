@@ -4,6 +4,7 @@ import { Suspense, useCallback, useState } from "react";
 import { useDefaultLayout } from "react-resizable-panels";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { PANEL_LAYOUT } from "@/config/layout";
+import { useSelectedMarketFallback } from "@/hooks/trade/use-selected-market-fallback";
 import { useSelectedMarketInfo } from "@/lib/hyperliquid";
 import { createLazyComponent } from "@/lib/lazy";
 import { useExchangeScope } from "@/providers/exchange-scope";
@@ -20,6 +21,7 @@ const { id, analysis, sidebar } = PANEL_LAYOUT.MAIN;
 export function MainWorkspace() {
 	const { defaultLayout, onLayoutChanged } = useDefaultLayout({ id });
 	const { data: selectedMarket } = useSelectedMarketInfo();
+	useSelectedMarketFallback();
 	const { scope } = useExchangeScope();
 	const { setSelectedMarket } = useMarketActions();
 	const [marketBodyMinHeightPx, setMarketBodyMinHeightPx] = useState<number>(PANEL_LAYOUT.ANALYSIS.minHeightPx);
