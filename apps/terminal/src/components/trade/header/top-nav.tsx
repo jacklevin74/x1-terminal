@@ -76,14 +76,14 @@ export function TopNav() {
 					</div>
 				)}
 				<Divider orientation="vertical" className="my-2 hidden lg:block" />
-				<nav className="hidden lg:flex items-center text-xs tracking-wide">
+				<nav className="hidden lg:flex min-w-0 items-center overflow-x-auto whitespace-nowrap text-xs tracking-wide [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
 					{SCOPE_NAV_ITEMS.map((item) => (
 						<Link
 							key={item.scope}
 							to={preview ? "/newtheme" : item.to}
 							search={preview ? { scope: item.scope } : {}}
 							className={cn(
-								"px-2.5 py-1 rounded-8 transition-colors duration-150",
+								"shrink-0 whitespace-nowrap px-2.5 py-1 rounded-8 transition-colors duration-150",
 								scope === item.scope ? item.activeClass : "text-fg-muted hover:text-fg",
 							)}
 						>
@@ -96,7 +96,7 @@ export function TopNav() {
 							key={item.key}
 							type="button"
 							disabled
-							className="px-2.5 py-1.5 text-fg-disabled cursor-not-allowed"
+							className="shrink-0 whitespace-nowrap px-2.5 py-1.5 text-fg-disabled cursor-not-allowed"
 							tabIndex={-1}
 						>
 							{item.label}
