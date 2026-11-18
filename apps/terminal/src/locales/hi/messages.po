@@ -354,8 +354,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/config/nav.tsx:52
-msgid "Builders"
-msgstr ""
+#~ msgid "Builders"
+#~ msgstr ""
 
 #: src/components/trade/positions/twap-tab.tsx:
 #~ msgid "buy"
@@ -839,7 +839,7 @@ msgstr ""
 msgid "Default"
 msgstr ""
 
-#: src/components/trade/header/top-nav.tsx:102
+#: src/components/trade/header/top-nav.tsx:119
 #: src/components/trade/mobile/mobile-nav-drawer.tsx:131
 #: src/components/trade/tradebox/account-panel.tsx:33
 #: src/components/trade/tradebox/account-panel.tsx:33
@@ -1318,8 +1318,8 @@ msgid "Highest cross maintenance margin divided by cross account equity across p
 msgstr ""
 
 #: src/components/trade/chart/token-selector-content.tsx:97
-msgid "HIP-3"
-msgstr ""
+#~ msgid "HIP-3"
+#~ msgstr ""
 
 #: src/components/trade/tradebox/trade-form-twap.tsx:51
 msgid "Hour(s)"
@@ -2695,7 +2695,7 @@ msgstr ""
 #~ msgstr ""
 
 #: src/components/trade/components/global-settings-modal.tsx:76
-#: src/components/trade/header/top-nav.tsx:119
+#: src/components/trade/header/top-nav.tsx:143
 msgid "Settings"
 msgstr "सेटिंग्स"
 
@@ -2915,6 +2915,11 @@ msgstr ""
 #: src/components/trade/positions/orders-history-tab.tsx:97
 #~ msgid "Status"
 #~ msgstr "स्थिति"
+
+#: src/components/trade/chart/token-selector-content.tsx:97
+#: src/config/nav.tsx:52
+msgid "Stocks & More"
+msgstr ""
 
 #: src/components/trade/order-entry/order-entry-panel.tsx:
 #~ msgid "Stop"

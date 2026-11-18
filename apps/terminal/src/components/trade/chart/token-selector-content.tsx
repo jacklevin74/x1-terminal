@@ -94,7 +94,7 @@ export function TokenSelectorContent({
 		{ value: "all", label: t`All` },
 		{ value: "perp", label: t`Perp` },
 		{ value: "spot", label: t`Spot` },
-		{ value: "hip3", label: t`HIP-3` },
+		{ value: "hip3", label: t`Stocks & More` },
 	];
 	const showScopeTabs = exchangeScope === "all";
 	const showSubcategoryTabs = !exchangeDex && subcategories.length > 0;
