@@ -1,11 +1,11 @@
-import { useTerminalBrand } from "./terminal-brand";
 import { Button, ButtonIcon, Divider, Dropdown } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { DownloadSimpleIcon, GearIcon, TerminalIcon } from "@phosphor-icons/react";
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { useConnection } from "wagmi";
+import { writeThemePreference } from "@/components/newtheme/theme-mode";
 import { APP_BAR_BUTTON_HEIGHT_CLASS, APP_HEADER_HEIGHT_CLASS } from "@/config/layout";
 import { SCOPE_NAV_ITEMS, STATIC_NAV_ITEMS } from "@/config/nav";
 import { cn } from "@/lib/cn";
@@ -13,6 +13,7 @@ import { createLazyComponent } from "@/lib/lazy";
 import { useExchangeScope } from "@/providers/exchange-scope";
 import { useDepositModalActions, useSettingsDialogActions } from "@/stores/use-global-modal-store";
 import { useIsTestnet } from "@/stores/use-global-settings-store";
+import { useTerminalBrand } from "./terminal-brand";
 
 const UserMenu = createLazyComponent(() => import("./user-menu"), "UserMenu");
 
@@ -30,7 +31,10 @@ function getScopeAccentClass(scope: string): string {
 }
 
 export function TopNav() {
- const brand = useTerminalBrand();
+	const brand = useTerminalBrand();
+	const { pathname } = useLocation();
+	const navigate = useNavigate();
+	const preview = pathname === "/newtheme";
 	const { open: openDepositModal } = useDepositModalActions();
 	const { open: openSettingsDialog } = useSettingsDialogActions();
 	const { isConnected } = useConnection();
@@ -49,22 +53,35 @@ export function TopNav() {
 			)}
 		>
 			<div className="flex items-center gap-3 min-w-0">
-				{brand ?? <div className="flex items-center gap-1.5">
-					<div className="size-5 rounded-8 bg-brand/10 border border-stroke-brand-strong/30 flex items-center justify-center">
-						<TerminalIcon className="size-3 text-brand" />
+				{brand ?? (
+					<div className="flex items-center gap-1.5">
+						<div className="size-5 rounded-8 bg-brand/10 border border-stroke-brand-strong/30 flex items-center justify-center">
+							<TerminalIcon className="size-3 text-brand" />
+						</div>
+						<span className="text-xs font-bold tracking-tight">
+							<span className="text-brand">X1 </span>
+							<span className="text-fg">TERMINAL</span>
+						</span>
+						<button
+							type="button"
+							className="ml-1 rounded-4 border border-stroke-weak px-1.5 py-0.5 text-2xs text-fg-muted hover:text-fg"
+							title="Switch to the new theme (saved in this browser)"
+							onClick={() => {
+								writeThemePreference("new");
+								if (pathname === "/classic") void navigate({ to: "/" });
+							}}
+						>
+							New theme
+						</button>
 					</div>
-					<span className="text-xs font-bold tracking-tight">
-						<span className="text-brand">X1 </span>
-						<span className="text-fg">TERMINAL</span>
-					</span>
-				</div>}
+				)}
 				<Divider orientation="vertical" className="my-2 hidden lg:block" />
 				<nav className="hidden lg:flex items-center text-xs tracking-wide">
 					{SCOPE_NAV_ITEMS.map((item) => (
 						<Link
 							key={item.scope}
-							to={brand ? "/newtheme" : item.to}
-       search={brand ? { scope: item.scope } : {}}
+							to={preview ? "/newtheme" : item.to}
+							search={preview ? { scope: item.scope } : {}}
 							className={cn(
 								"px-2.5 py-1 rounded-8 transition-colors duration-150",
 								scope === item.scope ? item.activeClass : "text-fg-muted hover:text-fg",
@@ -74,39 +91,52 @@ export function TopNav() {
 						</Link>
 					))}
 					<Divider orientation="vertical" className="my-2 mx-1" />
-					{STATIC_NAV_ITEMS.map((item) => item.key === "auto-trader" ? <a key={item.key} href="/API#auto-trader" className="px-2.5 py-1.5 text-fg-muted hover:text-fg">{item.label}</a> : (
-						<button
-							key={item.key}
-							type="button"
-							disabled
-							className="px-2.5 py-1.5 text-fg-disabled cursor-not-allowed"
-							tabIndex={-1}
-						>
-							{item.label}
-						</button>
-					))}
+					{STATIC_NAV_ITEMS.map((item) =>
+						item.key === "auto-trader" ? (
+							<a key={item.key} href="/API#auto-trader" className="px-2.5 py-1.5 text-fg-muted hover:text-fg">
+								{item.label}
+							</a>
+						) : (
+							<button
+								key={item.key}
+								type="button"
+								disabled
+								className="px-2.5 py-1.5 text-fg-disabled cursor-not-allowed"
+								tabIndex={-1}
+							>
+								{item.label}
+							</button>
+						),
+					)}
 				</nav>
 			</div>
 
 			<div className="flex items-center gap-2 min-h-8">
 				{isConnected && (
-     <div className="flex items-center gap-0.5">
-					<Button
-						variant="filled"
-						intent="brand"
-						size="sm"
-						onClick={() => openDepositModal("deposit")}
-						iconLeft={<DownloadSimpleIcon className="size-3.5" />}
-						className={cn(APP_BAR_BUTTON_HEIGHT_CLASS, "shrink-0 px-3")}
-					>
-						<Trans>Deposit</Trans>
-					</Button>
-      <Dropdown align="end" size="sm" triggerAriaLabel="More deposit options" trigger={<span className="sr-only">More deposit options</span>} triggerClassName="h-8 !px-2" items={[
-       { label: "Deposit from wallet", onSelect: () => openDepositModal("wallet") },
-       { label: "Deposit USDC from Arbitrum", onSelect: () => openDepositModal("usdc") },
-       { label: "Bridge from other chains", onSelect: () => openDepositModal("bridge") },
-      ]} />
-     </div>
+					<div className="flex items-center gap-0.5">
+						<Button
+							variant="filled"
+							intent="brand"
+							size="sm"
+							onClick={() => openDepositModal("deposit")}
+							iconLeft={<DownloadSimpleIcon className="size-3.5" />}
+							className={cn(APP_BAR_BUTTON_HEIGHT_CLASS, "shrink-0 px-3")}
+						>
+							<Trans>Deposit</Trans>
+						</Button>
+						<Dropdown
+							align="end"
+							size="sm"
+							triggerAriaLabel="More deposit options"
+							trigger={<span className="sr-only">More deposit options</span>}
+							triggerClassName="h-8 !px-2"
+							items={[
+								{ label: "Deposit from wallet", onSelect: () => openDepositModal("wallet") },
+								{ label: "Deposit USDC from Arbitrum", onSelect: () => openDepositModal("usdc") },
+								{ label: "Bridge from other chains", onSelect: () => openDepositModal("bridge") },
+							]}
+						/>
+					</div>
 				)}
 				<Suspense fallback={<UserMenuSkeleton />}>
 					<UserMenu />
