@@ -83,7 +83,7 @@ export function TopNav() {
 							to={preview ? "/newtheme" : item.to}
 							search={preview ? { scope: item.scope } : {}}
 							className={cn(
-								"shrink-0 whitespace-nowrap px-2.5 py-1 rounded-8 transition-colors duration-150",
+								"shrink-0 whitespace-nowrap px-2 py-1 rounded-8 transition-colors duration-150",
 								scope === item.scope ? item.activeClass : "text-fg-muted hover:text-fg",
 							)}
 						>
@@ -96,7 +96,7 @@ export function TopNav() {
 							key={item.key}
 							type="button"
 							disabled
-							className="shrink-0 whitespace-nowrap px-2.5 py-1.5 text-fg-disabled cursor-not-allowed"
+							className="shrink-0 whitespace-nowrap px-2 py-1.5 text-fg-disabled cursor-not-allowed"
 							tabIndex={-1}
 						>
 							{item.label}
