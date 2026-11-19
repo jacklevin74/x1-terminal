@@ -18,7 +18,7 @@ const state = vi.hoisted(() => ({
 	eth: vi.fn(async () => `0x${"cd".repeat(20)}`),
 	sol: vi.fn(async () => "9SLPTL41SPsYkgdsMzdfJsxymEANKr5bYoBsQzJyKpKS"),
 }));
-vi.mock("wagmi", () => ({ useConnection: () => ({ address: `0x${"ab".repeat(20)}`, connector: { id: "x1" } }) }));
+vi.mock("wagmi", () => ({ useConnection: () => ({ address: `0x${"ab".repeat(20)}`, connector: { id: "phantom" } }) }));
 vi.mock("@/stores/use-global-settings-store", () => ({ useIsTestnet: () => false }));
 vi.mock("@/lib/unit/eth-deposit", () => ({
 	fetchEthDepositAddress: state.eth,
@@ -82,7 +82,7 @@ it("shows an ETH address and supports entering a SOL amount directly without tra
 		"1.89999",
 		expect.any(Function),
 		expect.any(Function),
-		{ kind: "x1", expectedAddress: "9SLPTL41SPsYkgdsMzdfJsxymEANKr5bYoBsQzJyKpKS" },
+		{ kind: "phantom", expectedAddress: "9SLPTL41SPsYkgdsMzdfJsxymEANKr5bYoBsQzJyKpKS" },
 	);
 	await act(async () => root.unmount());
 	node.remove();

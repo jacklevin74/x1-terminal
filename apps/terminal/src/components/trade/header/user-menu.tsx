@@ -1,35 +1,23 @@
-import { Button, Dropdown } from "@hypeterminal/ui";
-import {
-	ArrowClockwiseIcon,
-	CodeIcon,
-	EyeIcon,
-	KeyIcon,
-	SignOutIcon,
-	SlidersHorizontalIcon,
-} from "@phosphor-icons/react";
+import { Popover } from "@base-ui/react/popover";
+import { Button } from "@hypeterminal/ui";
+import { CaretDownIcon, CheckIcon, CopyIcon } from "@phosphor-icons/react";
 import { useIsMutating } from "@tanstack/react-query";
-import { type SyntheticEvent, useState } from "react";
+import { useEffect, useState } from "react";
 import { zeroAddress } from "viem";
 import { useConnection, useDisconnect } from "wagmi";
-import { CopyStateIcon } from "@/components/ui/copy-state-icon";
 import { APP_BAR_BUTTON_HEIGHT_CLASS } from "@/config/layout";
 import { useCopyToClipboard } from "@/hooks/ui/use-copy-to-clipboard";
 import { useTradingAccount } from "@/hooks/use-trading-account";
-import { useXntRewards } from "@/hooks/use-xnt-rewards";
 import { cn } from "@/lib/cn";
 import { exitDemoMode } from "@/lib/demo/demo-mode";
-import { formatToken, formatUSD } from "@/lib/format";
 import { removeAgentFromStorage, useInfo } from "@/lib/hyperliquid";
 import { getNetwork } from "@/lib/network";
-import { feeDecimals, feesToXnt } from "@/lib/rewards/xnt-rewards";
-import { clearX1Session } from "@/lib/x1/provider";
 import { useOrderEntryActions } from "@/stores/use-order-entry-store";
 import { useTradingAccountStore } from "@/stores/use-trading-account-store";
-import { ExportKeyModal } from "../components/export-key-modal";
-import { WalletLogo } from "../components/wallet-logo";
 import { WalletModal } from "../components/wallet-modal";
-import { XntMark } from "../rewards/xnt-mark";
-import { XntRewardsDrawer } from "../rewards/xnt-rewards-drawer";
+
+const menuItemClass =
+	"block w-full rounded-6 px-2 py-1.5 text-left transition-colors duration-150 hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-stroke-focus disabled:opacity-40";
 
 export function UserMenu() {
 	const { address, isConnected, connector } = useConnection();
@@ -43,11 +31,13 @@ export function UserMenu() {
 		{ user: address ?? zeroAddress },
 		{ enabled: isConnected && !!address, refetchOnWindowFocus: true, refetchInterval: 30000 },
 	);
-	const [open, setOpen] = useState(false);
-	const [exportOpen, setExportOpen] = useState(false);
-	const [rewardsOpen, setRewardsOpen] = useState(false);
-	const rewards = useXntRewards();
-	const { copied, copy } = useCopyToClipboard();
+	const [walletOpen, setWalletOpen] = useState(false);
+	const [pickerOpen, setPickerOpen] = useState(false);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: close the picker when the connected owner changes
+	useEffect(() => {
+		setPickerOpen(false);
+	}, [address]);
 
 	if (!isConnected || !address) {
 		return (
@@ -56,29 +46,29 @@ export function UserMenu() {
 					variant="filled"
 					intent="brand"
 					size="sm"
-					onClick={() => setOpen(true)}
+					onClick={() => setWalletOpen(true)}
 					className={cn(APP_BAR_BUTTON_HEIGHT_CLASS, "text-sm font-semibold")}
 				>
 					Connect Wallet
 				</Button>
-				<WalletModal open={open} onOpenChange={setOpen} />
+				<WalletModal open={walletOpen} onOpenChange={setWalletOpen} />
 			</>
 		);
 	}
 
 	const owner = address;
-	const derived = connector?.id === "x1";
 	const demo = connector?.type === "mock";
-	const walletName = getWalletName(derived, connector);
-	const activeAddress = active.address ?? owner;
 	const rows = (subaccounts.data ?? []).filter((row) => row.master.toLowerCase() === owner.toLowerCase());
 
 	function choose(account: (typeof rows)[number] | null) {
+		if (mutating) return;
 		select(account ? { owner, network: getNetwork(), address: account.subAccountUser, name: account.name } : null);
 		resetForm();
+		setPickerOpen(false);
 	}
 
 	function handleDisconnect() {
+		setPickerOpen(false);
 		select(null);
 		if (demo) {
 			disconnect();
@@ -87,203 +77,137 @@ export function UserMenu() {
 		}
 		removeAgentFromStorage("Testnet", owner);
 		removeAgentFromStorage("Mainnet", owner);
-		clearX1Session();
 		disconnect();
 	}
 
-	const accountRows = rows.length
-		? [
-				{
-					label: `Main account (${shortAddress(owner)})`,
-					detail: <CopyAddressButton address={owner} name="main account" />,
-					active: !active.isSubaccount,
-					disabled: mutating,
-					onSelect: () => choose(null),
-				},
-				...rows.map((row) => ({
-					label: `${row.name} (${shortAddress(row.subAccountUser)})`,
-					detail: <CopyAddressButton address={row.subAccountUser} name={row.name} />,
-					active: activeAddress.toLowerCase() === row.subAccountUser.toLowerCase(),
-					disabled: subaccounts.isError || mutating,
-					onSelect: () => choose(row),
-				})),
-			]
-		: [];
-	const accountRetry = subaccounts.isError
-		? [
-				{
-					label: "Retry loading subaccounts",
-					icon: <ArrowClockwiseIcon className="size-4" />,
-					closeOnClick: false,
-					onSelect: () => {
-						void subaccounts.refetch();
-					},
-				},
-			]
-		: [];
-
-	const actionItems = [
-		{
-			label: "XNT rewards",
-			icon: <XntMark size={16} />,
-			detail: rewardsDetail(rewards.data?.total),
-			onSelect: () => setRewardsOpen(true),
-		},
-		{
-			label: "API wallets",
-			icon: <CodeIcon className="size-4" />,
-			onSelect: () => window.location.assign("/API"),
-		},
-		{
-			label: "Trading setup",
-			icon: <SlidersHorizontalIcon className="size-4" />,
-			detail: "0.05% fee",
-			onSelect: () => window.dispatchEvent(new Event("x1:setup")),
-		},
-		...(derived
-			? [
-					{
-						label: "Export private key",
-						icon: <KeyIcon className="size-4" />,
-						onSelect: () => setExportOpen(true),
-					},
-				]
-			: []),
-	];
-
-	const header = (
-		<div className="flex items-center gap-3 px-2 pt-1.5 pb-2">
-			{demo ? (
-				<span className="grid size-8 shrink-0 place-items-center rounded-8 bg-control-hover text-fg-muted">
-					<EyeIcon className="size-4" />
+	return (
+		<Popover.Root open={pickerOpen} onOpenChange={setPickerOpen}>
+			<Popover.Trigger
+				aria-label="Account and wallet"
+				className={cn(
+					APP_BAR_BUTTON_HEIGHT_CLASS,
+					"inline-flex max-w-64 items-center gap-2 rounded-8 bg-control px-3 text-xs font-medium text-fg tabular-nums transition-colors duration-150 hover:bg-control-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus",
+				)}
+			>
+				{demo && <span className="rounded-4 bg-control-hover px-1.5 py-0.5 text-2xs text-fg-secondary">Demo</span>}
+				<span className="truncate">
+					{active.isSubaccount ? `Sub: ${active.subaccount?.name}` : `Main: ${shortAddress(owner)}`}
 				</span>
-			) : (
-				<WalletLogo connector={connector} size={32} />
-			)}
-			<span className="flex min-w-0 flex-1 flex-col">
-				<span className="truncate text-sm font-medium tabular-nums">
-					{active.subaccount?.name ?? shortAddress(activeAddress)}
-				</span>
-				<span className="truncate text-xs text-fg-muted">{getAccountLabel(derived, demo, walletName)}</span>
-			</span>
+				<CaretDownIcon
+					aria-hidden="true"
+					className={cn("size-3.5 shrink-0 transition-transform", pickerOpen && "rotate-180")}
+				/>
+			</Popover.Trigger>
+			<Popover.Portal>
+				<Popover.Positioner align="end" sideOffset={6} collisionPadding={12} className="z-[var(--z-dropdown)]">
+					<Popover.Popup
+						aria-label="Switch trading account"
+						className="flex max-h-[min(70dvh,480px)] w-[248px] max-w-[calc(100vw-24px)] flex-col rounded-8 bg-overlay p-1 text-xs text-fg shadow-menu outline-none"
+					>
+						<div className="min-h-0 overflow-y-auto">
+							<AccountRow
+								kind="Master"
+								label="Main account"
+								address={owner}
+								selected={!active.isSubaccount}
+								disabled={mutating}
+								onSelect={() => choose(null)}
+							/>
+							{rows.map((row) => (
+								<AccountRow
+									key={row.subAccountUser}
+									kind="Sub"
+									label={row.name}
+									address={row.subAccountUser}
+									selected={active.address?.toLowerCase() === row.subAccountUser.toLowerCase()}
+									disabled={mutating || subaccounts.isError}
+									onSelect={() => choose(row)}
+								/>
+							))}
+							{subaccounts.isLoading && (
+								<output className="block px-2 py-1.5 text-fg-muted">Loading subaccounts…</output>
+							)}
+							{subaccounts.isError && (
+								<button
+									type="button"
+									onClick={() => void subaccounts.refetch()}
+									className={cn(menuItemClass, "text-warning")}
+								>
+									Could not refresh accounts. Retry
+								</button>
+							)}
+						</div>
+						<div className="mt-1 shrink-0 border-t border-stroke-weak pt-1">
+							<a
+								href="/subAccounts"
+								className={cn(menuItemClass, "text-fg-muted hover:text-fg")}
+								onClick={() => setPickerOpen(false)}
+							>
+								Manage subaccounts
+							</a>
+							<button
+								type="button"
+								className={cn(menuItemClass, "text-fg")}
+								disabled={mutating}
+								onClick={handleDisconnect}
+							>
+								{demo ? "Exit demo mode" : "Disconnect"}
+							</button>
+						</div>
+					</Popover.Popup>
+				</Popover.Positioner>
+			</Popover.Portal>
+		</Popover.Root>
+	);
+}
+
+interface AccountRowProps {
+	kind: "Master" | "Sub";
+	label: string;
+	address: string;
+	selected: boolean;
+	disabled: boolean;
+	onSelect: () => void;
+}
+
+function AccountRow({ kind, label, address, selected, disabled, onSelect }: AccountRowProps) {
+	const { copy, copied } = useCopyToClipboard(1800);
+	const short = shortAddress(address);
+	return (
+		<div className={cn("group flex items-center rounded-6", selected ? "bg-fill-hover" : "hover:bg-fill-weak")}>
 			<button
 				type="button"
-				onClick={() => void copy(activeAddress)}
-				aria-label="Copy address"
-				className="grid size-8 shrink-0 place-items-center rounded-8 text-fg-muted transition-colors hover:bg-control-hover hover:text-fg"
+				aria-label={kind === "Master" ? `Select main account ${short}` : `Select subaccount ${label}`}
+				aria-pressed={selected}
+				disabled={disabled}
+				onClick={onSelect}
+				className="flex min-w-0 flex-1 items-center gap-1.5 rounded-6 py-1.5 pr-1 pl-1.5 text-left focus-visible:outline-2 focus-visible:outline-stroke-focus disabled:opacity-40"
 			>
-				<CopyStateIcon copied={copied} announcement="Address copied" />
+				<span className="inline-flex size-3 shrink-0 items-center justify-center text-fg">
+					{selected && <CheckIcon aria-hidden="true" weight="bold" className="size-3" />}
+				</span>
+				<span className={cn("min-w-0 flex-1 truncate text-fg", selected && "font-medium")}>{label}</span>
+				<span className="shrink-0 font-mono text-2xs text-fg-muted" title={address}>
+					{short}
+				</span>
+			</button>
+			<button
+				type="button"
+				aria-label={`Copy ${kind === "Master" ? "main account" : label} address`}
+				title={copied ? "Copied" : "Copy address"}
+				onClick={() => void copy(address)}
+				className="mr-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-4 text-fg-muted opacity-0 transition-opacity hover:bg-fill-hover hover:text-fg group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-stroke-focus [@media(hover:none)]:opacity-100"
+			>
+				{copied ? (
+					<CheckIcon aria-hidden="true" className="size-3.5 text-market-up" />
+				) : (
+					<CopyIcon aria-hidden="true" className="size-3.5" />
+				)}
 			</button>
 		</div>
 	);
-
-	return (
-		<>
-			<Dropdown
-				align="end"
-				size="sm"
-				triggerAriaLabel="Account and wallet"
-				triggerClassName="tabular-nums max-md:h-8 max-md:px-2.5 max-md:[&>svg:last-child]:hidden"
-				trigger={
-					<span className="inline-flex max-w-56 items-center gap-2 whitespace-nowrap">
-						<WalletLabel connector={connector} demo={demo} name={active.subaccount?.name} />
-						<span>
-							{activeAddress.slice(0, 4)}
-							<span className="max-md:hidden">{activeAddress.slice(4, 6)}</span>…{activeAddress.slice(-4)}
-						</span>
-					</span>
-				}
-				popupClassName="max-h-none min-w-64"
-				header={header}
-				items={[...accountRows, ...accountRetry]}
-				groups={[
-					{ items: actionItems },
-					{
-						items: [
-							{
-								label: demo ? "Exit demo mode" : "Disconnect",
-								icon: <SignOutIcon className="size-4" />,
-								onSelect: handleDisconnect,
-							},
-						],
-					},
-				]}
-			/>
-			<XntRewardsDrawer open={rewardsOpen} onOpenChange={setRewardsOpen} />
-			{derived && exportOpen && <ExportKeyModal key={owner} address={owner} onClose={() => setExportOpen(false)} />}
-		</>
-	);
-}
-
-interface CopyAddressButtonProps {
-	address: string;
-	name: string;
-}
-
-function CopyAddressButton({ address, name }: CopyAddressButtonProps) {
-	const { copied, copy } = useCopyToClipboard();
-
-	function stop(event: SyntheticEvent) {
-		event.stopPropagation();
-	}
-
-	function handleClick(event: SyntheticEvent) {
-		event.stopPropagation();
-		void copy(address);
-	}
-
-	return (
-		<button
-			type="button"
-			aria-label={`Copy ${name} address`}
-			onClick={handleClick}
-			onMouseUp={stop}
-			onKeyDown={stop}
-			className={cn(
-				"grid size-6 place-items-center rounded-4 transition-colors hover:bg-control-hover",
-				copied ? "text-market-up" : "text-fg-muted",
-			)}
-		>
-			<CopyStateIcon copied={copied} announcement="Address copied" inheritColor />
-		</button>
-	);
-}
-
-function rewardsDetail(total: string | undefined) {
-	if (total === undefined) return undefined;
-	const xnt = feesToXnt(total);
-	if (xnt) return formatToken(xnt, { decimals: 2, symbol: "XNT" });
-	return formatUSD(total, feeDecimals(total));
 }
 
 function shortAddress(address: string) {
 	return `${address.slice(0, 6)}…${address.slice(-4)}`;
-}
-
-function getWalletName(derived: boolean, connector: { id: string; name: string } | undefined) {
-	if (derived) return "X1";
-	if (connector?.id === "rabby") return "Rabby";
-	return connector?.name ?? "Wallet";
-}
-
-interface WalletLabelProps {
-	connector: { id: string; icon?: string } | undefined;
-	demo: boolean;
-	name: string | undefined;
-}
-
-function WalletLabel({ connector, demo, name }: WalletLabelProps) {
-	if (demo) return <span className="rounded-4 bg-control-hover px-1.5 py-0.5 text-2xs text-fg-secondary">Demo</span>;
-	return (
-		<>
-			<WalletLogo connector={connector} size={18} />
-			{name && <span className="truncate text-fg-muted max-md:hidden">{name}</span>}
-		</>
-	);
-}
-
-function getAccountLabel(derived: boolean, demo: boolean, walletName: string) {
-	if (demo) return "Read-only demo account";
-	if (derived) return "X1 Wallet derived key";
-	return walletName;
 }

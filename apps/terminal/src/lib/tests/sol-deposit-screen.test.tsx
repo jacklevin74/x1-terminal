@@ -23,7 +23,7 @@ const state = vi.hoisted(() => ({
 	),
 }));
 vi.mock("wagmi", () => ({
-	useConnection: () => ({ address: state.address, connector: { id: "x1" }, chainId: 1 }),
+	useConnection: () => ({ address: state.address, connector: { id: "phantom" }, chainId: 1 }),
 	useSendTransaction: () => ({ mutateAsync: state.send, isPending: false }),
 	useSwitchChain: () => ({ mutateAsync: vi.fn(), isPending: false }),
 	useWaitForTransactionReceipt: () => ({}),
@@ -107,7 +107,7 @@ it("automatically loads X1 balance, then allows Max and Deposit", async () => {
 		"0.99999",
 		expect.any(Function),
 		expect.any(Function),
-		{ kind: "x1", expectedAddress: "9SLPTL41SPsYkgdsMzdfJsxymEANKr5bYoBsQzJyKpKS" },
+		{ kind: "phantom", expectedAddress: "9SLPTL41SPsYkgdsMzdfJsxymEANKr5bYoBsQzJyKpKS" },
 	);
 	await act(async () => root.unmount());
 	node.remove();

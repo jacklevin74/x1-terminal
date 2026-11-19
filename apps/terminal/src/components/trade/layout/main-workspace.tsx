@@ -9,6 +9,7 @@ import {
 	APP_PANEL_PADDING_X_CLASS,
 	PANEL_LAYOUT,
 } from "@/config/layout";
+import { useSelectedMarketFallback } from "@/hooks/trade/use-selected-market-fallback";
 import { cn } from "@/lib/cn";
 import { useSelectedMarketInfo } from "@/lib/hyperliquid";
 import { createLazyComponent } from "@/lib/lazy";
@@ -26,6 +27,7 @@ const { id, analysis, sidebar } = PANEL_LAYOUT.MAIN;
 export function MainWorkspace() {
 	const { defaultLayout, onLayoutChanged } = useDefaultLayout({ id });
 	const { data: selectedMarket } = useSelectedMarketInfo();
+	useSelectedMarketFallback();
 	const { scope } = useExchangeScope();
 	const { setSelectedMarket } = useMarketActions();
 	const [marketBodyMinHeightPx, setMarketBodyMinHeightPx] = useState<number>(PANEL_LAYOUT.ANALYSIS.minHeightPx);

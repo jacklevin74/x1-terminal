@@ -18,7 +18,7 @@ import X1TerminalLogo from "./x1-terminal-logo";
 const UserMenu = createLazyComponent(() => import("./user-menu"), "UserMenu");
 
 const NAV_LINK_CLASS =
-	"relative flex h-7 items-center rounded-8 px-3 text-sm font-normal transition-colors duration-150";
+	"relative flex h-7 shrink-0 items-center whitespace-nowrap rounded-8 px-3 text-sm font-normal transition-colors duration-150";
 
 export function TopNav() {
 	const brand = useTerminalBrand();
@@ -53,6 +53,9 @@ export function TopNav() {
 							</Link>
 						);
 					})}
+					<Link to="/guide" className={cn(NAV_LINK_CLASS, "text-fg-muted hover:text-fg")}>
+						<Trans>Guide</Trans>
+					</Link>
 					<div className="hidden min-[1360px]:contents">
 						<Divider orientation="vertical" className="mx-2 h-4 self-center" />
 						{STATIC_NAV_ITEMS.map((item) => (

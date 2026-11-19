@@ -17,7 +17,7 @@ const state = vi.hoisted(() => ({
 	send: vi.fn(async () => {}),
 }));
 vi.mock("wagmi", () => ({
-	useConnection: () => ({ address: `0x${"cd".repeat(20)}`, isConnected: true, connector: { id: "x1" } }),
+	useConnection: () => ({ address: `0x${"cd".repeat(20)}`, isConnected: true, connector: { id: "phantom" } }),
 }));
 vi.mock("@/lib/network", () => ({ isTestnet: () => false }));
 vi.mock("@/lib/solana/source-wallet", () => ({

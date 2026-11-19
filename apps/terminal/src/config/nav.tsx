@@ -53,7 +53,7 @@ export const SCOPE_NAV_ITEMS: readonly ScopeNavItem[] = [
 	},
 	{
 		scope: "builders-perp",
-		label: <Trans>Builders</Trans>,
+		label: <Trans>Stocks & More</Trans>,
 		to: "/builders-perp",
 		activeClass: "text-fg",
 		accentClass: "bg-scope-builders",
@@ -70,4 +70,6 @@ export const STATIC_NAV_ITEMS: readonly StaticNavItem[] = [
 	{ key: "portfolio", label: <Trans>Portfolio</Trans> },
 	{ key: "staking", label: <Trans>Staking</Trans> },
 	{ key: "leaderboard", label: <Trans>Leaderboard</Trans> },
+	// Shown disabled like the items above; Auto Trader itself lives in the trade panel's Auto tab.
+	{ key: "auto-trader", label: <Trans>Auto Trader</Trans> },
 ] as const;

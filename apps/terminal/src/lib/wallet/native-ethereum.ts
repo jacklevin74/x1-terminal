@@ -1,5 +1,5 @@
 import { type EIP1193Provider, getAddress, isAddress, zeroAddress } from "viem";
-import { getPhantomProvider } from "@/lib/x1/provider";
+import { getPhantomProvider } from "@/lib/wallet/phantom-provider";
 import { getRabbyProvider } from "./rabby-provider";
 import type { WithdrawalRecipient } from "./withdrawal-recipient";
 

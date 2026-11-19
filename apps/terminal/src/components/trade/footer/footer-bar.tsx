@@ -75,6 +75,16 @@ export function FooterBar() {
 					<span>Built on HypeTerminal</span>
 				</a>
 				<Divider orientation="vertical" className="h-3 self-center" />
+				{/* CC BY 4.0 attribution for the DB-IP country database used by the self-hosted /api/jurisdiction check */}
+				<a
+					href="https://db-ip.com"
+					target="_blank"
+					rel="noopener noreferrer"
+					className="rounded-4 transition-colors duration-150 hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus"
+				>
+					IP Geolocation by DB-IP
+				</a>
+				<Divider orientation="vertical" className="h-3 self-center" />
 				<ClientOnly>
 					<FooterClock />
 				</ClientOnly>

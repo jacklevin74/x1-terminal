@@ -50,7 +50,7 @@ export function PositionPnlShare({
 			<Modal open={open} onOpenChange={setOpen}>
 				<ModalPopup size="lg" className="!max-w-3xl">
 					<ModalHeader>
-						<ModalTitle>{symbol} position PNL</ModalTitle>
+						<ModalTitle>{symbol} · Position PNL</ModalTitle>
 					</ModalHeader>
 					<ModalContent className="space-y-3">
 						{open && (

@@ -12,7 +12,7 @@ vi.mock("@/lib/solana/source-wallet", () => ({
 	getSolSourceWallet: () => state.source,
 	connectSolSource: state.connect,
 }));
-vi.mock("@/lib/x1/provider", () => ({
+vi.mock("@/lib/wallet/phantom-provider", () => ({
 	getPhantomProvider: () => (state.providerAvailable ? { request: state.request } : undefined),
 }));
 afterEach(() => {
@@ -22,15 +22,15 @@ afterEach(() => {
 	vi.clearAllMocks();
 });
 it("reads the native Solana recipient without requesting a connection or signature", async () => {
-	const recipient = await readWithdrawalRecipient("SOL", "x1");
+	const recipient = await readWithdrawalRecipient("SOL", "phantom");
 	expect(recipient).toMatchObject({ status: "ready", address: state.source.publicKey.toBase58() });
 	expect(state.connect).not.toHaveBeenCalled();
 	expect(state.request).not.toHaveBeenCalled();
 });
 it("warns for a disconnected Solana wallet even if a stale public key is present", async () => {
 	state.source.isConnected = false;
-	expect(await readWithdrawalRecipient("SOL", "x1")).toMatchObject({ status: "locked", address: "" });
-	expect((await readWithdrawalRecipient("SOL", "x1")).message).toContain("Unlock");
+	expect(await readWithdrawalRecipient("SOL", "phantom")).toMatchObject({ status: "locked", address: "" });
+	expect((await readWithdrawalRecipient("SOL", "phantom")).message).toContain("Unlock");
 });
 it("reads Ethereum accounts silently and requests access only after an explicit reconnect", async () => {
 	const address = `0x${"ab".repeat(20)}`;
@@ -47,20 +47,8 @@ it("clears the Ethereum recipient when locked, disconnected, or access is reject
 	state.request.mockRejectedValue(new Error("Wallet locked"));
 	expect(await readWithdrawalRecipient("ETH", "phantom")).toMatchObject({ status: "locked", address: "" });
 });
-it("never substitutes the X1-derived Ethereum account for a native Ethereum recipient", async () => {
-	state.providerAvailable = false;
-	expect(await readWithdrawalRecipient("ETH", "x1")).toMatchObject({ status: "manual", address: "" });
-	expect(state.request).not.toHaveBeenCalled();
+it("needs a connected wallet before reading a Solana recipient", async () => {
 	expect(await readWithdrawalRecipient("SOL", undefined)).toMatchObject({ status: "unavailable", address: "" });
-});
-
-it("fills ETH from an injected Ethereum wallet even when the trading connector is X1", async () => {
-	state.providerAvailable = false;
-	const address = `0x${"12".repeat(20)}`;
-	const request = vi.fn(async () => [address]);
-	Object.assign(window, { ethereum: { request } });
-	expect(await readWithdrawalRecipient("ETH", "x1")).toMatchObject({ status: "ready", address });
-	expect(request).toHaveBeenCalledWith({ method: "eth_accounts" });
 });
 
 it("uses Rabby for ETH recipients instead of an available Phantom account", async () => {

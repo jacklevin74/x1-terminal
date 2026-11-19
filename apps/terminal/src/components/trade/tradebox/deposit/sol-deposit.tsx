@@ -23,10 +23,7 @@ import { explorerLinkClass, fieldChipClass, inlineLinkButtonClass, warningNotice
 export function SolDeposit({ compact = false }: { compact?: boolean }) {
 	const { address } = useConnection();
 	const testnet = useIsTestnet();
-	if (!address)
-		return (
-			<p className="py-4 text-xs text-fg-muted">Connect Phantom or X1 Wallet to generate a SOL deposit address.</p>
-		);
+	if (!address) return <p className="py-4 text-xs text-fg-muted">Connect Phantom to generate a SOL deposit address.</p>;
 	if (testnet)
 		return (
 			<p className="py-4 text-xs text-fg-muted">
@@ -47,8 +44,8 @@ function SolDepositAccount({ recipient, compact }: { recipient: `0x${string}`; c
 			active.current = false;
 		};
 	}, []);
-	const sourceKind: SolSourceKind = connector?.id === "x1" ? "x1" : "phantom";
-	const walletName = sourceKind === "x1" ? "X1 Wallet" : "Phantom";
+	const sourceKind: SolSourceKind = "phantom";
+	const walletName = "Phantom";
 	const [sourceAddress, setSourceAddress] = useState(() => getSolSourceWallet(sourceKind)?.publicKey?.toBase58() ?? "");
 	useEffect(() => {
 		const wallet = getSolSourceWallet(sourceKind);
@@ -89,7 +86,7 @@ function SolDepositAccount({ recipient, compact }: { recipient: `0x${string}`; c
 	const balanceQuery = useQuery({
 		queryKey: ["sol-wallet-balance", "mainnet", sourceKind, recipient, sourceAddress, deposit.data],
 		queryFn: () => readSolDepositBalance(sourceKind, deposit.data!, assertCurrentAccount),
-		enabled: !!deposit.data && (connector?.id === "x1" || connector?.id === "phantom"),
+		enabled: !!deposit.data && connector?.id === "phantom",
 		retry: false,
 		staleTime: 30_000,
 		refetchOnWindowFocus: false,
@@ -147,7 +144,7 @@ function SolDepositAccount({ recipient, compact }: { recipient: `0x${string}`; c
 					</Button>
 				</div>
 			)}
-			{(connector?.id === "phantom" || connector?.id === "x1") && deposit.data && !signature && (
+			{connector?.id === "phantom" && deposit.data && !signature && (
 				<>
 					<div className="flex min-h-6 items-center justify-between gap-2 text-fg-muted">
 						<span>{walletName}</span>

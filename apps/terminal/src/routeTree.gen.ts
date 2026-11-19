@@ -9,10 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SubAccountsRouteImport } from './routes/subAccounts'
 import { Route as SpotRouteImport } from './routes/spot'
 import { Route as PerpRouteImport } from './routes/perp'
 import { Route as NewthemeRouteImport } from './routes/newtheme'
 import { Route as MobileAgentSyncRouteImport } from './routes/mobile-agent-sync'
+import { Route as GuideRouteImport } from './routes/guide'
 import { Route as BuildersPerpRouteImport } from './routes/builders-perp'
 import { Route as AutoTraderRouteImport } from './routes/auto-trader'
 import { Route as Api_keysRouteImport } from './routes/api_keys'
@@ -22,6 +24,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as BuildersPerpIndexRouteImport } from './routes/builders-perp.index'
 import { Route as BuildersPerpDexRouteImport } from './routes/builders-perp.$dex'
 
+const SubAccountsRoute = SubAccountsRouteImport.update({
+  id: '/subAccounts',
+  path: '/subAccounts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SpotRoute = SpotRouteImport.update({
   id: '/spot',
   path: '/spot',
@@ -40,6 +47,11 @@ const NewthemeRoute = NewthemeRouteImport.update({
 const MobileAgentSyncRoute = MobileAgentSyncRouteImport.update({
   id: '/mobile-agent-sync',
   path: '/mobile-agent-sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuideRoute = GuideRouteImport.update({
+  id: '/guide',
+  path: '/guide',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BuildersPerpRoute = BuildersPerpRouteImport.update({
@@ -90,10 +102,12 @@ export interface FileRoutesByFullPath {
   '/api_keys': typeof Api_keysRoute
   '/auto-trader': typeof AutoTraderRoute
   '/builders-perp': typeof BuildersPerpRouteWithChildren
+  '/guide': typeof GuideRoute
   '/mobile-agent-sync': typeof MobileAgentSyncRoute
   '/newtheme': typeof NewthemeRoute
   '/perp': typeof PerpRoute
   '/spot': typeof SpotRoute
+  '/subAccounts': typeof SubAccountsRoute
   '/builders-perp/$dex': typeof BuildersPerpDexRoute
   '/builders-perp/': typeof BuildersPerpIndexRoute
 }
@@ -103,10 +117,12 @@ export interface FileRoutesByTo {
   '/API': typeof APIRoute
   '/api_keys': typeof Api_keysRoute
   '/auto-trader': typeof AutoTraderRoute
+  '/guide': typeof GuideRoute
   '/mobile-agent-sync': typeof MobileAgentSyncRoute
   '/newtheme': typeof NewthemeRoute
   '/perp': typeof PerpRoute
   '/spot': typeof SpotRoute
+  '/subAccounts': typeof SubAccountsRoute
   '/builders-perp/$dex': typeof BuildersPerpDexRoute
   '/builders-perp': typeof BuildersPerpIndexRoute
 }
@@ -118,10 +134,12 @@ export interface FileRoutesById {
   '/api_keys': typeof Api_keysRoute
   '/auto-trader': typeof AutoTraderRoute
   '/builders-perp': typeof BuildersPerpRouteWithChildren
+  '/guide': typeof GuideRoute
   '/mobile-agent-sync': typeof MobileAgentSyncRoute
   '/newtheme': typeof NewthemeRoute
   '/perp': typeof PerpRoute
   '/spot': typeof SpotRoute
+  '/subAccounts': typeof SubAccountsRoute
   '/builders-perp/$dex': typeof BuildersPerpDexRoute
   '/builders-perp/': typeof BuildersPerpIndexRoute
 }
@@ -134,10 +152,12 @@ export interface FileRouteTypes {
     | '/api_keys'
     | '/auto-trader'
     | '/builders-perp'
+    | '/guide'
     | '/mobile-agent-sync'
     | '/newtheme'
     | '/perp'
     | '/spot'
+    | '/subAccounts'
     | '/builders-perp/$dex'
     | '/builders-perp/'
   fileRoutesByTo: FileRoutesByTo
@@ -147,10 +167,12 @@ export interface FileRouteTypes {
     | '/API'
     | '/api_keys'
     | '/auto-trader'
+    | '/guide'
     | '/mobile-agent-sync'
     | '/newtheme'
     | '/perp'
     | '/spot'
+    | '/subAccounts'
     | '/builders-perp/$dex'
     | '/builders-perp'
   id:
@@ -161,10 +183,12 @@ export interface FileRouteTypes {
     | '/api_keys'
     | '/auto-trader'
     | '/builders-perp'
+    | '/guide'
     | '/mobile-agent-sync'
     | '/newtheme'
     | '/perp'
     | '/spot'
+    | '/subAccounts'
     | '/builders-perp/$dex'
     | '/builders-perp/'
   fileRoutesById: FileRoutesById
@@ -176,14 +200,23 @@ export interface RootRouteChildren {
   Api_keysRoute: typeof Api_keysRoute
   AutoTraderRoute: typeof AutoTraderRoute
   BuildersPerpRoute: typeof BuildersPerpRouteWithChildren
+  GuideRoute: typeof GuideRoute
   MobileAgentSyncRoute: typeof MobileAgentSyncRoute
   NewthemeRoute: typeof NewthemeRoute
   PerpRoute: typeof PerpRoute
   SpotRoute: typeof SpotRoute
+  SubAccountsRoute: typeof SubAccountsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/subAccounts': {
+      id: '/subAccounts'
+      path: '/subAccounts'
+      fullPath: '/subAccounts'
+      preLoaderRoute: typeof SubAccountsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/spot': {
       id: '/spot'
       path: '/spot'
@@ -210,6 +243,13 @@ declare module '@tanstack/react-router' {
       path: '/mobile-agent-sync'
       fullPath: '/mobile-agent-sync'
       preLoaderRoute: typeof MobileAgentSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guide': {
+      id: '/guide'
+      path: '/guide'
+      fullPath: '/guide'
+      preLoaderRoute: typeof GuideRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/builders-perp': {
@@ -292,10 +332,12 @@ const rootRouteChildren: RootRouteChildren = {
   Api_keysRoute: Api_keysRoute,
   AutoTraderRoute: AutoTraderRoute,
   BuildersPerpRoute: BuildersPerpRouteWithChildren,
+  GuideRoute: GuideRoute,
   MobileAgentSyncRoute: MobileAgentSyncRoute,
   NewthemeRoute: NewthemeRoute,
   PerpRoute: PerpRoute,
   SpotRoute: SpotRoute,
+  SubAccountsRoute: SubAccountsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

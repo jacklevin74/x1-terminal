@@ -34,7 +34,7 @@
     },
     {
       "source": "/api/auto-trader-signal",
-      "destination": "https://wxnt-sale-sim.vercel.app/api/daytraders"
+      "destination": "https://dtdi1o7ykdc6.cloudfront.net/api/daytraders"
     },
     {
       "source": "/analytics",

@@ -7,7 +7,7 @@ import { chooseOption, readChoice } from "./harness/ui-mock";
 
 const native = vi.hoisted(() => vi.fn(async () => ({ status: "ready", address: `0x${"12".repeat(20)}` })));
 vi.mock("@/lib/wallet/native-ethereum", () => ({ readNativeEthereumRecipient: native }));
-vi.mock("wagmi", () => ({ useConnection: () => ({ address: `0x${"cd".repeat(20)}`, connector: { id: "x1" } }) }));
+vi.mock("wagmi", () => ({ useConnection: () => ({ address: `0x${"cd".repeat(20)}`, connector: { id: "phantom" } }) }));
 vi.mock("@/components/trade/positions/native-withdraw-form", () => ({
 	NativeWithdrawForm: ({ asset }: { asset: string }) => createElement("p", null, `Recipient for ${asset}`),
 }));
