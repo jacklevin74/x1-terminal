@@ -10,8 +10,6 @@ import { getPositionMarkPrice } from "@/lib/positions/valuation";
 
 vi.mock("@/stores/use-global-settings-store", () => ({ getResolvedFormatLocale: () => "en-US" }));
 vi.mock("@/components/trade/positions/position-pnl-share", () => ({ PositionPnlShare: () => null }));
-vi.mock("@/components/trade/components/asset-display", () => ({ AssetDisplay: () => null }));
-vi.mock("@/components/trade/positions/position-row-actions", () => ({ PositionRowActions: () => null }));
 vi.mock("@lingui/core/macro", () => ({
 	t: (strings: TemplateStringsArray, ...values: unknown[]) =>
 		strings.reduce((s, p, i) => s + p + (values[i] ?? ""), ""),
@@ -20,23 +18,6 @@ vi.mock("@hypeterminal/ui", () => ({
 	TableRow: ({ children }: { children: ReactNode }) => createElement("tr", null, children),
 	TableCell: ({ children }: { children: ReactNode }) => createElement("td", null, children),
 	Tooltip: ({ children }: { children: ReactNode }) => children,
-	ButtonIcon: ({
-		children,
-		onClick,
-		disabled,
-		className,
-		...rest
-	}: {
-		children: ReactNode;
-		onClick?: () => void;
-		disabled?: boolean;
-		className?: string;
-	}) =>
-		createElement(
-			"button",
-			{ type: "button", onClick, disabled, className, "aria-label": (rest as Record<string, string>)["aria-label"] },
-			children,
-		),
 }));
 it("shows persistent TP/SL prices and opens the editor with current order IDs", async () => {
 	const open = vi.fn();
@@ -70,12 +51,12 @@ it("shows persistent TP/SL prices and opens the editor with current order IDs", 
 	const render = () => root.render(createElement("tbody", null, createElement(PositionRow, props)));
 	await act(async () => render());
 	expect(node.querySelectorAll("td")).toHaveLength(11);
-	expect(node.querySelectorAll("td")[4].textContent).toContain(
+	expect(node.querySelectorAll("td")[4].textContent).toBe(
 		formatPrice(getPositionMarkPrice(position), { szDecimals: 2, style: "decimal", compact: false }),
 	);
 	expect(node.querySelectorAll("td")[4].textContent).not.toBe("49.987");
 	const button = node.querySelector<HTMLButtonElement>('[aria-label="Edit TP/SL for SILVER"]')!;
-	expect(button.closest("td")?.textContent).toMatch(/55\s*\/\s*47/);
+	expect(button.closest("td")?.textContent).toContain("55 / 47");
 	expect(button.className).not.toContain("opacity-0");
 	await act(async () => button.click());
 	expect(open).toHaveBeenCalledWith(

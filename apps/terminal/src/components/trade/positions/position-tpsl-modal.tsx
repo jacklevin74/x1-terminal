@@ -1,18 +1,9 @@
-import {
-	Button,
-	Modal,
-	ModalContent,
-	ModalDescription,
-	ModalFooter,
-	ModalHeader,
-	ModalPopup,
-	ModalTitle,
-} from "@hypeterminal/ui";
+import { Button, Modal, ModalContent, ModalFooter, ModalHeader, ModalPopup, ModalTitle } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { SpinnerGapIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { InfoRow, InfoRowGroup } from "@/components/ui/info-row";
+import { InfoRow } from "@/components/ui/info-row";
 import { buildPositionTpSlUpdate } from "@/domain/trade/position-tpsl-update";
 import { useSubmitPlan } from "@/hooks/trade/use-submit-plan";
 import { cn } from "@/lib/cn";
@@ -21,11 +12,11 @@ import { useExchange } from "@/lib/hyperliquid";
 import { interpretOrderStatuses } from "@/lib/trade/extract-order-status";
 import { isPositive, toNumber } from "@/lib/trade/numbers";
 import { validateSlPrice, validateTpPrice } from "@/lib/trade/tpsl";
+import { getValueColorClass } from "@/lib/ui/value-color";
 import { AssetDisplay } from "../components/asset-display";
 import { TradingActionButton } from "../components/trading-action-button";
 import { TpSlSection } from "../tradebox/tp-sl-section";
 import type { TpSlPositionData } from "./position-dialog-types";
-import { getMarketValueClass } from "./positions-panel-table-styles";
 
 interface Props {
 	open: boolean;
@@ -37,7 +28,7 @@ export function PositionTpSlModal({ open, onOpenChange, position }: Props) {
 	if (!position) return null;
 	return (
 		<Modal open={open} onOpenChange={onOpenChange}>
-			<ModalPopup size="sm" aria-label={getTpSlModalAriaLabel(position)}>
+			<ModalPopup size="sm" showClose={false} aria-label={getTpSlModalAriaLabel(position)}>
 				<PositionTpSlModalBody
 					key={`${position.assetId}:${open ? "open" : "closed"}`}
 					position={position}
@@ -117,38 +108,58 @@ function PositionTpSlModalBody({ position, onOpenChange }: BodyProps) {
 		}
 	}
 
+	const visibleError = submitError;
+
 	return (
 		<>
 			<ModalHeader>
 				<ModalTitle>{t`Manage TP/SL`}</ModalTitle>
-				<ModalDescription className="flex items-center gap-1">
-					<AssetDisplay
-						coin={position.coin}
-						hideIcon
-						nameClassName={cn("font-medium", position.isLong ? "text-market-up" : "text-market-down")}
+				<div className="flex items-center gap-1.5">
+					<span
+						className={cn("h-4 w-0.5 shrink-0 rounded-full", position.isLong ? "bg-success" : "bg-error")}
+						aria-hidden="true"
 					/>
-					<span>{position.isLong ? t`long position` : t`short position`}</span>
-				</ModalDescription>
+					<AssetDisplay coin={position.coin} />
+					<span className="text-xs text-fg-muted">· {position.isLong ? t`Long position` : t`Short position`}</span>
+				</div>
 			</ModalHeader>
 
-			<ModalContent className="flex flex-col gap-4">
-				<InfoRowGroup className="rounded-8 bg-surface px-3 py-1">
-					<InfoRow label={t`Size`} value={`${formatToken(position.size, position.szDecimals)} ${position.coin}`} />
-					<InfoRow label={t`Entry Price`} value={formatPrice(position.entryPx, { szDecimals: position.szDecimals })} />
-					<InfoRow label={t`Mark Price`} value={formatPrice(position.markPx, { szDecimals: position.szDecimals })} />
+			<ModalContent>
+				<div className="rounded-8 border border-stroke-weak bg-surface p-3 space-y-1 text-xs">
 					<InfoRow
+						className="p-0"
+						label={t`Size`}
+						value={`${formatToken(position.size, position.szDecimals)} ${position.coin}`}
+						valueClassName="font-medium"
+					/>
+					<InfoRow
+						className="p-0"
+						label={t`Entry Price`}
+						value={formatPrice(position.entryPx, { szDecimals: position.szDecimals })}
+						valueClassName="font-medium"
+					/>
+					<InfoRow
+						className="p-0"
+						label={t`Mark Price`}
+						value={formatPrice(position.markPx, { szDecimals: position.szDecimals })}
+						valueClassName="font-medium text-warning"
+					/>
+					<InfoRow
+						className="p-0 border-t border-stroke-weak pt-3"
 						label={t`Unrealized P&L`}
 						value={
 							<>
-								{formatUSD(position.unrealizedPnl, { signDisplay: "exceptZero" })}{" "}
-								<span className="text-fg-muted">({formatPercent(position.roe, 1)})</span>
+								{formatUSD(position.unrealizedPnl, { signDisplay: "exceptZero" })}
+								<span className="font-normal text-fg-muted ml-1">({formatPercent(position.roe, 1)})</span>
 							</>
 						}
-						valueClassName={getMarketValueClass(position.unrealizedPnl)}
+						valueClassName={cn("font-semibold", getValueColorClass(position.unrealizedPnl))}
 					/>
-				</InfoRowGroup>
+				</div>
+			</ModalContent>
 
-				<p className="text-xs text-fg-muted">
+			<div className="px-4 pb-4">
+				<p className="mb-3 text-xs text-fg-muted">
 					Applies to the entire position. Clear a field to remove it. Changed triggers are cancelled before replacement.
 				</p>
 				<TpSlSection
@@ -164,25 +175,18 @@ function PositionTpSlModalBody({ position, onOpenChange }: BodyProps) {
 					slError={slError}
 				/>
 
-				{submitError && (
-					<p role="alert" className="text-xs text-market-down">
-						{submitError}
-					</p>
+				{visibleError && (
+					<div className="mt-3 px-2 py-1.5 rounded-8 bg-error-soft border border-stroke-error-weak text-xs text-error">
+						{visibleError}
+					</div>
 				)}
-			</ModalContent>
+			</div>
 
-			<ModalFooter className="grid grid-cols-2 pt-0">
-				<Button
-					variant="secondary"
-					intent="neutral"
-					size="md"
-					className="w-full"
-					onClick={() => onOpenChange(false)}
-					disabled={isSubmitting}
-				>
+			<ModalFooter>
+				<Button size="sm" variant="ghost" intent="neutral" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
 					{t`Cancel`}
 				</Button>
-				<TradingActionButton onClick={handleSubmit} disabled={!canSubmit} size="md" className="w-full">
+				<TradingActionButton onClick={handleSubmit} disabled={!canSubmit} className="min-w-24">
 					{isSubmitting ? (
 						<>
 							<SpinnerGapIcon className="size-3.5 animate-spin" />
