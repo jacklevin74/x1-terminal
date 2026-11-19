@@ -1,3 +1,5 @@
+> **Branch `no-x1-wallet`:** the X1 Wallet integration described below was removed. Only Phantom (and Rabby) are offered.
+
 # Brief: X1 Terminal, a Hyperliquid trading front end for X1 users
 
 ## Goal

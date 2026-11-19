@@ -65,7 +65,7 @@ export function useWithdrawalRecipient(
 			});
 			setReading(false);
 		};
-		const source = getSolSourceWallet(connectorId === "x1" ? "x1" : "phantom");
+		const source = getSolSourceWallet("phantom");
 		const ethereumProviders = getNativeEthereumProviders();
 		const cleanups: (() => void)[] = [];
 		for (const [event, listener] of [

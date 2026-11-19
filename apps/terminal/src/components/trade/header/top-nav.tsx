@@ -1,7 +1,7 @@
 import { Button, ButtonIcon, Divider, Dropdown } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { DownloadSimpleIcon, GearIcon } from "@phosphor-icons/react";
+import { DownloadSimpleIcon, GearIcon, QuestionIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { useConnection } from "wagmi";
@@ -18,7 +18,7 @@ import X1TerminalLogo from "./x1-terminal-logo";
 const UserMenu = createLazyComponent(() => import("./user-menu"), "UserMenu");
 
 const NAV_LINK_CLASS =
-	"relative flex h-7 items-center rounded-8 px-3 text-sm font-normal transition-colors duration-150";
+	"relative flex h-7 shrink-0 items-center whitespace-nowrap rounded-8 px-3 text-sm font-normal transition-colors duration-150";
 
 export function TopNav() {
 	const brand = useTerminalBrand();
@@ -100,6 +100,14 @@ export function TopNav() {
 				<Suspense fallback={<UserMenuSkeleton />}>
 					<UserMenu />
 				</Suspense>
+				<Link
+					to="/guide"
+					aria-label={t`Guide`}
+					title={t`Guide`}
+					className="inline-flex size-8 shrink-0 items-center justify-center rounded-8 text-fg-muted transition-colors duration-150 hover:bg-control-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus"
+				>
+					<QuestionIcon className="size-4" />
+				</Link>
 				<ButtonIcon variant="ghost" intent="neutral" size="sm" onClick={openSettingsDialog} aria-label={t`Settings`}>
 					<GearIcon className="size-4" />
 				</ButtonIcon>

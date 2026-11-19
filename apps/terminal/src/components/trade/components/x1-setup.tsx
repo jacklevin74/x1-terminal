@@ -11,7 +11,7 @@ const stepBadgeClass =
 	"flex size-4 shrink-0 items-center justify-center rounded-4 bg-control text-xs font-medium tabular-nums text-fg-secondary";
 
 export function X1Setup() {
-	const { address, connector } = useConnection();
+	const { address } = useConnection();
 	const { isReady, needsAgent, needsBuilderFee, isLoading } = useAgentStatus();
 	const { data: walletClient } = useWalletClient();
 	const [walletOpen, setWalletOpen] = useState(false);
@@ -111,12 +111,6 @@ export function X1Setup() {
 							<output className="block text-xs text-fg-muted text-pretty">
 								{status === "verifying" ? "Checking approval…" : "Open your wallet and confirm the approval request."}
 							</output>
-						)}
-						{connector?.id === "x1" && (
-							<p className="text-xs text-warning text-pretty">
-								Derived from your X1 signature. Withdrawals are signed by this derived key. Reconnect with the same X1
-								wallet to recover this account.
-							</p>
 						)}
 						{!BUILDER_CONFIGURED && (
 							<p role="alert" className="text-xs text-warning">

@@ -15,7 +15,7 @@ export async function readSolDepositBalance(
 ): Promise<SolDepositBalance> {
 	if (!isSolDepositAddress(destination)) throw new Error("Wait for a verified SOL deposit address.");
 	const wallet = getSolSourceWallet(kind);
-	if (!wallet) throw new Error(`Connect ${kind === "x1" ? "X1 Wallet" : "Phantom"} first.`);
+	if (!wallet) throw new Error("Connect Phantom first.");
 	const publicKey = await connectSolSource(kind, wallet);
 	assertCurrentAccount();
 	const connection = new Connection(SOLANA_RPC_URL, { commitment: "confirmed", disableRetryOnRateLimit: true });

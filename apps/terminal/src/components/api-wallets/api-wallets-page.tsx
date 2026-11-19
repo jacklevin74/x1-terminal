@@ -24,7 +24,7 @@ const field =
 const button = "rounded-lg bg-brand px-4 py-2.5 text-sm font-medium text-fg-inverse disabled:opacity-40";
 export function ApiWalletsPage({ managementOnly = false }: { managementOnly?: boolean }) {
 	const { address: tradingAddress } = useTradingAccount();
-	const { address, connector } = useConnection();
+	const { address } = useConnection();
 	const { data: wallet } = useWalletClient();
 	const { env } = useHyperliquid();
 	const ownerRef = useRef(address);
@@ -127,11 +127,7 @@ export function ApiWalletsPage({ managementOnly = false }: { managementOnly?: bo
 					throw new Error(
 						"Unlock and connect the account owner's wallet to approve the fee. An API wallet cannot approve it.",
 					);
-				setFeeMessage(
-					connector?.id === "x1"
-						? "Submitting approval with your X1-derived Hyperliquid account…"
-						: `Confirm the ${builderFeeRate} builder fee approval in your wallet.`,
-				);
+				setFeeMessage(`Confirm the ${builderFeeRate} builder fee approval in your wallet.`);
 				await approveFee.mutateAsync({ builder: builderAddress, maxFeeRate: builderFeeRate });
 				check();
 			}
@@ -344,10 +340,7 @@ export function ApiWalletsPage({ managementOnly = false }: { managementOnly?: bo
 						<div>
 							<h2 className="text-sm font-semibold">X1 trading fee, {builderFeeRate}</h2>
 							<p className="mt-1 text-xs text-fg-muted">
-								{connector?.id === "x1"
-									? "Approve with your X1-derived Hyperliquid account."
-									: "Approve with the account owner's wallet."}{" "}
-								This is separate from API wallet authorization.
+								Approve with the account owner's wallet. This is separate from API wallet authorization.
 							</p>
 						</div>
 						<output className="text-sm text-brand">

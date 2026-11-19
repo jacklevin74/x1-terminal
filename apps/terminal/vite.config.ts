@@ -13,8 +13,10 @@ const autoTraderProxy = {
   // The proxy refuses a localhost Origin on POST, so local dev can read key status but not change keys.
   '/api/ec2-keys': { target: process.env.EC2_KEYS_DEV_TARGET ?? 'https://x1-terminal-20261029.vercel.app', changeOrigin: true },
   '/api/copybot': { target: 'https://wxnt-sale-sim.vercel.app', changeOrigin: true },
+  // Sentiment (Mood Ring scores): EC2 mood-api through its CloudFront HTTPS front (GET only; EC2 :8091 accepts
+  // CloudFront origin-facing IPs only). Same route and JSON as the old wxnt-sale-sim /api/daytraders proxy.
   '/api/auto-trader-signal': {
-    target: 'https://wxnt-sale-sim.vercel.app', changeOrigin: true,
+    target: 'https://dtdi1o7ykdc6.cloudfront.net', changeOrigin: true,
     rewrite: (path: string) => path.replace(/^\/api\/auto-trader-signal/, '/api/daytraders'),
   },
 }

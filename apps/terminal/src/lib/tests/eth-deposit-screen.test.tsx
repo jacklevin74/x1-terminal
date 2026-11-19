@@ -15,7 +15,7 @@ const state = vi.hoisted(() => ({
 	),
 }));
 vi.mock("wagmi", () => ({
-	useConnection: () => ({ address: state.address, connector: { id: "x1" }, chainId: 1 }),
+	useConnection: () => ({ address: state.address, connector: { id: "phantom" }, chainId: 1 }),
 	useSendTransaction: () => ({ mutateAsync: state.send, isPending: false }),
 	useSwitchChain: () => ({ mutateAsync: vi.fn(), isPending: false }),
 	useWaitForTransactionReceipt: () => ({}),

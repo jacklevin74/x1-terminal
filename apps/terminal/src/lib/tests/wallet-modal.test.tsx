@@ -8,7 +8,6 @@ const state = vi.hoisted(() => ({ connect: vi.fn(async () => {}) }));
 vi.mock("wagmi", () => ({
 	useConnectors: () => [
 		{ id: "phantom", uid: "p", name: "Phantom" },
-		{ id: "x1", uid: "x", name: "X1 Wallet" },
 		{ id: "rabby", uid: "r", name: "Rabby Wallet" },
 		{ id: "other", uid: "o", name: "Other Wallet" },
 	],
@@ -19,7 +18,7 @@ afterEach(() => {
 	document.body.innerHTML = "";
 	state.connect.mockClear();
 });
-it("offers Rabby, Phantom and X1, with an explicit derived-account acknowledgment step", async () => {
+it("offers only Phantom and Rabby, with no X1 Wallet or derived-account step", async () => {
 	const el = document.createElement("div");
 	document.body.append(el);
 	const root = createRoot(el);
@@ -27,25 +26,20 @@ it("offers Rabby, Phantom and X1, with an explicit derived-account acknowledgmen
 		root.render(createElement(WalletModal, { open: true, onOpenChange: vi.fn() }));
 	});
 	const buttons = [...el.querySelectorAll("button")];
-	expect(buttons).toHaveLength(3);
+	expect(buttons).toHaveLength(2);
 	expect(buttons[0].textContent).toContain("Phantom");
-	expect(buttons[1].textContent).toContain("X1 Wallet");
-	expect(buttons[2].textContent).toContain("Rabby Wallet");
-	expect(state.connect).not.toHaveBeenCalled();
+	expect(buttons[1].textContent).toContain("Rabby Wallet");
+	expect(el.textContent).not.toContain("X1 Wallet");
+	expect(el.textContent).not.toContain("I understand, connect");
+	expect(buttons[0].disabled).toBe(false);
 	await act(async () => {
-		buttons[1].click();
+		buttons[0].click();
 	});
-	expect(state.connect).not.toHaveBeenCalled();
-	const agree = [...el.querySelectorAll("button")].find((b) => b.textContent?.includes("I understand, connect"));
-	expect(agree).toBeDefined();
-	await act(async () => {
-		agree?.click();
-	});
-	expect(state.connect).toHaveBeenCalledWith({ connector: expect.objectContaining({ id: "x1" }) });
+	expect(state.connect).toHaveBeenCalledWith({ connector: expect.objectContaining({ id: "phantom" }) });
 	await act(async () => root.unmount());
 });
 
-it("connects Rabby without requiring the X1 derived-account acknowledgment", async () => {
+it("connects Rabby", async () => {
 	const el = document.createElement("div");
 	document.body.append(el);
 	const root = createRoot(el);

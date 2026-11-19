@@ -75,7 +75,7 @@ export function AutoTraderPanel() {
 				</output>
 			) : !isConnected || !address ? (
 				<p className="rounded-xl border border-stroke-weak bg-surface p-4 text-sm">
-					<Trans>Connect Rabby, X1 Wallet or Phantom above to configure Auto Trader.</Trans>
+					<Trans>Connect Rabby or Phantom above to configure Auto Trader.</Trans>
 				</p>
 			) : (
 				<AutoTraderAccount key={address.toLowerCase()} master={address} />
@@ -405,9 +405,7 @@ function AutoTraderAccount({ master }: { master: Address }) {
 						<Check
 							label="Owner wallet"
 							ok={!!wallet}
-							detail={
-								wallet ? "Connected — signs control requests locally" : "Connect or unlock Rabby / X1 Wallet / Phantom"
-							}
+							detail={wallet ? "Connected — signs control requests locally" : "Connect or unlock Rabby / Phantom"}
 						/>
 						<Check
 							label="Account equity"

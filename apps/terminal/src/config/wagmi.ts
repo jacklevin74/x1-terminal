@@ -23,9 +23,9 @@ import {
 } from "wagmi/chains";
 import { injected, mock } from "wagmi/connectors";
 import { getDemoAddress } from "@/lib/demo/demo-mode";
+import { getPhantomProvider } from "@/lib/wallet/phantom-provider";
 import { getRabbyProvider } from "@/lib/wallet/rabby-provider";
 import type { MockWalletConfig } from "@/lib/wallet-utils";
-import { getPhantomProvider, getX1Provider } from "@/lib/x1/provider";
 
 // All chains supported for LiFi bridging — wagmi requires these upfront
 const BRIDGE_CHAINS = [
@@ -79,10 +79,6 @@ export function createWagmiConfig(
 			}),
 			injected({
 				target: () => ({ id: "phantom", name: "Phantom", provider: () => getPhantomProvider() }),
-				shimDisconnect: true,
-			}),
-			injected({
-				target: () => ({ id: "x1", name: "X1 Wallet", provider: () => getX1Provider() }),
 				shimDisconnect: true,
 			}),
 			...(DEMO_ADDRESS ? [mock({ accounts: [DEMO_ADDRESS], features: { reconnect: true } })] : []),

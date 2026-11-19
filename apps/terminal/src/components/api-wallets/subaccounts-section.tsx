@@ -84,7 +84,11 @@ export function SubaccountsSection() {
 			className="space-y-3 rounded-xl border border-stroke-weak bg-surface p-4 scroll-mt-4"
 		>
 			<div className="flex flex-wrap items-center justify-between gap-3">
-				<h2 className="text-sm font-semibold">Subaccounts</h2>
+				<h2 className="text-sm font-semibold">
+					<a href="/subAccounts" className="hover:text-brand">
+						Subaccounts ↗
+					</a>
+				</h2>
 				<button
 					type="button"
 					disabled={!address || busy}

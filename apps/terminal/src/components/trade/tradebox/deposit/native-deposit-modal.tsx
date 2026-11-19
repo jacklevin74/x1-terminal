@@ -73,9 +73,7 @@ export function NativeDepositModal({ open, onClose }: Props) {
 				<ModalContent className="space-y-4 p-6 pt-12">
 					<NativeDepositIntro asset={asset} chain={chain} fee={fees.data?.fee} eta={fees.data?.eta} />
 					{!address && (
-						<p className="text-center text-xs text-fg-muted">
-							Connect Phantom or X1 Wallet to get your deposit address.
-						</p>
+						<p className="text-center text-xs text-fg-muted">Connect Phantom to get your deposit address.</p>
 					)}
 					{address && testnet && (
 						<p className="text-center text-xs text-fg-muted">Native asset deposits are available on mainnet.</p>

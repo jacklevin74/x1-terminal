@@ -21,11 +21,7 @@ export function EthDeposit() {
 	const { address } = useConnection();
 	const testnet = useIsTestnet();
 	if (!address)
-		return (
-			<p className="py-4 text-xs text-fg-muted">
-				Connect Rabby, Phantom or X1 Wallet to generate an ETH deposit address.
-			</p>
-		);
+		return <p className="py-4 text-xs text-fg-muted">Connect Rabby or Phantom to generate an ETH deposit address.</p>;
 	if (testnet)
 		return (
 			<p className="py-4 text-xs text-fg-muted">

@@ -27,35 +27,25 @@ vi.mock("@/lib/hyperliquid", () => ({
 		refetch: vi.fn(),
 	}),
 }));
-vi.mock("@/hooks/use-xnt-rewards", () => ({ useXntRewards: () => ({ data: undefined }) }));
-vi.mock("@/components/trade/rewards/xnt-rewards-drawer", () => ({ XntRewardsDrawer: () => null }));
-vi.mock("@/components/trade/components/account-mode-control", () => ({ AccountModeControl: () => null }));
 vi.mock("@/components/trade/components/wallet-modal", () => ({ WalletModal: () => null }));
-vi.mock("@/components/trade/components/export-key-modal", () => ({ ExportKeyModal: () => null }));
-vi.mock("@hypeterminal/ui", () => ({
-	Button: () => null,
-	Dropdown: ({
-		trigger,
-		items,
-	}: {
-		trigger: ReactNode;
-		items: { label: string; detail?: ReactNode; disabled?: boolean; onSelect?: () => void }[];
-	}) => (
-		<div>
-			<span data-trigger>{trigger}</span>
-			{items.map((item) => (
-				<span key={item.label}>
-					<button type="button" disabled={item.disabled} onClick={item.onSelect}>
-						{item.label}
-					</button>
-					{item.detail}
-				</span>
-			))}
-		</div>
-	),
+vi.mock("@hypeterminal/ui", () => ({ Button: () => null }));
+vi.mock("@base-ui/react/popover", () => ({
+	Popover: {
+		Root: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+		Trigger: ({ children, ...props }: { children: ReactNode }) => (
+			<button data-trigger {...props}>
+				{children}
+			</button>
+		),
+		Portal: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+		Positioner: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+		Popup: ({ children, ...props }: { children: ReactNode }) => <div {...props}>{children}</div>,
+	},
 }));
 const copied = vi.hoisted(() => vi.fn());
+vi.mock("@/lib/demo/demo-mode", () => ({ exitDemoMode: vi.fn(), getDemoAddress: () => undefined }));
 vi.mock("@/hooks/ui/use-copy-to-clipboard", () => ({ useCopyToClipboard: () => ({ copy: copied, copied: false }) }));
+
 afterEach(() => {
 	useTradingAccountStore.getState().select(null);
 	state.mutating = 0;
@@ -67,18 +57,21 @@ it("selects the owner's subaccount from the top-right menu and returns to main",
 	const root = createRoot(host);
 	await act(async () => root.render(<UserMenu />));
 	expect(host.textContent).not.toContain("Other owner");
-	expect(host.querySelector("[data-trigger] svg")).not.toBeNull();
 	await act(async () =>
-		[...host.querySelectorAll("button")].find((b) => b.textContent?.includes("Ledger bot"))!.click(),
+		[...host.querySelectorAll("button")]
+			.find((b) => b.getAttribute("aria-label") === "Select subaccount Ledger bot")!
+			.click(),
 	);
 	expect(host.querySelector("[data-trigger]")?.textContent).toContain("Ledger bot");
 	expect(useTradingAccountStore.getState().selection?.address).toBe(state.sub);
 	expect(state.reset).toHaveBeenCalledOnce();
 	await act(async () =>
-		[...host.querySelectorAll("button")].find((b) => b.textContent?.includes("Main account"))!.click(),
+		[...host.querySelectorAll("button")]
+			.find((b) => b.getAttribute("aria-label")?.startsWith("Select main account"))!
+			.click(),
 	);
 	expect(useTradingAccountStore.getState().selection).toBeNull();
-	expect(host.querySelector("[data-trigger]")?.textContent).toContain("Rabby");
+	expect(host.querySelector("[data-trigger]")?.textContent).toContain("Main:");
 	await act(async () => root.unmount());
 	host.remove();
 });
@@ -88,19 +81,25 @@ it("disables account switching while an operation is pending", async () => {
 	const root = createRoot(host);
 	await act(async () => root.render(<UserMenu />));
 	const buttons = [...host.querySelectorAll("button")].filter(
-		(b) => b.textContent?.includes("Main account") || b.textContent?.includes("Ledger bot"),
+		(b) => b.getAttribute("aria-label")?.startsWith("Select main account") || b.textContent?.includes("Ledger bot"),
 	);
 	expect(buttons).toHaveLength(2);
 	expect(buttons.every((b) => b.disabled)).toBe(true);
 	await act(async () => root.unmount());
 });
-it("copies a subaccount address without switching accounts", async () => {
-	const host = document.createElement("div");
-	const root = createRoot(host);
+
+it("copies a subaccount address without switching accounts or adding utility rows", async () => {
+	const host = document.createElement("div"),
+		root = createRoot(host);
 	await act(async () => root.render(<UserMenu />));
 	await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Copy Ledger bot address"]')!.click());
 	expect(copied).toHaveBeenCalledWith(state.sub);
 	expect(useTradingAccountStore.getState().selection).toBeNull();
 	expect(state.reset).not.toHaveBeenCalled();
+	expect(host.textContent).not.toContain("Ethereum account");
+	expect(host.textContent).not.toContain("Refresh subaccounts");
+	expect(host.textContent).not.toContain("Trading setup");
+	expect(host.textContent).toContain("Manage subaccounts");
+	expect(host.textContent).toContain("Disconnect");
 	await act(async () => root.unmount());
 });
