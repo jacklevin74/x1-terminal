@@ -8,7 +8,7 @@ import { formatNumber, szDecimalsToPriceDecimals } from "@/lib/format";
 import { useSelectedMarketInfo } from "@/lib/hyperliquid";
 import { useRenderCommitTrack } from "@/lib/performance/render-profile";
 import { toNumber } from "@/lib/trade/numbers";
-import { getMaxTotal, getPriceGroupingKey, getPriceGroupingOptions, processLevels } from "@/lib/trade/orderbook";
+import { getMaxTotal, getPriceGroupingKey, getPriceGroupingOptions, processLevels, withQuoteTotals } from "@/lib/trade/orderbook";
 import { useGlobalSettings, useGlobalSettingsActions } from "@/stores/use-global-settings-store";
 import { OrderbookRow } from "./orderbook-row";
 import { TradesPanel } from "./trades-panel";
@@ -17,7 +17,7 @@ import { TradesPanel } from "./trades-panel";
 export function OrderbookPanel() {
 	useRenderCommitTrack("orderbook");
 	const [depth, setDepth] = useState<5 | 10 | 15 | 20>(15);
- const fast = depth === 5;
+ const fast = true;
  const [selectedOptionKey, setSelectedOptionKey] = useState<string | null>(null);
 	const { showOrderbookInQuote } = useGlobalSettings();
 	const { setShowOrderbookInQuote } = useGlobalSettingsActions();
@@ -41,7 +41,7 @@ export function OrderbookPanel() {
 		[selectedMarket?.name, selectedOption?.mantissa, selectedOption?.nSigFigs, fast],
 	);
 
- const { data: orderbook, status: orderbookStatus } = useOrderbookSubscription(subscriptionParams, !!selectedMarket?.name);
+ const { data: orderbook, status: orderbookStatus } = useOrderbookSubscription(subscriptionParams, !!selectedMarket?.name && tab === "book");
 
 	const { baseToken, quoteToken } = useMemo(() => {
 		if (!selectedMarket) return { baseToken: "", quoteToken: "" };
@@ -49,20 +49,20 @@ export function OrderbookPanel() {
 	}, [selectedMarket]);
 
 	const bids = useMemo(
-		() => processLevels(orderbook?.levels[0], depth),
+		() => withQuoteTotals(processLevels(orderbook?.levels[0], depth)),
 		[orderbook?.levels, depth],
 	);
 	const asks = useMemo(
-		() => processLevels(orderbook?.levels[1], depth),
+		() => withQuoteTotals(processLevels(orderbook?.levels[1], depth)),
 		[orderbook?.levels, depth],
 	);
 	const asksReversed = useMemo(() => {
-		const reversed = new Array(asks.length);
-		for (let i = 0; i < asks.length; i += 1) {
-			reversed[i] = asks[asks.length - 1 - i];
+		const reversed = new Array(depth);
+		for (let i = 0; i < depth; i += 1) {
+			reversed[i] = asks[depth - 1 - i];
 		}
 		return reversed;
-	}, [asks]);
+	}, [asks,depth]);
 	const maxTotal = useMemo(() => getMaxTotal(bids, asks), [asks, bids]);
 	const spread = orderbook?.spread;
 	const spreadPct = getPercent(spread, selectedMarket?.markPx);
@@ -73,7 +73,7 @@ export function OrderbookPanel() {
 	const displayAsset = showOrderbookInQuote ? quoteToken : baseToken;
 	const toggleAssetDisplay = () => setShowOrderbookInQuote(!showOrderbookInQuote);
 
-	const hasData = orderbookStatus !== "error";
+
 
 	const dropdownItems = priceGroupingOptions.map((option) => ({
 		label: option.label,
@@ -90,10 +90,10 @@ export function OrderbookPanel() {
 			variant="underline"
 		>
 			<div className="flex items-center justify-between">
-    <label className="order-last shrink-0 px-2 text-2xs text-brand whitespace-nowrap" title="5 levels uses the fast feed; 10, 15, and 20 use the depth feed.">
+    <label className="order-last shrink-0 px-2 text-2xs text-brand whitespace-nowrap" title="Live fast top of book with refreshed depth at every size.">
      <span className="sr-only">Order book depth per side</span>
      <select aria-label="Order book depth per side" value={depth} onChange={event => setDepth(Number(event.target.value) as 5 | 10 | 15 | 20)} className="bg-surface cursor-pointer py-1 outline-none focus-visible:ring-1 focus-visible:ring-brand">
-      <option value={5}>Fast · 5</option><option value={10}>Depth · 10</option><option value={15}>Depth · 15</option><option value={20}>Depth · 20</option>
+      <option value={5}>5 levels</option><option value={10}>10 levels</option><option value={15}>15 levels</option><option value={20}>20 levels</option>
      </select>
     </label>
 				<TabsList className="w-full min-w-0">
@@ -143,12 +143,12 @@ export function OrderbookPanel() {
 				</div>
 
 				<div className="flex-1 min-h-0 flex flex-col overflow-hidden">
-					<div className="flex-1 min-h-0 flex flex-col-reverse overflow-y-auto" aria-label="Ask levels">
+					<div className="flex-1 min-h-0 flex flex-col-reverse overflow-y-auto [overflow-anchor:none]" aria-label="Ask levels">
       <div className="flex flex-col shrink-0">
-						{hasData && asks.length > 0 ? (
-							asksReversed.map((level) => (
+						{
+							asksReversed.map((level,index) => level ? (
 								<OrderbookRow
-									key={`ask-${level.price}`}
+									key={`ask-${index}`}
 									level={level}
 									side="ask"
 									maxTotal={maxTotal}
@@ -156,12 +156,7 @@ export function OrderbookPanel() {
 									showInQuote={showOrderbookInQuote}
 									szDecimals={szDecimals}
 								/>
-							))
-						) : (
-							<div className="flex items-center justify-center px-2 py-6 text-xs text-fg">
-								{orderbookStatus === "error" ? t`Failed to load order book.` : t`Waiting for order book...`}
-							</div>
-						)}
+							) : <div key={`ask-${index}`} aria-hidden="true" data-book-placeholder="ask" className="h-5 shrink-0" />)}
       </div>
 					</div>
 
@@ -169,17 +164,16 @@ export function OrderbookPanel() {
 						data-slot="orderbook-spread"
 						className="shrink-0 px-2 py-1.5 border-y border-stroke-weak flex items-center justify-between text-xs text-fg"
 					>
-						<span>{t`Spread`}</span>
+						<span title={orderbookStatus === "error"?"Connection interrupted; showing last received book":undefined}>{t`Spread`}</span>
 						<span className="tabular-nums font-medium text-fg-muted">
 							{`${formatNumber(spread, 2)} (${formatNumber(spreadPct, 3)}%)`}
 						</span>
 					</div>
 
-					<div className="flex-1 min-h-0 flex flex-col overflow-y-auto" aria-label="Bid levels">
-						{hasData &&
-							bids.map((level) => (
+					<div className="flex-1 min-h-0 flex flex-col overflow-y-auto [overflow-anchor:none]" aria-label="Bid levels">
+						{							Array.from({length:depth},(_,index)=>bids[index]).map((level,index) => level ? (
 								<OrderbookRow
-									key={`bid-${level.price}`}
+									key={`bid-${index}`}
 									level={level}
 									side="bid"
 									maxTotal={maxTotal}
@@ -187,7 +181,7 @@ export function OrderbookPanel() {
 									showInQuote={showOrderbookInQuote}
 									szDecimals={szDecimals}
 								/>
-							))}
+							) : <div key={`bid-${index}`} aria-hidden="true" data-book-placeholder="bid" className="h-5 shrink-0" />)}
 					</div>
 				</div>
 			</TabsContent>

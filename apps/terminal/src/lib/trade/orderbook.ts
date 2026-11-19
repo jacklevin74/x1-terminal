@@ -1,6 +1,7 @@
 export type RawBookLevel = { px: string; sz: string; n: number };
 
 export type BookLevel = {
+ quoteTotal?:number;
 	price: number;
 	size: number;
 	total: number;
@@ -114,3 +115,5 @@ function formatTickSize(tickSize: number, decimals: number): string {
 	if (decimals === 0) return String(Math.trunc(tickSize));
 	return tickSize.toFixed(decimals).replace(/0+$/, "").replace(/\.$/, "");
 }
+
+export function withQuoteTotals(levels:BookLevel[]):BookLevel[]{let total=0;return levels.map(level=>{total+=level.price*level.size;return {...level,quoteTotal:total};});}

@@ -19,19 +19,19 @@ function OrderbookRowComponent({ level, side, maxTotal, priceDecimals, showInQuo
 	const isAsk = side === "ask";
 
 	const sizeValue = showInQuote ? level.size * level.price : level.size;
-	const totalValue = showInQuote ? level.total * level.price : level.total;
+	const totalValue = showInQuote ? level.quoteTotal ?? level.total * level.price : level.total;
 
 	const displayDecimals = showInQuote ? 2 : szDecimals;
 	const sizeText = formatNumber(sizeValue, { decimals: displayDecimals, compact: true });
 	const totalText = formatNumber(totalValue, { decimals: displayDecimals, compact: true });
 
 	return (
-		<div className="relative shrink-0 hover:bg-fill-hover cursor-pointer group">
+		<div data-book-side={side} data-book-price={level.price} data-book-total={totalValue} className="relative h-5 shrink-0 hover:bg-fill-hover cursor-pointer group">
 			<div
-				className={cn("absolute inset-y-0 pointer-events-none", isAsk ? "depth-bar-ask" : "depth-bar-bid")}
+				className={cn("absolute inset-y-0 pointer-events-none transition-[width] duration-[75ms] ease-out motion-reduce:transition-none", isAsk ? "depth-bar-ask" : "depth-bar-bid")}
 				style={{ width: `${depthPct}%`, [isAsk ? "right" : "left"]: 0, [isAsk ? "left" : "right"]: "auto" }}
 			/>
-			<div className="grid grid-cols-3 gap-1 text-2xs tabular-nums py-0.5 px-2 relative z-10">
+			<div className="grid h-full grid-cols-3 items-center gap-1 text-2xs tabular-nums px-2 relative z-10">
 				<button
 					type="button"
 					onClick={() => setSelectedPrice(level.price)}
@@ -58,7 +58,8 @@ function areEqual(prev: Props, next: Props): boolean {
 		prev.szDecimals === next.szDecimals &&
 		prev.level.price === next.level.price &&
 		prev.level.size === next.level.size &&
-		prev.level.total === next.level.total
+		prev.level.total === next.level.total &&
+  prev.level.quoteTotal === next.level.quoteTotal
 	);
 }
 

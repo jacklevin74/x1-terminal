@@ -10,7 +10,7 @@ it("sends the fast option over the shared transport and keeps depth mode separat
  expect(await subscribeOrderbook(transport, payload, listener)).toBe(subscription);
  expect(transport.subscribe).toHaveBeenCalledWith("l2Book", { type: "l2Book", coin: "BTC", nSigFigs: 5, mantissa: 2, fast: true }, expect.any(Function));
  expect(orderbookPayload({ coin: "BTC", fast: false }).fast).toBe(false);
- const push = (coin: string, time: number) => receive({ detail: { coin, time, levels: [[], []] } } as unknown as CustomEvent<L2BookWsEvent>);
- push("ETH", 200); push("BTC", 100); push("BTC", 99); push("BTC", 100); push("BTC", 101);
+ const push = (coin: string, time: number) => receive({ detail: { coin, time, fast:true, levels: [[], []] } } as unknown as CustomEvent<L2BookWsEvent>);
+ push("ETH", 200); push("BTC", 100); push("BTC", 99); push("BTC", 100); receive({detail:{coin:"BTC",time:1000,levels:[[],[]],fast:false}} as unknown as CustomEvent<L2BookWsEvent>); push("BTC", 101);
  expect(listener.mock.calls.map(([book]) => book.time)).toEqual([100, 101]);
 });
