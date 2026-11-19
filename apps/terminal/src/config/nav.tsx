@@ -49,7 +49,7 @@ export const SCOPE_NAV_ITEMS: readonly ScopeNavItem[] = [
 	},
 	{
 		scope: "builders-perp",
-		label: <Trans>Builders</Trans>,
+		label: <Trans>Stocks & More</Trans>,
 		to: "/builders-perp",
 		activeClass: "text-scope-builders font-medium bg-scope-builders/10",
 	},

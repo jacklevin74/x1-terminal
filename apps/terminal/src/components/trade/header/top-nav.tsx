@@ -1,7 +1,7 @@
 import { Button, ButtonIcon, Divider, Dropdown } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { DownloadSimpleIcon, GearIcon, TerminalIcon } from "@phosphor-icons/react";
+import { DownloadSimpleIcon, GearIcon, QuestionIcon, TerminalIcon } from "@phosphor-icons/react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { useConnection } from "wagmi";
@@ -76,14 +76,14 @@ export function TopNav() {
 					</div>
 				)}
 				<Divider orientation="vertical" className="my-2 hidden lg:block" />
-				<nav className="hidden lg:flex items-center text-xs tracking-wide">
+				<nav className="hidden lg:flex min-w-0 items-center overflow-x-auto whitespace-nowrap text-xs tracking-wide [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
 					{SCOPE_NAV_ITEMS.map((item) => (
 						<Link
 							key={item.scope}
 							to={preview ? "/newtheme" : item.to}
 							search={preview ? { scope: item.scope } : {}}
 							className={cn(
-								"px-2.5 py-1 rounded-8 transition-colors duration-150",
+								"shrink-0 whitespace-nowrap px-2 py-1 rounded-8 transition-colors duration-150",
 								scope === item.scope ? item.activeClass : "text-fg-muted hover:text-fg",
 							)}
 						>
@@ -91,23 +91,17 @@ export function TopNav() {
 						</Link>
 					))}
 					<Divider orientation="vertical" className="my-2 mx-1" />
-					{STATIC_NAV_ITEMS.map((item) =>
-						item.key === "auto-trader" ? (
-							<a key={item.key} href="/API#auto-trader" className="px-2.5 py-1.5 text-fg-muted hover:text-fg">
-								{item.label}
-							</a>
-						) : (
-							<button
-								key={item.key}
-								type="button"
-								disabled
-								className="px-2.5 py-1.5 text-fg-disabled cursor-not-allowed"
-								tabIndex={-1}
-							>
-								{item.label}
-							</button>
-						),
-					)}
+					{STATIC_NAV_ITEMS.map((item) => (
+						<button
+							key={item.key}
+							type="button"
+							disabled
+							className="shrink-0 whitespace-nowrap px-2 py-1.5 text-fg-disabled cursor-not-allowed"
+							tabIndex={-1}
+						>
+							{item.label}
+						</button>
+					))}
 				</nav>
 			</div>
 
@@ -141,6 +135,14 @@ export function TopNav() {
 				<Suspense fallback={<UserMenuSkeleton />}>
 					<UserMenu />
 				</Suspense>
+				<Link
+					to="/guide"
+					aria-label={t`Guide`}
+					title={t`Guide`}
+					className="inline-flex size-8 shrink-0 items-center justify-center rounded-8 text-fg-muted transition-colors hover:bg-fill-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-brand"
+				>
+					<QuestionIcon className="size-4" />
+				</Link>
 				<ButtonIcon
 					variant="ghost"
 					intent="neutral"

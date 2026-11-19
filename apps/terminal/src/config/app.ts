@@ -31,7 +31,7 @@ export const STORAGE_KEYS = {
 	LEGACY_METADATA: "hl-markets-meta-v1",
 } as const;
 
-export const RQ_CACHE_BUSTER = "v1";
+export const RQ_CACHE_BUSTER = "v2";
 
 export const GITHUB_URL = "https://github.com/vipineth/hypeterminal/";
 export const TOKEN_ICON_BASE_URL = "https://app.hyperliquid.xyz/coins";

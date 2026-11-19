@@ -5,6 +5,7 @@ import {
 	GearIcon,
 	HammerIcon,
 	ListIcon,
+	QuestionIcon,
 	TerminalIcon,
 	TrendUpIcon,
 	WalletIcon,
@@ -101,6 +102,14 @@ export function MobileNavDrawer() {
 							<p className="px-3 py-2 text-2xs font-semibold uppercase tracking-wider text-fg-muted">
 								<Trans>Platform</Trans>
 							</p>
+							<Link
+								to="/guide"
+								onClick={close}
+								className="flex items-center gap-3 px-3 py-2.5 rounded-xs text-sm text-fg-muted transition-colors duration-150 hover:text-fg hover:bg-fill-hover"
+							>
+								<QuestionIcon className="size-4" />
+								<Trans>Guide</Trans>
+							</Link>
 							{STATIC_NAV_ITEMS.map((item) => (
 								<div
 									key={item.key}
