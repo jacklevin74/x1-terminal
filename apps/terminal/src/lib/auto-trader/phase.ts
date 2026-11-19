@@ -42,7 +42,7 @@ export function isTrading(phase: AutoTraderPhase) {
 	return phase === "active" || phase === "waiting" || phase === "stopped" || phase === "closing";
 }
 
-function sameMarket(a: string, b: string) {
+export function sameMarket(a: string, b: string) {
 	return a === b || a.split(":").at(-1) === b.split(":").at(-1);
 }
 

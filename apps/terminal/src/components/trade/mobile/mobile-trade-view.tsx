@@ -17,6 +17,7 @@ import { getMidPx, useDefaultLimitPrice } from "@/hooks/trade/use-default-limit-
 import { useFeeRates } from "@/hooks/trade/use-fee-rates";
 import { useOrderEntryData } from "@/hooks/trade/use-order-entry-data";
 import { useOrderSubmit } from "@/hooks/trade/use-order-submit";
+import { useTradeMode } from "@/hooks/use-trade-mode";
 import { cn } from "@/lib/cn";
 import { formatPrice, formatToken, formatUSD } from "@/lib/format";
 import { useAgentRegistration, useAgentWallet, useSelectedMarketInfo } from "@/lib/hyperliquid";
@@ -36,7 +37,6 @@ import { useMarketOrderSlippageBps, useMarketOrderSlippagePercent } from "@/stor
 import { useMarketActions } from "@/stores/use-market-store";
 import { useOrderEntryActions, useOrderSide, useOrderType } from "@/stores/use-order-entry-store";
 import { getOrderbookActionsStore, useSelectedPrice } from "@/stores/use-orderbook-actions-store";
-import { useTradeModeStore } from "@/stores/use-trade-mode-store";
 import { AutoMarketWarning } from "../auto/auto-market-warning";
 import { AutoTradePanel } from "../auto/auto-trade-panel";
 import { TradeModeSwitch } from "../auto/trade-mode-switch";
@@ -54,7 +54,7 @@ interface Props {
 }
 
 export function MobileTradeView({ className }: Props) {
-	const mode = useTradeModeStore((state) => state.mode);
+	const mode = useTradeMode();
 	const { address, isConnected } = useConnection();
 	const { data: walletClient, isLoading: isWalletLoading, error: walletClientError } = useWalletClient();
 	const { switchChain, isPending: isSwitchingChain } = useSwitchChain();

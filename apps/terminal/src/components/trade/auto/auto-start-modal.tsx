@@ -1,15 +1,27 @@
 import { Button, Modal, ModalContent, ModalHeader, ModalPopup, ModalTitle } from "@hypeterminal/ui";
+import { sameMarket } from "@/lib/auto-trader/phase";
 import type { AutoTraderSettings } from "@/lib/auto-trader/types";
+import { useUserPositions } from "@/lib/hyperliquid";
 
 interface Props {
 	open: boolean;
 	settings: AutoTraderSettings;
-	marketCount: number;
+	markets: readonly string[];
 	onCancel: () => void;
 	onConfirm: () => void;
 }
 
-export function AutoStartModal({ open, settings, marketCount, onCancel, onConfirm }: Props) {
+function positionWarning(coins: string[]) {
+	const names = coins.map((coin) => coin.split(":").at(-1) ?? coin);
+	if (names.length === 1)
+		return `You have an open ${names[0]} position. Auto Trader will likely close or rebalance it.`;
+	const list = names.length > 3 ? `${names.length} markets` : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
+	return `You have open positions in ${list}. Auto Trader will likely close or rebalance them.`;
+}
+
+export function AutoStartModal({ open, settings, markets, onCancel, onConfirm }: Props) {
+	const { positions } = useUserPositions();
+	const affected = positions.map((p) => p.coin).filter((coin) => markets.some((market) => sameMarket(market, coin)));
 	return (
 		<Modal open={open} onOpenChange={(next) => !next && onCancel()}>
 			<ModalPopup size="sm">
@@ -23,9 +35,14 @@ export function AutoStartModal({ open, settings, marketCount, onCancel, onConfir
 						order.
 					</p>
 					<p className="text-sm text-fg-secondary">
-						It resizes positions in its {marketCount} markets, including positions you open by hand. Trading can lose
+						It resizes positions in its {markets.length} markets, including positions you open by hand. Trading can lose
 						money.
 					</p>
+					{affected.length > 0 && (
+						<p role="alert" className="text-sm text-warning">
+							{positionWarning(affected)}
+						</p>
+					)}
 					<div className="grid grid-cols-2 gap-2">
 						<Button variant="secondary" intent="neutral" size="md" onClick={onCancel}>
 							Cancel

@@ -1,8 +1,8 @@
 import { useLayoutEffect, useRef } from "react";
 import { APP_PANEL_CLASS } from "@/config/layout";
+import { useTradeMode } from "@/hooks/use-trade-mode";
 import { cn } from "@/lib/cn";
 import { useSelectedMarketInfo } from "@/lib/hyperliquid";
-import { useTradeModeStore } from "@/stores/use-trade-mode-store";
 import { AutoTradePanel } from "../auto/auto-trade-panel";
 import { TradeModeSwitch } from "../auto/trade-mode-switch";
 import { AccountPanel } from "../tradebox/account-panel";
@@ -19,7 +19,7 @@ export function TradeSidebar({ onDesiredHeightChange }: Props) {
 	const accountRef = useRef<HTMLDivElement>(null);
 	const { data: market } = useSelectedMarketInfo();
 	const formKey = market?.name ?? "default";
-	const mode = useTradeModeStore((state) => state.mode);
+	const mode = useTradeMode();
 
 	useLayoutEffect(() => {
 		const trade = tradeRef.current;

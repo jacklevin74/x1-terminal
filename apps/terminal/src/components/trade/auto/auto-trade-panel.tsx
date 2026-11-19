@@ -157,7 +157,7 @@ function AutoControls({ auto }: { auto: ReturnType<typeof useAutoTrader> }) {
 				<AutoStartModal
 					open={starting}
 					settings={settings}
-					marketCount={auto.markets.length}
+					markets={auto.markets}
 					onCancel={() => setStarting(false)}
 					onConfirm={() => {
 						setStarting(false);
