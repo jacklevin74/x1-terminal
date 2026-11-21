@@ -1,5 +1,5 @@
 [Unit]
-Description=X1 Terminal EC2 KMS key service (owner-signed create and lifecycle; no signing)
+Description=X1 Terminal key service (owner-signed; new keys via the signer-account provisioner; no signing)
 After=network-online.target
 Wants=network-online.target
 [Service]
@@ -14,7 +14,7 @@ Environment=X1_KEYS_DB=/var/lib/x1-ec2-keys/keys.sqlite
 Environment=X1_AUDIT_LOG=/var/lib/x1-ec2-keys/audit.jsonl
 # CloudFront → Caddy: Caddy appends the CloudFront edge address as one trusted hop.
 Environment=X1_TRUSTED_HOPS=1
-# X1_REGISTRAR_ROLE_ARN and X1_LIFECYCLE_ROLE_ARN (kept out of the repository).
+# X1_LIFECYCLE_ROLE_ARN, X1_SIGNER_CLIENT_ROLE_ARN, X1_PROVISIONER_ARN (kept out of the repository; gate 8).
 EnvironmentFile=/etc/x1-ec2-keys/env
 # Proxy HMAC secrets: 32 random bytes in hex, mode 0600. Never printed or logged.
 LoadCredential=proxy.secret:/etc/x1-ec2-keys/proxy.secret

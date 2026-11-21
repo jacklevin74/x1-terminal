@@ -82,6 +82,7 @@ export function createApp({
 					supported: true,
 					region: "us-east-2",
 					service: "ec2-key-registrar",
+					keyStore: "signer",
 					capabilities: { create: true, manage: true, sign: false, register: false },
 				});
 			if (url.pathname !== "/api/ec2-keys") throw new RequestError(404, "No route.");
@@ -95,7 +96,7 @@ export function createApp({
 				throw new RequestError(405, "Operation is not supported.");
 			if (tier === "preview" && op !== "status" && !allowPreviewMutations)
 				throw new RequestError(403, "Preview deployments can only read key status.");
-			if (op === "status") return reply(res, 200, service.status(owner));
+			if (op === "status") return reply(res, 200, await service.status(owner));
 			if (op === "nonce") return reply(res, 200, service.nonce(owner));
 			if (header(req, "content-type")?.split(";")[0].trim() !== "application/json")
 				throw new RequestError(415, "A JSON body is required.");

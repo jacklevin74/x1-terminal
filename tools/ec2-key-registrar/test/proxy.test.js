@@ -123,8 +123,11 @@ test('proxy secrets load from systemd credentials and must differ',t=>{
 });
 test('existing databases from the creation-only service migrate in place',t=>{
  const dir=mkdtempSync(join(tmpdir(),'x1-mig-'));t.after(()=>rmSync(dir,{recursive:true,force:true}));const file=join(dir,'keys.sqlite');
- const old=new DatabaseSync(file);old.exec("CREATE TABLE requests(id TEXT PRIMARY KEY,idem TEXT NOT NULL UNIQUE,owner TEXT NOT NULL,name TEXT NOT NULL,days INTEGER NOT NULL,state TEXT NOT NULL,arn TEXT,agent TEXT,created INTEGER NOT NULL,aws_request TEXT);");old.close();
- const service=createService({file,kms:{}});assert.equal(service.status(OWNER).agents.length,0);service.close();
+ const old=new DatabaseSync(file);old.exec("CREATE TABLE requests(id TEXT PRIMARY KEY,idem TEXT NOT NULL UNIQUE,owner TEXT NOT NULL,name TEXT NOT NULL,days INTEGER NOT NULL,state TEXT NOT NULL,arn TEXT,agent TEXT,created INTEGER NOT NULL,aws_request TEXT);");
+ old.prepare("INSERT INTO requests VALUES(?,?,?,?,?,?,?,?,?,?)").run('11111111-1111-1111-1111-111111111111','i',OWNER,'Old',7,'ready','arn:aws:kms:us-east-2:111122223333:key/x','0x'+'cd'.repeat(20),Date.now(),null);old.close();
+ const service=createService({file,kms:{}});const s=service.snapshot(OWNER);
+ // rows from before the signer-account move are legacy trading-account keys and never count toward the new quota
+ assert.equal(s.agents.length,1);assert.equal(s.agents[0].backend,'legacy');assert.equal(s.keyStore,'unavailable');assert.equal(s.canCreate,false);service.close();
 });
 test('behind CloudFront (one trusted hop) unauthenticated limits key on the address CloudFront saw, not the edge',async t=>{
  const {url}=await upstream(t,{trustedHops:1,unauthLimit:(()=>{const seen=new Map();return k=>{seen.set(k,(seen.get(k)??0)+1);return seen.get(k)<=2;};})()});
