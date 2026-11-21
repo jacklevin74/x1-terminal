@@ -2,17 +2,21 @@ import { appendFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { createApp } from "./app.js";
 import { kmsAdapter } from "./kms.js";
+import { provisionerClient } from "./provisioner.js";
 import { createProxyVerifier, loadProxyKeys } from "./proxy-auth.js";
 import { createService } from "./service.js";
 
 process.umask(0o077);
 const env = process.env;
-const kms = kmsAdapter({
-	registrarRoleArn: env.X1_REGISTRAR_ROLE_ARN,
-	lifecycleRoleArn: env.X1_LIFECYCLE_ROLE_ARN,
-	env: env.X1_KEYS_ENV ?? "prod",
-});
-await kms.verifyIdentity(); // Confirms both assumed roles via STS without creating, changing or signing a key.
+// Legacy trading-account keys: lifecycle only (disable, delete, cancel-delete). Nothing here can create a key.
+const kms = kmsAdapter({ lifecycleRoleArn: env.X1_LIFECYCLE_ROLE_ARN });
+await kms.verifyIdentity();
+// New keys: the signer-account key provisioner. Without both settings the page shows creation as unavailable.
+let provisioner = null;
+if (env.X1_PROVISIONER_ARN || env.X1_SIGNER_CLIENT_ROLE_ARN) {
+	provisioner = provisionerClient({ roleArn: env.X1_SIGNER_CLIENT_ROLE_ARN, functionArn: env.X1_PROVISIONER_ARN });
+	await provisioner.verifyIdentity(); // STS only: confirms the assumed x1-signer-key-client role, invokes nothing.
+}
 const auditFile = env.X1_AUDIT_LOG ?? "/var/lib/x1-ec2-keys/audit.jsonl";
 // Append-only JSONL: timestamp, owner, op, record id, agent address, result. Never ARNs, credentials or signatures.
 const audit = (entry) =>
@@ -28,7 +32,7 @@ const audit = (entry) =>
 		}) + "\n",
 		{ flag: "a", mode: 0o600 },
 	);
-const service = createService({ file: env.X1_KEYS_DB ?? "/var/lib/x1-ec2-keys/keys.sqlite", kms, audit });
+const service = createService({ file: env.X1_KEYS_DB ?? "/var/lib/x1-ec2-keys/keys.sqlite", kms, provisioner, audit });
 const verify = createProxyVerifier({ keys: loadProxyKeys() });
 const extraOrigins = (env.X1_EXTRA_ORIGINS ?? "")
 	.split(",")
@@ -48,7 +52,7 @@ server.requestTimeout = 15000;
 server.headersTimeout = 10000;
 server.listen(Number(env.X1_PORT ?? 8790), "127.0.0.1", () =>
 	console.log(
-		"EC2 key service ready on loopback; owner-signed create and lifecycle only; no signing or exchange routes.",
+		`EC2 key service ready on loopback; new keys: ${provisioner ? "signer account" : "unavailable"}; legacy keys: lifecycle only; no signing or exchange routes.`,
 	),
 );
 process.on("SIGTERM", () =>

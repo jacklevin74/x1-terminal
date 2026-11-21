@@ -1,10 +1,24 @@
-# EC2 KMS keys for `/api_keys`
+# `/api_keys` key service (x1-ec2-keys)
 
-`/api_keys` lets a connected owner wallet create and manage non-exportable
-`ECC_SECG_P256K1` / `SIGN_VERIFY` AWS KMS keys through a service on EC2 (`us-east-2`).
-The service never signs, approves on Hyperliquid, registers bots or trades
-(`capabilities: {sign:false, register:false}`). Hyperliquid approval stays in the
-browser, through `approveAgent` signed by the owner.
+**Since 2026-11-20 new keys are created in the SIGNER account**, not in this trading account, so the
+policy-signer Lambda (`hl-policy-signer`) can actually trade with them. The service relays the owner's
+exact EIP-712-signed request (domain `X1SignerKeys` v1) to the key provisioner Lambda in the signer
+account (hl-ws `signer/src/terminal-wallets.js`, design and deploy plan in hl-ws
+`docs/terminal-api-wallets.md`). The provisioner verifies the owner's signature itself, creates a
+secp256k1 key whose key policy denies `kms:Sign` to every principal except `role/hl-policy-signer`, and
+writes a binding (owner, account, agent, conservative limits) that the signer reads. This host can disable a
+key (fail-safe) but cannot create, bind, enable or delete one without the owner's signature.
+
+Keys created here before that date are **legacy** (trading account, `backend=legacy` in the database). The
+Organizations RCP keeps the signer account from ever using them. The page shows them as "not usable for
+trading" and offers only rename, disable, delete and cancel-delete (domain `X1Ec2KeyCreation` v1, lifecycle
+role). Nothing on this host can create a trading-account key any more; `x1-ec2-key-registrar` is unused.
+
+Flow: owner picks the trading account (main or an owned sub-account) and approval duration (30/90/180 days,
+default 90) → signs `create` → provisioner makes the key and a `pending` binding → owner signs `approveAgent`
+on Hyperliquid in the browser → the status poll asks the provisioner to `activate`, which checks Hyperliquid
+itself (agent listed with ≥ 1 h left, X1 builder fee ≥ 0.05%, sub-account still owned) → `active`.
+Renewal: same agent, same name, later `valid_until`; the next poll refreshes the binding's expiry.
 
 ## Architecture
 
@@ -62,9 +76,9 @@ Rate limits: 30 requests/min per client, 120 failed-auth requests/min per peer,
 |---|---|---|
 | `status` | GET | Public metadata: `awaiting_approval`, `disabled`, `pending_deletion` (+`deletionDate`). The page shows "Authorized on Hyperliquid" from Hyperliquid's own `extraAgents`. |
 | `nonce` | GET | Single-use, 5-minute nonce. |
-| `create` | POST | `{owner,name,days}`. Idempotent: the same owner, nonce and body returns the original result; an uncertain `CreateKey` is never retried. A definite AWS refusal (e.g. validation) frees the owner to try again. |
+| `create` | POST | `{account,days,name,owner}`, signed with `X1SignerKeys`. Relayed to the provisioner (`key-create`). Idempotent: the same signed request always maps to the same key; an unconfirmed invoke is finished by the status poll with the stored request (the provisioner returns or adopts the key it made). A provisioner refusal (quota, sub-account not owned, …) frees the owner to try again. |
 | `rename` | POST | `{id,name,owner}`. Display name only. |
-| `disable` / `enable` | POST | `{id,owner}` → `DisableKey` / `EnableKey`. |
+| `disable` / `enable` | POST | Signer keys: `{account,agent,owner}` → provisioner `key-manage` (enable returns the binding to `pending` until re-activation). Legacy keys: `{id,owner}` → `DisableKey`; enable is refused. |
 | `delete` | POST | `{id,owner[,days]}` → `ScheduleKeyDeletion` (default 30, 7–30). The page tells the owner to also remove the Hyperliquid API wallet. |
 | `cancel-delete` | POST | `{id,owner}` → `CancelKeyDeletion`. KMS leaves the key disabled. |
 
@@ -74,21 +88,17 @@ equal the record's owner. Each create and change is appended to
 `/var/lib/x1-ec2-keys/audit.jsonl` (`ts, owner, op, id, agent, result`). No ARNs,
 credentials or signatures appear in responses or logs.
 
-## AWS permissions (templates in `deploy/`, `ACCOUNT_ID` filled in by the gate scripts)
+## AWS permissions
 
-- **Instance role** `copybot-kms-shadow-signer`: unchanged. It may assume the two roles below.
-- **`x1-ec2-key-registrar`** (`registrar-policy.json`): `CreateKey` only for tagged,
-  single-Region secp256k1 `SIGN_VERIFY` keys with `env=prod`; `TagResource` only with those tags;
-  `GetPublicKey`/`DescribeKey` only on its tagged keys. Explicit Deny on Sign, Decrypt, grants,
-  `PutKeyPolicy`, untagging, aliases and all lifecycle actions. The key policy is set by
-  `CreateKey` itself (`src/kms.js` → `keyPolicy`).
-- **`x1-ec2-key-lifecycle`** (`lifecycle-policy.json`): its IAM policy contains **no Allow**.
-  The only grant is in each key's own key policy, written at creation:
-  Disable/Enable/CancelKeyDeletion/DescribeKey and ScheduleKeyDeletion with a 7–30 day window.
-  IAM additionally denies every other action, any key without `app=x1-terminal` and
-  `purpose=ec2-api-key`, and any Region but us-east-2. Because no IAM Allow exists, adding
-  tags to some other key (for example the copy trader's) grants this role nothing.
-- The previous registrar policy is kept in `registrar-policy.previous.json` for rollback.
+- **Instance role** `copybot-kms-shadow-signer`: unchanged. Same-account trust policies let it assume the roles below
+  (session name `x1-ec2-keys`).
+- **`x1-signer-key-client`** (trading account, `deploy/signer-client-*.json`, gate 7): only
+  `lambda:InvokeFunction` on the signer-account `hl-copybot-provisioner`; everything else denied. The provisioner's
+  resource policy admits only this role (`TerminalKeysRoleArn` in hl-ws `signer/infra/copybot-followers.yaml`).
+  Cross-account Lambda invoke from this instance role to the signer account is already used by the live bots
+  (`hl-policy-signer`), so the Organizations RCP (which blocks cross-account KMS) does not block it.
+- **`x1-ec2-key-lifecycle`** (`lifecycle-policy.json`): legacy keys only; its grant is in each legacy key's policy.
+- **`x1-ec2-key-registrar`**: no longer used by the code. Retire it after the cutover (see hl-ws doc).
 
 ## Deploy / rollout
 
@@ -129,7 +139,7 @@ npm ci --prefix tools/ec2-key-registrar --ignore-scripts
 npm test --prefix tools/ec2-key-registrar
 ```
 
-Offline only: fake KMS adapter and throwaway keys. They cover the proxy HMAC
+Offline only: fake provisioner, fake KMS adapter and throwaway keys. They cover the proxy HMAC
 (missing/bad/stale/replayed), method and op checks, body caps, origin tiers, rate limits,
 owner signatures, nonces, idempotent create, ownership (403), AWS refusals, audit records,
 the startup identity check and database migration.

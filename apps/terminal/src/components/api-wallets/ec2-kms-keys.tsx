@@ -5,21 +5,28 @@ import { useEffect, useRef, useState } from "react";
 import { type Address, zeroAddress } from "viem";
 import { useConnection, useWalletClient } from "wagmi";
 import { useCopyToClipboard } from "@/hooks/ui/use-copy-to-clipboard";
+import { cn } from "@/lib/cn";
 import {
+	APPROVAL_DAYS,
 	createEc2Key,
+	DEFAULT_APPROVAL_DAYS,
 	EC2_UNAVAILABLE,
 	type Ec2Key,
 	type Ec2ManageOp,
 	ec2AgentName,
 	getEc2Keys,
 	manageEc2Key,
+	renewDue,
+	SIGNER_DEFAULT_LIMITS,
+	signerKeyLabel,
+	signerKeyTone,
 } from "@/lib/ec2-keys/api";
 import { useExchange, useHyperliquid, useInfo } from "@/lib/hyperliquid";
 import { agentApprovalCurrent } from "@/lib/trade/api-wallets";
 
 const field =
 	"w-full min-w-0 rounded-lg border border-stroke-weak bg-background px-3 py-2.5 text-sm outline-none focus:border-brand disabled:opacity-40";
-const small = "rounded-md border border-stroke-weak px-2 py-1 text-[11px] hover:bg-fill-hover disabled:opacity-40";
+const small = "rounded-md border border-stroke-weak px-2 py-1 text-2xs hover:bg-fill-hover disabled:opacity-40";
 const OP_TITLE: Record<Ec2ManageOp, string> = {
 	rename: "Rename",
 	disable: "Disable",
@@ -29,12 +36,24 @@ const OP_TITLE: Record<Ec2ManageOp, string> = {
 };
 const OP_DONE: Record<Ec2ManageOp, string> = {
 	rename: "Key renamed.",
-	disable: "KMS key disabled. It cannot sign until you enable it.",
-	enable: "KMS key enabled.",
-	delete: "KMS key deletion scheduled. Remove its Hyperliquid API wallet below as well.",
+	disable: "Key disabled. The X1 signer stops signing with it at once.",
+	enable: "Key enabled. It signs again after its Hyperliquid approval is re-checked.",
+	delete: "Key deletion scheduled. Remove its Hyperliquid API wallet below as well.",
 	"cancel-delete": "Deletion cancelled. The key stays disabled until you enable it.",
 };
+const LIMITS_TEXT = `${SIGNER_DEFAULT_LIMITS.maxLeverage}x leverage, ${SIGNER_DEFAULT_LIMITS.maxGrossLev}x gross exposure, $${SIGNER_DEFAULT_LIMITS.maxOrderUsd.toLocaleString()} per order, ${SIGNER_DEFAULT_LIMITS.maxOrdersPerMin} new orders a minute`;
 type Pending = { op: Ec2ManageOp; key: Ec2Key };
+type SubAccount = { name: string; subAccountUser: Address; master: Address };
+
+function connectionLabel(owner: Address | undefined, env: string, fetching: boolean, ready: boolean, store?: string) {
+	if (!owner) return "Connect owner wallet";
+	if (env !== "Mainnet") return "Mainnet required";
+	if (fetching && !ready) return "Connecting…";
+	if (!ready) return EC2_UNAVAILABLE;
+	if (store === "signer") return "X1 signer account · us-east-2";
+	return "New keys unavailable";
+}
+
 export function Ec2KmsKeys({ onAuthorized }: { onAuthorized: () => void }) {
 	const { address: owner } = useConnection(),
 		{ data: wallet } = useWalletClient(),
@@ -44,8 +63,9 @@ export function Ec2KmsKeys({ onAuthorized }: { onAuthorized: () => void }) {
 	identity.current = { owner, env };
 	const alive = useRef(true),
 		lock = useRef(false);
-	const [name, setName] = useState("X1 KMS"),
-		[days, setDays] = useState(30),
+	const [name, setName] = useState("X1 Key"),
+		[days, setDays] = useState(DEFAULT_APPROVAL_DAYS),
+		[account, setAccount] = useState(""),
 		[error, setError] = useState<string | null>(null),
 		[message, setMessage] = useState<string | null>(null);
 	const [pending, setPending] = useState<Pending | null>(null),
@@ -55,6 +75,7 @@ export function Ec2KmsKeys({ onAuthorized }: { onAuthorized: () => void }) {
 		setError(null);
 		setMessage(null);
 		setPending(null);
+		setAccount("");
 		return () => {
 			alive.current = false;
 		};
@@ -74,11 +95,31 @@ export function Ec2KmsKeys({ onAuthorized }: { onAuthorized: () => void }) {
 		{ user: owner ?? zeroAddress },
 		{ enabled: !!owner, refetchOnWindowFocus: true },
 	);
+	const subAccounts = useInfo("subAccounts", { user: owner ?? zeroAddress }, { enabled: !!owner });
+	const ownedSubs = ((subAccounts.data ?? []) as SubAccount[]).filter(
+		(s) => !!owner && s.master.toLowerCase() === owner.toLowerCase(),
+	);
+	const target = (account || owner) as Address | undefined;
 	const approve = useExchange("approveAgent");
 	const approved = (key: Ec2Key) =>
-		approvals.data?.some(
+		!!approvals.data?.some(
 			(a) => a.address.toLowerCase() === key.agent.toLowerCase() && agentApprovalCurrent(a.validUntil),
 		);
+	function accountLabel(address?: Address) {
+		if (!address || !owner) return "";
+		if (address.toLowerCase() === owner.toLowerCase()) return "Main account";
+		const sub = ownedSubs.find((s) => s.subAccountUser.toLowerCase() === address.toLowerCase());
+		return sub ? `Sub-account ${sub.name}` : `Sub-account ${address.slice(0, 6)}…${address.slice(-4)}`;
+	}
+	function authorizeLabel(key: Ec2Key) {
+		if (!approved(key)) return "Authorize on Hyperliquid";
+		if (renewDue(key)) return "Renew on Hyperliquid";
+		return "Authorized";
+	}
+	function canAuthorize(key: Ec2Key) {
+		if (key.backend !== "signer" || key.state === "disabled" || key.state === "pending_deletion") return false;
+		return !approved(key) || renewDue(key);
+	}
 	const mutation = useMutation({
 		retry: false,
 		mutationFn: async ({
@@ -101,15 +142,17 @@ export function Ec2KmsKeys({ onAuthorized }: { onAuthorized: () => void }) {
 			try {
 				check();
 				if (!enabled || !owner || !wallet || keys.isError || !keys.data)
-					throw Error("Connect the owner wallet and EC2 key service first.");
+					throw Error("Connect the owner wallet and the key service first.");
 				setError(null);
 				if (action === "create") {
-					if (!keys.data.canCreate) throw Error("Key quota reached or a previous request needs reconciliation.");
+					if (!keys.data.canCreate || !target)
+						throw Error("Key quota reached, creation unavailable, or a previous request is being finished.");
 					setMessage(
-						"Confirm key creation in your owner wallet. This creates a billable KMS key; it does not authorize trading.",
+						"Confirm key creation in your owner wallet. This creates a billable KMS key in the X1 signer account; it does not authorize trading.",
 					);
 					const status = await createEc2Key({
 						owner,
+						account: target,
 						name: name.trim(),
 						days,
 						assertOwner: check,
@@ -117,7 +160,7 @@ export function Ec2KmsKeys({ onAuthorized }: { onAuthorized: () => void }) {
 					});
 					check();
 					client.setQueryData(queryKey, status);
-					setMessage("KMS key created on EC2. Authorize its public address on Hyperliquid below.");
+					setMessage("Key created in the X1 signer account. Authorize its address on Hyperliquid below.");
 				} else if (action === "manage") {
 					if (!op || !key || !keys.data.agents.some((a) => a.id === key.id && a.agent === key.agent))
 						throw Error("Select a key belonging to this owner.");
@@ -125,7 +168,7 @@ export function Ec2KmsKeys({ onAuthorized }: { onAuthorized: () => void }) {
 					const status = await manageEc2Key({
 						op,
 						owner,
-						id: key.id,
+						key,
 						...(op === "rename" ? { name: rename.trim() } : {}),
 						assertOwner: check,
 						sign: (args) => wallet.signTypedData(args),
@@ -135,14 +178,8 @@ export function Ec2KmsKeys({ onAuthorized }: { onAuthorized: () => void }) {
 					setPending(null);
 					setMessage(OP_DONE[op]);
 				} else {
-					if (
-						!key ||
-						!keys.data.agents.some((a) => a.id === key.id && a.agent === key.agent) ||
-						!agentApprovalCurrent(key.validUntil)
-					)
-						throw Error("Select a current key belonging to this owner.");
-					if (key.state === "disabled" || key.state === "pending_deletion")
-						throw Error("Enable this KMS key before authorizing it.");
+					if (!key || !keys.data.agents.some((a) => a.id === key.id && a.agent === key.agent) || !canAuthorize(key))
+						throw Error("Select a current signer-account key belonging to this owner.");
 					const current = await approvals.refetch();
 					check();
 					if (current.error || !current.data) throw Error("Could not verify existing Hyperliquid authorizations.");
@@ -167,7 +204,10 @@ export function Ec2KmsKeys({ onAuthorized }: { onAuthorized: () => void }) {
 					)
 						throw Error("Authorization submitted but not verified. Refresh before retrying.");
 					onAuthorized();
-					setMessage("KMS API wallet authorization verified. No bot or remote trade signing was enabled.");
+					void keys.refetch();
+					setMessage(
+						"Authorized on Hyperliquid. The X1 signer activates the key once it confirms this approval and the X1 builder fee.",
+					);
 				}
 			} catch (e) {
 				if (alive.current && identity.current.owner === startOwner && identity.current.env === startEnv) {
@@ -182,47 +222,24 @@ export function Ec2KmsKeys({ onAuthorized }: { onAuthorized: () => void }) {
 	});
 	const busy = mutation.isPending,
 		ready = enabled && keys.isSuccess && !keys.isError,
-		manage = ready && !!keys.data?.capabilities.manage && !!wallet;
-	const ask = (op: Ec2ManageOp, key: Ec2Key) => {
+		manage = ready && !!keys.data?.capabilities.manage && !!wallet,
+		legacyKeys = keys.data?.agents.filter((k) => k.backend === "legacy") ?? [];
+	function ask(op: Ec2ManageOp, key: Ec2Key) {
 		setError(null);
 		setMessage(null);
 		setRename(key.name);
 		setPending({ op, key });
-	};
-	const stateLabel = (key: Ec2Key) =>
-		key.state === "pending_deletion"
-			? `Deletion scheduled${key.deletionDate ? ` · ${new Date(key.deletionDate).toLocaleDateString()}` : ""}`
-			: key.state === "disabled"
-				? "Disabled"
-				: approved(key)
-					? "Authorized on Hyperliquid"
-					: "Awaiting owner approval";
-	const stateTone = (key: Ec2Key) =>
-		key.state === "pending_deletion"
-			? "text-error"
-			: key.state === "disabled"
-				? "text-fg-muted"
-				: approved(key)
-					? "text-success"
-					: "text-warning";
+	}
 	return (
-		<section aria-label="EC2 KMS keys" className="rounded-xl border border-stroke-weak bg-surface p-4 space-y-3">
+		<section aria-label="KMS keys" className="rounded-xl border border-stroke-weak bg-surface p-4 space-y-3">
 			<div className="flex flex-wrap items-center justify-between gap-3">
 				<h2 className="inline-flex items-center gap-2 text-sm font-medium">
 					<CloudIcon className="size-4" />
 					AWS KMS keys
 				</h2>
 				<div className="flex items-center gap-3">
-					<span className={`text-xs ${ready ? "text-success" : "text-fg-muted"}`}>
-						{!owner
-							? "Connect owner wallet"
-							: env !== "Mainnet"
-								? "Mainnet required"
-								: keys.isFetching && !keys.data
-									? "Connecting to EC2…"
-									: ready
-										? "EC2 connected · us-east-2"
-										: EC2_UNAVAILABLE}
+					<span className={cn("text-xs", ready && keys.data?.keyStore === "signer" ? "text-success" : "text-fg-muted")}>
+						{connectionLabel(owner, env, keys.isFetching, ready, keys.data?.keyStore)}
 					</span>
 					<button
 						type="button"
@@ -235,10 +252,10 @@ export function Ec2KmsKeys({ onAuthorized }: { onAuthorized: () => void }) {
 				</div>
 			</div>
 			<p className="text-xs text-fg-muted">
-				Create a non-exportable key through our EC2 service. The private key stays in AWS KMS; no download or deposit is
-				needed. Creating a key is billable.
+				Create a non-exportable key in the X1 signer account. The private key stays in AWS KMS and only the X1 policy
+				signer can sign with it, for the one account you choose, within {LIMITS_TEXT}. Creating a key is billable.
 			</p>
-			<div className="grid items-end gap-3 sm:grid-cols-[minmax(140px,1fr)_auto_auto]">
+			<div className="grid items-end gap-3 sm:grid-cols-[minmax(140px,1fr)_minmax(140px,1fr)_auto_auto]">
 				<label className="space-y-1 text-xs text-fg-muted">
 					<span>Key name</span>
 					<input
@@ -251,6 +268,23 @@ export function Ec2KmsKeys({ onAuthorized }: { onAuthorized: () => void }) {
 					/>
 				</label>
 				<label className="space-y-1 text-xs text-fg-muted">
+					<span>Trading account</span>
+					<select
+						aria-label="KMS key trading account"
+						value={account}
+						disabled={busy || !owner}
+						onChange={(e) => setAccount(e.target.value)}
+						className={field}
+					>
+						<option value="">Main account</option>
+						{ownedSubs.map((s) => (
+							<option key={s.subAccountUser} value={s.subAccountUser}>
+								Sub-account {s.name}
+							</option>
+						))}
+					</select>
+				</label>
+				<label className="space-y-1 text-xs text-fg-muted">
 					<span>Approval duration</span>
 					<select
 						aria-label="KMS approval duration"
@@ -259,7 +293,7 @@ export function Ec2KmsKeys({ onAuthorized }: { onAuthorized: () => void }) {
 						onChange={(e) => setDays(Number(e.target.value))}
 						className={field}
 					>
-						{[7, 30, 90].map((d) => (
+						{APPROVAL_DAYS.map((d) => (
 							<option key={d} value={d}>
 								{d} days
 							</option>
@@ -281,10 +315,21 @@ export function Ec2KmsKeys({ onAuthorized }: { onAuthorized: () => void }) {
 					keep working.
 				</output>
 			)}
+			{ready && keys.data?.keyStore === "unavailable" && (
+				<output className="block text-xs text-warning">
+					New keys are created in the X1 signer account, which this service cannot reach yet. Existing keys can still be
+					managed.
+				</output>
+			)}
 			{!!keys.data?.pending && (
 				<output className="block text-xs text-warning">
-					{keys.data.pending} creation request(s) require recovery. Refresh before retrying the same name and duration;
-					do not create replacements.
+					{keys.data.pending} creation request(s) are being finished. Refresh; do not create replacements.
+				</output>
+			)}
+			{!!legacyKeys.length && (
+				<output className="block text-xs text-warning">
+					{legacyKeys.length} legacy key(s) were created in the trading account. The X1 signer can never use them:
+					disable or delete them, and remove their Hyperliquid API wallets below.
 				</output>
 			)}
 			{!pending && message && <output className="block text-xs text-brand">{message}</output>}
@@ -295,106 +340,100 @@ export function Ec2KmsKeys({ onAuthorized }: { onAuthorized: () => void }) {
 			)}
 			{ready && !!keys.data?.agents.length && (
 				<div className="divide-y divide-stroke-weak border-t border-stroke-weak">
-					{keys.data.agents.map((key) => {
-						const usable = key.state !== "disabled" && key.state !== "pending_deletion";
-						return (
-							<div
-								key={key.id}
-								data-kms-key={key.id}
-								className="flex flex-wrap items-center justify-between gap-3 py-3"
-							>
-								<div className="min-w-0 space-y-1">
-									<div className="flex items-center gap-2 text-xs">
-										<strong>{key.name}</strong>
-										<span data-kms-state={key.state} className={stateTone(key)}>
-											{stateLabel(key)}
-										</span>
-									</div>
-									<KmsAddress agent={key.agent} />
-									<p className="text-[10px] text-fg-muted">
-										Approval name: {ec2AgentName(key).split(" valid_until ")[0]} · Expires{" "}
-										{new Date(key.validUntil).toLocaleString()}
-									</p>
+					{keys.data.agents.map((key) => (
+						<div
+							key={key.id}
+							data-kms-key={key.id}
+							data-kms-backend={key.backend}
+							className="flex flex-wrap items-center justify-between gap-3 py-3"
+						>
+							<div className="min-w-0 space-y-1">
+								<div className="flex flex-wrap items-center gap-2 text-xs">
+									<strong>{key.name}</strong>
+									{key.backend === "signer" && <span className="text-fg-muted">{accountLabel(key.account)}</span>}
+									<span data-kms-state={key.state} className={signerKeyTone(key)}>
+										{signerKeyLabel(key, approved(key))}
+									</span>
 								</div>
-								<div className="flex flex-wrap items-center gap-1.5">
+								<KmsAddress agent={key.agent} />
+								<p className="text-2xs text-fg-muted">
+									{key.backend === "signer"
+										? `Approval: ${key.days} days · Expires ${new Date(key.validUntil).toLocaleString()}`
+										: "Created in the trading account. Remove its Hyperliquid API wallet below."}
+								</p>
+							</div>
+							<div className="flex flex-wrap items-center gap-1.5">
+								{key.backend === "signer" && (
 									<button
 										type="button"
-										disabled={
-											busy ||
-											!wallet ||
-											!usable ||
-											approved(key) ||
-											approvals.isError ||
-											!agentApprovalCurrent(key.validUntil)
-										}
+										disabled={busy || !wallet || !canAuthorize(key) || approvals.isError}
 										onClick={() => mutation.mutate({ action: "approve", key })}
 										className="rounded-lg border border-stroke-weak px-3 py-2 text-xs text-brand disabled:opacity-40"
 									>
-										{approved(key) ? "Authorized" : "Authorize on Hyperliquid"}
+										{authorizeLabel(key)}
 									</button>
+								)}
+								<button
+									type="button"
+									aria-label={`Rename KMS key ${key.name}`}
+									disabled={busy || !manage}
+									onClick={() => ask("rename", key)}
+									className={cn(small, "text-brand")}
+								>
+									Rename
+								</button>
+								{key.state === "disabled" && key.backend === "signer" && (
 									<button
 										type="button"
-										aria-label={`Rename KMS key ${key.name}`}
+										aria-label={`Enable KMS key ${key.name}`}
 										disabled={busy || !manage}
-										onClick={() => ask("rename", key)}
-										className={`${small} text-brand`}
+										onClick={() => ask("enable", key)}
+										className={cn(small, "text-brand")}
 									>
-										Rename
+										Enable
 									</button>
-									{key.state === "disabled" ? (
-										<button
-											type="button"
-											aria-label={`Enable KMS key ${key.name}`}
-											disabled={busy || !manage}
-											onClick={() => ask("enable", key)}
-											className={`${small} text-brand`}
-										>
-											Enable
-										</button>
-									) : (
-										key.state !== "pending_deletion" && (
-											<button
-												type="button"
-												aria-label={`Disable KMS key ${key.name}`}
-												disabled={busy || !manage}
-												onClick={() => ask("disable", key)}
-												className={`${small} text-warning`}
-											>
-												Disable
-											</button>
-										)
-									)}
-									{key.state === "pending_deletion" ? (
-										<button
-											type="button"
-											aria-label={`Cancel deletion of KMS key ${key.name}`}
-											disabled={busy || !manage}
-											onClick={() => ask("cancel-delete", key)}
-											className={`${small} text-brand`}
-										>
-											Cancel deletion
-										</button>
-									) : (
-										<button
-											type="button"
-											aria-label={`Delete KMS key ${key.name}`}
-											disabled={busy || !manage}
-											onClick={() => ask("delete", key)}
-											className={`${small} border-error/30 text-error`}
-										>
-											Delete
-										</button>
-									)}
-								</div>
+								)}
+								{key.state !== "disabled" && key.state !== "pending_deletion" && (
+									<button
+										type="button"
+										aria-label={`Disable KMS key ${key.name}`}
+										disabled={busy || !manage}
+										onClick={() => ask("disable", key)}
+										className={cn(small, "text-warning")}
+									>
+										Disable
+									</button>
+								)}
+								{key.state === "pending_deletion" ? (
+									<button
+										type="button"
+										aria-label={`Cancel deletion of KMS key ${key.name}`}
+										disabled={busy || !manage}
+										onClick={() => ask("cancel-delete", key)}
+										className={cn(small, "text-brand")}
+									>
+										Cancel deletion
+									</button>
+								) : (
+									<button
+										type="button"
+										aria-label={`Delete KMS key ${key.name}`}
+										disabled={busy || !manage}
+										onClick={() => ask("delete", key)}
+										className={cn(small, "border-error/30 text-error")}
+									>
+										Delete
+									</button>
+								)}
 							</div>
-						);
-					})}
+						</div>
+					))}
 				</div>
 			)}
-			<p className="text-[10px] text-fg-muted">
-				This connection creates, authorizes and manages keys only. It does not register a bot or enable remote trade
-				signing. Removing an API wallet below revokes Hyperliquid access; deleting a KMS key here does not remove its
-				Hyperliquid approval.
+			<p className="text-2xs text-fg-muted">
+				This page creates, authorizes and manages keys only; it never signs a trade. A key signs only after Hyperliquid
+				shows your approval and the X1 builder fee. Removing an API wallet below revokes Hyperliquid access; deleting a
+				KMS key here does not remove its Hyperliquid approval.
 			</p>
 			{pending && (
 				<Modal
@@ -434,7 +473,11 @@ export function Ec2KmsKeys({ onAuthorized }: { onAuthorized: () => void }) {
 									The key cannot sign while disabled. Its Hyperliquid approval stays in place; you can enable it again.
 								</p>
 							)}
-							{pending.op === "enable" && <p className="text-sm">The key can sign again wherever it is authorized.</p>}
+							{pending.op === "enable" && (
+								<p className="text-sm">
+									The X1 signer signs with it again once it re-checks the Hyperliquid approval and the builder fee.
+								</p>
+							)}
 							{pending.op === "delete" && (
 								<>
 									<p className="text-sm">
@@ -475,7 +518,10 @@ export function Ec2KmsKeys({ onAuthorized }: { onAuthorized: () => void }) {
 										(!/^[-\w ]{1,16}$/.test(rename.trim()) || rename.trim() === pending.key.name))
 								}
 								onClick={() => mutation.mutate({ action: "manage", key: pending.key, op: pending.op })}
-								className={`rounded-lg px-4 py-2 text-sm text-fg-inverse disabled:opacity-40 ${pending.op === "delete" || pending.op === "disable" ? "bg-error" : "bg-brand"}`}
+								className={cn(
+									"rounded-lg px-4 py-2 text-sm text-fg-inverse disabled:opacity-40",
+									pending.op === "delete" || pending.op === "disable" ? "bg-error" : "bg-brand",
+								)}
 							>
 								{busy ? "Confirm in wallet…" : `Confirm ${OP_TITLE[pending.op].toLowerCase()}`}
 							</button>
