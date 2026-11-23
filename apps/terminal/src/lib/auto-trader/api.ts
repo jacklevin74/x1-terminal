@@ -46,6 +46,14 @@ function endpoint(api: string, op: string, master?: Address) {
 	if (master) url.searchParams.set("addr", master);
 	return url.href;
 }
+export class AutoTraderResponseError extends Error {
+	status: number;
+	constructor(message: string, status: number) {
+		super(message);
+		this.name = "AutoTraderResponseError";
+		this.status = status;
+	}
+}
 async function json(url: string, options: RequestInit, fetcher = fetch) {
 	let response: Response;
 	try {
@@ -61,10 +69,11 @@ async function json(url: string, options: RequestInit, fetcher = fetch) {
 	}
 	const data = await response.json().catch(() => null);
 	if (!response.ok)
-		throw new Error(
+		throw new AutoTraderResponseError(
 			typeof data?.error === "string"
 				? data.error.replace(/0x[\da-f]{64}/gi, "[redacted]").slice(0, 300)
 				: `Auto Trader request failed (${response.status}).`,
+			response.status,
 		);
 	if (!data || typeof data !== "object") throw new Error("Invalid Auto Trader response.");
 	return data;

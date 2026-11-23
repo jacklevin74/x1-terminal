@@ -7,12 +7,12 @@ interface Props {
 	title: string;
 	subtitle: string;
 	equity: string;
-	markets: string[];
-	actionLabel: string;
-	busy: boolean;
-	disabled: boolean;
-	onToggle: () => void;
-	onMarkets: () => void;
+	markets?: string[];
+	actionLabel?: string;
+	busy?: boolean;
+	disabled?: boolean;
+	onToggle?: () => void;
+	onMarkets?: () => void;
 }
 
 export function AutoStatusCard({
@@ -42,35 +42,39 @@ export function AutoStatusCard({
 					<span className="text-sm font-medium">{title}</span>
 					<span className="text-xs text-fg-muted tabular-nums">{subtitle}</span>
 				</span>
-				<button
-					type="button"
-					onClick={onToggle}
-					disabled={disabled || busy}
-					className={cn(
-						"inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full px-3.5 text-xs font-medium transition-colors disabled:opacity-50",
-						on ? "bg-control-hover text-fg hover:bg-fill-hover" : "bg-fill text-fg-inverse hover:opacity-90",
-					)}
-				>
-					{busy && <SpinnerGapIcon className="size-3.5 animate-spin" />}
-					{actionLabel}
-				</button>
+				{onToggle && (
+					<button
+						type="button"
+						onClick={onToggle}
+						disabled={disabled || busy}
+						className={cn(
+							"inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full px-3.5 text-xs font-medium transition-colors disabled:opacity-50",
+							on ? "bg-control-hover text-fg hover:bg-fill-hover" : "bg-fill text-fg-inverse hover:opacity-90",
+						)}
+					>
+						{busy && <SpinnerGapIcon className="size-3.5 animate-spin" />}
+						{actionLabel}
+					</button>
+				)}
 			</div>
 			<div className="grid grid-cols-3 gap-2 text-xs">
 				<Metric label="Account equity" value={equity} />
 			</div>
-			<button
-				type="button"
-				onClick={onMarkets}
-				className="group -mx-2 -mb-2 flex items-center gap-3 rounded-8 px-2 py-2 text-left transition-colors hover:bg-control-hover"
-			>
-				<AutoIconStack coins={markets} max={5} />
-				<span className="flex-1 text-xs text-fg-secondary">
-					{on ? "Trading " : ""}
-					<span className="text-fg">{markets.length} markets</span>
-					{on ? "" : " selected"}
-				</span>
-				<CaretRightIcon weight="bold" className="size-3 text-fg-muted" />
-			</button>
+			{onMarkets && markets && (
+				<button
+					type="button"
+					onClick={onMarkets}
+					className="group -mx-2 -mb-2 flex items-center gap-3 rounded-8 px-2 py-2 text-left transition-colors hover:bg-control-hover"
+				>
+					<AutoIconStack coins={markets} max={5} />
+					<span className="flex-1 text-xs text-fg-secondary">
+						{on ? "Trading " : ""}
+						<span className="text-fg">{markets.length} markets</span>
+						{on ? "" : " selected"}
+					</span>
+					<CaretRightIcon weight="bold" className="size-3 text-fg-muted" />
+				</button>
+			)}
 		</div>
 	);
 }

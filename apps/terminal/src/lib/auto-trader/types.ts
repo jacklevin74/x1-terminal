@@ -9,6 +9,13 @@ export interface AutoTraderSettings {
 	include: string[] | null;
 	exclude: string[] | null;
 	minOrderUsd: number;
+	follow?: string;
+	followLeverage?: number;
+	basket?: string[];
+}
+export interface BasketMember {
+	id: string;
+	on: boolean;
 }
 export interface PlanRow {
 	coin: string;

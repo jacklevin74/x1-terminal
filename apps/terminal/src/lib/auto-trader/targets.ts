@@ -31,6 +31,21 @@ export function validateSettings(settings: AutoTraderSettings, markets: readonly
 			!settings.closeMarkets.every(validMarket))
 	)
 		throw new Error("Invalid pending market closes.");
+	if (settings.follow !== undefined && !/^0x[0-9a-fA-F]{40}$/.test(settings.follow))
+		throw new Error("Choose a valid trader address.");
+	if (
+		settings.followLeverage !== undefined &&
+		(!Number.isInteger(settings.followLeverage) || settings.followLeverage < 1 || settings.followLeverage > 40)
+	)
+		throw new Error("Max leverage must be an integer from 1 to 40.");
+	if (
+		settings.basket !== undefined &&
+		(!Array.isArray(settings.basket) ||
+			!settings.basket.length ||
+			settings.basket.length > 200 ||
+			!settings.basket.every((a) => typeof a === "string" && /^0x[0-9a-fA-F]{40}$/.test(a)))
+	)
+		throw new Error("The basket needs 1 to 200 valid trader addresses.");
 	if (!Number.isInteger(settings.leverage) || settings.leverage < 1 || settings.leverage > 5)
 		throw new Error("Leverage must be an integer from 1 to 5.");
 	if (!Number.isFinite(settings.killPct) || settings.killPct <= 0 || settings.killPct > 0.5)

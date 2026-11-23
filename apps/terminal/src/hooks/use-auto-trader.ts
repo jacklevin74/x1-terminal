@@ -5,6 +5,7 @@ import { useConnection } from "wagmi";
 import { AUTO_TRADER_BUILDER, AUTO_TRADER_MIN_EQUITY } from "@/config/auto-trader";
 import { useSubmitPlan } from "@/hooks/trade/use-submit-plan";
 import { useTradingAccount } from "@/hooks/use-trading-account";
+import { type ChoiceFields, submitChoice } from "@/lib/auto-trader/choice";
 import { closeNow } from "@/lib/auto-trader/close-now";
 import { demoSetContext, isDemoSession } from "@/lib/auto-trader/demo-sim";
 import { autoTraderErrorMessage } from "@/lib/auto-trader/error-message";
@@ -99,6 +100,36 @@ export function useAutoTrader() {
 		);
 	}
 
+	function saveChoice(fields: ChoiceFields) {
+		return submitChoice({
+			current: status.data?.settings ?? settings,
+			fields,
+			universe,
+			send: (body) => control.mutateAsync({ action: "settings", body }),
+			reload: async () => {
+				const saved = await status.refetch();
+				return saved.isError ? null : saved.data?.settings;
+			},
+		});
+	}
+
+	function startWith(fields: ChoiceFields) {
+		return run(
+			"start",
+			async () => {
+				if (isDemoSession()) prepareDemo();
+				else await verifyReady();
+				await saveChoice(fields);
+				await control.mutateAsync({ action: "resume", body: {} });
+			},
+			"Auto Trader started.",
+		);
+	}
+
+	function applyChoice(fields: ChoiceFields) {
+		return run("settings", () => saveChoice(fields), "Auto Trader settings saved.");
+	}
+
 	function pause() {
 		return run("pause", () => control.mutateAsync({ action: "pause", body: {} }), "Auto Trader paused.");
 	}
@@ -158,6 +189,8 @@ export function useAutoTrader() {
 		markets,
 		pending,
 		start,
+		startWith,
+		applyChoice,
 		pause,
 		flatten,
 		remove,

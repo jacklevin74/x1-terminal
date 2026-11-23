@@ -1,18 +1,25 @@
-import { ArrowUpRightIcon } from "@phosphor-icons/react";
+import { ArrowUpRightIcon, CaretDownIcon, CaretRightIcon } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import { useAutoTrader } from "@/hooks/use-auto-trader";
 import { useAutoTraderSetup } from "@/hooks/use-auto-trader-setup";
 import { useTradingAccount } from "@/hooks/use-trading-account";
+import { basketFields, type ChoiceFields, copyFields, withChoice } from "@/lib/auto-trader/choice";
 import { cycleTiming } from "@/lib/auto-trader/cycle-timing";
-import { isTrading } from "@/lib/auto-trader/phase";
+import { isTrading, PHASE_SHORT_LABEL } from "@/lib/auto-trader/phase";
 import { autoStatusText } from "@/lib/auto-trader/status-text";
+import { cn } from "@/lib/cn";
 import { formatUSD } from "@/lib/format";
+import { type AutoChoiceMode, useAutoChoiceStore } from "@/stores/use-auto-choice-store";
 import { AutoConfirmModal } from "./auto-confirm-modal";
+import { AutoIconStack } from "./auto-icon-stack";
 import { AutoMarketsModal } from "./auto-markets-modal";
 import { AutoSettingsForm } from "./auto-settings-form";
 import { AutoSetup } from "./auto-setup";
 import { AutoStartModal } from "./auto-start-modal";
 import { AutoStatusCard } from "./auto-status-card";
+import { AutoChoice } from "./copy/auto-choice";
+import { AutoRunning } from "./copy/auto-running";
+import { basketField } from "./copy/basket";
 
 export function AutoTradePanel() {
 	const auto = useAutoTrader();
@@ -21,7 +28,17 @@ export function AutoTradePanel() {
 	if (!auto.available) return <AutoNote text="Connect a wallet to use Auto Trader." />;
 	if (auto.loading) return <AutoNote text="Loading Auto Trader…" />;
 	if (auto.statusError && !auto.status) return <AutoNote text="Auto Trader status is unavailable. Try again soon." />;
-	const body = auto.phase === "setup" ? <AutoSetup /> : <AutoControls auto={auto} />;
+	const body =
+		auto.phase === "setup" ? (
+			<>
+				<div className="px-3 pt-4">
+					<AutoChoice />
+				</div>
+				<AutoSetup />
+			</>
+		) : (
+			<AutoControls auto={auto} />
+		);
 	if (!auto.demo) return body;
 	return (
 		<>
@@ -51,9 +68,16 @@ type Confirm = "flatten" | "renew" | "remove" | null;
 
 const RENEW_WINDOW_MS = 14 * 86_400_000;
 
+function choiceFields(mode: AutoChoiceMode) {
+	const { trader, leverage, members } = useAutoChoiceStore.getState();
+	if (mode === "copy" && trader) return copyFields(trader, leverage);
+	return basketFields(basketField(members));
+}
+
 function AutoControls({ auto }: { auto: ReturnType<typeof useAutoTrader> }) {
-	const [starting, setStarting] = useState(false);
+	const [starting, setStarting] = useState<ChoiceFields | null>(null);
 	const [editingMarkets, setEditingMarkets] = useState(false);
+	const [settingsOpen, setSettingsOpen] = useState(false);
 	const [confirm, setConfirm] = useState<Confirm>(null);
 	const setup = useAutoTraderSetup();
 	const { subaccount } = useTradingAccount();
@@ -66,11 +90,7 @@ function AutoControls({ auto }: { auto: ReturnType<typeof useAutoTrader> }) {
 	const settings = auto.settings;
 	const busy = auto.pending !== null || setup.busy !== null;
 	const expiresSoon = !!status?.validUntil && (status.renewSoon || status.validUntil - now < RENEW_WINDOW_MS);
-
-	function toggle() {
-		if (trading) void auto.pause();
-		else setStarting(true);
-	}
+	const live = auto.phase === "active" || auto.phase === "waiting";
 
 	function runConfirmed(kind: Confirm) {
 		setConfirm(null);
@@ -81,17 +101,31 @@ function AutoControls({ auto }: { auto: ReturnType<typeof useAutoTrader> }) {
 
 	return (
 		<div className="flex flex-col gap-4 px-3 pt-4 pb-3">
+			{trading && settings ? (
+				<AutoRunning
+					settings={settings}
+					live={live}
+					stateLabel={live ? "Live" : PHASE_SHORT_LABEL[auto.phase]}
+					disabled={busy || auto.phase === "closing"}
+					onPause={() => void auto.pause()}
+					onApply={(fields) => void auto.applyChoice(fields)}
+				/>
+			) : (
+				<AutoChoice
+					startDisabled={busy || !settings || auto.phase === "closing"}
+					onStart={(mode) => setStarting(choiceFields(mode))}
+				/>
+			)}
+
 			<AutoStatusCard
 				on={trading}
 				title={title}
 				subtitle={subtitle}
 				equity={formatUSD(plan?.equity)}
-				markets={auto.markets}
-				actionLabel={trading ? "Pause" : "Start"}
-				busy={auto.pending === "start" || auto.pending === "pause"}
+				actionLabel="Pause"
+				busy={auto.pending === "pause"}
 				disabled={busy || auto.phase === "closing"}
-				onToggle={toggle}
-				onMarkets={() => setEditingMarkets(true)}
+				onToggle={trading && !settings ? () => void auto.pause() : undefined}
 			/>
 
 			{expiresSoon && status?.validUntil && (
@@ -109,13 +143,40 @@ function AutoControls({ auto }: { auto: ReturnType<typeof useAutoTrader> }) {
 			)}
 
 			{settings && (
-				<AutoSettingsForm
-					key={JSON.stringify(settings)}
-					saved={settings}
-					saving={auto.pending === "settings"}
-					disabled={busy || auto.phase === "closing"}
-					onSave={auto.saveSettings}
-				/>
+				<div className="flex flex-col gap-3">
+					<button
+						type="button"
+						aria-expanded={settingsOpen}
+						onClick={() => setSettingsOpen((open) => !open)}
+						className="flex items-center justify-between text-xs text-fg-muted transition-colors hover:text-fg"
+					>
+						Settings
+						<CaretDownIcon weight="bold" className={cn("size-3 transition-transform", settingsOpen && "rotate-180")} />
+					</button>
+					{settingsOpen && (
+						<>
+							<button
+								type="button"
+								onClick={() => setEditingMarkets(true)}
+								className="flex items-center gap-3 rounded-8 bg-control px-3 py-2 text-left transition-colors hover:bg-control-hover"
+							>
+								<AutoIconStack coins={auto.markets} max={5} />
+								<span className="flex-1 text-xs text-fg-secondary">
+									<span className="text-fg">{auto.markets.length} markets</span>
+									{trading ? "" : " selected"}
+								</span>
+								<CaretRightIcon weight="bold" className="size-3 text-fg-muted" />
+							</button>
+							<AutoSettingsForm
+								key={JSON.stringify(settings)}
+								saved={settings}
+								saving={auto.pending === "settings"}
+								disabled={busy || auto.phase === "closing"}
+								onSave={auto.saveSettings}
+							/>
+						</>
+					)}
+				</div>
 			)}
 
 			<div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-fg-secondary">
@@ -155,13 +216,14 @@ function AutoControls({ auto }: { auto: ReturnType<typeof useAutoTrader> }) {
 
 			{settings && (
 				<AutoStartModal
-					open={starting}
-					settings={settings}
+					open={starting !== null}
+					settings={withChoice(settings, starting ?? {})}
 					markets={auto.markets}
-					onCancel={() => setStarting(false)}
+					onCancel={() => setStarting(null)}
 					onConfirm={() => {
-						setStarting(false);
-						void auto.start();
+						const fields = starting ?? {};
+						setStarting(null);
+						void auto.startWith(fields);
 					}}
 				/>
 			)}
