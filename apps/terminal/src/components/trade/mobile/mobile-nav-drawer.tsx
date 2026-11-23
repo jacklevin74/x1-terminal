@@ -1,4 +1,4 @@
-import { Badge, Button, ButtonIcon, Drawer, DrawerContent } from "@hypeterminal/ui";
+import { Button, ButtonIcon, Drawer, DrawerContent } from "@hypeterminal/ui";
 import { Trans } from "@lingui/react/macro";
 import {
 	DownloadSimpleIcon,
@@ -7,13 +7,14 @@ import {
 	ListIcon,
 	TerminalIcon,
 	TrendUpIcon,
+	TrophyIcon,
 	WalletIcon,
 	XIcon,
 } from "@phosphor-icons/react";
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { useConnection } from "wagmi";
-import { SCOPE_NAV_ITEMS, STATIC_NAV_ITEMS } from "@/config/nav";
+import { SCOPE_NAV_ITEMS, TOURNAMENT_NAV_LABEL, TOURNAMENT_PATH } from "@/config/nav";
 import { cn } from "@/lib/cn";
 import { useExchangeScope } from "@/providers/exchange-scope";
 import { useDepositModalActions, useSettingsDialogActions } from "@/stores/use-global-modal-store";
@@ -37,6 +38,8 @@ export function MobileNavDrawer() {
 	const [open, setOpen] = useState(false);
 	const [walletOpen, setWalletOpen] = useState(false);
 	const { scope } = useExchangeScope();
+	const pathname = useLocation().pathname;
+	const onTournament = pathname === TOURNAMENT_PATH;
 	const { isConnected } = useConnection();
 	const { open: openDepositModal } = useDepositModalActions();
 	const { open: openSettingsDialog } = useSettingsDialogActions();
@@ -66,7 +69,7 @@ export function MobileNavDrawer() {
 								<Trans>Markets</Trans>
 							</p>
 							{SCOPE_NAV_ITEMS.map((item) => {
-								const isActive = scope === item.scope;
+								const isActive = !onTournament && scope === item.scope;
 								return (
 									<Link
 										key={item.scope}
@@ -93,17 +96,18 @@ export function MobileNavDrawer() {
 							<p className="h-6 px-2 flex items-center text-2xs font-normal uppercase tracking-micro text-fg-muted">
 								<Trans>Platform</Trans>
 							</p>
-							{STATIC_NAV_ITEMS.map((item) => (
-								<div
-									key={item.key}
-									className="h-10 flex items-center justify-between px-2 rounded-8 text-sm text-fg-disabled"
-								>
-									<span>{item.label}</span>
-									<Badge tone="neutral" size="xs" className="font-normal text-fg-disabled">
-										<Trans>Soon</Trans>
-									</Badge>
-								</div>
-							))}
+							<Link
+								to={TOURNAMENT_PATH}
+								onClick={close}
+								aria-current={onTournament ? "page" : undefined}
+								className={cn(
+									"h-10 flex items-center gap-3 px-2 rounded-8 text-sm transition-colors duration-150 motion-reduce:transition-none",
+									onTournament ? "bg-control font-medium text-fg" : "text-fg-muted hover:text-fg hover:bg-control",
+								)}
+							>
+								<TrophyIcon className="size-4 shrink-0" />
+								<span className="flex-1 truncate">{TOURNAMENT_NAV_LABEL}</span>
+							</Link>
 						</nav>
 
 						<div className="mx-3 border-t border-stroke-weak" />

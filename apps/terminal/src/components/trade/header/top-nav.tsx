@@ -1,15 +1,14 @@
-import { Button, ButtonIcon, Divider, Dropdown } from "@hypeterminal/ui";
+import { Button, ButtonIcon, Dropdown } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { DownloadSimpleIcon, GearIcon } from "@phosphor-icons/react";
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { useConnection } from "wagmi";
 import { APP_BAR_BUTTON_HEIGHT_CLASS, APP_HEADER_HEIGHT_CLASS } from "@/config/layout";
-import { SCOPE_NAV_ITEMS, STATIC_NAV_ITEMS } from "@/config/nav";
+import { TOURNAMENT_NAV_LABEL, TOURNAMENT_PATH } from "@/config/nav";
 import { cn } from "@/lib/cn";
 import { createLazyComponent } from "@/lib/lazy";
-import { useExchangeScope } from "@/providers/exchange-scope";
 import { useDepositModalActions, useSettingsDialogActions } from "@/stores/use-global-modal-store";
 import { useIsTestnet } from "@/stores/use-global-settings-store";
 import { useTerminalBrand } from "./terminal-brand";
@@ -17,16 +16,17 @@ import X1TerminalLogo from "./x1-terminal-logo";
 
 const UserMenu = createLazyComponent(() => import("./user-menu"), "UserMenu");
 
-const NAV_LINK_CLASS =
-	"relative flex h-7 items-center rounded-8 px-3 text-sm font-normal transition-colors duration-150";
+const NAV_LINK_CLASS = "flex h-7 items-center text-xs font-medium transition-colors duration-150";
 
 export function TopNav() {
 	const brand = useTerminalBrand();
 	const { open: openDepositModal } = useDepositModalActions();
 	const { open: openSettingsDialog } = useSettingsDialogActions();
 	const { isConnected } = useConnection();
-	const { scope } = useExchangeScope();
 	const isTestnet = useIsTestnet();
+	const pathname = useLocation().pathname;
+	const onTournament = pathname === TOURNAMENT_PATH;
+	const onTrade = !onTournament;
 
 	return (
 		<header
@@ -38,35 +38,21 @@ export function TopNav() {
 		>
 			<div className="flex min-w-0 items-center gap-6">
 				{brand ?? <X1TerminalLogo />}
-				<nav className="hidden items-center gap-1 lg:flex">
-					{SCOPE_NAV_ITEMS.map((item) => {
-						const isActive = scope === item.scope;
-						return (
-							<Link
-								key={item.scope}
-								to={brand ? "/newtheme" : item.to}
-								search={brand ? { scope: item.scope } : {}}
-								aria-current={isActive ? "page" : undefined}
-								className={cn(NAV_LINK_CLASS, isActive ? item.activeClass : "text-fg-muted hover:text-fg")}
-							>
-								{item.label}
-							</Link>
-						);
-					})}
-					<div className="hidden min-[1360px]:contents">
-						<Divider orientation="vertical" className="mx-2 h-4 self-center" />
-						{STATIC_NAV_ITEMS.map((item) => (
-							<button
-								key={item.key}
-								type="button"
-								disabled
-								tabIndex={-1}
-								className={cn(NAV_LINK_CLASS, "cursor-not-allowed text-fg-disabled")}
-							>
-								{item.label}
-							</button>
-						))}
-					</div>
+				<nav className="hidden items-center gap-7 lg:flex">
+					<Link
+						to={brand ? "/newtheme" : "/"}
+						aria-current={onTrade ? "page" : undefined}
+						className={cn(NAV_LINK_CLASS, onTrade ? "text-fg" : "text-fg-muted hover:text-fg")}
+					>
+						<Trans>Trade</Trans>
+					</Link>
+					<Link
+						to={TOURNAMENT_PATH}
+						aria-current={onTournament ? "page" : undefined}
+						className={cn(NAV_LINK_CLASS, onTournament ? "text-fg" : "text-fg-muted hover:text-fg")}
+					>
+						{TOURNAMENT_NAV_LABEL}
+					</Link>
 				</nav>
 			</div>
 

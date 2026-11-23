@@ -342,7 +342,7 @@ msgstr ""
 
 #: src/components/trade/mobile/mobile-account-view.tsx:68
 #: src/components/trade/mobile/mobile-account-view.tsx:74
-#: src/components/trade/mobile/mobile-nav-drawer.tsx:150
+#: src/components/trade/mobile/mobile-nav-drawer.tsx:154
 #: src/components/trade/mobile/mobile-positions-view.tsx:141
 #: src/components/trade/positions/connect-placeholder.tsx:18
 #: src/lib/trade/use-button-content.ts:49
@@ -380,7 +380,7 @@ msgid "Connect your wallet to view funding payments."
 msgstr "连接钱包查看资金费用。"
 
 #: src/components/trade/mobile/mobile-orders-tab.tsx:130
-#: src/components/trade/positions/orders-tab.tsx:184
+#: src/components/trade/positions/orders-tab.tsx:185
 msgid "Connect your wallet to view open orders."
 msgstr "连接钱包查看未成交订单。"
 
@@ -536,8 +536,8 @@ msgstr ""
 msgid "Default"
 msgstr ""
 
-#: src/components/trade/header/top-nav.tsx:84
-#: src/components/trade/mobile/mobile-nav-drawer.tsx:139
+#: src/components/trade/header/top-nav.tsx:70
+#: src/components/trade/mobile/mobile-nav-drawer.tsx:143
 #: src/components/trade/tradebox/account-panel.tsx:120
 #: src/components/trade/tradebox/account-panel.tsx:123
 #: src/components/trade/tradebox/deposit-modal.tsx:99
@@ -746,7 +746,7 @@ msgstr ""
 msgid "Failed to load balances."
 msgstr "加载余额失败。"
 
-#: src/components/trade/chart/kline-chart.tsx:326
+#: src/components/trade/chart/kline-chart.tsx:328
 msgid "Failed to load chart."
 msgstr ""
 
@@ -756,7 +756,7 @@ msgid "Failed to load funding history."
 msgstr "加载资金费用历史失败。"
 
 #: src/components/trade/mobile/mobile-orders-tab.tsx:138
-#: src/components/trade/positions/orders-tab.tsx:189
+#: src/components/trade/positions/orders-tab.tsx:190
 msgid "Failed to load open orders."
 msgstr "加载未成交订单失败。"
 
@@ -929,8 +929,8 @@ msgid "Last 24 hours"
 msgstr ""
 
 #: src/config/nav.tsx:72
-msgid "Leaderboard"
-msgstr "排行榜"
+#~ msgid "Leaderboard"
+#~ msgstr "排行榜"
 
 #: src/components/auto-trader/settings-card.tsx:34
 #: src/components/trade/tradebox/leverage-control.tsx:39
@@ -980,7 +980,7 @@ msgid "Live fast top of book with refreshed depth at every size."
 msgstr ""
 
 #: src/components/trade/chart/chart-panel.tsx:65
-#: src/components/trade/chart/kline-chart.tsx:325
+#: src/components/trade/chart/kline-chart.tsx:327
 #: src/components/ui/spinner.tsx:9
 msgid "Loading"
 msgstr "加载中"
@@ -1005,7 +1005,7 @@ msgstr "加载资金费用历史中..."
 msgid "Loading markets..."
 msgstr "加载市场中..."
 
-#: src/components/trade/positions/orders-tab.tsx:185
+#: src/components/trade/positions/orders-tab.tsx:186
 msgid "Loading open orders..."
 msgstr "加载未成交订单中..."
 
@@ -1138,7 +1138,7 @@ msgstr "个市场"
 
 #: src/components/auto-trader/settings-card.tsx:159
 #: src/components/trade/chart/token-selector-content.tsx:219
-#: src/components/trade/mobile/mobile-nav-drawer.tsx:66
+#: src/components/trade/mobile/mobile-nav-drawer.tsx:69
 msgid "Markets"
 msgstr ""
 
@@ -1275,7 +1275,7 @@ msgid "No markets found."
 msgstr "未找到市场。"
 
 #: src/components/trade/mobile/mobile-orders-tab.tsx:147
-#: src/components/trade/positions/orders-tab.tsx:194
+#: src/components/trade/positions/orders-tab.tsx:195
 msgid "No open orders."
 msgstr "无未成交订单。"
 
@@ -1458,13 +1458,13 @@ msgstr ""
 msgid "Plans run about every five minutes. Active does not guarantee live trading: execution also requires the operator's live gate. Paused and dry-run plans send no orders."
 msgstr ""
 
-#: src/components/trade/mobile/mobile-nav-drawer.tsx:94
+#: src/components/trade/mobile/mobile-nav-drawer.tsx:97
 msgid "Platform"
 msgstr ""
 
 #: src/config/nav.tsx:70
-msgid "Portfolio"
-msgstr "投资组合"
+#~ msgid "Portfolio"
+#~ msgstr "投资组合"
 
 #: src/components/trade/tradebox/account-panel.tsx:222
 msgid "Portfolio Margin Ratio"
@@ -1725,8 +1725,8 @@ msgid "Set to {p}%"
 msgstr ""
 
 #: src/components/trade/components/global-settings-modal.tsx:83
-#: src/components/trade/header/top-nav.tsx:103
-#: src/components/trade/mobile/mobile-nav-drawer.tsx:121
+#: src/components/trade/header/top-nav.tsx:89
+#: src/components/trade/mobile/mobile-nav-drawer.tsx:125
 msgid "Settings"
 msgstr "设置"
 
@@ -1821,8 +1821,8 @@ msgid "Slippage tolerance"
 msgstr ""
 
 #: src/components/trade/mobile/mobile-nav-drawer.tsx:103
-msgid "Soon"
-msgstr ""
+#~ msgid "Soon"
+#~ msgstr ""
 
 #: src/components/trade/chart/token-selector-content.tsx:184
 msgid "Sort by {sortLabel}"
@@ -1858,8 +1858,8 @@ msgid "Spread"
 msgstr "价差"
 
 #: src/config/nav.tsx:71
-msgid "Staking"
-msgstr "质押"
+#~ msgid "Staking"
+#~ msgstr "质押"
 
 #: src/lib/errors/definitions/scale.ts:46
 msgid "Start and end must differ"
@@ -2067,6 +2067,10 @@ msgstr ""
 msgid "Total time"
 msgstr ""
 
+#: src/config/nav.tsx:65
+msgid "Tournament"
+msgstr ""
+
 #: src/lib/trade/order-types.ts:29
 msgid "TP Lmt"
 msgstr ""
@@ -2103,6 +2107,10 @@ msgstr "止盈止损"
 
 #: src/components/trade/tradebox/bridge/executing-screen.tsx:50
 msgid "Track on LI.FI Explorer"
+msgstr ""
+
+#: src/components/trade/header/top-nav.tsx:47
+msgid "Trade"
 msgstr ""
 
 #: src/components/trade/mobile/mobile-history-tab.tsx:55
@@ -2214,7 +2222,7 @@ msgstr ""
 msgid "Unknown error"
 msgstr ""
 
-#: src/components/trade/chart/datafeed.ts:275
+#: src/components/trade/chart/datafeed.ts:258
 msgid "Unknown symbol: {symbolName}"
 msgstr "未知交易对: {symbolName}"
 
@@ -2232,7 +2240,7 @@ msgid "Unsaved settings. Save before enabling. Changes to an active trader apply
 msgstr ""
 
 #. placeholder {0}: String(resolution)
-#: src/components/trade/chart/datafeed.ts:315
+#: src/components/trade/chart/datafeed.ts:298
 msgid "Unsupported resolution: {0}"
 msgstr "不支持的分辨率: {0}"
 
@@ -2267,8 +2275,8 @@ msgid "Using"
 msgstr ""
 
 #: src/config/nav.tsx:69
-msgid "Vaults"
-msgstr "金库"
+#~ msgid "Vaults"
+#~ msgstr "金库"
 
 #: src/lib/trade/use-button-content.ts:31
 msgid "Verifying..."

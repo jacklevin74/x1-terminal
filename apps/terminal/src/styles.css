@@ -234,6 +234,9 @@
     --market-down-flash: color-mix(in oklab, var(--market-down) 55%, var(--text-strong));
     --market-neutral: #8A919A;
     --scope-perp: #2563EB;
+    /* X1 brand, from the logo "1" gradient */
+    --x1-blue: #0072FF;
+    --x1-cyan: #00C6FF;
     --scope-spot: #0F766E;
     --scope-builders: #B45309;
     --sel: rgba(37, 99, 235, 0.15);
@@ -340,6 +343,9 @@
     --market-down-flash: color-mix(in oklab, var(--market-down) 55%, var(--text-strong));
     --market-neutral: #6B7280;
     --scope-perp: #4F7DFF;
+    /* X1 brand, from the logo "1" gradient */
+    --x1-blue: #0072FF;
+    --x1-cyan: #00C6FF;
     --scope-spot: #2DD4BF;
     --scope-builders: #F59E0B;
     --sel: rgba(79, 125, 255, 0.15);
@@ -444,6 +450,8 @@
   --color-market-up-flash: var(--market-up-flash);
   --color-market-down-flash: var(--market-down-flash);
   --color-market-neutral: var(--market-neutral);
+  --color-x1-blue: var(--x1-blue);
+  --color-x1-cyan: var(--x1-cyan);
   --color-scope-perp: var(--scope-perp);
   --color-scope-spot: var(--scope-spot);
   --color-scope-builders: var(--scope-builders);
