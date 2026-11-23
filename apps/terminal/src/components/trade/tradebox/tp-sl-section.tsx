@@ -22,6 +22,8 @@ interface Props {
 	slError?: string | null;
 	disabled?: boolean;
 	compact?: boolean;
+	hideTp?: boolean;
+	hideSl?: boolean;
 }
 
 export function TpSlSection({
@@ -37,6 +39,8 @@ export function TpSlSection({
 	slError,
 	disabled,
 	compact,
+	hideTp,
+	hideSl,
 }: Props) {
 	const tpPriceNum = toNumber(tpPrice);
 	const slPriceNum = toNumber(slPrice);
@@ -101,60 +105,69 @@ export function TpSlSection({
 
 	return (
 		<div className="flex min-w-0 flex-col gap-3">
-			<PriceInputWithPercent
-				label={t`TP Price`}
-				value={tpPrice}
-				onChange={onTpPriceChange}
-				percentOptions={TP_QUICK_PERCENT_OPTIONS}
-				onPercentClick={handleTpPercentClick}
-				pnlValue={tpPnl}
-				error={tpError}
-				disabled={disabled}
-				referencePrice={referencePrice}
-			/>
-
-			<PriceInputWithPercent
-				label={t`SL Price`}
-				value={slPrice}
-				onChange={onSlPriceChange}
-				percentOptions={SL_QUICK_PERCENT_OPTIONS}
-				onPercentClick={handleSlPercentClick}
-				pnlValue={slPnl}
-				error={slError}
-				disabled={disabled}
-				referencePrice={referencePrice}
-			/>
-
-			{riskRewardDisplay && (
-				<div className="flex flex-col gap-1">
-					<div className="flex min-h-6 items-center justify-between text-xs">
-						<span className="text-fg-muted">{t`Risk/Reward`}</span>
-						<span
-							className={cn(
-								"font-medium tabular-nums",
-								riskRewardDisplay.rrDisplay.isFavorable ? "text-market-up" : "text-warning",
-							)}
-						>
-							{riskRewardDisplay.rrDisplay.label}
-						</span>
-					</div>
-					<div className="flex h-1 gap-0.5 overflow-hidden rounded-full">
-						<div
-							className="rounded-full bg-market-down"
-							style={{
-								width: `${(riskRewardDisplay.rrDisplay.risk / (riskRewardDisplay.rrDisplay.risk + riskRewardDisplay.rrDisplay.reward)) * 100}%`,
-							}}
-						/>
-						<div className="flex-1 rounded-full bg-market-up" />
-					</div>
-					<div className="flex min-h-6 items-center justify-between text-xs tabular-nums">
-						<span className="text-market-down">
-							{formatUSD(riskRewardDisplay.slPnl, { signDisplay: "exceptZero" })}
-						</span>
-						<span className="text-market-up">{formatUSD(riskRewardDisplay.tpPnl, { signDisplay: "exceptZero" })}</span>
-					</div>
-				</div>
+			{!hideTp && (
+				<PriceInputWithPercent
+					label={t`TP Price`}
+					value={tpPrice}
+					onChange={onTpPriceChange}
+					percentOptions={TP_QUICK_PERCENT_OPTIONS}
+					onPercentClick={handleTpPercentClick}
+					pnlValue={tpPnl}
+					error={tpError}
+					disabled={disabled}
+					referencePrice={referencePrice}
+				/>
 			)}
+
+			{!hideSl && (
+				<PriceInputWithPercent
+					label={t`SL Price`}
+					value={slPrice}
+					onChange={onSlPriceChange}
+					percentOptions={SL_QUICK_PERCENT_OPTIONS}
+					onPercentClick={handleSlPercentClick}
+					pnlValue={slPnl}
+					error={slError}
+					disabled={disabled}
+					referencePrice={referencePrice}
+				/>
+			)}
+
+			<div className="flex flex-col gap-1">
+				<div className="flex min-h-6 items-center justify-between text-xs">
+					<span className="text-fg-muted">{t`Risk/Reward`}</span>
+					<span
+						className={cn(
+							"font-medium tabular-nums",
+							!riskRewardDisplay && "text-fg-disabled",
+							riskRewardDisplay && (riskRewardDisplay.rrDisplay.isFavorable ? "text-market-up" : "text-fg"),
+						)}
+					>
+						{riskRewardDisplay ? riskRewardDisplay.rrDisplay.label : "-"}
+					</span>
+				</div>
+				<div className="flex h-1 gap-0.5 overflow-hidden rounded-full bg-control">
+					{riskRewardDisplay && (
+						<>
+							<div
+								className="rounded-full bg-market-down"
+								style={{
+									width: `${(riskRewardDisplay.rrDisplay.risk / (riskRewardDisplay.rrDisplay.risk + riskRewardDisplay.rrDisplay.reward)) * 100}%`,
+								}}
+							/>
+							<div className="flex-1 rounded-full bg-market-up" />
+						</>
+					)}
+				</div>
+				<div className="flex min-h-6 items-center justify-between text-xs tabular-nums">
+					<span className="text-market-down">
+						{riskRewardDisplay ? formatUSD(riskRewardDisplay.slPnl, { signDisplay: "exceptZero" }) : ""}
+					</span>
+					<span className="text-market-up">
+						{riskRewardDisplay ? formatUSD(riskRewardDisplay.tpPnl, { signDisplay: "exceptZero" }) : ""}
+					</span>
+				</div>
+			</div>
 		</div>
 	);
 }

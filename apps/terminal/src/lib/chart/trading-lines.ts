@@ -49,7 +49,7 @@ export function buildTradingLines(
 						: undefined,
 				price: entry,
 				label: `${long ? "Long" : "Short"} ${Math.abs(Number(position.szi))}${position.unrealizedPnl != null && Number.isFinite(Number(position.unrealizedPnl)) ? ` PNL ${Number(position.unrealizedPnl).toFixed(2)}` : ""}`,
-				tone: long ? "up" : "down",
+				tone: Number(position.unrealizedPnl) < 0 ? "down" : "up",
 			});
 		const liquidation = Number(position.liquidationPx);
 		if (valid(liquidation))
@@ -59,7 +59,7 @@ export function buildTradingLines(
 				title: "Liq.",
 				price: liquidation,
 				label: "Liquidation",
-				tone: "warning",
+				tone: "down",
 			});
 	}
 	for (const order of orders) {

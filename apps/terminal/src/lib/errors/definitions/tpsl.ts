@@ -18,6 +18,7 @@ export const enterTpSlPriceValidator: Validator<TpSlContext> = createValidator({
 	code: "TPSL_001",
 	category: "tpsl",
 	priority: 200,
+	severity: "info",
 	getMessage: () => t`Enter TP or SL price`,
 	validate: (ctx) => {
 		if (!ctx.tpSlEnabled || !ctx.canUseTpSl) return true;

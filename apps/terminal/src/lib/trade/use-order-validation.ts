@@ -59,13 +59,14 @@ export function perpInput(base: BaseOrderInput, perp: PerpOrderFields): PerpVali
 
 function toResult(result: {
 	valid: boolean;
-	errors: { message: string }[];
+	errors: { message: string; severity: string }[];
 	canSubmit: boolean;
 	needsApproval: boolean;
 }): FormValidationResult {
 	return {
 		valid: result.valid,
 		errors: result.errors.map((e) => e.message),
+		blockingError: result.errors.find((e) => e.severity !== "info")?.message ?? null,
 		canSubmit: result.canSubmit,
 		needsApproval: result.needsApproval,
 	};

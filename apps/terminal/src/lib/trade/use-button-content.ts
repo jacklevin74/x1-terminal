@@ -77,7 +77,7 @@ export function useButtonContent(input: ButtonContentInput): ButtonContent {
 			};
 		}
 		return {
-			text: t`Place ${input.sideLabel} Order`,
+			text: input.validation.blockingError ?? t`Place ${input.sideLabel} Order`,
 			action: input.onSubmit,
 			disabled: !input.validation.canSubmit || input.isSubmitting,
 			variant: input.side as "buy" | "sell",
@@ -91,6 +91,7 @@ export function useButtonContent(input: ButtonContentInput): ButtonContent {
 		input.reduceOnly,
 		input.validation.needsApproval,
 		input.validation.canSubmit,
+		input.validation.blockingError,
 		registerText,
 		isRegistering,
 		input.canApprove,

@@ -405,15 +405,17 @@ export function TradePanel() {
 			/>
 
 			<div className="flex flex-col gap-4 px-3 pt-3 pb-3">
-				<TradeFormFields
-					price={price}
-					positionSize={positionSize}
-					swapTargetToken={swapTargetToken}
-					onSizeModeToggle={handleSizeModeToggle}
-					onSizePercentApply={handleSizePercentApply}
-					onDepositClick={() => openDepositModal("deposit")}
-					onSwapClick={() => swapTargetToken && openSwapModal(DEFAULT_QUOTE_TOKEN, swapTargetToken)}
-				/>
+				<div className="flex min-h-[260px] flex-col">
+					<TradeFormFields
+						price={price}
+						positionSize={positionSize}
+						swapTargetToken={swapTargetToken}
+						onSizeModeToggle={handleSizeModeToggle}
+						onSizePercentApply={handleSizePercentApply}
+						onDepositClick={() => openDepositModal("deposit")}
+						onSwapClick={() => swapTargetToken && openSwapModal(DEFAULT_QUOTE_TOKEN, swapTargetToken)}
+					/>
+				</div>
 
 				<AutoMarketWarning
 					coin={market?.name}
@@ -422,10 +424,6 @@ export function TradePanel() {
 				/>
 
 				<div className="flex flex-col gap-2">
-					{validation.errors.length > 0 && isConnected && availableBalance > 0 && (
-						<div className="text-xs text-market-down">{validation.errors.join(" • ")}</div>
-					)}
-
 					{approvalError && <div className="text-xs text-market-down">{approvalError}</div>}
 
 					<Button

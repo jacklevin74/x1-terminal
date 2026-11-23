@@ -57,6 +57,14 @@ function PositionTpSlModalBody({ position, onOpenChange }: BodyProps) {
 	const [tpPriceInput, setTpPriceInput] = useState(position.existingTpPrice ? String(position.existingTpPrice) : "");
 	const [slPriceInput, setSlPriceInput] = useState(position.existingSlPrice ? String(position.existingSlPrice) : "");
 	const [submitError, setSubmitError] = useState<string | null>(null);
+	const [tpEditing, setTpEditing] = useState(position.existingTpOrderId === undefined);
+	const [slEditing, setSlEditing] = useState(position.existingSlOrderId === undefined);
+	const [tpRemoved, setTpRemoved] = useState(false);
+	const [slRemoved, setSlRemoved] = useState(false);
+	const existingTpOrderId = tpRemoved ? undefined : position.existingTpOrderId;
+	const existingSlOrderId = slRemoved ? undefined : position.existingSlOrderId;
+	const existingTpPrice = tpRemoved ? undefined : position.existingTpPrice;
+	const existingSlPrice = slRemoved ? undefined : position.existingSlPrice;
 
 	const { submitPlan, isSubmitting: isPlacing } = useSubmitPlan();
 	const { mutateAsync: cancelOrders, isPending: isCancelling } = useExchange("cancel");
@@ -74,11 +82,33 @@ function PositionTpSlModalBody({ position, onOpenChange }: BodyProps) {
 	const hasSl = isPositive(slPriceNum);
 	const tpValid = !tpPriceInput.trim() || (hasTp && validateTpPrice(position.markPx, tpPriceNum, side));
 	const slValid = !slPriceInput.trim() || (hasSl && validateSlPrice(position.markPx, slPriceNum, side));
-	const hasExisting = position.existingTpOrderId !== undefined || position.existingSlOrderId !== undefined;
+	const hasExisting = existingTpOrderId !== undefined || existingSlOrderId !== undefined;
 	const canSubmit = (hasTp || hasSl || hasExisting) && tpValid && slValid && !isSubmitting && !refreshRequired;
 
 	const tpError = !tpValid ? (position.isLong ? t`TP must be above mark price` : t`TP must be below mark price`) : null;
 	const slError = !slValid ? (position.isLong ? t`SL must be below mark price` : t`SL must be above mark price`) : null;
+
+	async function handleRemove(leg: "tp" | "sl") {
+		const oid = leg === "tp" ? existingTpOrderId : existingSlOrderId;
+		if (oid === undefined) return;
+		try {
+			const result = await cancelOrders({ cancels: [{ a: position.assetId, o: oid }] });
+			const status = interpretOrderStatuses(result.response?.data?.statuses ?? []);
+			if (!status.ok) throw new Error(status.error);
+			toast.success(leg === "tp" ? t`Take profit removed` : t`Stop loss removed`);
+			if (leg === "tp") {
+				setTpRemoved(true);
+				setTpPriceInput("");
+				setTpEditing(true);
+			} else {
+				setSlRemoved(true);
+				setSlPriceInput("");
+				setSlEditing(true);
+			}
+		} catch (error) {
+			toast.error(error instanceof Error ? error.message : t`Failed to remove trigger`);
+		}
+	}
 
 	async function handleSubmit() {
 		if (!canSubmit) return;
@@ -88,10 +118,10 @@ function PositionTpSlModalBody({ position, onOpenChange }: BodyProps) {
 			isLong: position.isLong,
 			tpPriceNum: hasTp ? tpPriceNum : null,
 			slPriceNum: hasSl ? slPriceNum : null,
-			existingTpOrderId: position.existingTpOrderId,
-			existingSlOrderId: position.existingSlOrderId,
-			existingTpPrice: position.existingTpPrice,
-			existingSlPrice: position.existingSlPrice,
+			existingTpOrderId,
+			existingSlOrderId,
+			existingTpPrice,
+			existingSlPrice,
 		});
 		setSubmitError(null);
 		let cancelled = false;
@@ -148,10 +178,32 @@ function PositionTpSlModalBody({ position, onOpenChange }: BodyProps) {
 					/>
 				</InfoRowGroup>
 
-				<p className="text-xs text-fg-muted">
-					Applies to the entire position. Clear a field to remove it. Changed triggers are cancelled before replacement.
-				</p>
+				{(!tpEditing || !slEditing) && (
+					<InfoRowGroup className="rounded-8 bg-surface px-3 py-1">
+						{!tpEditing && (
+							<TriggerRow
+								label={t`Take Profit`}
+								text={position.isLong ? t`Price above ${tpPriceInput}` : t`Price below ${tpPriceInput}`}
+								disabled={isSubmitting}
+								onEdit={() => setTpEditing(true)}
+								onRemove={() => handleRemove("tp")}
+							/>
+						)}
+						{!slEditing && (
+							<TriggerRow
+								label={t`Stop Loss`}
+								text={position.isLong ? t`Price below ${slPriceInput}` : t`Price above ${slPriceInput}`}
+								disabled={isSubmitting}
+								onEdit={() => setSlEditing(true)}
+								onRemove={() => handleRemove("sl")}
+							/>
+						)}
+					</InfoRowGroup>
+				)}
+				<p className="text-xs text-fg-muted">{t`Applies to the entire position.`}</p>
 				<TpSlSection
+					hideTp={!tpEditing}
+					hideSl={!slEditing}
 					side={side}
 					referencePrice={referencePrice}
 					size={size}
@@ -194,6 +246,33 @@ function PositionTpSlModalBody({ position, onOpenChange }: BodyProps) {
 				</TradingActionButton>
 			</ModalFooter>
 		</>
+	);
+}
+
+interface TriggerRowProps {
+	label: string;
+	text: string;
+	disabled: boolean;
+	onEdit: () => void;
+	onRemove: () => void;
+}
+
+function TriggerRow({ label, text, disabled, onEdit, onRemove }: TriggerRowProps) {
+	return (
+		<InfoRow
+			label={label}
+			value={
+				<span className="flex items-center gap-3">
+					<span>{text}</span>
+					<button type="button" className="text-fg-muted hover:text-fg" onClick={onEdit} disabled={disabled}>
+						{t`Edit`}
+					</button>
+					<button type="button" className="text-fg-muted hover:text-fg" onClick={onRemove} disabled={disabled}>
+						{t`Remove`}
+					</button>
+				</span>
+			}
+		/>
 	);
 }
 

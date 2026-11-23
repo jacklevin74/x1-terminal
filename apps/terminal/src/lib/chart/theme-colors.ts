@@ -170,7 +170,7 @@ export function buildChartOverrides(): Record<string, string | number | boolean>
 		"mainSeriesProperties.baselineStyle.topLineColor": green,
 		"mainSeriesProperties.baselineStyle.bottomLineColor": red,
 
-		"mainSeriesProperties.priceLineColor": textSecondary,
+		"mainSeriesProperties.priceLineColor": "",
 		"mainSeriesProperties.priceLineWidth": 1,
 		"mainSeriesProperties.showPriceLine": true,
 		"mainSeriesProperties.showCountdown": true,
