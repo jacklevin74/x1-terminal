@@ -2,6 +2,7 @@ import { Button } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
 import { PencilIcon, PlusIcon, XIcon } from "@phosphor-icons/react";
 import { useState } from "react";
+import { AutoLockedClose } from "@/components/trade/auto/auto-locked-close";
 import { Spinner } from "@/components/ui/spinner";
 import { LIQ_WARNING_PROXIMITY } from "@/config/trade";
 import { cn } from "@/lib/cn";
@@ -236,27 +237,41 @@ export function MobilePositionCard({
 								t`TP/SL`
 							)}
 						</Button>
-						<Button
-							variant="secondary"
-							intent="neutral"
-							size="sm"
-							className="flex-1"
-							onClick={handleLimitClose}
-							disabled={!canClose || isRowClosing}
-						>
-							{t`Limit Close`}
-						</Button>
-						<Button
-							variant="secondary"
-							intent="down"
-							size="sm"
-							className="flex-1"
-							onClick={() => setConfirmingClose(true)}
-							disabled={!canClose || isRowClosing}
-							iconLeft={<XIcon className="size-3.5" />}
-						>
-							{t`Close`}
-						</Button>
+						{autoManaged ? (
+							[t`Limit Close`, t`Close`].map((label) => (
+								<AutoLockedClose
+									key={label}
+									label={label}
+									coin={market?.shortName ?? p.coin.split(":").pop() ?? p.coin}
+									className="flex-1"
+									trigger={<Button variant="secondary" intent="neutral" size="sm" className="w-full text-fg-muted" />}
+								/>
+							))
+						) : (
+							<>
+								<Button
+									variant="secondary"
+									intent="neutral"
+									size="sm"
+									className="flex-1"
+									onClick={handleLimitClose}
+									disabled={!canClose || isRowClosing}
+								>
+									{t`Limit Close`}
+								</Button>
+								<Button
+									variant="secondary"
+									intent="down"
+									size="sm"
+									className="flex-1"
+									onClick={() => setConfirmingClose(true)}
+									disabled={!canClose || isRowClosing}
+									iconLeft={<XIcon className="size-3.5" />}
+								>
+									{t`Close`}
+								</Button>
+							</>
+						)}
 					</>
 				)}
 			</div>

@@ -113,6 +113,7 @@ export function PositionRow(props: PositionRowProps) {
 				<PositionRowActions
 					disabled={m.actionsDisabled}
 					closing={props.isRowClosing}
+					lockedCoin={props.autoManaged ? m.symbol : null}
 					onLimit={m.limitClose}
 					onMarket={m.close}
 					onReverse={m.reverse}

@@ -1,35 +1,24 @@
-import { Button, Dropdown } from "@hypeterminal/ui";
-import {
-	ArrowClockwiseIcon,
-	CodeIcon,
-	EyeIcon,
-	KeyIcon,
-	SignOutIcon,
-	SlidersHorizontalIcon,
-} from "@phosphor-icons/react";
+import { Button, dropdownTriggerVariants } from "@hypeterminal/ui";
+import { CaretDownIcon, CodeIcon, KeyIcon, SignOutIcon, SlidersHorizontalIcon } from "@phosphor-icons/react";
 import { useIsMutating } from "@tanstack/react-query";
-import { type SyntheticEvent, useState } from "react";
+import { useState } from "react";
 import { zeroAddress } from "viem";
 import { useConnection, useDisconnect } from "wagmi";
-import { CopyStateIcon } from "@/components/ui/copy-state-icon";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { APP_BAR_BUTTON_HEIGHT_CLASS } from "@/config/layout";
-import { useCopyToClipboard } from "@/hooks/ui/use-copy-to-clipboard";
 import { useTradingAccount } from "@/hooks/use-trading-account";
-import { useXntRewards } from "@/hooks/use-xnt-rewards";
 import { cn } from "@/lib/cn";
 import { exitDemoMode } from "@/lib/demo/demo-mode";
-import { formatToken, formatUSD } from "@/lib/format";
 import { removeAgentFromStorage, useInfo } from "@/lib/hyperliquid";
 import { getNetwork } from "@/lib/network";
-import { feeDecimals, feesToXnt } from "@/lib/rewards/xnt-rewards";
 import { clearX1Session } from "@/lib/x1/provider";
 import { useOrderEntryActions } from "@/stores/use-order-entry-store";
 import { useTradingAccountStore } from "@/stores/use-trading-account-store";
 import { ExportKeyModal } from "../components/export-key-modal";
 import { WalletLogo } from "../components/wallet-logo";
 import { WalletModal } from "../components/wallet-modal";
-import { XntMark } from "../rewards/xnt-mark";
-import { XntRewardsDrawer } from "../rewards/xnt-rewards-drawer";
+import { AccountMenu } from "./account-menu";
+import type { MenuAccount } from "./account-menu-types";
 
 export function UserMenu() {
 	const { address, isConnected, connector } = useConnection();
@@ -43,11 +32,14 @@ export function UserMenu() {
 		{ user: address ?? zeroAddress },
 		{ enabled: isConnected && !!address, refetchOnWindowFocus: true, refetchInterval: 30000 },
 	);
+	const main = useInfo(
+		"clearinghouseState",
+		{ user: address ?? zeroAddress },
+		{ enabled: isConnected && !!address, refetchOnWindowFocus: true, refetchInterval: 30000 },
+	);
 	const [open, setOpen] = useState(false);
+	const [menuOpen, setMenuOpen] = useState(false);
 	const [exportOpen, setExportOpen] = useState(false);
-	const [rewardsOpen, setRewardsOpen] = useState(false);
-	const rewards = useXntRewards();
-	const { copied, copy } = useCopyToClipboard();
 
 	if (!isConnected || !address) {
 		return (
@@ -73,9 +65,31 @@ export function UserMenu() {
 	const activeAddress = active.address ?? owner;
 	const rows = (subaccounts.data ?? []).filter((row) => row.master.toLowerCase() === owner.toLowerCase());
 
-	function choose(account: (typeof rows)[number] | null) {
-		select(account ? { owner, network: getNetwork(), address: account.subAccountUser, name: account.name } : null);
+	const accounts: MenuAccount[] = [
+		{
+			address: owner,
+			name: "Main account",
+			master: true,
+			value: main.data?.marginSummary?.accountValue,
+			withdrawable: main.data?.withdrawable,
+		},
+		...rows.map((row) => ({
+			address: row.subAccountUser,
+			name: row.name,
+			master: false,
+			value: row.clearinghouseState?.marginSummary.accountValue,
+			withdrawable: row.clearinghouseState?.withdrawable,
+		})),
+	];
+
+	function choose(account: MenuAccount) {
+		select(account.master ? null : { owner, network: getNetwork(), address: account.address, name: account.name });
 		resetForm();
+	}
+
+	function refresh() {
+		void subaccounts.refetch();
+		void main.refetch();
 	}
 
 	function handleDisconnect() {
@@ -91,44 +105,7 @@ export function UserMenu() {
 		disconnect();
 	}
 
-	const accountRows = rows.length
-		? [
-				{
-					label: `Main account (${shortAddress(owner)})`,
-					detail: <CopyAddressButton address={owner} name="main account" />,
-					active: !active.isSubaccount,
-					disabled: mutating,
-					onSelect: () => choose(null),
-				},
-				...rows.map((row) => ({
-					label: `${row.name} (${shortAddress(row.subAccountUser)})`,
-					detail: <CopyAddressButton address={row.subAccountUser} name={row.name} />,
-					active: activeAddress.toLowerCase() === row.subAccountUser.toLowerCase(),
-					disabled: subaccounts.isError || mutating,
-					onSelect: () => choose(row),
-				})),
-			]
-		: [];
-	const accountRetry = subaccounts.isError
-		? [
-				{
-					label: "Retry loading subaccounts",
-					icon: <ArrowClockwiseIcon className="size-4" />,
-					closeOnClick: false,
-					onSelect: () => {
-						void subaccounts.refetch();
-					},
-				},
-			]
-		: [];
-
 	const actionItems = [
-		{
-			label: "XNT rewards",
-			icon: <XntMark size={16} />,
-			detail: rewardsDetail(rewards.data?.total),
-			onSelect: () => setRewardsOpen(true),
-		},
 		{
 			label: "API wallets",
 			icon: <CodeIcon className="size-4" />,
@@ -151,113 +128,56 @@ export function UserMenu() {
 			: []),
 	];
 
-	const header = (
-		<div className="flex items-center gap-3 px-2 pt-1.5 pb-2">
-			{demo ? (
-				<span className="grid size-8 shrink-0 place-items-center rounded-8 bg-control-hover text-fg-muted">
-					<EyeIcon className="size-4" />
-				</span>
-			) : (
-				<WalletLogo connector={connector} size={32} />
-			)}
-			<span className="flex min-w-0 flex-1 flex-col">
-				<span className="truncate text-sm font-medium tabular-nums">
-					{active.subaccount?.name ?? shortAddress(activeAddress)}
-				</span>
-				<span className="truncate text-xs text-fg-muted">{getAccountLabel(derived, demo, walletName)}</span>
-			</span>
-			<button
-				type="button"
-				onClick={() => void copy(activeAddress)}
-				aria-label="Copy address"
-				className="grid size-8 shrink-0 place-items-center rounded-8 text-fg-muted transition-colors hover:bg-control-hover hover:text-fg"
-			>
-				<CopyStateIcon copied={copied} announcement="Address copied" />
-			</button>
-		</div>
-	);
-
 	return (
 		<>
-			<Dropdown
-				align="end"
-				size="sm"
-				triggerAriaLabel="Account and wallet"
-				triggerClassName="tabular-nums max-md:h-8 max-md:px-2.5 max-md:[&>svg:last-child]:hidden"
-				trigger={
-					<span className="inline-flex max-w-56 items-center gap-2 whitespace-nowrap">
+			<Popover open={menuOpen} onOpenChange={setMenuOpen}>
+				<PopoverTrigger
+					aria-label="Account and wallet"
+					className={cn(
+						dropdownTriggerVariants({ size: "sm" }),
+						"tabular-nums max-md:h-8 max-md:px-2.5 max-md:[&>svg:last-child]:hidden",
+					)}
+				>
+					<span data-trigger className="inline-flex max-w-56 items-center gap-2 whitespace-nowrap">
 						<WalletLabel connector={connector} demo={demo} name={active.subaccount?.name} />
 						<span>
 							{activeAddress.slice(0, 4)}
 							<span className="max-md:hidden">{activeAddress.slice(4, 6)}</span>…{activeAddress.slice(-4)}
 						</span>
 					</span>
-				}
-				popupClassName="max-h-none min-w-64"
-				header={header}
-				items={[...accountRows, ...accountRetry]}
-				groups={[
-					{ items: actionItems },
-					{
-						items: [
-							{
-								label: demo ? "Exit demo mode" : "Disconnect",
-								icon: <SignOutIcon className="size-4" />,
-								onSelect: handleDisconnect,
-							},
-						],
-					},
-				]}
-			/>
-			<XntRewardsDrawer open={rewardsOpen} onOpenChange={setRewardsOpen} />
+					<CaretDownIcon
+						size={12}
+						weight="bold"
+						className="shrink-0 text-fg-muted transition-transform duration-150 motion-reduce:transition-none [[data-popup-open]>&]:rotate-180"
+					/>
+				</PopoverTrigger>
+				<PopoverContent align="end" className="w-auto p-0">
+					<AccountMenu
+						accounts={accounts}
+						activeAddress={activeAddress}
+						walletLabel={getAccountLabel(derived, demo, walletName)}
+						canManage={!demo}
+						switchDisabled={mutating}
+						loadError={!!subaccounts.isError}
+						more={actionItems}
+						groups={[
+							[
+								{
+									label: demo ? "Exit demo mode" : "Disconnect",
+									icon: <SignOutIcon className="size-4" />,
+									onSelect: handleDisconnect,
+								},
+							],
+						]}
+						onSwitch={choose}
+						onRefresh={refresh}
+						onClose={() => setMenuOpen(false)}
+					/>
+				</PopoverContent>
+			</Popover>
 			{derived && exportOpen && <ExportKeyModal key={owner} address={owner} onClose={() => setExportOpen(false)} />}
 		</>
 	);
-}
-
-interface CopyAddressButtonProps {
-	address: string;
-	name: string;
-}
-
-function CopyAddressButton({ address, name }: CopyAddressButtonProps) {
-	const { copied, copy } = useCopyToClipboard();
-
-	function stop(event: SyntheticEvent) {
-		event.stopPropagation();
-	}
-
-	function handleClick(event: SyntheticEvent) {
-		event.stopPropagation();
-		void copy(address);
-	}
-
-	return (
-		<button
-			type="button"
-			aria-label={`Copy ${name} address`}
-			onClick={handleClick}
-			onMouseUp={stop}
-			onKeyDown={stop}
-			className={cn(
-				"grid size-6 place-items-center rounded-4 transition-colors hover:bg-control-hover",
-				copied ? "text-market-up" : "text-fg-muted",
-			)}
-		>
-			<CopyStateIcon copied={copied} announcement="Address copied" inheritColor />
-		</button>
-	);
-}
-
-function rewardsDetail(total: string | undefined) {
-	if (total === undefined) return undefined;
-	const xnt = feesToXnt(total);
-	if (xnt) return formatToken(xnt, { decimals: 2, symbol: "XNT" });
-	return formatUSD(total, feeDecimals(total));
-}
-
-function shortAddress(address: string) {
-	return `${address.slice(0, 6)}…${address.slice(-4)}`;
 }
 
 function getWalletName(derived: boolean, connector: { id: string; name: string } | undefined) {

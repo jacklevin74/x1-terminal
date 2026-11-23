@@ -16,6 +16,7 @@ import {
 import { t } from "@lingui/core/macro";
 import { useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { AutoLockedClose } from "@/components/trade/auto/auto-locked-close";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { HL_ALL_DEXS } from "@/config/app";
 import { buildOrderPlan } from "@/domain/trade/order-intent";
@@ -306,14 +307,27 @@ export function PositionsTab() {
 											"sticky right-0 z-10 bg-surface",
 										)}
 									>
-										<button
-											type="button"
-											className={accountHeadActionClass}
-											disabled={!canCloseAll || closingAll}
-											onClick={() => setCloseAllOpen(true)}
-										>
-											{closingAll ? t`Closing...` : t`Close All`}
-										</button>
+										{positions.some((p) => auto.isManaged(p.coin)) ? (
+											<AutoLockedClose
+												label={t`Close All`}
+												coin={null}
+												trigger={
+													<button
+														type="button"
+														className={cn(accountHeadActionClass, "inline-flex items-center gap-1 text-fg-muted")}
+													/>
+												}
+											/>
+										) : (
+											<button
+												type="button"
+												className={accountHeadActionClass}
+												disabled={!canCloseAll || closingAll}
+												onClick={() => setCloseAllOpen(true)}
+											>
+												{closingAll ? t`Closing...` : t`Close All`}
+											</button>
+										)}
 									</TableHead>
 								</TableRow>
 							</TableHeader>
