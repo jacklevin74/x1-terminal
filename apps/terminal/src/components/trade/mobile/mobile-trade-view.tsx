@@ -514,9 +514,6 @@ export function MobileTradeView({ className }: Props) {
 					</div>
 
 					<div className="shrink-0 px-3 pt-2 pb-2 border-t border-stroke-weak bg-surface">
-						{validation.errors.length > 0 && isConnected && availableBalance > 0 && !validation.needsApproval && (
-							<p className="text-xs text-market-down mb-2">{validation.errors.join(" \u2022 ")}</p>
-						)}
 						{approvalError && <p className="text-xs text-market-down mb-2">{approvalError}</p>}
 						<AutoMarketWarning
 							className="mb-2"

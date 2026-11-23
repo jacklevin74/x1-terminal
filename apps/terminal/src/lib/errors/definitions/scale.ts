@@ -18,6 +18,7 @@ export const enterPriceRangeValidator: Validator<ScaleContext> = createValidator
 	code: "SCL_001",
 	category: "scale",
 	priority: 400,
+	severity: "info",
 	getMessage: () => t`Enter price range`,
 	validate: (ctx) => {
 		if (!ctx.scaleOrder) return true;

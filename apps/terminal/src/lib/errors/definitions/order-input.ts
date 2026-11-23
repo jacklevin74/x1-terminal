@@ -18,6 +18,7 @@ export const enterLimitPriceValidator: Validator<OrderInputContext> = createVali
 	code: "INP_001",
 	category: "input",
 	priority: 100,
+	severity: "info",
 	getMessage: () => t`Enter limit price`,
 	validate: (ctx) => !ctx.usesLimitPrice || ctx.price > 0,
 });
@@ -27,6 +28,7 @@ export const enterTriggerPriceValidator: Validator<OrderInputContext> = createVa
 	code: "INP_002",
 	category: "input",
 	priority: 101,
+	severity: "info",
 	getMessage: () => t`Enter trigger price`,
 	validate: (ctx) => !ctx.usesTriggerPrice || isPositive(ctx.triggerPriceNum),
 });
@@ -36,6 +38,7 @@ export const enterSizeValidator: Validator<OrderInputContext> = createValidator(
 	code: "INP_003",
 	category: "input",
 	priority: 102,
+	severity: "info",
 	getMessage: () => t`Enter size`,
 	validate: (ctx) => ctx.sizeValue > 0,
 });

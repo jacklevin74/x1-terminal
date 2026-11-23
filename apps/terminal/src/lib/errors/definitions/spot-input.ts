@@ -14,6 +14,7 @@ export const spotEnterLimitPriceValidator: Validator<SpotInputContext> = createV
 	code: "SPOT_INP_001",
 	category: "input",
 	priority: 100,
+	severity: "info",
 	getMessage: () => t`Enter limit price`,
 	validate: (ctx) => !ctx.usesLimitPrice || ctx.price > 0,
 });
@@ -23,6 +24,7 @@ export const spotEnterSizeValidator: Validator<SpotInputContext> = createValidat
 	code: "SPOT_INP_002",
 	category: "input",
 	priority: 101,
+	severity: "info",
 	getMessage: () => t`Enter size`,
 	validate: (ctx) => ctx.sizeValue > 0,
 });

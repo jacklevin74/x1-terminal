@@ -8,6 +8,7 @@ export type SizeMode = "base" | "quote";
 export interface FormValidationResult {
 	valid: boolean;
 	errors: string[];
+	blockingError: string | null;
 	canSubmit: boolean;
 	needsApproval: boolean;
 }

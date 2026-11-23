@@ -422,10 +422,6 @@ export function TradePanel() {
 				/>
 
 				<div className="flex flex-col gap-2">
-					{validation.errors.length > 0 && isConnected && availableBalance > 0 && (
-						<div className="text-xs text-market-down">{validation.errors.join(" • ")}</div>
-					)}
-
 					{approvalError && <div className="text-xs text-market-down">{approvalError}</div>}
 
 					<Button
