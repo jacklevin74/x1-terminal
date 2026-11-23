@@ -1,10 +1,10 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect width="512" height="512" rx="112" fill="#050505"/>
-  <g transform="translate(86 145.5) scale(2.764)">
-    <path d="M76.9314 0H62.289L42.451 26.1546L23.9103 0H0L29.6265 39.6956L-6.3884e-07 80H23.0058L41.8736 54.0388L59.7085 80H82.7143L54.7044 39.7582L85.3119 0H76.9314Z" fill="#FFFFFF"/>
-    <path d="M85.3125 15.7479L97.3316 0H123.001L123.001 79.9681H104.697L104.697 15.7479H85.3125Z" fill="url(#favicon_1_gradient)"/>
+  <g transform="translate(-31.8 -23.7) scale(10.76)">
+    <path d="M12 14H21L32.5 26L21 38H12L23.5 26Z" fill="#FFFFFF"/>
+    <rect x="32" y="32.5" width="9.5" height="5.5" fill="url(#favicon_cursor_gradient)"/>
     <defs>
-      <linearGradient id="favicon_1_gradient" x1="104.147" y1="0" x2="104.147" y2="79.9681" gradientUnits="userSpaceOnUse">
+      <linearGradient id="favicon_cursor_gradient" x1="32" y1="0" x2="41.5" y2="0" gradientUnits="userSpaceOnUse">
         <stop stop-color="#00C6FF"/>
         <stop offset="1" stop-color="#0072FF"/>
       </linearGradient>

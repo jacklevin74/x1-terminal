@@ -6,13 +6,28 @@
 @source "../../../packages/ui/src";
 
 @font-face {
-  font-family: "Geist";
-  src: url("/fonts/Geist-SemiBold.woff2") format("woff2");
-  font-weight: 600;
+  font-family: "Aeonik Pro";
+  src: url("/fonts/AeonikPro-Regular.otf") format("opentype");
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Aeonik Pro";
+  src: url("/fonts/AeonikPro-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Aeonik Pro";
+  src: url("/fonts/AeonikPro-RegularItalic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
 /* ============================================
    HyperTerminal UI — Design Tokens
    Source: Figma variable exports
@@ -29,8 +44,8 @@
   /* ---- Font Families ---- */
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: ui-monospace, "SF Mono", monospace;
-  --font-wordmark: "Geist", var(--font-sans);
-  --text-wordmark: 14.5px;
+  --font-wordmark: "Aeonik Pro", var(--font-sans);
+  --text-wordmark: 16px;
 
   /* ---- Typography Scale (docs/design-system.md §2) ----
      11/16 → text-2xs  (uppercase micro-labels only, with tracking-micro)
