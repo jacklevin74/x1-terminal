@@ -1,6 +1,7 @@
 import { Button, ButtonIcon, Drawer, DrawerContent } from "@hypeterminal/ui";
 import { Trans } from "@lingui/react/macro";
 import {
+	ChartPieSliceIcon,
 	DownloadSimpleIcon,
 	GearIcon,
 	HammerIcon,
@@ -14,7 +15,13 @@ import {
 import { Link, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { useConnection } from "wagmi";
-import { SCOPE_NAV_ITEMS, TOURNAMENT_NAV_LABEL, TOURNAMENT_PATH } from "@/config/nav";
+import {
+	PORTFOLIO_NAV_LABEL,
+	PORTFOLIO_PATH,
+	SCOPE_NAV_ITEMS,
+	TOURNAMENT_NAV_LABEL,
+	TOURNAMENT_PATH,
+} from "@/config/nav";
 import { cn } from "@/lib/cn";
 import { useExchangeScope } from "@/providers/exchange-scope";
 import { useDepositModalActions, useSettingsDialogActions } from "@/stores/use-global-modal-store";
@@ -40,6 +47,7 @@ export function MobileNavDrawer() {
 	const { scope } = useExchangeScope();
 	const pathname = useLocation().pathname;
 	const onTournament = pathname === TOURNAMENT_PATH;
+	const onPortfolio = pathname === PORTFOLIO_PATH;
 	const { isConnected } = useConnection();
 	const { open: openDepositModal } = useDepositModalActions();
 	const { open: openSettingsDialog } = useSettingsDialogActions();
@@ -69,7 +77,7 @@ export function MobileNavDrawer() {
 								<Trans>Markets</Trans>
 							</p>
 							{SCOPE_NAV_ITEMS.map((item) => {
-								const isActive = !onTournament && scope === item.scope;
+								const isActive = !onTournament && !onPortfolio && scope === item.scope;
 								return (
 									<Link
 										key={item.scope}
@@ -107,6 +115,18 @@ export function MobileNavDrawer() {
 							>
 								<TrophyIcon className="size-4 shrink-0" />
 								<span className="flex-1 truncate">{TOURNAMENT_NAV_LABEL}</span>
+							</Link>
+							<Link
+								to={PORTFOLIO_PATH}
+								onClick={close}
+								aria-current={onPortfolio ? "page" : undefined}
+								className={cn(
+									"h-10 flex items-center gap-3 px-2 rounded-8 text-sm transition-colors duration-150 motion-reduce:transition-none",
+									onPortfolio ? "bg-control font-medium text-fg" : "text-fg-muted hover:text-fg hover:bg-control",
+								)}
+							>
+								<ChartPieSliceIcon className="size-4 shrink-0" />
+								<span className="flex-1 truncate">{PORTFOLIO_NAV_LABEL}</span>
 							</Link>
 						</nav>
 

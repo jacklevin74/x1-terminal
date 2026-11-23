@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TournamentRouteImport } from './routes/tournament'
 import { Route as SpotRouteImport } from './routes/spot'
+import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as PerpRouteImport } from './routes/perp'
 import { Route as NewthemeRouteImport } from './routes/newtheme'
 import { Route as MobileAgentSyncRouteImport } from './routes/mobile-agent-sync'
@@ -31,6 +32,11 @@ const TournamentRoute = TournamentRouteImport.update({
 const SpotRoute = SpotRouteImport.update({
   id: '/spot',
   path: '/spot',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortfolioRoute = PortfolioRouteImport.update({
+  id: '/portfolio',
+  path: '/portfolio',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PerpRoute = PerpRouteImport.update({
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/mobile-agent-sync': typeof MobileAgentSyncRoute
   '/newtheme': typeof NewthemeRoute
   '/perp': typeof PerpRoute
+  '/portfolio': typeof PortfolioRoute
   '/spot': typeof SpotRoute
   '/tournament': typeof TournamentRoute
   '/builders-perp/$dex': typeof BuildersPerpDexRoute
@@ -113,6 +120,7 @@ export interface FileRoutesByTo {
   '/mobile-agent-sync': typeof MobileAgentSyncRoute
   '/newtheme': typeof NewthemeRoute
   '/perp': typeof PerpRoute
+  '/portfolio': typeof PortfolioRoute
   '/spot': typeof SpotRoute
   '/tournament': typeof TournamentRoute
   '/builders-perp/$dex': typeof BuildersPerpDexRoute
@@ -129,6 +137,7 @@ export interface FileRoutesById {
   '/mobile-agent-sync': typeof MobileAgentSyncRoute
   '/newtheme': typeof NewthemeRoute
   '/perp': typeof PerpRoute
+  '/portfolio': typeof PortfolioRoute
   '/spot': typeof SpotRoute
   '/tournament': typeof TournamentRoute
   '/builders-perp/$dex': typeof BuildersPerpDexRoute
@@ -146,6 +155,7 @@ export interface FileRouteTypes {
     | '/mobile-agent-sync'
     | '/newtheme'
     | '/perp'
+    | '/portfolio'
     | '/spot'
     | '/tournament'
     | '/builders-perp/$dex'
@@ -160,6 +170,7 @@ export interface FileRouteTypes {
     | '/mobile-agent-sync'
     | '/newtheme'
     | '/perp'
+    | '/portfolio'
     | '/spot'
     | '/tournament'
     | '/builders-perp/$dex'
@@ -175,6 +186,7 @@ export interface FileRouteTypes {
     | '/mobile-agent-sync'
     | '/newtheme'
     | '/perp'
+    | '/portfolio'
     | '/spot'
     | '/tournament'
     | '/builders-perp/$dex'
@@ -191,6 +203,7 @@ export interface RootRouteChildren {
   MobileAgentSyncRoute: typeof MobileAgentSyncRoute
   NewthemeRoute: typeof NewthemeRoute
   PerpRoute: typeof PerpRoute
+  PortfolioRoute: typeof PortfolioRoute
   SpotRoute: typeof SpotRoute
   TournamentRoute: typeof TournamentRoute
 }
@@ -209,6 +222,13 @@ declare module '@tanstack/react-router' {
       path: '/spot'
       fullPath: '/spot'
       preLoaderRoute: typeof SpotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portfolio': {
+      id: '/portfolio'
+      path: '/portfolio'
+      fullPath: '/portfolio'
+      preLoaderRoute: typeof PortfolioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/perp': {
@@ -315,6 +335,7 @@ const rootRouteChildren: RootRouteChildren = {
   MobileAgentSyncRoute: MobileAgentSyncRoute,
   NewthemeRoute: NewthemeRoute,
   PerpRoute: PerpRoute,
+  PortfolioRoute: PortfolioRoute,
   SpotRoute: SpotRoute,
   TournamentRoute: TournamentRoute,
 }
