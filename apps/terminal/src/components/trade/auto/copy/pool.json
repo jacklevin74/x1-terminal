@@ -1,0 +1,5675 @@
+{
+	"source": "https://wxnt-sale-sim.vercel.app/api/daytraders, fetched once. profiles (nickname, style, monthly PNL, fills in the last 14 days, capped at 2000 by the Hyperliquid fills API), accounts (equity, 30d and all-time PNL) and open positions (all coins, size, leverage). Recent fill events dropped.",
+	"capturedAt": "2026-11-19T10:39:16.915Z",
+	"traders": [
+		{
+			"usr": "0x418aa6bf98a2b2bc93779f810330d88cde488888",
+			"name": "Lightning Eights",
+			"style": "Fast in-and-out, large BTC/ETH shorts",
+			"coins": ["BTC", "ENA", "TRUMP"],
+			"acct": 334761,
+			"pnl30": 5377257,
+			"pnlAll": 40354890,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": -796924
+				},
+				{
+					"m": "Aug",
+					"pnl": -257566
+				},
+				{
+					"m": "Sep",
+					"pnl": -1623676
+				},
+				{
+					"m": "Oct",
+					"pnl": 6596359
+				}
+			],
+			"green": 1,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "BTC",
+					"szi": -1,
+					"ntl": 63792,
+					"upnl": 8713,
+					"lev": "40x cross"
+				},
+				{
+					"coin": "ENA",
+					"szi": 332134,
+					"ntl": 36578,
+					"upnl": -4784,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "TRUMP",
+					"szi": 10000,
+					"ntl": 9693,
+					"upnl": 204,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "io:ANTH",
+					"szi": 1,
+					"ntl": 1858,
+					"upnl": 169,
+					"lev": "2x isolated"
+				},
+				{
+					"coin": "xyz:ANT",
+					"szi": -3.47,
+					"ntl": 368,
+					"upnl": -14,
+					"lev": "3x cross"
+				}
+			]
+		},
+		{
+			"usr": "0x7583b5364597736a6a72c4ba61ede0a4a37ef4de",
+			"name": "HYPE Monk",
+			"style": "HYPE-only active trader",
+			"coins": ["HYPE", "@334"],
+			"acct": 798695,
+			"pnl30": -712266,
+			"pnlAll": 2481503,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 542868
+				},
+				{
+					"m": "Aug",
+					"pnl": 670257
+				},
+				{
+					"m": "Sep",
+					"pnl": 997845
+				},
+				{
+					"m": "Oct",
+					"pnl": -247353
+				}
+			],
+			"green": 3,
+			"nmonths": 4,
+			"fills14": 716,
+			"positions": [
+				{
+					"coin": "HYPE",
+					"szi": 63000,
+					"ntl": 4302635,
+					"upnl": -837124,
+					"lev": "10x cross"
+				}
+			]
+		},
+		{
+			"usr": "0xe86b057f5eb764c9738d6b0d38170befd0723664",
+			"name": "Frog Sniper",
+			"style": "Intraday majors + kPEPE scalper",
+			"coins": ["BTC", "ETH", "ZEC", "kPEPE"],
+			"acct": 1853869,
+			"pnl30": 2499489,
+			"pnlAll": 24854804,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 214495
+				},
+				{
+					"m": "Aug",
+					"pnl": -1752888
+				},
+				{
+					"m": "Sep",
+					"pnl": -1315212
+				},
+				{
+					"m": "Oct",
+					"pnl": 4163461
+				}
+			],
+			"green": 2,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "ZEC",
+					"szi": -506.07,
+					"ntl": 480023,
+					"upnl": -30525,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "HYPE",
+					"szi": -4980.75,
+					"ntl": 340111,
+					"upnl": -2180,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "kPEPE",
+					"szi": -81576536,
+					"ntl": 310317,
+					"upnl": 120055,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "WLFI",
+					"szi": 6018616,
+					"ntl": 276676,
+					"upnl": -16080,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "HBAR",
+					"szi": -4859918,
+					"ntl": 270061,
+					"upnl": 229664,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "MON",
+					"szi": -17867679,
+					"ntl": 243554,
+					"upnl": 187861,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "CHIP",
+					"szi": -7126030,
+					"ntl": 228247,
+					"upnl": 60223,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "XPL",
+					"szi": -4714781,
+					"ntl": 223721,
+					"upnl": 28144,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "PUMP",
+					"szi": -80878275,
+					"ntl": 219989,
+					"upnl": 6563,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "ETH",
+					"szi": 113.5219,
+					"ntl": 204805,
+					"upnl": 1196,
+					"lev": "25x cross"
+				},
+				{
+					"coin": "VVV",
+					"szi": -8656.56,
+					"ntl": 199906,
+					"upnl": -20884,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "XMR",
+					"szi": -265.238,
+					"ntl": 133102,
+					"upnl": 945,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "SYRUP",
+					"szi": -1286724,
+					"ntl": 127942,
+					"upnl": 73821,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "NEAR",
+					"szi": -34812.2,
+					"ntl": 118283,
+					"upnl": -5987,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "SOL",
+					"szi": -1398.23,
+					"ntl": 104203,
+					"upnl": -1439,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "BTC",
+					"szi": -1.62349,
+					"ntl": 103564,
+					"upnl": -67,
+					"lev": "40x cross"
+				},
+				{
+					"coin": "XRP",
+					"szi": 100110,
+					"ntl": 98164,
+					"upnl": 1257,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "GRAM",
+					"szi": -83374,
+					"ntl": 85834,
+					"upnl": 325,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "ZRO",
+					"szi": -54559.5,
+					"ntl": 77340,
+					"upnl": -2104,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "STRK",
+					"szi": -2198240.6,
+					"ntl": 74696,
+					"upnl": 92788,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "USELESS",
+					"szi": -630261,
+					"ntl": 65427,
+					"upnl": -3209,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "UNI",
+					"szi": 10678.7,
+					"ntl": 55481,
+					"upnl": -751,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "JTO",
+					"szi": -185833,
+					"ntl": 47393,
+					"upnl": 41505,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "kBONK",
+					"szi": -18941824,
+					"ntl": 44513,
+					"upnl": 16426,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "GRASS",
+					"szi": 93235.4,
+					"ntl": 40491,
+					"upnl": 2857,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "BNB",
+					"szi": 64.103,
+					"ntl": 37840,
+					"upnl": -7028,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "AAVE",
+					"szi": 339.49,
+					"ntl": 37195,
+					"upnl": -113,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "SUI",
+					"szi": 44758.4,
+					"ntl": 32571,
+					"upnl": -294,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "SKY",
+					"szi": 622723,
+					"ntl": 28359,
+					"upnl": -3773,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "ASTER",
+					"szi": 44574,
+					"ntl": 23272,
+					"upnl": -4391,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "JUP",
+					"szi": 76802,
+					"ntl": 20487,
+					"upnl": 625,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "LTC",
+					"szi": -419.04,
+					"ntl": 18656,
+					"upnl": -120,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "LIT",
+					"szi": -4616,
+					"ntl": 13511,
+					"upnl": -669,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "CRV",
+					"szi": -68230.1,
+					"ntl": 13383,
+					"upnl": 602,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "SPX",
+					"szi": 39928.5,
+					"ntl": 12641,
+					"upnl": 571,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "LINK",
+					"szi": -1374.4,
+					"ntl": 12622,
+					"upnl": 30,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "PENDLE",
+					"szi": -7583,
+					"ntl": 10896,
+					"upnl": 15,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "ARB",
+					"szi": -71188,
+					"ntl": 9039,
+					"upnl": 301,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "PENGU",
+					"szi": -1507438,
+					"ntl": 7200,
+					"upnl": 286,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "FARTCOIN",
+					"szi": -81672.7,
+					"ntl": 7061,
+					"upnl": 230,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "ADA",
+					"szi": -41451,
+					"ntl": 6364,
+					"upnl": -262,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "DOGE",
+					"szi": -107014,
+					"ntl": 6350,
+					"upnl": -97,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "ONDO",
+					"szi": -20037,
+					"ntl": 6084,
+					"upnl": 276,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "BCH",
+					"szi": 27.015,
+					"ntl": 5635,
+					"upnl": 59,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "TRUMP",
+					"szi": -5765.2,
+					"ntl": 5586,
+					"upnl": -99,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "AERO",
+					"szi": -12263,
+					"ntl": 5322,
+					"upnl": 82,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "TAO",
+					"szi": -14.462,
+					"ntl": 2843,
+					"upnl": -51,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "WLD",
+					"szi": -8947.7,
+					"ntl": 2357,
+					"upnl": -11,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "AVAX",
+					"szi": -235.24,
+					"ntl": 1662,
+					"upnl": 32,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "ENA",
+					"szi": 4068,
+					"ntl": 448,
+					"upnl": -39,
+					"lev": "10x cross"
+				}
+			]
+		},
+		{
+			"usr": "0xf97ad6704baec104d00b88e0c157e2b7b3a1ddd1",
+			"name": "Night Owl",
+			"style": "Daily HYPE/oil/ZEC trader, low drawdown",
+			"coins": ["HYPE", "LITE", "NBIS", "IREN"],
+			"acct": 528905,
+			"pnl30": -56193,
+			"pnlAll": 3546953,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 51819
+				},
+				{
+					"m": "Aug",
+					"pnl": 106333
+				},
+				{
+					"m": "Sep",
+					"pnl": 85972
+				},
+				{
+					"m": "Oct",
+					"pnl": -8953
+				}
+			],
+			"green": 3,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "HYPE",
+					"szi": 17000,
+					"ntl": 1161287,
+					"upnl": -71613,
+					"lev": "6x cross"
+				},
+				{
+					"coin": "xyz:NVDA",
+					"szi": 3500,
+					"ntl": 537600,
+					"upnl": -9881,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:INTC",
+					"szi": 4500,
+					"ntl": 256599,
+					"upnl": -48078,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:NBIS",
+					"szi": 600,
+					"ntl": 67386,
+					"upnl": -4428,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "BTC",
+					"szi": 1,
+					"ntl": 63777,
+					"upnl": -982,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "xyz:GOOGL",
+					"szi": 200,
+					"ntl": 58632,
+					"upnl": 730,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "xyz:IREN",
+					"szi": 3000,
+					"ntl": 48021,
+					"upnl": -2247,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:BE",
+					"szi": 150,
+					"ntl": 27017,
+					"upnl": 392,
+					"lev": "10x isolated"
+				}
+			]
+		},
+		{
+			"usr": "0x9c062c0575c30a3b7614d0c6ea8de67faab00560",
+			"name": "Metal Bear",
+			"style": "Metals/ETH/stocks, holds big shorts",
+			"coins": ["ETH", "BTC", "HYPE", "SILVER"],
+			"acct": 3967998,
+			"pnl30": -305624,
+			"pnlAll": 1427089,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 0
+				},
+				{
+					"m": "Aug",
+					"pnl": 2911694
+				},
+				{
+					"m": "Sep",
+					"pnl": -1950973
+				},
+				{
+					"m": "Oct",
+					"pnl": 2870758
+				}
+			],
+			"green": 2,
+			"nmonths": 3,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "xyz:GOLD",
+					"szi": 1527.5773,
+					"ntl": 5701224,
+					"upnl": -301647,
+					"lev": "25x cross"
+				},
+				{
+					"coin": "BTC",
+					"szi": 86.55564,
+					"ntl": 5521471,
+					"upnl": -578203,
+					"lev": "40x cross"
+				},
+				{
+					"coin": "ETH",
+					"szi": 2024.1442,
+					"ntl": 3651759,
+					"upnl": -92240,
+					"lev": "25x cross"
+				},
+				{
+					"coin": "ZEC",
+					"szi": -2989.8,
+					"ntl": 2835885,
+					"upnl": -485890,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:GOOGL",
+					"szi": 5781.895,
+					"ntl": 1695772,
+					"upnl": -50626,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "xyz:NBIS",
+					"szi": 11537.05,
+					"ntl": 1295957,
+					"upnl": -551557,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:CRWV",
+					"szi": 24945.47,
+					"ntl": 1246874,
+					"upnl": -351856,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:SILVER",
+					"szi": 25697.14,
+					"ntl": 1162641,
+					"upnl": -85805,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "xyz:SPCX",
+					"szi": 6093.51,
+					"ntl": 894223,
+					"upnl": 37562,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "xyz:SNDK",
+					"szi": 1051.943,
+					"ntl": 854420,
+					"upnl": -327830,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:SKHX",
+					"szi": 917.29,
+					"ntl": 818901,
+					"upnl": -23205,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:INTC",
+					"szi": 13845.05,
+					"ntl": 789708,
+					"upnl": -182775,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:SMSN",
+					"szi": 5304.084,
+					"ntl": 787020,
+					"upnl": -47484,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:AMD",
+					"szi": 1401.428,
+					"ntl": 765628,
+					"upnl": 76573,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:NVDA",
+					"szi": 4940.61,
+					"ntl": 759471,
+					"upnl": -99353,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:MU",
+					"szi": 960.189,
+					"ntl": 708667,
+					"upnl": -51994,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:PLTR",
+					"szi": 4150.866,
+					"ntl": 668705,
+					"upnl": -3530,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:META",
+					"szi": 1016.53,
+					"ntl": 636175,
+					"upnl": 7277,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "xyz:SOXL",
+					"szi": 9506.51,
+					"ntl": 513988,
+					"upnl": 29138,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:DRAM",
+					"szi": 12085.3,
+					"ntl": 494035,
+					"upnl": -83210,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "xyz:ORCL",
+					"szi": 4029.865,
+					"ntl": 471655,
+					"upnl": -30104,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:IREN",
+					"szi": 24263.3,
+					"ntl": 388310,
+					"upnl": -171387,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:KORU",
+					"szi": 47447.9,
+					"ntl": 344353,
+					"upnl": -31276,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:MRVL",
+					"szi": 1985.41,
+					"ntl": 300690,
+					"upnl": -73542,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:NOW",
+					"szi": 2969.77,
+					"ntl": 271930,
+					"upnl": -68001,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:MSFT",
+					"szi": 494.071,
+					"ntl": 254526,
+					"upnl": 4686,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "xyz:TSLA",
+					"szi": 594.672,
+					"ntl": 231857,
+					"upnl": 26766,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "xyz:LITE",
+					"szi": 391.918,
+					"ntl": 224279,
+					"upnl": -34983,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:NFLX",
+					"szi": 3171.21,
+					"ntl": 190644,
+					"upnl": -9345,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:CBRS",
+					"szi": 1624.81,
+					"ntl": 157951,
+					"upnl": -16867,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:RKLB",
+					"szi": 1864.72,
+					"ntl": 103031,
+					"upnl": 17792,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:EWZ",
+					"szi": 3184.71,
+					"ntl": 96134,
+					"upnl": -3653,
+					"lev": "20x isolated"
+				},
+				{
+					"coin": "xyz:AAOI",
+					"szi": 2220.72,
+					"ntl": 94578,
+					"upnl": -35403,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:SNXX",
+					"szi": 25838.7,
+					"ntl": 76661,
+					"upnl": -53564,
+					"lev": "10x isolated"
+				}
+			]
+		},
+		{
+			"usr": "0xda3768e9299e1fd81708ec030dac5ea37125f7b5",
+			"name": "Chip Whale",
+			"style": "Stock-perp position trader (multi-day)",
+			"coins": ["CRCL", "SOXL", "GOOGL", "LITE"],
+			"acct": 20070304,
+			"pnl30": 7764093,
+			"pnlAll": 5867850,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 2321548
+				},
+				{
+					"m": "Aug",
+					"pnl": -4252965
+				},
+				{
+					"m": "Sep",
+					"pnl": 71568
+				},
+				{
+					"m": "Oct",
+					"pnl": 7804927
+				}
+			],
+			"green": 3,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "xyz:NVDA",
+					"szi": -68229.892,
+					"ntl": 10486934,
+					"upnl": 595321,
+					"lev": "4x cross"
+				},
+				{
+					"coin": "xyz:MU",
+					"szi": -5726.121,
+					"ntl": 4224789,
+					"upnl": 552639,
+					"lev": "4x cross"
+				},
+				{
+					"coin": "xyz:INTC",
+					"szi": -58055.01,
+					"ntl": 3310935,
+					"upnl": 546967,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:AAPL",
+					"szi": 6734.729,
+					"ntl": 2383825,
+					"upnl": 41004,
+					"lev": "4x cross"
+				},
+				{
+					"coin": "xyz:SKHY",
+					"szi": 17243.4,
+					"ntl": 2227847,
+					"upnl": -604842,
+					"lev": "4x cross"
+				},
+				{
+					"coin": "xyz:SNDK",
+					"szi": -2267.24,
+					"ntl": 1841203,
+					"upnl": 750028,
+					"lev": "4x cross"
+				},
+				{
+					"coin": "xyz:EWZ",
+					"szi": -55586.71,
+					"ntl": 1677940,
+					"upnl": 159686,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:DRAM",
+					"szi": -36851.9,
+					"ntl": 1506321,
+					"upnl": 148966,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:CRCL",
+					"szi": -23602.475,
+					"ntl": 1308309,
+					"upnl": 305366,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:AMD",
+					"szi": 2328.788,
+					"ntl": 1272217,
+					"upnl": -66797,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:NBIS",
+					"szi": -11041.29,
+					"ntl": 1240158,
+					"upnl": 201080,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:SOXL",
+					"szi": -18228.3,
+					"ntl": 984729,
+					"upnl": -64067,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:CBRS",
+					"szi": 8753.13,
+					"ntl": 850577,
+					"upnl": -349145,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:MRNA",
+					"szi": 3680.55,
+					"ntl": 733313,
+					"upnl": -163371,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:NET",
+					"szi": -2204.82,
+					"ntl": 698266,
+					"upnl": -87883,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:TSLA",
+					"szi": -1413.292,
+					"ntl": 551014,
+					"upnl": 4345,
+					"lev": "4x cross"
+				},
+				{
+					"coin": "xyz:IREN",
+					"szi": -25992.9,
+					"ntl": 416016,
+					"upnl": 89658,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:MSTR",
+					"szi": -3762.184,
+					"ntl": 355666,
+					"upnl": 173308,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:BE",
+					"szi": -1599.46,
+					"ntl": 288127,
+					"upnl": 42719,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:LITE",
+					"szi": -453.418,
+					"ntl": 259514,
+					"upnl": 60252,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:KIOXIA",
+					"szi": -4213.67,
+					"ntl": 221235,
+					"upnl": 7336,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:PURRDAT",
+					"szi": -24673,
+					"ntl": 203846,
+					"upnl": 28119,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:KORU",
+					"szi": -25436.1,
+					"ntl": 184610,
+					"upnl": 55773,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:GOOGL",
+					"szi": -315.199,
+					"ntl": 92438,
+					"upnl": -2026,
+					"lev": "4x cross"
+				},
+				{
+					"coin": "xyz:MSFT",
+					"szi": 151.393,
+					"ntl": 77990,
+					"upnl": 1276,
+					"lev": "4x cross"
+				},
+				{
+					"coin": "xyz:DELL",
+					"szi": 21.26,
+					"ntl": 6921,
+					"upnl": -3431,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:META",
+					"szi": -6.495,
+					"ntl": 4065,
+					"upnl": -27,
+					"lev": "4x cross"
+				},
+				{
+					"coin": "xyz:CRWV",
+					"szi": -55.22,
+					"ntl": 2761,
+					"upnl": 197,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:SPCX",
+					"szi": 16.08,
+					"ntl": 2360,
+					"upnl": 114,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:AMAT",
+					"szi": -4.362,
+					"ntl": 1595,
+					"upnl": 19,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:AVGO",
+					"szi": -3.56,
+					"ntl": 1296,
+					"upnl": -34,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:ARM",
+					"szi": -5.05,
+					"ntl": 964,
+					"upnl": -9,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:IBM",
+					"szi": -2.32,
+					"ntl": 533,
+					"upnl": 83,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:PLTR",
+					"szi": 0.802,
+					"ntl": 129,
+					"upnl": -8,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:AMZN",
+					"szi": 0.217,
+					"ntl": 59,
+					"upnl": 5,
+					"lev": "4x cross"
+				}
+			]
+		},
+		{
+			"usr": "0xde8a6d588f8067e761bac811a102e0146c721e41",
+			"name": "Oil Fox",
+			"style": "Commodities (Brent/gold) intraday",
+			"coins": ["BRENTOIL", "SOXL", "GOLD", "ETH"],
+			"acct": 48166,
+			"pnl30": -78151,
+			"pnlAll": 806223,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 150062
+				},
+				{
+					"m": "Aug",
+					"pnl": 96183
+				},
+				{
+					"m": "Sep",
+					"pnl": 323201
+				},
+				{
+					"m": "Oct",
+					"pnl": 85104
+				}
+			],
+			"green": 4,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "BTC",
+					"szi": -2,
+					"ntl": 127558,
+					"upnl": 16242,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:JPY",
+					"szi": 500,
+					"ntl": 79915,
+					"upnl": 1666,
+					"lev": "20x isolated"
+				},
+				{
+					"coin": "xyz:STRC",
+					"szi": -635.5,
+					"ntl": 61557,
+					"upnl": -355,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "HYPE",
+					"szi": -300,
+					"ntl": 20493,
+					"upnl": 4043,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "NIL",
+					"szi": 400000,
+					"ntl": 20284,
+					"upnl": -24292,
+					"lev": "3x cross"
+				}
+			]
+		},
+		{
+			"usr": "0xf220c9b7b4c0e5e785ebe4b40b17576ce24473e0",
+			"name": "Gold Hawk",
+			"style": "Majors and gold intraday",
+			"coins": ["BTC", "XYZ100", "ETH", "GOLD"],
+			"acct": 499085,
+			"pnl30": 300963,
+			"pnlAll": 4225771,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 221564
+				},
+				{
+					"m": "Aug",
+					"pnl": 1015436
+				},
+				{
+					"m": "Sep",
+					"pnl": 347344
+				},
+				{
+					"m": "Oct",
+					"pnl": 681591
+				}
+			],
+			"green": 4,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "BTC",
+					"szi": 55,
+					"ntl": 3508010,
+					"upnl": 24122,
+					"lev": "40x cross"
+				},
+				{
+					"coin": "xyz:XYZ100",
+					"szi": 60,
+					"ntl": 1660440,
+					"upnl": 33483,
+					"lev": "30x cross"
+				},
+				{
+					"coin": "xyz:GOLD",
+					"szi": 310,
+					"ntl": 1156827,
+					"upnl": -66094,
+					"lev": "20x cross"
+				}
+			]
+		},
+		{
+			"usr": "0x888e000c78b8f1aada5b3c99f880794907b76d77",
+			"name": "Samba Swinger",
+			"style": "Stock perps + BTC swing/day trading",
+			"coins": ["AMD", "SKHX", "BNB", "BTC"],
+			"acct": 934979,
+			"pnl30": 1023802,
+			"pnlAll": 6352235,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 134962
+				},
+				{
+					"m": "Aug",
+					"pnl": 349513
+				},
+				{
+					"m": "Sep",
+					"pnl": 363332
+				},
+				{
+					"m": "Oct",
+					"pnl": 1209036
+				}
+			],
+			"green": 4,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "xyz:AMD",
+					"szi": -700,
+					"ntl": 382403,
+					"upnl": 22127,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:SKHX",
+					"szi": 120,
+					"ntl": 107141,
+					"upnl": 11201,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "kPEPE",
+					"szi": -27000000,
+					"ntl": 102708,
+					"upnl": 29964,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "TRUMP",
+					"szi": -47000,
+					"ntl": 45558,
+					"upnl": 67766,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "STRK",
+					"szi": -1322000,
+					"ntl": 44922,
+					"upnl": 92725,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "ARB",
+					"szi": -270000,
+					"ntl": 34282,
+					"upnl": 16513,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "UNI",
+					"szi": -5700,
+					"ntl": 29609,
+					"upnl": 20193,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "VVV",
+					"szi": -1200,
+					"ntl": 27680,
+					"upnl": 11622,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "NEAR",
+					"szi": -7000,
+					"ntl": 23786,
+					"upnl": 8458,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "INIT",
+					"szi": -200000,
+					"ntl": 21514,
+					"upnl": 27101,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "MELANIA",
+					"szi": -449000,
+					"ntl": 21381,
+					"upnl": 40082,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "USELESS",
+					"szi": -157000,
+					"ntl": 16290,
+					"upnl": 24522,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "SAND",
+					"szi": -377777,
+					"ntl": 13796,
+					"upnl": 12741,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "WLD",
+					"szi": -49000,
+					"ntl": 12907,
+					"upnl": 13424,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "ZEC",
+					"szi": -10,
+					"ntl": 9482,
+					"upnl": 5219,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "FIL",
+					"szi": -10777,
+					"ntl": 6231,
+					"upnl": 4375,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "xyz:SILVER",
+					"szi": -99,
+					"ntl": 4478,
+					"upnl": 3449,
+					"lev": "25x isolated"
+				},
+				{
+					"coin": "NIL",
+					"szi": -77700,
+					"ntl": 3939,
+					"upnl": 5447,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "RENDER",
+					"szi": -2500,
+					"ntl": 3569,
+					"upnl": 2496,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "ZETA",
+					"szi": -99344.7,
+					"ntl": 2960,
+					"upnl": 3480,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "MEGA",
+					"szi": -50000,
+					"ntl": 2865,
+					"upnl": 5047,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "ANIME",
+					"szi": -1099998,
+					"ntl": 2376,
+					"upnl": 4321,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "XPL",
+					"szi": -50000,
+					"ntl": 2373,
+					"upnl": 3752,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "WLFI",
+					"szi": -50000,
+					"ntl": 2299,
+					"upnl": 4776,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "STABLE",
+					"szi": -100000,
+					"ntl": 2222,
+					"upnl": 1768,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "DYDX",
+					"szi": -27000,
+					"ntl": 2169,
+					"upnl": 4071,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "POL",
+					"szi": -26000,
+					"ntl": 2129,
+					"upnl": 2356,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "APE",
+					"szi": -24999,
+					"ntl": 2027,
+					"upnl": 2917,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "GRIFFAIN",
+					"szi": -200000,
+					"ntl": 1988,
+					"upnl": 2912,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "KAITO",
+					"szi": -8700,
+					"ntl": 1541,
+					"upnl": 9079,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "STBL",
+					"szi": -77000,
+					"ntl": 1526,
+					"upnl": 4801,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "DOT",
+					"szi": -2000,
+					"ntl": 1434,
+					"upnl": 1685,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "MOVE",
+					"szi": -200000,
+					"ntl": 990,
+					"upnl": 10394,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "ICP",
+					"szi": -350,
+					"ntl": 784,
+					"upnl": 1487,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "BERA",
+					"szi": -9000,
+					"ntl": 761,
+					"upnl": 6587,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "AVNT",
+					"szi": -10000,
+					"ntl": 725,
+					"upnl": 3360,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "WCT",
+					"szi": -23003,
+					"ntl": 670,
+					"upnl": 1471,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "kFLOKI",
+					"szi": -29000,
+					"ntl": 516,
+					"upnl": 2296,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "MON",
+					"szi": -29999,
+					"ntl": 408,
+					"upnl": 714,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "ZK",
+					"szi": -50000,
+					"ntl": 391,
+					"upnl": 2771,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "FOGO",
+					"szi": -200000,
+					"ntl": 360,
+					"upnl": 6762,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "SNX",
+					"szi": -1787.9,
+					"ntl": 288,
+					"upnl": 3625,
+					"lev": "3x cross"
+				}
+			]
+		},
+		{
+			"usr": "0xd7b8209d95d4c05faaa505671211058d51529f55",
+			"name": "Ether Hummingbird",
+			"style": "High-frequency ETH scalper",
+			"coins": ["HYPE", "ETH", "BNB"],
+			"acct": 417477,
+			"pnl30": -1471649,
+			"pnlAll": 1412030,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 152161
+				},
+				{
+					"m": "Aug",
+					"pnl": 1038110
+				},
+				{
+					"m": "Sep",
+					"pnl": 257727
+				},
+				{
+					"m": "Oct",
+					"pnl": -444207
+				}
+			],
+			"green": 3,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "HYPE",
+					"szi": 45923.95,
+					"ntl": 3137065,
+					"upnl": 32174,
+					"lev": "10x cross"
+				}
+			]
+		},
+		{
+			"usr": "0x1081e214bd6f0137234b92432d9b6033b88965b7",
+			"name": "Ticker Tornado",
+			"style": "High-volume stock-perp day trader",
+			"coins": ["KIOXIA", "CXMT", "UNITREE", "ZHIPU"],
+			"acct": 1140845,
+			"pnl30": 224925,
+			"pnlAll": 1385098,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 260361
+				},
+				{
+					"m": "Aug",
+					"pnl": 256950
+				},
+				{
+					"m": "Sep",
+					"pnl": 393997
+				},
+				{
+					"m": "Oct",
+					"pnl": 375093
+				}
+			],
+			"green": 4,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "para:2Y",
+					"szi": -22626.9,
+					"ntl": 109417,
+					"upnl": 666,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "xyz:TLT",
+					"szi": -1077.06,
+					"ntl": 86104,
+					"upnl": -120,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "para:10Y",
+					"szi": -13003.9,
+					"ntl": 66335,
+					"upnl": 374,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "xyz:JPY",
+					"szi": 297.45,
+					"ntl": 47541,
+					"upnl": 159,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "xyz:IREN",
+					"szi": -2925.9,
+					"ntl": 46847,
+					"upnl": -1183,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:EUR",
+					"szi": -41159,
+					"ntl": 45320,
+					"upnl": -35,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "xyz:SMH",
+					"szi": -86.901,
+					"ntl": 41164,
+					"upnl": -448,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "para:30Y",
+					"szi": 7349.5,
+					"ntl": 39908,
+					"upnl": -377,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "para:IREN",
+					"szi": 2485.45,
+					"ntl": 39775,
+					"upnl": 68,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:JP225",
+					"szi": 0.61587,
+					"ntl": 36931,
+					"upnl": 232,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "para:TTWO",
+					"szi": 163.44,
+					"ntl": 35211,
+					"upnl": -394,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:PLATINUM",
+					"szi": -23.8744,
+					"ntl": 32994,
+					"upnl": -92,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "xyz:BMNR",
+					"szi": -1954.54,
+					"ntl": 31617,
+					"upnl": -807,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "para:RDDT",
+					"szi": 318.32,
+					"ntl": 30731,
+					"upnl": -78,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:RDDT",
+					"szi": -317.82,
+					"ntl": 30682,
+					"upnl": -215,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:COPPER",
+					"szi": 4883.09,
+					"ntl": 28115,
+					"upnl": -35,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "para:SMCI",
+					"szi": -1081.83,
+					"ntl": 27411,
+					"upnl": -584,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:TTWO",
+					"szi": -113.21,
+					"ntl": 24406,
+					"upnl": -57,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:BABA",
+					"szi": -289.719,
+					"ntl": 24285,
+					"upnl": 164,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:CRWD",
+					"szi": 95.2,
+					"ntl": 23994,
+					"upnl": 365,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:XBI",
+					"szi": -163.94,
+					"ntl": 23930,
+					"upnl": 64,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "xyz:HO",
+					"szi": 6086,
+					"ntl": 23572,
+					"upnl": -166,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "xyz:SHAZ",
+					"szi": -983.38,
+					"ntl": 23113,
+					"upnl": -1130,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:KIOXIA",
+					"szi": -426.027,
+					"ntl": 22360,
+					"upnl": -20,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:GIGADEV",
+					"szi": 680.7,
+					"ntl": 22142,
+					"upnl": 315,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:LRCX",
+					"szi": -98.13,
+					"ntl": 21622,
+					"upnl": -471,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "para:LRCX",
+					"szi": 95.85,
+					"ntl": 21112,
+					"upnl": 971,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "para:GDX",
+					"szi": -282.22,
+					"ntl": 21060,
+					"upnl": 124,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "xyz:KR200",
+					"szi": -25.5442,
+					"ntl": 20485,
+					"upnl": -77,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "xyz:BE",
+					"szi": -112.28,
+					"ntl": 20223,
+					"upnl": -263,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "io:DRAM",
+					"szi": -480.11,
+					"ntl": 19624,
+					"upnl": -611,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "xyz:LLY",
+					"szi": 13.7488,
+					"ntl": 18865,
+					"upnl": -96,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:EWJ",
+					"szi": -208.88,
+					"ntl": 18577,
+					"upnl": -18,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "xyz:LYTE",
+					"szi": -1221.51,
+					"ntl": 17590,
+					"upnl": -786,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "xyz:SHEIN",
+					"szi": 3186.9,
+					"ntl": 17405,
+					"upnl": 95,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:STRC",
+					"szi": -174.6,
+					"ntl": 16912,
+					"upnl": -65,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "xyz:ZHIPU",
+					"szi": 368.972,
+					"ntl": 16697,
+					"upnl": -115,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:MINIMAX",
+					"szi": 1132.09,
+					"ntl": 16389,
+					"upnl": -144,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "io:IONQ",
+					"szi": -647.99,
+					"ntl": 15827,
+					"upnl": -351,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:MUU",
+					"szi": -1028.8,
+					"ntl": 15706,
+					"upnl": -415,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:SOFTBANK",
+					"szi": 692.203,
+					"ntl": 15475,
+					"upnl": 35,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:COST",
+					"szi": 14.0736,
+					"ntl": 15351,
+					"upnl": -146,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "para:MELI",
+					"szi": -10.592,
+					"ntl": 15297,
+					"upnl": -152,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:UMC",
+					"szi": 1107.7,
+					"ntl": 15170,
+					"upnl": -150,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:ICE",
+					"szi": 88.19,
+					"ntl": 15141,
+					"upnl": 89,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:HYUNDAI",
+					"szi": 74.911,
+					"ntl": 15033,
+					"upnl": 104,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:EBAY",
+					"szi": -118.34,
+					"ntl": 14482,
+					"upnl": -291,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:NET",
+					"szi": 44.52,
+					"ntl": 14100,
+					"upnl": 211,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "para:SMH",
+					"szi": 29.69,
+					"ntl": 14041,
+					"upnl": 395,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:USAR",
+					"szi": -2038.84,
+					"ntl": 14024,
+					"upnl": -171,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:NFLX",
+					"szi": -228.968,
+					"ntl": 13761,
+					"upnl": 30,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "para:IGV",
+					"szi": -128.88,
+					"ntl": 12876,
+					"upnl": -232,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "xyz:PURRDAT",
+					"szi": 1509,
+					"ntl": 12496,
+					"upnl": 28,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:RIVN",
+					"szi": 1037.94,
+					"ntl": 12346,
+					"upnl": 37,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "para:CRWD",
+					"szi": -48.54,
+					"ntl": 12235,
+					"upnl": -569,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "para:AAOI",
+					"szi": -272.01,
+					"ntl": 11596,
+					"upnl": -26,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:BX",
+					"szi": -96.17,
+					"ntl": 11259,
+					"upnl": -120,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:IBM",
+					"szi": 47.94,
+					"ntl": 11023,
+					"upnl": -69,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:NOW",
+					"szi": -116.39,
+					"ntl": 10657,
+					"upnl": -27,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:CAMBRICON",
+					"szi": 76.64,
+					"ntl": 10643,
+					"upnl": 60,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:XLE",
+					"szi": -173.08,
+					"ntl": 10631,
+					"upnl": 145,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "xyz:ORCL",
+					"szi": -89.424,
+					"ntl": 10464,
+					"upnl": -183,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:EWT",
+					"szi": -119.4,
+					"ntl": 10413,
+					"upnl": -19,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "para:UNITREE",
+					"szi": -110.46,
+					"ntl": 9974,
+					"upnl": -63,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:AVGO",
+					"szi": 26.8,
+					"ntl": 9761,
+					"upnl": 35,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:NOK",
+					"szi": -1203.5,
+					"ntl": 9369,
+					"upnl": -110,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:AAOI",
+					"szi": -219.81,
+					"ntl": 9365,
+					"upnl": -68,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "para:CRDO",
+					"szi": -70.91,
+					"ntl": 9121,
+					"upnl": -297,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "para:COHR",
+					"szi": 40.91,
+					"ntl": 9090,
+					"upnl": 82,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "para:SOFI",
+					"szi": -596.33,
+					"ntl": 8617,
+					"upnl": 432,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:PALLADIUM",
+					"szi": -8.9624,
+					"ntl": 8562,
+					"upnl": -10,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "io:XIAOMI",
+					"szi": -2329,
+					"ntl": 8498,
+					"upnl": 40,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:SNXX",
+					"szi": 2854.3,
+					"ntl": 8449,
+					"upnl": 88,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:HIMS",
+					"szi": -445.71,
+					"ntl": 7733,
+					"upnl": -55,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "io:GPRO",
+					"szi": 12950.8,
+					"ntl": 7664,
+					"upnl": -294,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:ASML",
+					"szi": -5.1,
+					"ntl": 7381,
+					"upnl": -136,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:TSM",
+					"szi": -20.142,
+					"ntl": 7355,
+					"upnl": -30,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:BB",
+					"szi": -802,
+					"ntl": 7042,
+					"upnl": -89,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:UNITREE",
+					"szi": 73.76,
+					"ntl": 6658,
+					"upnl": 55,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "para:STX",
+					"szi": -12.089,
+					"ntl": 6521,
+					"upnl": -169,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:QNT",
+					"szi": -184.68,
+					"ntl": 6117,
+					"upnl": 17,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "para:VST",
+					"szi": -46.37,
+					"ntl": 5965,
+					"upnl": -59,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "para:CIEN",
+					"szi": 20.93,
+					"ntl": 5793,
+					"upnl": 125,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "para:NET",
+					"szi": -17.26,
+					"ntl": 5471,
+					"upnl": -497,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:QCOM",
+					"szi": -32.15,
+					"ntl": 5232,
+					"upnl": -1,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:AMAT",
+					"szi": -14.27,
+					"ntl": 5217,
+					"upnl": 0,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:TWST",
+					"szi": 42.27,
+					"ntl": 4973,
+					"upnl": 19,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:PANW",
+					"szi": -13.19,
+					"ntl": 4914,
+					"upnl": 4,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "para:GLW",
+					"szi": 43.22,
+					"ntl": 4830,
+					"upnl": -9,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:EWZ",
+					"szi": 154.17,
+					"ntl": 4654,
+					"upnl": 8,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "para:AVGO",
+					"szi": 12.07,
+					"ntl": 4395,
+					"upnl": 260,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:GLW",
+					"szi": -38.46,
+					"ntl": 4290,
+					"upnl": -108,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:CVX",
+					"szi": -18.24,
+					"ntl": 3764,
+					"upnl": 50,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "io:TCNT",
+					"szi": 75.614,
+					"ntl": 3367,
+					"upnl": -200,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:DELL",
+					"szi": 9.86,
+					"ntl": 3210,
+					"upnl": 35,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:CXMT",
+					"szi": 527,
+					"ntl": 2972,
+					"upnl": 13,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:NCLD",
+					"szi": 224.3,
+					"ntl": 2949,
+					"upnl": 48,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:GEV",
+					"szi": -3.57,
+					"ntl": 2829,
+					"upnl": -69,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "para:CIFR",
+					"szi": 403.9,
+					"ntl": 2793,
+					"upnl": 97,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:DKNG",
+					"szi": -148.32,
+					"ntl": 2670,
+					"upnl": -5,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:MAGS",
+					"szi": 38.98,
+					"ntl": 2648,
+					"upnl": 28,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "xyz:WDC",
+					"szi": -8.632,
+					"ntl": 2588,
+					"upnl": -44,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:ZM",
+					"szi": -26.541,
+					"ntl": 2522,
+					"upnl": -42,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:BIRD",
+					"szi": -1432.8,
+					"ntl": 1747,
+					"upnl": -24,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:GBP",
+					"szi": 1119,
+					"ntl": 1473,
+					"upnl": 3,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "xyz:URNM",
+					"szi": -29.64,
+					"ntl": 1101,
+					"upnl": 2,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "io:EWY",
+					"szi": -7.16,
+					"ntl": 1009,
+					"upnl": -23,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "xyz:KSTR",
+					"szi": 18.14,
+					"ntl": 328,
+					"upnl": 9,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "xyz:BOT",
+					"szi": 16.15,
+					"ntl": 321,
+					"upnl": -2,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "xyz:GME",
+					"szi": -10.65,
+					"ntl": 283,
+					"upnl": 0,
+					"lev": "4x isolated"
+				},
+				{
+					"coin": "para:TER",
+					"szi": 0.05,
+					"ntl": 12,
+					"upnl": 0,
+					"lev": "4x isolated"
+				}
+			]
+		},
+		{
+			"usr": "0xe31501c472d557bfa145ce105d325fb2dd4cb867",
+			"name": "Silicon Sprinter",
+			"style": "High-volume stock-perp day trader",
+			"coins": ["XYZ100", "SOXL", "SP500", "CL"],
+			"acct": 1957774,
+			"pnl30": 692781,
+			"pnlAll": 1776434,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 95926
+				},
+				{
+					"m": "Aug",
+					"pnl": 312131
+				},
+				{
+					"m": "Sep",
+					"pnl": 194218
+				},
+				{
+					"m": "Oct",
+					"pnl": 773093
+				}
+			],
+			"green": 4,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "xyz:TLT",
+					"szi": 837.36,
+					"ntl": 66942,
+					"upnl": 29,
+					"lev": "20x isolated"
+				},
+				{
+					"coin": "xyz:HO",
+					"szi": 5366,
+					"ntl": 20783,
+					"upnl": 120,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:BB",
+					"szi": -1545.9,
+					"ntl": 13573,
+					"upnl": -137,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:MUU",
+					"szi": -498.1,
+					"ntl": 7608,
+					"upnl": -146,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:QNT",
+					"szi": -211.75,
+					"ntl": 7013,
+					"upnl": -227,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:SHAZ",
+					"szi": -35.03,
+					"ntl": 823,
+					"upnl": 0,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:GEV",
+					"szi": -0.625,
+					"ntl": 495,
+					"upnl": 2,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:NCLD",
+					"szi": 22.67,
+					"ntl": 298,
+					"upnl": 1,
+					"lev": "10x isolated"
+				}
+			]
+		},
+		{
+			"usr": "0x42fd5648cf21c158d15e4f58785760755b3f6623",
+			"name": "Steady Hand",
+			"style": "Crypto day trader, low drawdown",
+			"coins": ["ETH", "ZEC", "HYPE", "BTC"],
+			"acct": 518289,
+			"pnl30": -112434,
+			"pnlAll": 2515835,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 48486
+				},
+				{
+					"m": "Aug",
+					"pnl": 369892
+				},
+				{
+					"m": "Sep",
+					"pnl": 515104
+				},
+				{
+					"m": "Oct",
+					"pnl": -101737
+				}
+			],
+			"green": 3,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "BTC",
+					"szi": 16.49099,
+					"ntl": 1051729,
+					"upnl": -63652,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "HYPE",
+					"szi": 11012.19,
+					"ntl": 752243,
+					"upnl": 43287,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "ZEC",
+					"szi": 636.32,
+					"ntl": 603508,
+					"upnl": 21597,
+					"lev": "10x cross"
+				}
+			]
+		},
+		{
+			"usr": "0xd65ac35cd234c8718b876ab304fa56c8995e387f",
+			"name": "Lone Chip",
+			"style": "Single-stock (SKHX) day trader",
+			"coins": ["SKHX"],
+			"acct": 0,
+			"pnl30": 432303,
+			"pnlAll": 1430025,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 107246
+				},
+				{
+					"m": "Aug",
+					"pnl": 384356
+				},
+				{
+					"m": "Sep",
+					"pnl": 82234
+				},
+				{
+					"m": "Oct",
+					"pnl": 509141
+				}
+			],
+			"green": 4,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": []
+		},
+		{
+			"usr": "0xc3602c55a23475df22818f78ac9d84c8b96dbda0",
+			"name": "Cinder Lynx",
+			"style": "HYPE long, majors short",
+			"coins": ["ETH", "HYPE", "XRP", "BTC"],
+			"acct": 226677,
+			"pnl30": 101581,
+			"pnlAll": 279611,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 0
+				},
+				{
+					"m": "Aug",
+					"pnl": 97653
+				},
+				{
+					"m": "Sep",
+					"pnl": 34270
+				},
+				{
+					"m": "Oct",
+					"pnl": 87465
+				}
+			],
+			"green": 3,
+			"nmonths": 3,
+			"fills14": 1505,
+			"positions": [
+				{
+					"coin": "BTC",
+					"szi": -12,
+					"ntl": 765360,
+					"upnl": 116803,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "ETH",
+					"szi": -287.587,
+					"ntl": 518749,
+					"upnl": 5503,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "XRP",
+					"szi": -170000,
+					"ntl": 166847,
+					"upnl": -2162,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "SOL",
+					"szi": -2200,
+					"ntl": 163878,
+					"upnl": -2667,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "HYPE",
+					"szi": -2000,
+					"ntl": 136596,
+					"upnl": -2005,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "AAVE",
+					"szi": -523.97,
+					"ntl": 57284,
+					"upnl": 360,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "LINK",
+					"szi": -5000,
+					"ntl": 45925,
+					"upnl": 127,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "INJ",
+					"szi": -4200,
+					"ntl": 30445,
+					"upnl": -905,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "VVV",
+					"szi": -1000,
+					"ntl": 23062,
+					"upnl": -2478,
+					"lev": "3x cross"
+				}
+			]
+		},
+		{
+			"usr": "0x541e077ac38c56d7bf590924d249c60b0c80071d",
+			"name": "Lone Tusk",
+			"style": "Large single BTC short",
+			"coins": ["BTC", "GOOGL", "META", "NVDA"],
+			"acct": 261407,
+			"pnl30": 1594771,
+			"pnlAll": 3179254,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 16847
+				},
+				{
+					"m": "Aug",
+					"pnl": 0
+				},
+				{
+					"m": "Sep",
+					"pnl": -194383
+				},
+				{
+					"m": "Oct",
+					"pnl": 2522960
+				}
+			],
+			"green": 3,
+			"nmonths": 4,
+			"fills14": 758,
+			"positions": [
+				{
+					"coin": "BTC",
+					"szi": -30,
+					"ntl": 1913280,
+					"upnl": 596443,
+					"lev": "40x cross"
+				},
+				{
+					"coin": "PURR",
+					"szi": -2740171,
+					"ntl": 229308,
+					"upnl": 126280,
+					"lev": "3x cross"
+				}
+			]
+		},
+		{
+			"usr": "0x34ea1e25034eb9d49f23c5c55483c84a9d642f47",
+			"name": "Frost Badger",
+			"style": "BTC/HYPE/ZEC short swing",
+			"coins": ["HYPE", "@107", "UNITREE", "PONS"],
+			"acct": 577154,
+			"pnl30": 668391,
+			"pnlAll": 1291159,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 0
+				},
+				{
+					"m": "Aug",
+					"pnl": 152184
+				},
+				{
+					"m": "Sep",
+					"pnl": -88125
+				},
+				{
+					"m": "Oct",
+					"pnl": 1157493
+				}
+			],
+			"green": 2,
+			"nmonths": 3,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "xyz:BRENTOIL",
+					"szi": -26000,
+					"ntl": 2335476,
+					"upnl": 417242,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "xyz:CL",
+					"szi": -15000,
+					"ntl": 1241925,
+					"upnl": 255076,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "VVV",
+					"szi": -19000,
+					"ntl": 437988,
+					"upnl": -55945,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "WLFI",
+					"szi": 6000000,
+					"ntl": 275880,
+					"upnl": -18308,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "xyz:UNITREE",
+					"szi": -3000,
+					"ntl": 270783,
+					"upnl": -10979,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "USELESS",
+					"szi": -2200000,
+					"ntl": 228404,
+					"upnl": -15279,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "io:PRL",
+					"szi": -2550,
+					"ntl": 5943,
+					"upnl": 26,
+					"lev": "3x isolated"
+				}
+			]
+		},
+		{
+			"usr": "0xea0027b6ea9b6d7d401b5266979cc3b3ca87a918",
+			"name": "ZEC Whale Charlie",
+			"style": "ZEC whale: 5k ZEC long conviction",
+			"coins": ["CL", "NBIS"],
+			"acct": 2817163,
+			"pnl30": -12732392,
+			"pnlAll": 949363,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 491813
+				},
+				{
+					"m": "Aug",
+					"pnl": 15874679
+				},
+				{
+					"m": "Sep",
+					"pnl": 9649571
+				},
+				{
+					"m": "Oct",
+					"pnl": -19674871
+				}
+			],
+			"green": 3,
+			"nmonths": 4,
+			"fills14": 474,
+			"positions": [
+				{
+					"coin": "ETH",
+					"szi": 3920,
+					"ntl": 7067368,
+					"upnl": -784442,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "HYPE",
+					"szi": 75409.9,
+					"ntl": 5148611,
+					"upnl": 40902,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "ZEC",
+					"szi": 3000,
+					"ntl": 2846610,
+					"upnl": 629121,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "BNB",
+					"szi": 4098.429,
+					"ntl": 2418606,
+					"upnl": -807821,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "LIT",
+					"szi": 800000,
+					"ntl": 2345722,
+					"upnl": -84310,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "xyz:SNDK",
+					"szi": 2500,
+					"ntl": 2030800,
+					"upnl": -1316222,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "SOL",
+					"szi": 20022.69,
+					"ntl": 1490889,
+					"upnl": 167581,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "xyz:GOOGL",
+					"szi": 5000,
+					"ntl": 1466450,
+					"upnl": 30299,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "kPEPE",
+					"szi": 300000000,
+					"ntl": 1141200,
+					"upnl": -361654,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "AAVE",
+					"szi": 10000,
+					"ntl": 1092554,
+					"upnl": -411264,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "TAO",
+					"szi": 5000,
+					"ntl": 983065,
+					"upnl": -291711,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "LTC",
+					"szi": 20000,
+					"ntl": 890300,
+					"upnl": -254893,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "PURR",
+					"szi": 8000000,
+					"ntl": 670056,
+					"upnl": -319103,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "XRP",
+					"szi": 500000,
+					"ntl": 490635,
+					"upnl": -201592,
+					"lev": "20x cross"
+				}
+			]
+		},
+		{
+			"usr": "0x774f28fc243d6aa8787506869643fb4698bd2133",
+			"name": "Quiet Comet",
+			"style": "NEAR/ZRO active day trader",
+			"coins": ["NEAR", "ZRO", "ENA"],
+			"acct": 174464,
+			"pnl30": 111928,
+			"pnlAll": 948784,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": -166529
+				},
+				{
+					"m": "Aug",
+					"pnl": 63695
+				},
+				{
+					"m": "Sep",
+					"pnl": -310349
+				},
+				{
+					"m": "Oct",
+					"pnl": 150004
+				}
+			],
+			"green": 2,
+			"nmonths": 4,
+			"fills14": 1328,
+			"positions": [
+				{
+					"coin": "GRASS",
+					"szi": -450000,
+					"ntl": 195255,
+					"upnl": -55487,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "LIT",
+					"szi": -60000,
+					"ntl": 175908,
+					"upnl": 17579,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "PURR",
+					"szi": -2100000,
+					"ntl": 175577,
+					"upnl": 65250,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "ZRO",
+					"szi": -110000,
+					"ntl": 155848,
+					"upnl": 9417,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "FARTCOIN",
+					"szi": -1300000,
+					"ntl": 112437,
+					"upnl": 97785,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "NEAR",
+					"szi": -30000,
+					"ntl": 101916,
+					"upnl": 30460,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "ENA",
+					"szi": -500000,
+					"ntl": 55070,
+					"upnl": 38493,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "STBL",
+					"szi": -1950000,
+					"ntl": 38633,
+					"upnl": 10578,
+					"lev": "3x cross"
+				}
+			]
+		},
+		{
+			"usr": "0x8af700ba841f30e0a3fcb0ee4c4a9d223e1efa05",
+			"name": "ZEC Whale Alpha",
+			"style": "ZEC whale: big ZEC long, +$77M all-time",
+			"coins": ["@272", "SKHX"],
+			"acct": 8402071,
+			"pnl30": -2107814,
+			"pnlAll": 74964057,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": -2024374
+				},
+				{
+					"m": "Aug",
+					"pnl": 7847337
+				},
+				{
+					"m": "Sep",
+					"pnl": 3566714
+				},
+				{
+					"m": "Oct",
+					"pnl": -3789238
+				}
+			],
+			"green": 2,
+			"nmonths": 4,
+			"fills14": 126,
+			"positions": [
+				{
+					"coin": "xyz:SP500",
+					"szi": 5490.099,
+					"ntl": 40684379,
+					"upnl": 1310628,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "BTC",
+					"szi": 203.80547,
+					"ntl": 12998713,
+					"upnl": -203129,
+					"lev": "40x cross"
+				},
+				{
+					"coin": "xyz:XYZ100",
+					"szi": 159.5,
+					"ntl": 4414482,
+					"upnl": -280999,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "HYPE",
+					"szi": -47728.12,
+					"ntl": 3258590,
+					"upnl": 815866,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "ZEC",
+					"szi": 1745.07,
+					"ntl": 1655879,
+					"upnl": 182993,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "xyz:SPCX",
+					"szi": -6979,
+					"ntl": 1024098,
+					"upnl": 508726,
+					"lev": "2x isolated"
+				},
+				{
+					"coin": "AAVE",
+					"szi": -9133.75,
+					"ntl": 998045,
+					"upnl": 202936,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:JPY",
+					"szi": 4611.29,
+					"ntl": 737022,
+					"upnl": -7763,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "XRP",
+					"szi": -696000,
+					"ntl": 682964,
+					"upnl": 356801,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "LINK",
+					"szi": -69261.2,
+					"ntl": 636095,
+					"upnl": 339126,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "kPEPE",
+					"szi": -96500000,
+					"ntl": 367086,
+					"upnl": 312725,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "UNI",
+					"szi": -61310.7,
+					"ntl": 318399,
+					"upnl": 244961,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "PENDLE",
+					"szi": -155378,
+					"ntl": 223198,
+					"upnl": 631839,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "xyz:NVDA",
+					"szi": -1091,
+					"ntl": 167567,
+					"upnl": 28851,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "ADA",
+					"szi": -1086001,
+					"ntl": 166701,
+					"upnl": 604157,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "NEAR",
+					"szi": -48872.7,
+					"ntl": 165967,
+					"upnl": -5004,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "STRK",
+					"szi": -4500000,
+					"ntl": 152820,
+					"upnl": 460875,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "GRASS",
+					"szi": -238431.2,
+					"ntl": 103408,
+					"upnl": 580641,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "CRV",
+					"szi": -441827.7,
+					"ntl": 86629,
+					"upnl": 54957,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "AVAX",
+					"szi": -12091.83,
+					"ntl": 85423,
+					"upnl": 423842,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "FIL",
+					"szi": -143000,
+					"ntl": 82653,
+					"upnl": 373386,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "ETH",
+					"szi": 37.4459,
+					"ntl": 67507,
+					"upnl": -1561,
+					"lev": "25x cross"
+				},
+				{
+					"coin": "xyz:CL",
+					"szi": -694.927,
+					"ntl": 57529,
+					"upnl": 7677,
+					"lev": "5x isolated"
+				},
+				{
+					"coin": "SUI",
+					"szi": -63739.9,
+					"ntl": 46390,
+					"upnl": 101260,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "kSHIB",
+					"szi": -12000000,
+					"ntl": 46200,
+					"upnl": 139856,
+					"lev": "10x cross"
+				}
+			]
+		},
+		{
+			"usr": "0x350e33a777d510616fbdb483d1de3b50d1edfcfb",
+			"name": "ZEC Whale Bravo",
+			"style": "ZEC whale: high-volume ZEC trader",
+			"coins": [],
+			"acct": 0,
+			"pnl30": -107671,
+			"pnlAll": 21594288,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": -975019
+				},
+				{
+					"m": "Aug",
+					"pnl": 634633
+				},
+				{
+					"m": "Sep",
+					"pnl": 6305747
+				},
+				{
+					"m": "Oct",
+					"pnl": -226286
+				}
+			],
+			"green": 2,
+			"nmonths": 4,
+			"fills14": 0,
+			"positions": []
+		},
+		{
+			"usr": "0x8463d6ffcbfb56bf20ab2e1111f9a0e8359533f2",
+			"name": "Sol Drifter",
+			"style": "SOL long, alt shorts",
+			"coins": ["LIT", "XPL", "SOL", "ZEC"],
+			"acct": 205343,
+			"pnl30": 1864,
+			"pnlAll": 6256450,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": -81702
+				},
+				{
+					"m": "Aug",
+					"pnl": 195524
+				},
+				{
+					"m": "Sep",
+					"pnl": 544055
+				},
+				{
+					"m": "Oct",
+					"pnl": -24204
+				}
+			],
+			"green": 2,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "xyz:CL",
+					"szi": 10000,
+					"ntl": 827960,
+					"upnl": -53281,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "BTC",
+					"szi": -5,
+					"ntl": 318900,
+					"upnl": 1923,
+					"lev": "40x cross"
+				},
+				{
+					"coin": "XPL",
+					"szi": 4198003,
+					"ntl": 199313,
+					"upnl": -51442,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "HYPE",
+					"szi": 2500,
+					"ntl": 170745,
+					"upnl": 698,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "LIT",
+					"szi": -50000,
+					"ntl": 146600,
+					"upnl": -1877,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "MON",
+					"szi": 5000000,
+					"ntl": 68040,
+					"upnl": -12703,
+					"lev": "5x cross"
+				}
+			]
+		},
+		{
+			"usr": "0x9836e286fbf4f71998827d4bd6ea3b470c26457e",
+			"name": "Tidal Ox",
+			"style": "HYPE/NEAR long, BTC hedge",
+			"coins": ["HYPE", "NEAR", "NVDA", "@107"],
+			"acct": 455863,
+			"pnl30": -721260,
+			"pnlAll": -545114,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": -226324
+				},
+				{
+					"m": "Aug",
+					"pnl": 599880
+				},
+				{
+					"m": "Sep",
+					"pnl": 286333
+				},
+				{
+					"m": "Oct",
+					"pnl": -639788
+				}
+			],
+			"green": 2,
+			"nmonths": 4,
+			"fills14": 1528,
+			"positions": [
+				{
+					"coin": "HYPE",
+					"szi": 33003.91,
+					"ntl": 2254134,
+					"upnl": -187994,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:NVDA",
+					"szi": 8747.419,
+					"ntl": 1343691,
+					"upnl": -56955,
+					"lev": "10x cross"
+				}
+			]
+		},
+		{
+			"usr": "0xc30c7ea910a71ce06ae840868b0c7e47616ba4c9",
+			"name": "Ash Raven",
+			"style": "ETH/ZEC/BTC short swing trader",
+			"coins": ["ZEC", "ETH", "HYPE", "XRP"],
+			"acct": 976298,
+			"pnl30": 1952290,
+			"pnlAll": 5585818,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": -312933
+				},
+				{
+					"m": "Aug",
+					"pnl": -1195045
+				},
+				{
+					"m": "Sep",
+					"pnl": -320896
+				},
+				{
+					"m": "Oct",
+					"pnl": 2158895
+				}
+			],
+			"green": 1,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "BTC",
+					"szi": -38.11393,
+					"ntl": 2430868,
+					"upnl": 538586,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "XRP",
+					"szi": -2384072,
+					"ntl": 2339347,
+					"upnl": 866366,
+					"lev": "5x cross"
+				}
+			]
+		},
+		{
+			"usr": "0x0ca4109c94438dde8d7386da27180f414de80fa8",
+			"name": "Mint Otter",
+			"style": "HYPE/NEAR/ETH long swing",
+			"coins": ["HYPE", "DRAM", "ETH", "WLD"],
+			"acct": 33878,
+			"pnl30": -306943,
+			"pnlAll": 689106,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": -113571
+				},
+				{
+					"m": "Aug",
+					"pnl": 237015
+				},
+				{
+					"m": "Sep",
+					"pnl": 32975
+				},
+				{
+					"m": "Oct",
+					"pnl": -163886
+				}
+			],
+			"green": 2,
+			"nmonths": 4,
+			"fills14": 560,
+			"positions": [
+				{
+					"coin": "HYPE",
+					"szi": 2008.82,
+					"ntl": 137166,
+					"upnl": -21387,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "NEAR",
+					"szi": 26400,
+					"ntl": 89646,
+					"upnl": -21498,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "WLD",
+					"szi": 315000,
+					"ntl": 82914,
+					"upnl": -36313,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:DRAM",
+					"szi": 1480,
+					"ntl": 60499,
+					"upnl": -3585,
+					"lev": "20x cross"
+				}
+			]
+		},
+		{
+			"usr": "0xd440715f2ce6f7ed1924f282e0096c863e7049f7",
+			"name": "Ember Marten",
+			"style": "ZEC/HYPE short day trader",
+			"coins": ["ZEC", "@272", "FARTCOIN", "@162"],
+			"acct": 156082,
+			"pnl30": 15967,
+			"pnlAll": 172215,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 9409
+				},
+				{
+					"m": "Aug",
+					"pnl": 3650
+				},
+				{
+					"m": "Sep",
+					"pnl": 22524
+				},
+				{
+					"m": "Oct",
+					"pnl": 20258
+				}
+			],
+			"green": 4,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "HYPE",
+					"szi": -3929.65,
+					"ntl": 268293,
+					"upnl": -82327,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "FARTCOIN",
+					"szi": -2483807,
+					"ntl": 214576,
+					"upnl": 130570,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "ZEC",
+					"szi": -149.79,
+					"ntl": 142091,
+					"upnl": -9668,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "PUMP",
+					"szi": -47879655,
+					"ntl": 130281,
+					"upnl": 11210,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "PURR",
+					"szi": -1067204,
+					"ntl": 89308,
+					"upnl": 16895,
+					"lev": "3x cross"
+				}
+			]
+		},
+		{
+			"usr": "0xf0ae4d359f07fb630a5bcb197ac3beaba4cc2f74",
+			"name": "Storm Gecko",
+			"style": "BTC/HYPE/ZEC active shorter",
+			"coins": ["CL", "HYPE", "@107", "XMR"],
+			"acct": 976112,
+			"pnl30": 1807509,
+			"pnlAll": 2102291,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": -186120
+				},
+				{
+					"m": "Aug",
+					"pnl": -22019
+				},
+				{
+					"m": "Sep",
+					"pnl": -305111
+				},
+				{
+					"m": "Oct",
+					"pnl": 1883529
+				}
+			],
+			"green": 1,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "xyz:BRENTOIL",
+					"szi": -35000,
+					"ntl": 3143910,
+					"upnl": 474972,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "xyz:CL",
+					"szi": -35000,
+					"ntl": 2897860,
+					"upnl": 646246,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "HYPE",
+					"szi": -12500,
+					"ntl": 853725,
+					"upnl": 199440,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "ZEC",
+					"szi": -800,
+					"ntl": 758864,
+					"upnl": 264113,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "xyz:CXMT",
+					"szi": -50000,
+					"ntl": 281860,
+					"upnl": 96964,
+					"lev": "5x isolated"
+				},
+				{
+					"coin": "xyz:UNITREE",
+					"szi": -2500,
+					"ntl": 225653,
+					"upnl": 16382,
+					"lev": "5x isolated"
+				},
+				{
+					"coin": "io:PRL",
+					"szi": -12000,
+					"ntl": 27967,
+					"upnl": 341,
+					"lev": "1x isolated"
+				}
+			]
+		},
+		{
+			"usr": "0x3d89bcea338f35edfaeb313b1c713978c6dceb14",
+			"name": "Granite Owl",
+			"style": "Big BTC/HYPE shorts, patient",
+			"coins": ["SILVER", "CXMT", "STRC", "UNITREE"],
+			"acct": 886824,
+			"pnl30": 527810,
+			"pnlAll": 1724871,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": -83281
+				},
+				{
+					"m": "Aug",
+					"pnl": -70305
+				},
+				{
+					"m": "Sep",
+					"pnl": -180989
+				},
+				{
+					"m": "Oct",
+					"pnl": 1220207
+				}
+			],
+			"green": 1,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "xyz:XYZ100",
+					"szi": -90,
+					"ntl": 2490750,
+					"upnl": -6260,
+					"lev": "7x cross"
+				},
+				{
+					"coin": "xyz:JPY",
+					"szi": 7000,
+					"ntl": 1118810,
+					"upnl": 11501,
+					"lev": "5x isolated"
+				},
+				{
+					"coin": "io:NVDA",
+					"szi": -3900,
+					"ntl": 599430,
+					"upnl": -7350,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:GIGADEV",
+					"szi": 4300,
+					"ntl": 139862,
+					"upnl": -20952,
+					"lev": "2x isolated"
+				},
+				{
+					"coin": "xyz:EUR",
+					"szi": -70000,
+					"ntl": 77077,
+					"upnl": -61,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "WLFI",
+					"szi": 564000,
+					"ntl": 25933,
+					"upnl": 823,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "LDO",
+					"szi": -35000,
+					"ntl": 9391,
+					"upnl": 7847,
+					"lev": "5x cross"
+				}
+			]
+		},
+		{
+			"usr": "0x24fb52e17e3d4fd62a119b8f53c1a3f3bfe65c2f",
+			"name": "Near Viper",
+			"style": "NEAR-focused short trader",
+			"coins": ["HYPE", "ETH", "BRENTOIL", "NEAR"],
+			"acct": 244416,
+			"pnl30": 196140,
+			"pnlAll": 1059539,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 0
+				},
+				{
+					"m": "Aug",
+					"pnl": 0
+				},
+				{
+					"m": "Sep",
+					"pnl": 540523
+				},
+				{
+					"m": "Oct",
+					"pnl": 740769
+				}
+			],
+			"green": 2,
+			"nmonths": 2,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "xyz:NVDA",
+					"szi": 4648.415,
+					"ntl": 714043,
+					"upnl": -6830,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:NBIS",
+					"szi": 3788.61,
+					"ntl": 425499,
+					"upnl": 17080,
+					"lev": "5x isolated"
+				},
+				{
+					"coin": "xyz:SPCX",
+					"szi": 2540.11,
+					"ntl": 372609,
+					"upnl": 1494,
+					"lev": "5x cross"
+				}
+			]
+		},
+		{
+			"usr": "0x20ad988487d6a53fea7918657f45fe0bb8fd8183",
+			"name": "Iron Finch",
+			"style": "Multi-coin short bias, ZEC long",
+			"coins": ["ZEC", "ETH", "SOL", "XYZ100"],
+			"acct": 70211,
+			"pnl30": 32553,
+			"pnlAll": 845640,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": -35763
+				},
+				{
+					"m": "Aug",
+					"pnl": 119560
+				},
+				{
+					"m": "Sep",
+					"pnl": -48252
+				},
+				{
+					"m": "Oct",
+					"pnl": 156939
+				}
+			],
+			"green": 2,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "HYPE",
+					"szi": 4202.74,
+					"ntl": 287035,
+					"upnl": -2464,
+					"lev": "6x isolated"
+				},
+				{
+					"coin": "NEAR",
+					"szi": 32116.3,
+					"ntl": 109109,
+					"upnl": 299,
+					"lev": "7x isolated"
+				},
+				{
+					"coin": "ETH",
+					"szi": 57.1278,
+					"ntl": 103048,
+					"upnl": 2572,
+					"lev": "16x isolated"
+				}
+			]
+		},
+		{
+			"usr": "0x3bcae23e8c380dab4732e9a159c0456f12d866f3",
+			"name": "North Star Pair",
+			"style": "BTC long vs NEAR short pair trader",
+			"coins": ["ETH", "ZEC", "BTC", "NBIS"],
+			"acct": 696738,
+			"pnl30": -427141,
+			"pnlAll": 7703976,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 430108
+				},
+				{
+					"m": "Aug",
+					"pnl": -897629
+				},
+				{
+					"m": "Sep",
+					"pnl": -2636915
+				},
+				{
+					"m": "Oct",
+					"pnl": 481571
+				}
+			],
+			"green": 2,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "xyz:AAPL",
+					"szi": -7766.157,
+					"ntl": 2748909,
+					"upnl": -5166,
+					"lev": "20x isolated"
+				},
+				{
+					"coin": "xyz:CL",
+					"szi": 23388.809,
+					"ntl": 1936289,
+					"upnl": 14178,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "xyz:DRAM",
+					"szi": 24412.6,
+					"ntl": 997938,
+					"upnl": 24982,
+					"lev": "20x isolated"
+				},
+				{
+					"coin": "xyz:SNDK",
+					"szi": 452.19,
+					"ntl": 367337,
+					"upnl": 9742,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "PUMP",
+					"szi": 55679287,
+					"ntl": 151392,
+					"upnl": 1480,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:INTC",
+					"szi": 1747.93,
+					"ntl": 99681,
+					"upnl": 1960,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:CRWV",
+					"szi": 846.22,
+					"ntl": 42256,
+					"upnl": 998,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:SOXL",
+					"szi": 754.12,
+					"ntl": 40751,
+					"upnl": 1653,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:SKHX",
+					"szi": 35.105,
+					"ntl": 31348,
+					"upnl": 1014,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:NBIS",
+					"szi": 150.49,
+					"ntl": 16893,
+					"upnl": 222,
+					"lev": "10x isolated"
+				},
+				{
+					"coin": "xyz:MU",
+					"szi": 21.489,
+					"ntl": 15851,
+					"upnl": 419,
+					"lev": "10x cross"
+				}
+			]
+		},
+		{
+			"usr": "0x413c2724b62975c18b1415650f998a8f0a67886c",
+			"name": "Copper Kite",
+			"style": "HYPE + ZEC long conviction",
+			"coins": ["ZEC", "HYPE", "PRL"],
+			"acct": 374658,
+			"pnl30": -196386,
+			"pnlAll": 1483918,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": -210094
+				},
+				{
+					"m": "Aug",
+					"pnl": 307392
+				},
+				{
+					"m": "Sep",
+					"pnl": 633641
+				},
+				{
+					"m": "Oct",
+					"pnl": -102533
+				}
+			],
+			"green": 2,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "ZEC",
+					"szi": -3000,
+					"ntl": 2845170,
+					"upnl": 184130,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:XYZ100",
+					"szi": -20,
+					"ntl": 553460,
+					"upnl": -1334,
+					"lev": "8x isolated"
+				}
+			]
+		},
+		{
+			"usr": "0x0c7aafb0a737a800b2e908974be6a1c9f9892f50",
+			"name": "Bear Lantern",
+			"style": "Majors short-biased swing trader",
+			"coins": ["ANTH", "ANT", "BTC"],
+			"acct": 90808,
+			"pnl30": 439873,
+			"pnlAll": 449388,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": -167926
+				},
+				{
+					"m": "Aug",
+					"pnl": -398071
+				},
+				{
+					"m": "Sep",
+					"pnl": -66548
+				},
+				{
+					"m": "Oct",
+					"pnl": 574807
+				}
+			],
+			"green": 1,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "BTC",
+					"szi": -9.16568,
+					"ntl": 584578,
+					"upnl": 93135,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "ETH",
+					"szi": -204.8453,
+					"ntl": 369510,
+					"upnl": 56191,
+					"lev": "20x cross"
+				}
+			]
+		},
+		{
+			"usr": "0x0748e296e5a350ec36c8487a1cea406e1b57d4b2",
+			"name": "ZEC Whale Delta",
+			"style": "ZEC whale: consistent ZEC long swing",
+			"coins": ["ZEC", "SOXL", "LIT", "SMH"],
+			"acct": 1957960,
+			"pnl30": -581856,
+			"pnlAll": 11430404,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 600077
+				},
+				{
+					"m": "Aug",
+					"pnl": 489361
+				},
+				{
+					"m": "Sep",
+					"pnl": 4092736
+				},
+				{
+					"m": "Oct",
+					"pnl": -1459202
+				}
+			],
+			"green": 3,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "ZEC",
+					"szi": 2000,
+					"ntl": 1898140,
+					"upnl": -702149,
+					"lev": "7x cross"
+				},
+				{
+					"coin": "VVV",
+					"szi": 69990.67,
+					"ntl": 1617624,
+					"upnl": 177824,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "PUMP",
+					"szi": 500000000,
+					"ntl": 1361500,
+					"upnl": -366311,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "ADA",
+					"szi": -7000000,
+					"ntl": 1074500,
+					"upnl": 249317,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "XLM",
+					"szi": -3000500,
+					"ntl": 413751,
+					"upnl": 173082,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "SUI",
+					"szi": -431250,
+					"ntl": 313907,
+					"upnl": 129888,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "XRP",
+					"szi": -300000,
+					"ntl": 294435,
+					"upnl": 155558,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "HBAR",
+					"szi": -5000000,
+					"ntl": 277695,
+					"upnl": 100216,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "MON",
+					"szi": -20000000,
+					"ntl": 272180,
+					"upnl": 205485,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "io:PRL",
+					"szi": 103178.9,
+					"ntl": 240438,
+					"upnl": 37594,
+					"lev": "3x isolated"
+				}
+			]
+		},
+		{
+			"usr": "0xbf732ea04197942783e34730ed6e0f6099575d58",
+			"name": "ZEC Whale Golf",
+			"style": "ZEC whale: 12k ZEC long at 10x",
+			"coins": ["ZEC", "XYZ100", "WLD", "SOXL"],
+			"acct": 289275,
+			"pnl30": -1140709,
+			"pnlAll": 21163796,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": -442678
+				},
+				{
+					"m": "Aug",
+					"pnl": 1877480
+				},
+				{
+					"m": "Sep",
+					"pnl": 12072125
+				},
+				{
+					"m": "Oct",
+					"pnl": -3409012
+				}
+			],
+			"green": 2,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "XRP",
+					"szi": -4169207,
+					"ntl": 4091701,
+					"upnl": -103690,
+					"lev": "20x cross"
+				}
+			]
+		},
+		{
+			"usr": "0xfc27136e42af1732ddc9ce2605ea9bff1b959d9d",
+			"name": "ZEC Whale Echo",
+			"style": "ZEC whale: large ZEC short",
+			"coins": ["SOXL", "NVDA", "DRAM", "SKHY"],
+			"acct": 34589396,
+			"pnl30": 28732748,
+			"pnlAll": 36315418,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": 2866046
+				},
+				{
+					"m": "Aug",
+					"pnl": -5693443
+				},
+				{
+					"m": "Sep",
+					"pnl": -8728173
+				},
+				{
+					"m": "Oct",
+					"pnl": 32506312
+				}
+			],
+			"green": 2,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "BTC",
+					"szi": -897.282,
+					"ntl": 57231338,
+					"upnl": 6936356,
+					"lev": "25x cross"
+				},
+				{
+					"coin": "xyz:SKHX",
+					"szi": 11442.811,
+					"ntl": 10218888,
+					"upnl": 91661,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:IBM",
+					"szi": -19055.96,
+					"ntl": 4381727,
+					"upnl": 330753,
+					"lev": "5x isolated"
+				},
+				{
+					"coin": "xyz:SMSN",
+					"szi": -28973.024,
+					"ntl": 4296120,
+					"upnl": -2987,
+					"lev": "5x isolated"
+				},
+				{
+					"coin": "SOL",
+					"szi": -56446.8,
+					"ntl": 4203650,
+					"upnl": 362386,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "xyz:NVDA",
+					"szi": -26879.58,
+					"ntl": 4129241,
+					"upnl": 167417,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "XRP",
+					"szi": -3546202,
+					"ntl": 3480278,
+					"upnl": 273234,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "xyz:MU",
+					"szi": -4710.273,
+					"ntl": 3476511,
+					"upnl": 96851,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "ZEC",
+					"szi": -3658.31,
+					"ntl": 3471590,
+					"upnl": 84195,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:BRENTOIL",
+					"szi": -23976.79,
+					"ntl": 2153715,
+					"upnl": 14196,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "xyz:SOXL",
+					"szi": -37837.89,
+					"ntl": 2047862,
+					"upnl": -89886,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:SNDK",
+					"szi": -2234.007,
+					"ntl": 1814773,
+					"upnl": 26490,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:NATGAS",
+					"szi": 474115.9,
+					"ntl": 1781965,
+					"upnl": 37052,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:EWY",
+					"szi": -11684.763,
+					"ntl": 1646033,
+					"upnl": -5062,
+					"lev": "5x isolated"
+				},
+				{
+					"coin": "ETH",
+					"szi": 868.9179,
+					"ntl": 1566833,
+					"upnl": 4214,
+					"lev": "25x cross"
+				},
+				{
+					"coin": "xyz:SPCX",
+					"szi": -8736.27,
+					"ntl": 1282048,
+					"upnl": -55655,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "xyz:MRVL",
+					"szi": -7691.16,
+					"ntl": 1163519,
+					"upnl": 43981,
+					"lev": "5x isolated"
+				},
+				{
+					"coin": "NEAR",
+					"szi": -319997.7,
+					"ntl": 1086952,
+					"upnl": 516590,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:XYZ100",
+					"szi": -33.2086,
+					"ntl": 919214,
+					"upnl": -9188,
+					"lev": "25x cross"
+				},
+				{
+					"coin": "LINK",
+					"szi": -90485.3,
+					"ntl": 831144,
+					"upnl": 227730,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:GOLD",
+					"szi": -215.6026,
+					"ntl": 805060,
+					"upnl": 12718,
+					"lev": "25x cross"
+				},
+				{
+					"coin": "xyz:SP500",
+					"szi": -107.715,
+					"ntl": 798297,
+					"upnl": 8820,
+					"lev": "30x cross"
+				},
+				{
+					"coin": "xyz:COST",
+					"szi": 673.9609,
+					"ntl": 735157,
+					"upnl": -6893,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "BNB",
+					"szi": 1241.436,
+					"ntl": 732770,
+					"upnl": -124469,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "AAVE",
+					"szi": -6642.82,
+					"ntl": 725927,
+					"upnl": 88716,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:STRC",
+					"szi": -7362.2,
+					"ntl": 713206,
+					"upnl": -2514,
+					"lev": "5x isolated"
+				},
+				{
+					"coin": "xyz:NBIS",
+					"szi": -6098.59,
+					"ntl": 684384,
+					"upnl": -2081,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:DRAM",
+					"szi": -16033.2,
+					"ntl": 655549,
+					"upnl": -13938,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "SUI",
+					"szi": 735250.3,
+					"ntl": 535174,
+					"upnl": -101694,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:TSLA",
+					"szi": 1213.261,
+					"ntl": 472929,
+					"upnl": 16556,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:LLY",
+					"szi": -342.4443,
+					"ntl": 469902,
+					"upnl": 18035,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:CL",
+					"szi": -5436.048,
+					"ntl": 450072,
+					"upnl": 7161,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "xyz:DELL",
+					"szi": -1317.53,
+					"ntl": 429014,
+					"upnl": 16916,
+					"lev": "5x isolated"
+				},
+				{
+					"coin": "xyz:NOW",
+					"szi": -4240.95,
+					"ntl": 388318,
+					"upnl": 57500,
+					"lev": "5x isolated"
+				},
+				{
+					"coin": "xyz:CRCL",
+					"szi": 6245.317,
+					"ntl": 346290,
+					"upnl": -14877,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "xyz:ZHIPU",
+					"szi": -7603.074,
+					"ntl": 344085,
+					"upnl": 171386,
+					"lev": "5x isolated"
+				},
+				{
+					"coin": "xyz:INTC",
+					"szi": 5617.71,
+					"ntl": 320580,
+					"upnl": -8794,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "xyz:AMD",
+					"szi": 550.78,
+					"ntl": 301376,
+					"upnl": 9452,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:RIVN",
+					"szi": 23431.71,
+					"ntl": 278697,
+					"upnl": -7883,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:GME",
+					"szi": -9956.69,
+					"ntl": 264499,
+					"upnl": -12626,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:KORU",
+					"szi": -34806.4,
+					"ntl": 252910,
+					"upnl": -11718,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:KIOXIA",
+					"szi": 3964.583,
+					"ntl": 208180,
+					"upnl": -12533,
+					"lev": "5x isolated"
+				},
+				{
+					"coin": "xyz:META",
+					"szi": -307.467,
+					"ntl": 192471,
+					"upnl": -400,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:CXMT",
+					"szi": -33669.4,
+					"ntl": 189929,
+					"upnl": 24460,
+					"lev": "5x isolated"
+				},
+				{
+					"coin": "HBAR",
+					"szi": -3245587,
+					"ntl": 180270,
+					"upnl": 23860,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "xyz:TSM",
+					"szi": -483.134,
+					"ntl": 176383,
+					"upnl": 838,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:XLE",
+					"szi": 2663.94,
+					"ntl": 163633,
+					"upnl": -3827,
+					"lev": "5x isolated"
+				},
+				{
+					"coin": "xyz:AMZN",
+					"szi": 586.72,
+					"ntl": 160638,
+					"upnl": 5793,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:MSTR",
+					"szi": -1541.005,
+					"ntl": 145807,
+					"upnl": -6134,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:HIMS",
+					"szi": 8305,
+					"ntl": 144067,
+					"upnl": -21539,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:CRWV",
+					"szi": -2518.79,
+					"ntl": 125866,
+					"upnl": -290,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:SKHY",
+					"szi": -942.01,
+					"ntl": 121745,
+					"upnl": -3752,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:NFLX",
+					"szi": 1864.009,
+					"ntl": 112040,
+					"upnl": -2838,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:SILVER",
+					"szi": -2430.01,
+					"ntl": 109968,
+					"upnl": 2133,
+					"lev": "25x cross"
+				},
+				{
+					"coin": "ADA",
+					"szi": 683401,
+					"ntl": 104909,
+					"upnl": -8040,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:HOOD",
+					"szi": 1433.94,
+					"ntl": 103462,
+					"upnl": -1601,
+					"lev": "5x isolated"
+				},
+				{
+					"coin": "xyz:ASML",
+					"szi": -70.695,
+					"ntl": 102465,
+					"upnl": 254,
+					"lev": "5x isolated"
+				},
+				{
+					"coin": "xyz:ORCL",
+					"szi": -826.403,
+					"ntl": 96697,
+					"upnl": 6358,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "LTC",
+					"szi": -1947.58,
+					"ntl": 86697,
+					"upnl": 8759,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:EWZ",
+					"szi": 2805.68,
+					"ntl": 84673,
+					"upnl": -3869,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:URNM",
+					"szi": 2195.74,
+					"ntl": 81523,
+					"upnl": -3200,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:USAR",
+					"szi": -11172.03,
+					"ntl": 76843,
+					"upnl": 2863,
+					"lev": "5x isolated"
+				},
+				{
+					"coin": "xyz:EWJ",
+					"szi": -834.542,
+					"ntl": 74243,
+					"upnl": 277,
+					"lev": "5x isolated"
+				},
+				{
+					"coin": "xyz:ARM",
+					"szi": 386.2,
+					"ntl": 73753,
+					"upnl": 1512,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "HYPE",
+					"szi": -1060.99,
+					"ntl": 72477,
+					"upnl": -924,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "ENA",
+					"szi": 648517,
+					"ntl": 71421,
+					"upnl": -9726,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "DOGE",
+					"szi": -1184328,
+					"ntl": 70272,
+					"upnl": -1497,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:AAPL",
+					"szi": 190.532,
+					"ntl": 67437,
+					"upnl": 733,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:LITE",
+					"szi": -112.958,
+					"ntl": 64562,
+					"upnl": 2649,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:MRNA",
+					"szi": 308.16,
+					"ntl": 61398,
+					"upnl": -275,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:PLTR",
+					"szi": 352.027,
+					"ntl": 56726,
+					"upnl": 605,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "WLD",
+					"szi": -204084.7,
+					"ntl": 53756,
+					"upnl": 10085,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:COIN",
+					"szi": -467.507,
+					"ntl": 53539,
+					"upnl": 337,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "DOT",
+					"szi": 71735.2,
+					"ntl": 51414,
+					"upnl": -2157,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:BABA",
+					"szi": -593.143,
+					"ntl": 49800,
+					"upnl": -87,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:CBRS",
+					"szi": -474.1,
+					"ntl": 46064,
+					"upnl": 41,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:EWT",
+					"szi": 510.96,
+					"ntl": 44562,
+					"upnl": 151,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "BCH",
+					"szi": 212.717,
+					"ntl": 44366,
+					"upnl": -3086,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "AVAX",
+					"szi": -4156.36,
+					"ntl": 29367,
+					"upnl": 512,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "XLM",
+					"szi": 196558,
+					"ntl": 27111,
+					"upnl": -9,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "xyz:RKLB",
+					"szi": 430.39,
+					"ntl": 23776,
+					"upnl": -1669,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:BX",
+					"szi": -163.94,
+					"ntl": 19192,
+					"upnl": -133,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:AVGO",
+					"szi": -41.34,
+					"ntl": 15058,
+					"upnl": -194,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:DKNG",
+					"szi": 425.59,
+					"ntl": 7661,
+					"upnl": -82,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:EBAY",
+					"szi": -26.59,
+					"ntl": 3254,
+					"upnl": -34,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:MSFT",
+					"szi": 4.993,
+					"ntl": 2574,
+					"upnl": -10,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "xyz:ZM",
+					"szi": -24.708,
+					"ntl": 2348,
+					"upnl": -14,
+					"lev": "5x isolated"
+				},
+				{
+					"coin": "ONDO",
+					"szi": -2091,
+					"ntl": 635,
+					"upnl": -6,
+					"lev": "10x cross"
+				}
+			]
+		},
+		{
+			"usr": "0x023a3d058020fb76cca98f01b3c48c8938a22355",
+			"name": "ZEC Whale Foxtrot",
+			"style": "ZEC whale: ZEC short, +$57M all-time",
+			"coins": ["BTC", "ETH", "kPEPE", "SOL"],
+			"acct": 4967993,
+			"pnl30": 2678935,
+			"pnlAll": 64170130,
+			"months": [
+				{
+					"m": "Jul",
+					"pnl": -338963
+				},
+				{
+					"m": "Aug",
+					"pnl": 2506462
+				},
+				{
+					"m": "Sep",
+					"pnl": -13497357
+				},
+				{
+					"m": "Oct",
+					"pnl": 8465110
+				}
+			],
+			"green": 2,
+			"nmonths": 4,
+			"fills14": 2000,
+			"positions": [
+				{
+					"coin": "BTC",
+					"szi": 213.30745,
+					"ntl": 13605325,
+					"upnl": 86811,
+					"lev": "40x cross"
+				},
+				{
+					"coin": "ZEC",
+					"szi": -3460.94,
+					"ntl": 3283740,
+					"upnl": -168814,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "SOL",
+					"szi": -40083.37,
+					"ntl": 2985049,
+					"upnl": -41036,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "HYPE",
+					"szi": -34129.33,
+					"ntl": 2331579,
+					"upnl": -33872,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "ETH",
+					"szi": 629.2027,
+					"ntl": 1134578,
+					"upnl": 5540,
+					"lev": "25x cross"
+				},
+				{
+					"coin": "PUMP",
+					"szi": -325567176,
+					"ntl": 886519,
+					"upnl": 58296,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "NEAR",
+					"szi": -185649.3,
+					"ntl": 630608,
+					"upnl": -24382,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "XMR",
+					"szi": 1067.54,
+					"ntl": 535745,
+					"upnl": -2699,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "ENA",
+					"szi": -4522677,
+					"ntl": 498082,
+					"upnl": 10991,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "ASTER",
+					"szi": 816852,
+					"ntl": 425947,
+					"upnl": -33842,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "STRK",
+					"szi": -10846970.4,
+					"ntl": 367821,
+					"upnl": 93291,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "XPL",
+					"szi": -6965477,
+					"ntl": 330853,
+					"upnl": 159394,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "BNB",
+					"szi": 545.94,
+					"ntl": 322247,
+					"upnl": 298,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "CASHCAT",
+					"szi": -6801408,
+					"ntl": 296759,
+					"upnl": 414700,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "LIT",
+					"szi": -87723,
+					"ntl": 257283,
+					"upnl": -32348,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "PAXG",
+					"szi": -57.557,
+					"ntl": 214386,
+					"upnl": 3879,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "XRP",
+					"szi": -200293,
+					"ntl": 196570,
+					"upnl": 16102,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "LINK",
+					"szi": -21217,
+					"ntl": 194893,
+					"upnl": 915,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "WLFI",
+					"szi": 2885291,
+					"ntl": 132865,
+					"upnl": -30582,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "kSHIB",
+					"szi": -32973633,
+					"ntl": 126948,
+					"upnl": 5521,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "kPEPE",
+					"szi": 30389140,
+					"ntl": 115600,
+					"upnl": 59,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "ZRO",
+					"szi": 79540.7,
+					"ntl": 112781,
+					"upnl": -40546,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "LDO",
+					"szi": -406060.3,
+					"ntl": 108995,
+					"upnl": 48170,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "DOGE",
+					"szi": 1820403,
+					"ntl": 108015,
+					"upnl": -16173,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "JUP",
+					"szi": -392785,
+					"ntl": 104815,
+					"upnl": 8217,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "PENDLE",
+					"szi": -70380,
+					"ntl": 101100,
+					"upnl": 43189,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "CRV",
+					"szi": -385283.4,
+					"ntl": 75543,
+					"upnl": 2044,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "ADA",
+					"szi": 437773,
+					"ntl": 67203,
+					"upnl": 1016,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "FIL",
+					"szi": 114622.7,
+					"ntl": 66275,
+					"upnl": -3311,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "PENGU",
+					"szi": -12462988,
+					"ntl": 59523,
+					"upnl": 27099,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "HBAR",
+					"szi": -1030677,
+					"ntl": 57243,
+					"upnl": 3030,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "AVAX",
+					"szi": -7993.07,
+					"ntl": 56467,
+					"upnl": -105,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "AERO",
+					"szi": 126351,
+					"ntl": 54836,
+					"upnl": -17922,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "ATOM",
+					"szi": 39459.41,
+					"ntl": 51814,
+					"upnl": -11951,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "TRX",
+					"szi": 161699,
+					"ntl": 50524,
+					"upnl": 646,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "TIA",
+					"szi": -137587.5,
+					"ntl": 48435,
+					"upnl": 985,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "WLD",
+					"szi": 183124.9,
+					"ntl": 48230,
+					"upnl": -1437,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "ARB",
+					"szi": -324977.7,
+					"ntl": 41249,
+					"upnl": 5770,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "INJ",
+					"szi": 5638.7,
+					"ntl": 40900,
+					"upnl": 1078,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "AR",
+					"szi": -15478.32,
+					"ntl": 39207,
+					"upnl": -3719,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "SPX",
+					"szi": -116533,
+					"ntl": 36865,
+					"upnl": -273,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "UNI",
+					"szi": -6877.6,
+					"ntl": 35719,
+					"upnl": 497,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "PONS",
+					"szi": -281060,
+					"ntl": 33488,
+					"upnl": 1104,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "LTC",
+					"szi": -684.39,
+					"ntl": 30466,
+					"upnl": -542,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "TAO",
+					"szi": -149.499,
+					"ntl": 29397,
+					"upnl": -583,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "IMX",
+					"szi": -281418.5,
+					"ntl": 27326,
+					"upnl": 7559,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "FARTCOIN",
+					"szi": 268685.9,
+					"ntl": 23214,
+					"upnl": -15104,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "FET",
+					"szi": -169049,
+					"ntl": 21863,
+					"upnl": 259,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "DOT",
+					"szi": -29531.7,
+					"ntl": 21166,
+					"upnl": 1382,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "XLM",
+					"szi": 153284,
+					"ntl": 21141,
+					"upnl": -87,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "RUNE",
+					"szi": -35596.8,
+					"ntl": 18902,
+					"upnl": -2172,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "OP",
+					"szi": 243255.9,
+					"ntl": 18653,
+					"upnl": -535,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "SAND",
+					"szi": 504771,
+					"ntl": 18416,
+					"upnl": -2428,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "ONDO",
+					"szi": 59181,
+					"ntl": 17973,
+					"upnl": 467,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "TRB",
+					"szi": 1374.06,
+					"ntl": 17866,
+					"upnl": -3249,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "SUI",
+					"szi": 22589.5,
+					"ntl": 16440,
+					"upnl": -4203,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "kBONK",
+					"szi": -5626141,
+					"ntl": 13221,
+					"upnl": 4744,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "PNUT",
+					"szi": -448465.4,
+					"ntl": 12952,
+					"upnl": 8636,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "ENS",
+					"szi": -3259.42,
+					"ntl": 12766,
+					"upnl": 5959,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "S",
+					"szi": -344543,
+					"ntl": 10757,
+					"upnl": 6672,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "MNT",
+					"szi": 26089.9,
+					"ntl": 10385,
+					"upnl": -3299,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "DASH",
+					"szi": 275.36,
+					"ntl": 10334,
+					"upnl": -22,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "BCH",
+					"szi": -46.488,
+					"ntl": 9695,
+					"upnl": -50,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "POPCAT",
+					"szi": -346263,
+					"ntl": 9685,
+					"upnl": 8017,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "APE",
+					"szi": -115123,
+					"ntl": 9335,
+					"upnl": 6613,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "kLUNC",
+					"szi": 171860,
+					"ntl": 8163,
+					"upnl": -556,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "VIRTUAL",
+					"szi": -18849.9,
+					"ntl": 8118,
+					"upnl": 2375,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "TRUMP",
+					"szi": 7489.1,
+					"ntl": 7258,
+					"upnl": 106,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "kFLOKI",
+					"szi": -381539,
+					"ntl": 6790,
+					"upnl": 3005,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "CAKE",
+					"szi": -3997.7,
+					"ntl": 6439,
+					"upnl": 1539,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "MELANIA",
+					"szi": 79915.4,
+					"ntl": 3812,
+					"upnl": -4743,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "AAVE",
+					"szi": -30.12,
+					"ntl": 3291,
+					"upnl": -141,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "APT",
+					"szi": -7321.29,
+					"ntl": 3161,
+					"upnl": 1072,
+					"lev": "10x cross"
+				},
+				{
+					"coin": "ZEN",
+					"szi": -720.55,
+					"ntl": 2929,
+					"upnl": 1124,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "RENDER",
+					"szi": -1721.1,
+					"ntl": 2458,
+					"upnl": 102,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "W",
+					"szi": -237783.1,
+					"ntl": 2102,
+					"upnl": 3635,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "DYDX",
+					"szi": 23147.7,
+					"ntl": 1859,
+					"upnl": -1211,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "AVNT",
+					"szi": -25344,
+					"ntl": 1838,
+					"upnl": 1664,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "GRASS",
+					"szi": 3993.9,
+					"ntl": 1733,
+					"upnl": 311,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "STX",
+					"szi": 6244.8,
+					"ntl": 1729,
+					"upnl": -905,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "WIF",
+					"szi": -12565,
+					"ntl": 1688,
+					"upnl": 565,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "SOPH",
+					"szi": 1608879,
+					"ntl": 1649,
+					"upnl": -2449,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "TURBO",
+					"szi": -2612883,
+					"ntl": 1573,
+					"upnl": 1112,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "VVV",
+					"szi": 63.4,
+					"ntl": 1466,
+					"upnl": 116,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "ETHFI",
+					"szi": 2618.9,
+					"ntl": 1363,
+					"upnl": -266,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "xyz:SP500",
+					"szi": 0.136,
+					"ntl": 1008,
+					"upnl": 5,
+					"lev": "20x cross"
+				},
+				{
+					"coin": "BIO",
+					"szi": 48963,
+					"ntl": 792,
+					"upnl": -490,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "BLUR",
+					"szi": 118398,
+					"ntl": 791,
+					"upnl": -227,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "GALA",
+					"szi": 578079,
+					"ntl": 782,
+					"upnl": -406,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "ETC",
+					"szi": 125.53,
+					"ntl": 741,
+					"upnl": -233,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "BABY",
+					"szi": -75678,
+					"ntl": 643,
+					"upnl": 388,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "MON",
+					"szi": -44182,
+					"ntl": 602,
+					"upnl": 418,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "xyz:XYZ100",
+					"szi": -0.0214,
+					"ntl": 592,
+					"upnl": -8,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "xyz:SKHX",
+					"szi": -0.653,
+					"ntl": 583,
+					"upnl": -25,
+					"lev": "3x isolated"
+				},
+				{
+					"coin": "BOME",
+					"szi": -1089104,
+					"ntl": 543,
+					"upnl": 95,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "RESOLV",
+					"szi": -35158,
+					"ntl": 491,
+					"upnl": 204,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "GRAM",
+					"szi": 429,
+					"ntl": 441,
+					"upnl": -26,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "KAITO",
+					"szi": -2453,
+					"ntl": 434,
+					"upnl": 297,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "ORDI",
+					"szi": 141.37,
+					"ntl": 392,
+					"upnl": -61,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "MOODENG",
+					"szi": 11294,
+					"ntl": 311,
+					"upnl": -240,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "ICP",
+					"szi": -136.8,
+					"ntl": 306,
+					"upnl": 38,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "ALGO",
+					"szi": -3802,
+					"ntl": 297,
+					"upnl": 109,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "ANIME",
+					"szi": -125633,
+					"ntl": 271,
+					"upnl": 89,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "IO",
+					"szi": -1132.3,
+					"ntl": 115,
+					"upnl": 87,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "HEMI",
+					"szi": -26187,
+					"ntl": 94,
+					"upnl": 145,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "BERA",
+					"szi": -840.2,
+					"ntl": 71,
+					"upnl": 125,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "USELESS",
+					"szi": -635,
+					"ntl": 66,
+					"upnl": 121,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "REZ",
+					"szi": -22645,
+					"ntl": 63,
+					"upnl": -4,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "SKY",
+					"szi": -1378,
+					"ntl": 63,
+					"upnl": 24,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "CFX",
+					"szi": -956,
+					"ntl": 32,
+					"upnl": 5,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "COMP",
+					"szi": -1.61,
+					"ntl": 29,
+					"upnl": 2,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "DYM",
+					"szi": -2199,
+					"ntl": 27,
+					"upnl": 17,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "2Z",
+					"szi": -536,
+					"ntl": 9,
+					"upnl": 22,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "NEO",
+					"szi": -3.52,
+					"ntl": 6,
+					"upnl": 2,
+					"lev": "5x cross"
+				},
+				{
+					"coin": "STABLE",
+					"szi": -193,
+					"ntl": 4,
+					"upnl": 1,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "BRETT",
+					"szi": 214,
+					"ntl": 1,
+					"upnl": 0,
+					"lev": "3x cross"
+				},
+				{
+					"coin": "SUSHI",
+					"szi": 4.5,
+					"ntl": 1,
+					"upnl": 0,
+					"lev": "3x cross"
+				}
+			]
+		}
+	]
+}
