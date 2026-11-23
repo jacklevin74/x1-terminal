@@ -41,6 +41,13 @@ export const ROUTE_SEO = {
 		path: "/builders-perp",
 		keywords: ["builders", "hip-3", "perpetuals", "community"],
 	},
+	TOURNAMENT: {
+		title: "Tournament",
+		description:
+			"Weekly trading tournament on X1 Terminal. Ranked by dollar PNL. The top 3 at each table split the pot.",
+		path: "/tournament",
+		keywords: ["tournament", "leaderboard", "competition", "pnl"],
+	},
 	COMPONENTS: {
 		title: "Components",
 		description:

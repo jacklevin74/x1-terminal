@@ -60,14 +60,6 @@ export const SCOPE_NAV_ITEMS: readonly ScopeNavItem[] = [
 	},
 ] as const;
 
-export interface StaticNavItem {
-	key: string;
-	label: ReactNode;
-}
+export const TOURNAMENT_PATH = "/tournament";
 
-export const STATIC_NAV_ITEMS: readonly StaticNavItem[] = [
-	{ key: "vaults", label: <Trans>Vaults</Trans> },
-	{ key: "portfolio", label: <Trans>Portfolio</Trans> },
-	{ key: "staking", label: <Trans>Staking</Trans> },
-	{ key: "leaderboard", label: <Trans>Leaderboard</Trans> },
-] as const;
+export const TOURNAMENT_NAV_LABEL = <Trans>Tournament</Trans>;
