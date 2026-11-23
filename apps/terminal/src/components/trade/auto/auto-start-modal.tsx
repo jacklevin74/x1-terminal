@@ -1,7 +1,10 @@
 import { Button, Modal, ModalContent, ModalHeader, ModalPopup, ModalTitle } from "@hypeterminal/ui";
+import { useTradingAccount } from "@/hooks/use-trading-account";
+import { isDemoSession } from "@/lib/auto-trader/demo-sim";
 import { sameMarket } from "@/lib/auto-trader/phase";
 import type { AutoTraderSettings } from "@/lib/auto-trader/types";
 import { useUserPositions } from "@/lib/hyperliquid";
+import { AutoStartWarning } from "./auto-start-warning";
 
 interface Props {
 	open: boolean;
@@ -21,7 +24,11 @@ function positionWarning(coins: string[]) {
 
 export function AutoStartModal({ open, settings, markets, onCancel, onConfirm }: Props) {
 	const { positions } = useUserPositions();
-	const affected = positions.map((p) => p.coin).filter((coin) => markets.some((market) => sameMarket(market, coin)));
+	const { isSubaccount } = useTradingAccount();
+	const managed = positions.filter((p) => markets.some((market) => sameMarket(market, p.coin)));
+	const affected = managed.map((p) => p.coin);
+	if (managed.length > 0 && !isSubaccount && !isDemoSession())
+		return <AutoStartWarning open={open} positions={managed} onCancel={onCancel} onConfirm={onConfirm} />;
 	return (
 		<Modal open={open} onOpenChange={(next) => !next && onCancel()}>
 			<ModalPopup size="sm">

@@ -27,32 +27,18 @@ vi.mock("@/lib/hyperliquid", () => ({
 		refetch: vi.fn(),
 	}),
 }));
-vi.mock("@/hooks/use-xnt-rewards", () => ({ useXntRewards: () => ({ data: undefined }) }));
-vi.mock("@/components/trade/rewards/xnt-rewards-drawer", () => ({ XntRewardsDrawer: () => null }));
 vi.mock("@/components/trade/components/account-mode-control", () => ({ AccountModeControl: () => null }));
 vi.mock("@/components/trade/components/wallet-modal", () => ({ WalletModal: () => null }));
 vi.mock("@/components/trade/components/export-key-modal", () => ({ ExportKeyModal: () => null }));
-vi.mock("@hypeterminal/ui", () => ({
-	Button: () => null,
-	Dropdown: ({
-		trigger,
-		items,
-	}: {
-		trigger: ReactNode;
-		items: { label: string; detail?: ReactNode; disabled?: boolean; onSelect?: () => void }[];
-	}) => (
-		<div>
-			<span data-trigger>{trigger}</span>
-			{items.map((item) => (
-				<span key={item.label}>
-					<button type="button" disabled={item.disabled} onClick={item.onSelect}>
-						{item.label}
-					</button>
-					{item.detail}
-				</span>
-			))}
-		</div>
-	),
+vi.mock("@hypeterminal/ui", () => ({ Button: () => null, dropdownTriggerVariants: () => "" }));
+vi.mock("@/components/ui/popover", () => ({
+	Popover: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+	PopoverTrigger: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+	PopoverContent: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+}));
+vi.mock("@/lib/auto-trader/hooks", () => ({ useAutoTraderStatus: () => ({ data: undefined }) }));
+vi.mock("@/hooks/use-subaccount-actions", () => ({
+	useSubaccountActions: () => ({ busy: false, create: vi.fn(), transfer: vi.fn() }),
 }));
 const copied = vi.hoisted(() => vi.fn());
 vi.mock("@/hooks/ui/use-copy-to-clipboard", () => ({ useCopyToClipboard: () => ({ copy: copied, copied: false }) }));
@@ -98,9 +84,33 @@ it("copies a subaccount address without switching accounts", async () => {
 	const host = document.createElement("div");
 	const root = createRoot(host);
 	await act(async () => root.render(<UserMenu />));
+	await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Open Ledger bot"]')!.click());
+	expect(host.querySelector('input[aria-label="Amount in USDC"]')).toBeNull();
 	await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Copy Ledger bot address"]')!.click());
 	expect(copied).toHaveBeenCalledWith(state.sub);
 	expect(useTradingAccountStore.getState().selection).toBeNull();
 	expect(state.reset).not.toHaveBeenCalled();
+	await act(async () => root.unmount());
+});
+it("shows the transfer form only after a direction is picked on the account page", async () => {
+	const host = document.createElement("div");
+	const root = createRoot(host);
+	await act(async () => root.render(<UserMenu />));
+	expect(host.textContent).not.toContain("Add from Main");
+	await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Open Ledger bot"]')!.click());
+	expect(host.querySelector('input[aria-label="Amount in USDC"]')).toBeNull();
+	await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Add from Main")!.click());
+	expect(host.querySelector('input[aria-label="Amount in USDC"]')).not.toBeNull();
+	await act(async () => root.unmount());
+});
+it("keeps API wallets and Trading setup inside a collapsed More section and has no XNT rewards item", async () => {
+	const host = document.createElement("div");
+	const root = createRoot(host);
+	await act(async () => root.render(<UserMenu />));
+	expect(host.textContent).not.toContain("XNT rewards");
+	expect(host.textContent).not.toContain("API wallets");
+	await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "More")!.click());
+	expect(host.textContent).toContain("API wallets");
+	expect(host.textContent).toContain("Trading setup");
 	await act(async () => root.unmount());
 });
