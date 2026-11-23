@@ -48,6 +48,13 @@ export const ROUTE_SEO = {
 		path: "/tournament",
 		keywords: ["tournament", "leaderboard", "competition", "pnl"],
 	},
+	PORTFOLIO: {
+		title: "Portfolio",
+		description:
+			"Account value, PNL history, positions, orders, trades, funding, deposits and withdrawals for your Hyperliquid account on X1 Terminal.",
+		path: "/portfolio",
+		keywords: ["portfolio", "pnl", "account", "positions"],
+	},
 	COMPONENTS: {
 		title: "Components",
 		description:

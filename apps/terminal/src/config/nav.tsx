@@ -63,3 +63,7 @@ export const SCOPE_NAV_ITEMS: readonly ScopeNavItem[] = [
 export const TOURNAMENT_PATH = "/tournament";
 
 export const TOURNAMENT_NAV_LABEL = <Trans>Tournament</Trans>;
+
+export const PORTFOLIO_PATH = "/portfolio";
+
+export const PORTFOLIO_NAV_LABEL = <Trans>Portfolio</Trans>;

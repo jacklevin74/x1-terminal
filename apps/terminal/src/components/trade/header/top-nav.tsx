@@ -6,7 +6,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { useConnection } from "wagmi";
 import { APP_BAR_BUTTON_HEIGHT_CLASS, APP_HEADER_HEIGHT_CLASS } from "@/config/layout";
-import { TOURNAMENT_NAV_LABEL, TOURNAMENT_PATH } from "@/config/nav";
+import { PORTFOLIO_NAV_LABEL, PORTFOLIO_PATH, TOURNAMENT_NAV_LABEL, TOURNAMENT_PATH } from "@/config/nav";
 import { cn } from "@/lib/cn";
 import { createLazyComponent } from "@/lib/lazy";
 import { useDepositModalActions, useSettingsDialogActions } from "@/stores/use-global-modal-store";
@@ -26,7 +26,8 @@ export function TopNav() {
 	const isTestnet = useIsTestnet();
 	const pathname = useLocation().pathname;
 	const onTournament = pathname === TOURNAMENT_PATH;
-	const onTrade = !onTournament;
+	const onPortfolio = pathname === PORTFOLIO_PATH;
+	const onTrade = !onTournament && !onPortfolio;
 
 	return (
 		<header
@@ -52,6 +53,13 @@ export function TopNav() {
 						className={cn(NAV_LINK_CLASS, onTournament ? "text-fg" : "text-fg-muted hover:text-fg")}
 					>
 						{TOURNAMENT_NAV_LABEL}
+					</Link>
+					<Link
+						to={PORTFOLIO_PATH}
+						aria-current={onPortfolio ? "page" : undefined}
+						className={cn(NAV_LINK_CLASS, onPortfolio ? "text-fg" : "text-fg-muted hover:text-fg")}
+					>
+						{PORTFOLIO_NAV_LABEL}
 					</Link>
 				</nav>
 			</div>
