@@ -13,7 +13,7 @@ import { PositionsPanel } from "../positions/positions-panel";
 import { MarketInfo } from "./market-info";
 
 const { id, chart, positions } = PANEL_LAYOUT.ANALYSIS;
-const chartHeightStorageKey = `${id}:chart-height-px`;
+const chartShareStorageKey = `${id}:chart-share`;
 const fallbackFooterHeightPx = 24;
 const outerInsetPx = 4;
 const resizeHandlePx = 4;
@@ -27,6 +27,7 @@ export function AnalysisSection({ onDesiredHeightChange }: AnalysisSectionProps)
 	const rootRef = useRef<HTMLDivElement>(null);
 	const cleanupDragRef = useRef<(() => void) | null>(null);
 	const initializedRef = useRef(false);
+	const userShareRef = useRef<number | null>(null);
 	const positionsMinHeightPx = isConnected ? positions.minHeightPx : positions.disconnectedMinHeightPx;
 	const [chartHeightPx, setChartHeightPx] = useState<number>(chart.minHeightPx);
 	const [visibleChartMaxHeightPx, setVisibleChartMaxHeightPx] = useState<number>(
@@ -38,11 +39,15 @@ export function AnalysisSection({ onDesiredHeightChange }: AnalysisSectionProps)
 		if (initializedRef.current) return;
 		initializedRef.current = true;
 
-		const storedChartHeight = readStoredChartHeight();
+		const storedShare = readStoredChartShare();
+		userShareRef.current = storedShare;
 		const availableHeight = rootRef.current?.getBoundingClientRect().height ?? PANEL_LAYOUT.ANALYSIS.minHeightPx;
+		const largestChartHeight = availableHeight - positionsMinHeightPx - resizeHandlePx;
 		const initialChartHeight = Math.max(
 			chart.minHeightPx,
-			storedChartHeight ?? availableHeight - positionsMinHeightPx - resizeHandlePx,
+			storedShare === null
+				? largestChartHeight
+				: Math.min(largestChartHeight, Math.round(storedShare * availableHeight)),
 		);
 
 		setVisibleChartMaxHeightPx(getVisibleChartMaxHeight(rootRef.current));
@@ -56,9 +61,14 @@ export function AnalysisSection({ onDesiredHeightChange }: AnalysisSectionProps)
 
 		const observer = new ResizeObserver((entries) => {
 			const entry = entries[0];
-			if (entry) {
-				setVisibleChartMaxHeightPx(getVisibleChartMaxHeight(root));
-			}
+			if (!entry) return;
+			setVisibleChartMaxHeightPx(getVisibleChartMaxHeight(root));
+			const availableHeight = entry.contentRect.height;
+			if (availableHeight <= 0) return;
+			const largest = availableHeight - positionsMinHeightPx - resizeHandlePx;
+			const share = userShareRef.current;
+			const next = share === null ? largest : Math.min(largest, Math.round(share * availableHeight));
+			setChartHeightPx(Math.max(chart.minHeightPx, next));
 		});
 		observer.observe(root);
 		function handleResize() {
@@ -70,15 +80,11 @@ export function AnalysisSection({ onDesiredHeightChange }: AnalysisSectionProps)
 			window.removeEventListener("resize", handleResize);
 			observer.disconnect();
 		};
-	}, []);
+	}, [positionsMinHeightPx]);
 
 	useLayoutEffect(() => {
 		onDesiredHeightChange?.(chartHeightPx + positionsMinHeightPx + resizeHandlePx);
 	}, [chartHeightPx, onDesiredHeightChange, positionsMinHeightPx]);
-
-	useEffect(() => {
-		writeStoredChartHeight(chartHeightPx);
-	}, [chartHeightPx]);
 
 	useEffect(() => {
 		return () => {
@@ -89,6 +95,11 @@ export function AnalysisSection({ onDesiredHeightChange }: AnalysisSectionProps)
 	function resizeChartTo(nextHeightPx: number) {
 		const clamped = Math.min(maxChartHeightPx, Math.max(chart.minHeightPx, Math.round(nextHeightPx)));
 		setChartHeightPx(clamped);
+		const availableHeight = rootRef.current?.getBoundingClientRect().height ?? 0;
+		if (availableHeight > 0) {
+			userShareRef.current = clamped / availableHeight;
+			writeStoredChartShare(clamped / availableHeight);
+		}
 	}
 
 	function handlePointerDown(event: ReactPointerEvent<HTMLDivElement>) {
@@ -170,19 +181,19 @@ export function AnalysisSection({ onDesiredHeightChange }: AnalysisSectionProps)
 	);
 }
 
-function readStoredChartHeight() {
+function readStoredChartShare() {
 	if (typeof window === "undefined") return null;
 
-	const storedValue = window.localStorage.getItem(chartHeightStorageKey);
+	const storedValue = window.localStorage.getItem(chartShareStorageKey);
 	if (!storedValue) return null;
 
-	const parsedValue = Number.parseInt(storedValue, 10);
-	return Number.isFinite(parsedValue) ? parsedValue : null;
+	const parsedValue = Number.parseFloat(storedValue);
+	return Number.isFinite(parsedValue) && parsedValue > 0 && parsedValue < 1 ? parsedValue : null;
 }
 
-function writeStoredChartHeight(heightPx: number) {
+function writeStoredChartShare(share: number) {
 	if (typeof window === "undefined") return;
-	window.localStorage.setItem(chartHeightStorageKey, String(heightPx));
+	window.localStorage.setItem(chartShareStorageKey, share.toFixed(4));
 }
 
 function getVisibleChartMaxHeight(root: HTMLElement | null) {

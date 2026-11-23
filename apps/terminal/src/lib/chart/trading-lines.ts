@@ -59,7 +59,7 @@ export function buildTradingLines(
 				title: "Liq.",
 				price: liquidation,
 				label: "Liquidation",
-				tone: "warning",
+				tone: "down",
 			});
 	}
 	for (const order of orders) {

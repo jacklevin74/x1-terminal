@@ -148,6 +148,10 @@ msgstr ""
 msgid "Any portion that is not immediately filled will be canceled."
 msgstr ""
 
+#: src/components/trade/positions/position-tpsl-modal.tsx:203
+msgid "Applies to the entire position."
+msgstr ""
+
 #: src/components/auto-trader/auto-trader-panel.tsx:481
 msgid "Approve 0.05% fee"
 msgstr ""
@@ -156,7 +160,7 @@ msgstr ""
 msgid "Approve in wallet..."
 msgstr ""
 
-#: src/components/trade/mobile/mobile-trade-view.tsx:627
+#: src/components/trade/mobile/mobile-trade-view.tsx:624
 msgid "Approve trading"
 msgstr ""
 
@@ -236,7 +240,7 @@ msgstr "شراء"
 #: src/components/trade/mobile/mobile-position-card.tsx:200
 #: src/components/trade/mobile/mobile-twap-tab.tsx:110
 #: src/components/trade/positions/position-limit-close-modal.tsx:191
-#: src/components/trade/positions/position-tpsl-modal.tsx:183
+#: src/components/trade/positions/position-tpsl-modal.tsx:235
 #: src/components/trade/positions/positions-tab.tsx:382
 #: src/components/trade/positions/twap-tab.tsx:158
 #: src/components/trade/tradebox/deposit-modal.tsx:129
@@ -314,7 +318,7 @@ msgid "Closing..."
 msgstr "جاري الإغلاق..."
 
 #: src/components/auto-trader/auto-trader-panel.tsx:833
-#: src/components/trade/positions/position-tpsl-modal.tsx:192
+#: src/components/trade/positions/position-tpsl-modal.tsx:244
 #: src/components/trade/tradebox/bridge/confirmation-screen.tsx:146
 #: src/components/trade/tradebox/leverage-control.tsx:207
 #: src/components/trade/tradebox/leverage-control.tsx:221
@@ -610,6 +614,7 @@ msgstr ""
 msgid "Each position uses only its allocated margin. If the margin ratio reaches 100%, the position is liquidated. Margin can be added or removed individually."
 msgstr ""
 
+#: src/components/trade/positions/position-tpsl-modal.tsx:268
 #: src/components/trade/positions/send-modal.tsx:326
 msgid "Edit"
 msgstr ""
@@ -648,25 +653,25 @@ msgstr ""
 msgid "End Price"
 msgstr ""
 
-#: src/lib/errors/definitions/order-input.ts:21
-#: src/lib/errors/definitions/spot-input.ts:17
+#: src/lib/errors/definitions/order-input.ts:22
+#: src/lib/errors/definitions/spot-input.ts:18
 msgid "Enter limit price"
 msgstr "أدخل السعر المحدد"
 
-#: src/lib/errors/definitions/scale.ts:21
+#: src/lib/errors/definitions/scale.ts:22
 msgid "Enter price range"
 msgstr ""
 
-#: src/lib/errors/definitions/order-input.ts:39
-#: src/lib/errors/definitions/spot-input.ts:26
+#: src/lib/errors/definitions/order-input.ts:42
+#: src/lib/errors/definitions/spot-input.ts:28
 msgid "Enter size"
 msgstr "أدخل الحجم"
 
-#: src/lib/errors/definitions/tpsl.ts:21
+#: src/lib/errors/definitions/tpsl.ts:22
 msgid "Enter TP or SL price"
 msgstr ""
 
-#: src/lib/errors/definitions/order-input.ts:30
+#: src/lib/errors/definitions/order-input.ts:32
 msgid "Enter trigger price"
 msgstr ""
 
@@ -675,7 +680,7 @@ msgid "Entry"
 msgstr "الدخول"
 
 #: src/components/trade/positions/position-limit-close-modal.tsx:124
-#: src/components/trade/positions/position-tpsl-modal.tsx:137
+#: src/components/trade/positions/position-tpsl-modal.tsx:167
 msgid "Entry Price"
 msgstr ""
 
@@ -701,7 +706,7 @@ msgstr ""
 msgid "Exceeds held position size"
 msgstr ""
 
-#: src/lib/errors/definitions/order-input.ts:57
+#: src/lib/errors/definitions/order-input.ts:60
 msgid "Exceeds max size"
 msgstr "يتجاوز الحد الأقصى"
 
@@ -785,6 +790,10 @@ msgstr ""
 
 #: src/components/trade/positions/position-limit-close-modal.tsx:99
 msgid "Failed to place limit close order"
+msgstr ""
+
+#: src/components/trade/positions/position-tpsl-modal.tsx:109
+msgid "Failed to remove trigger"
 msgstr ""
 
 #: src/components/trade/positions/positions-tab.tsx:145
@@ -1043,7 +1052,7 @@ msgstr "جارٍ التحميل..."
 msgid "Long"
 msgstr "شراء"
 
-#: src/components/trade/positions/position-tpsl-modal.tsx:130
+#: src/components/trade/positions/position-tpsl-modal.tsx:160
 msgid "long position"
 msgstr ""
 
@@ -1071,17 +1080,17 @@ msgstr ""
 msgid "Manage / revoke API wallets"
 msgstr ""
 
-#: src/components/trade/positions/position-tpsl-modal.tsx:123
+#: src/components/trade/positions/position-tpsl-modal.tsx:153
 msgid "Manage TP/SL"
 msgstr ""
 
 #. placeholder {0}: position.coin
-#: src/components/trade/positions/position-tpsl-modal.tsx:201
+#: src/components/trade/positions/position-tpsl-modal.tsx:280
 msgid "Manage TP/SL for {0} long position"
 msgstr ""
 
 #. placeholder {0}: position.coin
-#: src/components/trade/positions/position-tpsl-modal.tsx:202
+#: src/components/trade/positions/position-tpsl-modal.tsx:281
 msgid "Manage TP/SL for {0} short position"
 msgstr ""
 
@@ -1115,7 +1124,7 @@ msgid "Mark"
 msgstr "السعر المرجعي"
 
 #: src/components/trade/positions/position-limit-close-modal.tsx:125
-#: src/components/trade/positions/position-tpsl-modal.tsx:138
+#: src/components/trade/positions/position-tpsl-modal.tsx:168
 msgid "Mark Price"
 msgstr ""
 
@@ -1159,11 +1168,11 @@ msgstr "الأقصى"
 msgid "Mid"
 msgstr ""
 
-#: src/lib/errors/definitions/spot-input.ts:35
+#: src/lib/errors/definitions/spot-input.ts:37
 msgid "Min order ${ORDER_MIN_NOTIONAL_USD}"
 msgstr ""
 
-#: src/lib/errors/definitions/order-input.ts:48
+#: src/lib/errors/definitions/order-input.ts:51
 msgid "Min order $10"
 msgstr "الحد الأدنى $10"
 
@@ -1521,6 +1530,22 @@ msgstr ""
 msgid "Price"
 msgstr "السعر"
 
+#: src/components/trade/positions/position-tpsl-modal.tsx:195
+msgid "Price above {slPriceInput}"
+msgstr ""
+
+#: src/components/trade/positions/position-tpsl-modal.tsx:186
+msgid "Price above {tpPriceInput}"
+msgstr ""
+
+#: src/components/trade/positions/position-tpsl-modal.tsx:195
+msgid "Price below {slPriceInput}"
+msgstr ""
+
+#: src/components/trade/positions/position-tpsl-modal.tsx:186
+msgid "Price below {tpPriceInput}"
+msgstr ""
+
 #: src/components/trade/orderbook/orderbook-panel.tsx:107
 msgid "Price grouping"
 msgstr ""
@@ -1566,6 +1591,10 @@ msgstr ""
 
 #: src/components/auto-trader/auto-trader-panel.tsx:606
 msgid "Register Auto Trader"
+msgstr ""
+
+#: src/components/trade/positions/position-tpsl-modal.tsx:271
+msgid "Remove"
 msgstr ""
 
 #. placeholder {0}: market.pairName
@@ -1629,7 +1658,7 @@ msgstr ""
 msgid "Review send"
 msgstr ""
 
-#: src/components/trade/tradebox/tp-sl-section.tsx:131
+#: src/components/trade/tradebox/tp-sl-section.tsx:138
 msgid "Risk/Reward"
 msgstr ""
 
@@ -1660,11 +1689,11 @@ msgstr ""
 msgid "Scale"
 msgstr ""
 
-#: src/lib/errors/definitions/scale.ts:59
+#: src/lib/errors/definitions/scale.ts:60
 msgid "Scale level below min notional"
 msgstr ""
 
-#: src/lib/errors/definitions/scale.ts:33
+#: src/lib/errors/definitions/scale.ts:34
 msgid "Scale levels must be {SCALE_LEVELS_MIN}-{SCALE_LEVELS_MAX}"
 msgstr ""
 
@@ -1740,7 +1769,7 @@ msgstr "الإعدادات"
 msgid "Short"
 msgstr "بيع"
 
-#: src/components/trade/positions/position-tpsl-modal.tsx:130
+#: src/components/trade/positions/position-tpsl-modal.tsx:160
 msgid "short position"
 msgstr ""
 
@@ -1773,7 +1802,7 @@ msgstr "المُوقِّع غير جاهز"
 #: src/components/trade/positions/history-tab.tsx:79
 #: src/components/trade/positions/position-limit-close-modal.tsx:123
 #: src/components/trade/positions/position-limit-close-modal.tsx:151
-#: src/components/trade/positions/position-tpsl-modal.tsx:136
+#: src/components/trade/positions/position-tpsl-modal.tsx:166
 #: src/components/trade/positions/twap-tab.tsx:68
 #: src/components/trade/tradebox/order-toast.tsx:88
 #: src/components/trade/tradebox/trade-form-fields.tsx:222
@@ -1795,24 +1824,24 @@ msgstr ""
 msgid "Size percentage"
 msgstr ""
 
-#: src/lib/errors/definitions/tpsl.ts:49
+#: src/lib/errors/definitions/tpsl.ts:50
 msgid "SL must be above entry"
 msgstr ""
 
-#: src/components/trade/positions/position-tpsl-modal.tsx:81
+#: src/components/trade/positions/position-tpsl-modal.tsx:89
 msgid "SL must be above mark price"
 msgstr ""
 
-#: src/lib/errors/definitions/tpsl.ts:49
+#: src/lib/errors/definitions/tpsl.ts:50
 msgid "SL must be below entry"
 msgstr ""
 
-#: src/components/trade/positions/position-tpsl-modal.tsx:81
+#: src/components/trade/positions/position-tpsl-modal.tsx:89
 msgid "SL must be below mark price"
 msgstr ""
 
-#: src/components/trade/tradebox/tp-sl-section.tsx:89
-#: src/components/trade/tradebox/tp-sl-section.tsx:117
+#: src/components/trade/tradebox/tp-sl-section.tsx:93
+#: src/components/trade/tradebox/tp-sl-section.tsx:124
 msgid "SL Price"
 msgstr ""
 
@@ -1867,7 +1896,7 @@ msgstr "الفارق"
 #~ msgid "Staking"
 #~ msgstr "التخزين"
 
-#: src/lib/errors/definitions/scale.ts:46
+#: src/lib/errors/definitions/scale.ts:47
 msgid "Start and end must differ"
 msgstr ""
 
@@ -1885,8 +1914,13 @@ msgstr ""
 msgid "Stop Lmt"
 msgstr ""
 
-#: src/components/trade/tradebox/tp-sl-section.tsx:91
+#: src/components/trade/positions/position-tpsl-modal.tsx:194
+#: src/components/trade/tradebox/tp-sl-section.tsx:95
 msgid "Stop Loss"
+msgstr ""
+
+#: src/components/trade/positions/position-tpsl-modal.tsx:98
+msgid "Stop loss removed"
 msgstr ""
 
 #: src/components/trade/tradebox/trade-header.tsx:55
@@ -1912,7 +1946,7 @@ msgid "Submit market orders to close all {0} positions shown here. Market slippa
 msgstr ""
 
 #: src/components/trade/positions/position-limit-close-modal.tsx:203
-#: src/components/trade/positions/position-tpsl-modal.tsx:189
+#: src/components/trade/positions/position-tpsl-modal.tsx:241
 msgid "Submitting..."
 msgstr ""
 
@@ -1977,7 +2011,8 @@ msgstr ""
 msgid "Switching..."
 msgstr "جاري التبديل..."
 
-#: src/components/trade/tradebox/tp-sl-section.tsx:81
+#: src/components/trade/positions/position-tpsl-modal.tsx:185
+#: src/components/trade/tradebox/tp-sl-section.tsx:85
 msgid "Take Profit"
 msgstr ""
 
@@ -1991,6 +2026,10 @@ msgstr ""
 
 #: src/lib/trade/order-types.ts:11
 msgid "Take Profit Market"
+msgstr ""
+
+#: src/components/trade/positions/position-tpsl-modal.tsx:98
+msgid "Take profit removed"
 msgstr ""
 
 #: src/lib/errors/definitions/trigger.ts:48
@@ -2085,24 +2124,24 @@ msgstr ""
 msgid "TP Mkt"
 msgstr ""
 
-#: src/lib/errors/definitions/tpsl.ts:35
+#: src/lib/errors/definitions/tpsl.ts:36
 msgid "TP must be above entry"
 msgstr ""
 
-#: src/components/trade/positions/position-tpsl-modal.tsx:80
+#: src/components/trade/positions/position-tpsl-modal.tsx:88
 msgid "TP must be above mark price"
 msgstr ""
 
-#: src/lib/errors/definitions/tpsl.ts:35
+#: src/lib/errors/definitions/tpsl.ts:36
 msgid "TP must be below entry"
 msgstr ""
 
-#: src/components/trade/positions/position-tpsl-modal.tsx:80
+#: src/components/trade/positions/position-tpsl-modal.tsx:88
 msgid "TP must be below mark price"
 msgstr ""
 
-#: src/components/trade/tradebox/tp-sl-section.tsx:79
-#: src/components/trade/tradebox/tp-sl-section.tsx:105
+#: src/components/trade/tradebox/tp-sl-section.tsx:83
+#: src/components/trade/tradebox/tp-sl-section.tsx:110
 msgid "TP Price"
 msgstr ""
 
@@ -2233,7 +2272,7 @@ msgid "Unknown symbol: {symbolName}"
 msgstr "رمز غير معروف: {symbolName}"
 
 #: src/components/trade/positions/position-limit-close-modal.tsx:127
-#: src/components/trade/positions/position-tpsl-modal.tsx:140
+#: src/components/trade/positions/position-tpsl-modal.tsx:170
 msgid "Unrealized P&L"
 msgstr ""
 

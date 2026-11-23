@@ -10,7 +10,7 @@ export const PANEL_LAYOUT = {
 		id: "CHART_WITH_POSITIONS",
 		minHeightPx: 660,
 		chart: { minHeightPx: 260 },
-		positions: { minHeightPx: 400, disconnectedMinHeightPx: 180 },
+		positions: { minHeightPx: 240, disconnectedMinHeightPx: 180 },
 	},
 	MARKET: {
 		id: "CHART_WITH_ORDERBOOK",
