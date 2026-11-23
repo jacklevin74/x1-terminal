@@ -1,0 +1,43 @@
+{
+	"source": "https://stats-data.hyperliquid.xyz/Mainnet/leaderboard",
+	"captured": "2026-11-18",
+	"window": "week",
+	"traders": [
+		{
+			"rank": 7,
+			"address": "0xfc27136e42af1732ddc9ce2605ea9bff1b959d9d",
+			"name": "John Wick",
+			"accountValue": 34482004.21,
+			"pnl": 10852292.46,
+			"roi": 0.2594,
+			"vlm": 475817274.71
+		},
+		{
+			"rank": 10,
+			"address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+			"name": "BobbyBigSize",
+			"accountValue": 32118227.65,
+			"pnl": 6641237.54,
+			"roi": 0.2439,
+			"vlm": 397327941.76
+		},
+		{
+			"rank": 28,
+			"address": "0x49e96e255ba418d08e66c35b588e2f2f3766e1d0",
+			"name": "2 freres 2 fauves",
+			"accountValue": 30984399.6,
+			"pnl": 2438775.68,
+			"roi": 0.0825,
+			"vlm": 523784676.84
+		},
+		{
+			"rank": 39,
+			"address": "0x2d23b731e5f04996a2dfdbe434c7d922afdb5e00",
+			"name": "thank you JEFF",
+			"accountValue": 5206046.74,
+			"pnl": 1895024.98,
+			"roi": 0.89,
+			"vlm": 97208556.71
+		}
+	]
+}

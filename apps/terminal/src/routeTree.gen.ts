@@ -23,6 +23,50 @@ import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BuildersPerpIndexRouteImport } from './routes/builders-perp.index'
 import { Route as BuildersPerpDexRouteImport } from './routes/builders-perp.$dex'
+import { Route as DevVariantsWinMarkersRouteImport } from './routes/dev.variants.win-markers'
+import { Route as DevVariantsTournamentTop36RouteImport } from './routes/dev.variants.tournament-top3-6'
+import { Route as DevVariantsTournamentTop35RouteImport } from './routes/dev.variants.tournament-top3-5'
+import { Route as DevVariantsTournamentTop34RouteImport } from './routes/dev.variants.tournament-top3-4'
+import { Route as DevVariantsTournamentTop33RouteImport } from './routes/dev.variants.tournament-top3-3'
+import { Route as DevVariantsTournamentTop32RouteImport } from './routes/dev.variants.tournament-top3-2'
+import { Route as DevVariantsTournamentTop3RouteImport } from './routes/dev.variants.tournament-top3'
+import { Route as DevVariantsTournamentRank3RouteImport } from './routes/dev.variants.tournament-rank-3'
+import { Route as DevVariantsTournamentRank2RouteImport } from './routes/dev.variants.tournament-rank-2'
+import { Route as DevVariantsTournamentRankRouteImport } from './routes/dev.variants.tournament-rank'
+import { Route as DevVariantsTournamentRaceRouteImport } from './routes/dev.variants.tournament-race'
+import { Route as DevVariantsTournamentBanner4RouteImport } from './routes/dev.variants.tournament-banner-4'
+import { Route as DevVariantsTournamentBanner3RouteImport } from './routes/dev.variants.tournament-banner-3'
+import { Route as DevVariantsTournamentBanner2RouteImport } from './routes/dev.variants.tournament-banner-2'
+import { Route as DevVariantsTournamentBannerRouteImport } from './routes/dev.variants.tournament-banner'
+import { Route as DevVariantsTournament3RouteImport } from './routes/dev.variants.tournament-3'
+import { Route as DevVariantsTournament2RouteImport } from './routes/dev.variants.tournament-2'
+import { Route as DevVariantsTournamentRouteImport } from './routes/dev.variants.tournament'
+import { Route as DevVariantsSubAccounts3RouteImport } from './routes/dev.variants.sub-accounts-3'
+import { Route as DevVariantsSubAccounts2RouteImport } from './routes/dev.variants.sub-accounts-2'
+import { Route as DevVariantsSubAccountsRouteImport } from './routes/dev.variants.sub-accounts'
+import { Route as DevVariantsPortfolioHeader2RouteImport } from './routes/dev.variants.portfolio-header-2'
+import { Route as DevVariantsPortfolioHeaderRouteImport } from './routes/dev.variants.portfolio-header'
+import { Route as DevVariantsPortfolio2RouteImport } from './routes/dev.variants.portfolio-2'
+import { Route as DevVariantsPortfolioRouteImport } from './routes/dev.variants.portfolio'
+import { Route as DevVariantsMoodTraders3RouteImport } from './routes/dev.variants.mood-traders-3'
+import { Route as DevVariantsMoodTraders2RouteImport } from './routes/dev.variants.mood-traders-2'
+import { Route as DevVariantsMoodTradersRouteImport } from './routes/dev.variants.mood-traders'
+import { Route as DevVariantsMoodRingRouteImport } from './routes/dev.variants.mood-ring'
+import { Route as DevVariantsMarketColorsRouteImport } from './routes/dev.variants.market-colors'
+import { Route as DevVariantsLogoX1markRouteImport } from './routes/dev.variants.logo-x1mark'
+import { Route as DevVariantsLogoStandoutRouteImport } from './routes/dev.variants.logo-standout'
+import { Route as DevVariantsLogoPromptRouteImport } from './routes/dev.variants.logo-prompt'
+import { Route as DevVariantsLogoDrawnRouteImport } from './routes/dev.variants.logo-drawn'
+import { Route as DevVariantsCopyTrader3RouteImport } from './routes/dev.variants.copy-trader-3'
+import { Route as DevVariantsCopyTrader2RouteImport } from './routes/dev.variants.copy-trader-2'
+import { Route as DevVariantsCopyTraderRouteImport } from './routes/dev.variants.copy-trader'
+import { Route as DevVariantsAutoToggleRouteImport } from './routes/dev.variants.auto-toggle'
+import { Route as DevVariantsAutoTabRouteImport } from './routes/dev.variants.auto-tab'
+import { Route as DevVariantsAutoStatusRouteImport } from './routes/dev.variants.auto-status'
+import { Route as DevVariantsAutoMarketsRouteImport } from './routes/dev.variants.auto-markets'
+import { Route as DevVariantsAutoHeaderRouteImport } from './routes/dev.variants.auto-header'
+import { Route as DevVariantsAutoGuard2RouteImport } from './routes/dev.variants.auto-guard-2'
+import { Route as DevVariantsAutoGuardRouteImport } from './routes/dev.variants.auto-guard'
 
 const TournamentRoute = TournamentRouteImport.update({
   id: '/tournament',
@@ -94,6 +138,242 @@ const BuildersPerpDexRoute = BuildersPerpDexRouteImport.update({
   path: '/$dex',
   getParentRoute: () => BuildersPerpRoute,
 } as any)
+const DevVariantsWinMarkersRoute = DevVariantsWinMarkersRouteImport.update({
+  id: '/dev/variants/win-markers',
+  path: '/dev/variants/win-markers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsTournamentTop36Route =
+  DevVariantsTournamentTop36RouteImport.update({
+    id: '/dev/variants/tournament-top3-6',
+    path: '/dev/variants/tournament-top3-6',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DevVariantsTournamentTop35Route =
+  DevVariantsTournamentTop35RouteImport.update({
+    id: '/dev/variants/tournament-top3-5',
+    path: '/dev/variants/tournament-top3-5',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DevVariantsTournamentTop34Route =
+  DevVariantsTournamentTop34RouteImport.update({
+    id: '/dev/variants/tournament-top3-4',
+    path: '/dev/variants/tournament-top3-4',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DevVariantsTournamentTop33Route =
+  DevVariantsTournamentTop33RouteImport.update({
+    id: '/dev/variants/tournament-top3-3',
+    path: '/dev/variants/tournament-top3-3',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DevVariantsTournamentTop32Route =
+  DevVariantsTournamentTop32RouteImport.update({
+    id: '/dev/variants/tournament-top3-2',
+    path: '/dev/variants/tournament-top3-2',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DevVariantsTournamentTop3Route =
+  DevVariantsTournamentTop3RouteImport.update({
+    id: '/dev/variants/tournament-top3',
+    path: '/dev/variants/tournament-top3',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DevVariantsTournamentRank3Route =
+  DevVariantsTournamentRank3RouteImport.update({
+    id: '/dev/variants/tournament-rank-3',
+    path: '/dev/variants/tournament-rank-3',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DevVariantsTournamentRank2Route =
+  DevVariantsTournamentRank2RouteImport.update({
+    id: '/dev/variants/tournament-rank-2',
+    path: '/dev/variants/tournament-rank-2',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DevVariantsTournamentRankRoute =
+  DevVariantsTournamentRankRouteImport.update({
+    id: '/dev/variants/tournament-rank',
+    path: '/dev/variants/tournament-rank',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DevVariantsTournamentRaceRoute =
+  DevVariantsTournamentRaceRouteImport.update({
+    id: '/dev/variants/tournament-race',
+    path: '/dev/variants/tournament-race',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DevVariantsTournamentBanner4Route =
+  DevVariantsTournamentBanner4RouteImport.update({
+    id: '/dev/variants/tournament-banner-4',
+    path: '/dev/variants/tournament-banner-4',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DevVariantsTournamentBanner3Route =
+  DevVariantsTournamentBanner3RouteImport.update({
+    id: '/dev/variants/tournament-banner-3',
+    path: '/dev/variants/tournament-banner-3',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DevVariantsTournamentBanner2Route =
+  DevVariantsTournamentBanner2RouteImport.update({
+    id: '/dev/variants/tournament-banner-2',
+    path: '/dev/variants/tournament-banner-2',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DevVariantsTournamentBannerRoute =
+  DevVariantsTournamentBannerRouteImport.update({
+    id: '/dev/variants/tournament-banner',
+    path: '/dev/variants/tournament-banner',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DevVariantsTournament3Route = DevVariantsTournament3RouteImport.update({
+  id: '/dev/variants/tournament-3',
+  path: '/dev/variants/tournament-3',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsTournament2Route = DevVariantsTournament2RouteImport.update({
+  id: '/dev/variants/tournament-2',
+  path: '/dev/variants/tournament-2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsTournamentRoute = DevVariantsTournamentRouteImport.update({
+  id: '/dev/variants/tournament',
+  path: '/dev/variants/tournament',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsSubAccounts3Route = DevVariantsSubAccounts3RouteImport.update({
+  id: '/dev/variants/sub-accounts-3',
+  path: '/dev/variants/sub-accounts-3',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsSubAccounts2Route = DevVariantsSubAccounts2RouteImport.update({
+  id: '/dev/variants/sub-accounts-2',
+  path: '/dev/variants/sub-accounts-2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsSubAccountsRoute = DevVariantsSubAccountsRouteImport.update({
+  id: '/dev/variants/sub-accounts',
+  path: '/dev/variants/sub-accounts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsPortfolioHeader2Route =
+  DevVariantsPortfolioHeader2RouteImport.update({
+    id: '/dev/variants/portfolio-header-2',
+    path: '/dev/variants/portfolio-header-2',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DevVariantsPortfolioHeaderRoute =
+  DevVariantsPortfolioHeaderRouteImport.update({
+    id: '/dev/variants/portfolio-header',
+    path: '/dev/variants/portfolio-header',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DevVariantsPortfolio2Route = DevVariantsPortfolio2RouteImport.update({
+  id: '/dev/variants/portfolio-2',
+  path: '/dev/variants/portfolio-2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsPortfolioRoute = DevVariantsPortfolioRouteImport.update({
+  id: '/dev/variants/portfolio',
+  path: '/dev/variants/portfolio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsMoodTraders3Route = DevVariantsMoodTraders3RouteImport.update({
+  id: '/dev/variants/mood-traders-3',
+  path: '/dev/variants/mood-traders-3',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsMoodTraders2Route = DevVariantsMoodTraders2RouteImport.update({
+  id: '/dev/variants/mood-traders-2',
+  path: '/dev/variants/mood-traders-2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsMoodTradersRoute = DevVariantsMoodTradersRouteImport.update({
+  id: '/dev/variants/mood-traders',
+  path: '/dev/variants/mood-traders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsMoodRingRoute = DevVariantsMoodRingRouteImport.update({
+  id: '/dev/variants/mood-ring',
+  path: '/dev/variants/mood-ring',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsMarketColorsRoute = DevVariantsMarketColorsRouteImport.update({
+  id: '/dev/variants/market-colors',
+  path: '/dev/variants/market-colors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsLogoX1markRoute = DevVariantsLogoX1markRouteImport.update({
+  id: '/dev/variants/logo-x1mark',
+  path: '/dev/variants/logo-x1mark',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsLogoStandoutRoute = DevVariantsLogoStandoutRouteImport.update({
+  id: '/dev/variants/logo-standout',
+  path: '/dev/variants/logo-standout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsLogoPromptRoute = DevVariantsLogoPromptRouteImport.update({
+  id: '/dev/variants/logo-prompt',
+  path: '/dev/variants/logo-prompt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsLogoDrawnRoute = DevVariantsLogoDrawnRouteImport.update({
+  id: '/dev/variants/logo-drawn',
+  path: '/dev/variants/logo-drawn',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsCopyTrader3Route = DevVariantsCopyTrader3RouteImport.update({
+  id: '/dev/variants/copy-trader-3',
+  path: '/dev/variants/copy-trader-3',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsCopyTrader2Route = DevVariantsCopyTrader2RouteImport.update({
+  id: '/dev/variants/copy-trader-2',
+  path: '/dev/variants/copy-trader-2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsCopyTraderRoute = DevVariantsCopyTraderRouteImport.update({
+  id: '/dev/variants/copy-trader',
+  path: '/dev/variants/copy-trader',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsAutoToggleRoute = DevVariantsAutoToggleRouteImport.update({
+  id: '/dev/variants/auto-toggle',
+  path: '/dev/variants/auto-toggle',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsAutoTabRoute = DevVariantsAutoTabRouteImport.update({
+  id: '/dev/variants/auto-tab',
+  path: '/dev/variants/auto-tab',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsAutoStatusRoute = DevVariantsAutoStatusRouteImport.update({
+  id: '/dev/variants/auto-status',
+  path: '/dev/variants/auto-status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsAutoMarketsRoute = DevVariantsAutoMarketsRouteImport.update({
+  id: '/dev/variants/auto-markets',
+  path: '/dev/variants/auto-markets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsAutoHeaderRoute = DevVariantsAutoHeaderRouteImport.update({
+  id: '/dev/variants/auto-header',
+  path: '/dev/variants/auto-header',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsAutoGuard2Route = DevVariantsAutoGuard2RouteImport.update({
+  id: '/dev/variants/auto-guard-2',
+  path: '/dev/variants/auto-guard-2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevVariantsAutoGuardRoute = DevVariantsAutoGuardRouteImport.update({
+  id: '/dev/variants/auto-guard',
+  path: '/dev/variants/auto-guard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -110,6 +390,50 @@ export interface FileRoutesByFullPath {
   '/tournament': typeof TournamentRoute
   '/builders-perp/$dex': typeof BuildersPerpDexRoute
   '/builders-perp/': typeof BuildersPerpIndexRoute
+  '/dev/variants/auto-guard': typeof DevVariantsAutoGuardRoute
+  '/dev/variants/auto-guard-2': typeof DevVariantsAutoGuard2Route
+  '/dev/variants/auto-header': typeof DevVariantsAutoHeaderRoute
+  '/dev/variants/auto-markets': typeof DevVariantsAutoMarketsRoute
+  '/dev/variants/auto-status': typeof DevVariantsAutoStatusRoute
+  '/dev/variants/auto-tab': typeof DevVariantsAutoTabRoute
+  '/dev/variants/auto-toggle': typeof DevVariantsAutoToggleRoute
+  '/dev/variants/copy-trader': typeof DevVariantsCopyTraderRoute
+  '/dev/variants/copy-trader-2': typeof DevVariantsCopyTrader2Route
+  '/dev/variants/copy-trader-3': typeof DevVariantsCopyTrader3Route
+  '/dev/variants/logo-drawn': typeof DevVariantsLogoDrawnRoute
+  '/dev/variants/logo-prompt': typeof DevVariantsLogoPromptRoute
+  '/dev/variants/logo-standout': typeof DevVariantsLogoStandoutRoute
+  '/dev/variants/logo-x1mark': typeof DevVariantsLogoX1markRoute
+  '/dev/variants/market-colors': typeof DevVariantsMarketColorsRoute
+  '/dev/variants/mood-ring': typeof DevVariantsMoodRingRoute
+  '/dev/variants/mood-traders': typeof DevVariantsMoodTradersRoute
+  '/dev/variants/mood-traders-2': typeof DevVariantsMoodTraders2Route
+  '/dev/variants/mood-traders-3': typeof DevVariantsMoodTraders3Route
+  '/dev/variants/portfolio': typeof DevVariantsPortfolioRoute
+  '/dev/variants/portfolio-2': typeof DevVariantsPortfolio2Route
+  '/dev/variants/portfolio-header': typeof DevVariantsPortfolioHeaderRoute
+  '/dev/variants/portfolio-header-2': typeof DevVariantsPortfolioHeader2Route
+  '/dev/variants/sub-accounts': typeof DevVariantsSubAccountsRoute
+  '/dev/variants/sub-accounts-2': typeof DevVariantsSubAccounts2Route
+  '/dev/variants/sub-accounts-3': typeof DevVariantsSubAccounts3Route
+  '/dev/variants/tournament': typeof DevVariantsTournamentRoute
+  '/dev/variants/tournament-2': typeof DevVariantsTournament2Route
+  '/dev/variants/tournament-3': typeof DevVariantsTournament3Route
+  '/dev/variants/tournament-banner': typeof DevVariantsTournamentBannerRoute
+  '/dev/variants/tournament-banner-2': typeof DevVariantsTournamentBanner2Route
+  '/dev/variants/tournament-banner-3': typeof DevVariantsTournamentBanner3Route
+  '/dev/variants/tournament-banner-4': typeof DevVariantsTournamentBanner4Route
+  '/dev/variants/tournament-race': typeof DevVariantsTournamentRaceRoute
+  '/dev/variants/tournament-rank': typeof DevVariantsTournamentRankRoute
+  '/dev/variants/tournament-rank-2': typeof DevVariantsTournamentRank2Route
+  '/dev/variants/tournament-rank-3': typeof DevVariantsTournamentRank3Route
+  '/dev/variants/tournament-top3': typeof DevVariantsTournamentTop3Route
+  '/dev/variants/tournament-top3-2': typeof DevVariantsTournamentTop32Route
+  '/dev/variants/tournament-top3-3': typeof DevVariantsTournamentTop33Route
+  '/dev/variants/tournament-top3-4': typeof DevVariantsTournamentTop34Route
+  '/dev/variants/tournament-top3-5': typeof DevVariantsTournamentTop35Route
+  '/dev/variants/tournament-top3-6': typeof DevVariantsTournamentTop36Route
+  '/dev/variants/win-markers': typeof DevVariantsWinMarkersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -125,6 +449,50 @@ export interface FileRoutesByTo {
   '/tournament': typeof TournamentRoute
   '/builders-perp/$dex': typeof BuildersPerpDexRoute
   '/builders-perp': typeof BuildersPerpIndexRoute
+  '/dev/variants/auto-guard': typeof DevVariantsAutoGuardRoute
+  '/dev/variants/auto-guard-2': typeof DevVariantsAutoGuard2Route
+  '/dev/variants/auto-header': typeof DevVariantsAutoHeaderRoute
+  '/dev/variants/auto-markets': typeof DevVariantsAutoMarketsRoute
+  '/dev/variants/auto-status': typeof DevVariantsAutoStatusRoute
+  '/dev/variants/auto-tab': typeof DevVariantsAutoTabRoute
+  '/dev/variants/auto-toggle': typeof DevVariantsAutoToggleRoute
+  '/dev/variants/copy-trader': typeof DevVariantsCopyTraderRoute
+  '/dev/variants/copy-trader-2': typeof DevVariantsCopyTrader2Route
+  '/dev/variants/copy-trader-3': typeof DevVariantsCopyTrader3Route
+  '/dev/variants/logo-drawn': typeof DevVariantsLogoDrawnRoute
+  '/dev/variants/logo-prompt': typeof DevVariantsLogoPromptRoute
+  '/dev/variants/logo-standout': typeof DevVariantsLogoStandoutRoute
+  '/dev/variants/logo-x1mark': typeof DevVariantsLogoX1markRoute
+  '/dev/variants/market-colors': typeof DevVariantsMarketColorsRoute
+  '/dev/variants/mood-ring': typeof DevVariantsMoodRingRoute
+  '/dev/variants/mood-traders': typeof DevVariantsMoodTradersRoute
+  '/dev/variants/mood-traders-2': typeof DevVariantsMoodTraders2Route
+  '/dev/variants/mood-traders-3': typeof DevVariantsMoodTraders3Route
+  '/dev/variants/portfolio': typeof DevVariantsPortfolioRoute
+  '/dev/variants/portfolio-2': typeof DevVariantsPortfolio2Route
+  '/dev/variants/portfolio-header': typeof DevVariantsPortfolioHeaderRoute
+  '/dev/variants/portfolio-header-2': typeof DevVariantsPortfolioHeader2Route
+  '/dev/variants/sub-accounts': typeof DevVariantsSubAccountsRoute
+  '/dev/variants/sub-accounts-2': typeof DevVariantsSubAccounts2Route
+  '/dev/variants/sub-accounts-3': typeof DevVariantsSubAccounts3Route
+  '/dev/variants/tournament': typeof DevVariantsTournamentRoute
+  '/dev/variants/tournament-2': typeof DevVariantsTournament2Route
+  '/dev/variants/tournament-3': typeof DevVariantsTournament3Route
+  '/dev/variants/tournament-banner': typeof DevVariantsTournamentBannerRoute
+  '/dev/variants/tournament-banner-2': typeof DevVariantsTournamentBanner2Route
+  '/dev/variants/tournament-banner-3': typeof DevVariantsTournamentBanner3Route
+  '/dev/variants/tournament-banner-4': typeof DevVariantsTournamentBanner4Route
+  '/dev/variants/tournament-race': typeof DevVariantsTournamentRaceRoute
+  '/dev/variants/tournament-rank': typeof DevVariantsTournamentRankRoute
+  '/dev/variants/tournament-rank-2': typeof DevVariantsTournamentRank2Route
+  '/dev/variants/tournament-rank-3': typeof DevVariantsTournamentRank3Route
+  '/dev/variants/tournament-top3': typeof DevVariantsTournamentTop3Route
+  '/dev/variants/tournament-top3-2': typeof DevVariantsTournamentTop32Route
+  '/dev/variants/tournament-top3-3': typeof DevVariantsTournamentTop33Route
+  '/dev/variants/tournament-top3-4': typeof DevVariantsTournamentTop34Route
+  '/dev/variants/tournament-top3-5': typeof DevVariantsTournamentTop35Route
+  '/dev/variants/tournament-top3-6': typeof DevVariantsTournamentTop36Route
+  '/dev/variants/win-markers': typeof DevVariantsWinMarkersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -142,6 +510,50 @@ export interface FileRoutesById {
   '/tournament': typeof TournamentRoute
   '/builders-perp/$dex': typeof BuildersPerpDexRoute
   '/builders-perp/': typeof BuildersPerpIndexRoute
+  '/dev/variants/auto-guard': typeof DevVariantsAutoGuardRoute
+  '/dev/variants/auto-guard-2': typeof DevVariantsAutoGuard2Route
+  '/dev/variants/auto-header': typeof DevVariantsAutoHeaderRoute
+  '/dev/variants/auto-markets': typeof DevVariantsAutoMarketsRoute
+  '/dev/variants/auto-status': typeof DevVariantsAutoStatusRoute
+  '/dev/variants/auto-tab': typeof DevVariantsAutoTabRoute
+  '/dev/variants/auto-toggle': typeof DevVariantsAutoToggleRoute
+  '/dev/variants/copy-trader': typeof DevVariantsCopyTraderRoute
+  '/dev/variants/copy-trader-2': typeof DevVariantsCopyTrader2Route
+  '/dev/variants/copy-trader-3': typeof DevVariantsCopyTrader3Route
+  '/dev/variants/logo-drawn': typeof DevVariantsLogoDrawnRoute
+  '/dev/variants/logo-prompt': typeof DevVariantsLogoPromptRoute
+  '/dev/variants/logo-standout': typeof DevVariantsLogoStandoutRoute
+  '/dev/variants/logo-x1mark': typeof DevVariantsLogoX1markRoute
+  '/dev/variants/market-colors': typeof DevVariantsMarketColorsRoute
+  '/dev/variants/mood-ring': typeof DevVariantsMoodRingRoute
+  '/dev/variants/mood-traders': typeof DevVariantsMoodTradersRoute
+  '/dev/variants/mood-traders-2': typeof DevVariantsMoodTraders2Route
+  '/dev/variants/mood-traders-3': typeof DevVariantsMoodTraders3Route
+  '/dev/variants/portfolio': typeof DevVariantsPortfolioRoute
+  '/dev/variants/portfolio-2': typeof DevVariantsPortfolio2Route
+  '/dev/variants/portfolio-header': typeof DevVariantsPortfolioHeaderRoute
+  '/dev/variants/portfolio-header-2': typeof DevVariantsPortfolioHeader2Route
+  '/dev/variants/sub-accounts': typeof DevVariantsSubAccountsRoute
+  '/dev/variants/sub-accounts-2': typeof DevVariantsSubAccounts2Route
+  '/dev/variants/sub-accounts-3': typeof DevVariantsSubAccounts3Route
+  '/dev/variants/tournament': typeof DevVariantsTournamentRoute
+  '/dev/variants/tournament-2': typeof DevVariantsTournament2Route
+  '/dev/variants/tournament-3': typeof DevVariantsTournament3Route
+  '/dev/variants/tournament-banner': typeof DevVariantsTournamentBannerRoute
+  '/dev/variants/tournament-banner-2': typeof DevVariantsTournamentBanner2Route
+  '/dev/variants/tournament-banner-3': typeof DevVariantsTournamentBanner3Route
+  '/dev/variants/tournament-banner-4': typeof DevVariantsTournamentBanner4Route
+  '/dev/variants/tournament-race': typeof DevVariantsTournamentRaceRoute
+  '/dev/variants/tournament-rank': typeof DevVariantsTournamentRankRoute
+  '/dev/variants/tournament-rank-2': typeof DevVariantsTournamentRank2Route
+  '/dev/variants/tournament-rank-3': typeof DevVariantsTournamentRank3Route
+  '/dev/variants/tournament-top3': typeof DevVariantsTournamentTop3Route
+  '/dev/variants/tournament-top3-2': typeof DevVariantsTournamentTop32Route
+  '/dev/variants/tournament-top3-3': typeof DevVariantsTournamentTop33Route
+  '/dev/variants/tournament-top3-4': typeof DevVariantsTournamentTop34Route
+  '/dev/variants/tournament-top3-5': typeof DevVariantsTournamentTop35Route
+  '/dev/variants/tournament-top3-6': typeof DevVariantsTournamentTop36Route
+  '/dev/variants/win-markers': typeof DevVariantsWinMarkersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -160,6 +572,50 @@ export interface FileRouteTypes {
     | '/tournament'
     | '/builders-perp/$dex'
     | '/builders-perp/'
+    | '/dev/variants/auto-guard'
+    | '/dev/variants/auto-guard-2'
+    | '/dev/variants/auto-header'
+    | '/dev/variants/auto-markets'
+    | '/dev/variants/auto-status'
+    | '/dev/variants/auto-tab'
+    | '/dev/variants/auto-toggle'
+    | '/dev/variants/copy-trader'
+    | '/dev/variants/copy-trader-2'
+    | '/dev/variants/copy-trader-3'
+    | '/dev/variants/logo-drawn'
+    | '/dev/variants/logo-prompt'
+    | '/dev/variants/logo-standout'
+    | '/dev/variants/logo-x1mark'
+    | '/dev/variants/market-colors'
+    | '/dev/variants/mood-ring'
+    | '/dev/variants/mood-traders'
+    | '/dev/variants/mood-traders-2'
+    | '/dev/variants/mood-traders-3'
+    | '/dev/variants/portfolio'
+    | '/dev/variants/portfolio-2'
+    | '/dev/variants/portfolio-header'
+    | '/dev/variants/portfolio-header-2'
+    | '/dev/variants/sub-accounts'
+    | '/dev/variants/sub-accounts-2'
+    | '/dev/variants/sub-accounts-3'
+    | '/dev/variants/tournament'
+    | '/dev/variants/tournament-2'
+    | '/dev/variants/tournament-3'
+    | '/dev/variants/tournament-banner'
+    | '/dev/variants/tournament-banner-2'
+    | '/dev/variants/tournament-banner-3'
+    | '/dev/variants/tournament-banner-4'
+    | '/dev/variants/tournament-race'
+    | '/dev/variants/tournament-rank'
+    | '/dev/variants/tournament-rank-2'
+    | '/dev/variants/tournament-rank-3'
+    | '/dev/variants/tournament-top3'
+    | '/dev/variants/tournament-top3-2'
+    | '/dev/variants/tournament-top3-3'
+    | '/dev/variants/tournament-top3-4'
+    | '/dev/variants/tournament-top3-5'
+    | '/dev/variants/tournament-top3-6'
+    | '/dev/variants/win-markers'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -175,6 +631,50 @@ export interface FileRouteTypes {
     | '/tournament'
     | '/builders-perp/$dex'
     | '/builders-perp'
+    | '/dev/variants/auto-guard'
+    | '/dev/variants/auto-guard-2'
+    | '/dev/variants/auto-header'
+    | '/dev/variants/auto-markets'
+    | '/dev/variants/auto-status'
+    | '/dev/variants/auto-tab'
+    | '/dev/variants/auto-toggle'
+    | '/dev/variants/copy-trader'
+    | '/dev/variants/copy-trader-2'
+    | '/dev/variants/copy-trader-3'
+    | '/dev/variants/logo-drawn'
+    | '/dev/variants/logo-prompt'
+    | '/dev/variants/logo-standout'
+    | '/dev/variants/logo-x1mark'
+    | '/dev/variants/market-colors'
+    | '/dev/variants/mood-ring'
+    | '/dev/variants/mood-traders'
+    | '/dev/variants/mood-traders-2'
+    | '/dev/variants/mood-traders-3'
+    | '/dev/variants/portfolio'
+    | '/dev/variants/portfolio-2'
+    | '/dev/variants/portfolio-header'
+    | '/dev/variants/portfolio-header-2'
+    | '/dev/variants/sub-accounts'
+    | '/dev/variants/sub-accounts-2'
+    | '/dev/variants/sub-accounts-3'
+    | '/dev/variants/tournament'
+    | '/dev/variants/tournament-2'
+    | '/dev/variants/tournament-3'
+    | '/dev/variants/tournament-banner'
+    | '/dev/variants/tournament-banner-2'
+    | '/dev/variants/tournament-banner-3'
+    | '/dev/variants/tournament-banner-4'
+    | '/dev/variants/tournament-race'
+    | '/dev/variants/tournament-rank'
+    | '/dev/variants/tournament-rank-2'
+    | '/dev/variants/tournament-rank-3'
+    | '/dev/variants/tournament-top3'
+    | '/dev/variants/tournament-top3-2'
+    | '/dev/variants/tournament-top3-3'
+    | '/dev/variants/tournament-top3-4'
+    | '/dev/variants/tournament-top3-5'
+    | '/dev/variants/tournament-top3-6'
+    | '/dev/variants/win-markers'
   id:
     | '__root__'
     | '/'
@@ -191,6 +691,50 @@ export interface FileRouteTypes {
     | '/tournament'
     | '/builders-perp/$dex'
     | '/builders-perp/'
+    | '/dev/variants/auto-guard'
+    | '/dev/variants/auto-guard-2'
+    | '/dev/variants/auto-header'
+    | '/dev/variants/auto-markets'
+    | '/dev/variants/auto-status'
+    | '/dev/variants/auto-tab'
+    | '/dev/variants/auto-toggle'
+    | '/dev/variants/copy-trader'
+    | '/dev/variants/copy-trader-2'
+    | '/dev/variants/copy-trader-3'
+    | '/dev/variants/logo-drawn'
+    | '/dev/variants/logo-prompt'
+    | '/dev/variants/logo-standout'
+    | '/dev/variants/logo-x1mark'
+    | '/dev/variants/market-colors'
+    | '/dev/variants/mood-ring'
+    | '/dev/variants/mood-traders'
+    | '/dev/variants/mood-traders-2'
+    | '/dev/variants/mood-traders-3'
+    | '/dev/variants/portfolio'
+    | '/dev/variants/portfolio-2'
+    | '/dev/variants/portfolio-header'
+    | '/dev/variants/portfolio-header-2'
+    | '/dev/variants/sub-accounts'
+    | '/dev/variants/sub-accounts-2'
+    | '/dev/variants/sub-accounts-3'
+    | '/dev/variants/tournament'
+    | '/dev/variants/tournament-2'
+    | '/dev/variants/tournament-3'
+    | '/dev/variants/tournament-banner'
+    | '/dev/variants/tournament-banner-2'
+    | '/dev/variants/tournament-banner-3'
+    | '/dev/variants/tournament-banner-4'
+    | '/dev/variants/tournament-race'
+    | '/dev/variants/tournament-rank'
+    | '/dev/variants/tournament-rank-2'
+    | '/dev/variants/tournament-rank-3'
+    | '/dev/variants/tournament-top3'
+    | '/dev/variants/tournament-top3-2'
+    | '/dev/variants/tournament-top3-3'
+    | '/dev/variants/tournament-top3-4'
+    | '/dev/variants/tournament-top3-5'
+    | '/dev/variants/tournament-top3-6'
+    | '/dev/variants/win-markers'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -206,6 +750,50 @@ export interface RootRouteChildren {
   PortfolioRoute: typeof PortfolioRoute
   SpotRoute: typeof SpotRoute
   TournamentRoute: typeof TournamentRoute
+  DevVariantsAutoGuardRoute: typeof DevVariantsAutoGuardRoute
+  DevVariantsAutoGuard2Route: typeof DevVariantsAutoGuard2Route
+  DevVariantsAutoHeaderRoute: typeof DevVariantsAutoHeaderRoute
+  DevVariantsAutoMarketsRoute: typeof DevVariantsAutoMarketsRoute
+  DevVariantsAutoStatusRoute: typeof DevVariantsAutoStatusRoute
+  DevVariantsAutoTabRoute: typeof DevVariantsAutoTabRoute
+  DevVariantsAutoToggleRoute: typeof DevVariantsAutoToggleRoute
+  DevVariantsCopyTraderRoute: typeof DevVariantsCopyTraderRoute
+  DevVariantsCopyTrader2Route: typeof DevVariantsCopyTrader2Route
+  DevVariantsCopyTrader3Route: typeof DevVariantsCopyTrader3Route
+  DevVariantsLogoDrawnRoute: typeof DevVariantsLogoDrawnRoute
+  DevVariantsLogoPromptRoute: typeof DevVariantsLogoPromptRoute
+  DevVariantsLogoStandoutRoute: typeof DevVariantsLogoStandoutRoute
+  DevVariantsLogoX1markRoute: typeof DevVariantsLogoX1markRoute
+  DevVariantsMarketColorsRoute: typeof DevVariantsMarketColorsRoute
+  DevVariantsMoodRingRoute: typeof DevVariantsMoodRingRoute
+  DevVariantsMoodTradersRoute: typeof DevVariantsMoodTradersRoute
+  DevVariantsMoodTraders2Route: typeof DevVariantsMoodTraders2Route
+  DevVariantsMoodTraders3Route: typeof DevVariantsMoodTraders3Route
+  DevVariantsPortfolioRoute: typeof DevVariantsPortfolioRoute
+  DevVariantsPortfolio2Route: typeof DevVariantsPortfolio2Route
+  DevVariantsPortfolioHeaderRoute: typeof DevVariantsPortfolioHeaderRoute
+  DevVariantsPortfolioHeader2Route: typeof DevVariantsPortfolioHeader2Route
+  DevVariantsSubAccountsRoute: typeof DevVariantsSubAccountsRoute
+  DevVariantsSubAccounts2Route: typeof DevVariantsSubAccounts2Route
+  DevVariantsSubAccounts3Route: typeof DevVariantsSubAccounts3Route
+  DevVariantsTournamentRoute: typeof DevVariantsTournamentRoute
+  DevVariantsTournament2Route: typeof DevVariantsTournament2Route
+  DevVariantsTournament3Route: typeof DevVariantsTournament3Route
+  DevVariantsTournamentBannerRoute: typeof DevVariantsTournamentBannerRoute
+  DevVariantsTournamentBanner2Route: typeof DevVariantsTournamentBanner2Route
+  DevVariantsTournamentBanner3Route: typeof DevVariantsTournamentBanner3Route
+  DevVariantsTournamentBanner4Route: typeof DevVariantsTournamentBanner4Route
+  DevVariantsTournamentRaceRoute: typeof DevVariantsTournamentRaceRoute
+  DevVariantsTournamentRankRoute: typeof DevVariantsTournamentRankRoute
+  DevVariantsTournamentRank2Route: typeof DevVariantsTournamentRank2Route
+  DevVariantsTournamentRank3Route: typeof DevVariantsTournamentRank3Route
+  DevVariantsTournamentTop3Route: typeof DevVariantsTournamentTop3Route
+  DevVariantsTournamentTop32Route: typeof DevVariantsTournamentTop32Route
+  DevVariantsTournamentTop33Route: typeof DevVariantsTournamentTop33Route
+  DevVariantsTournamentTop34Route: typeof DevVariantsTournamentTop34Route
+  DevVariantsTournamentTop35Route: typeof DevVariantsTournamentTop35Route
+  DevVariantsTournamentTop36Route: typeof DevVariantsTournamentTop36Route
+  DevVariantsWinMarkersRoute: typeof DevVariantsWinMarkersRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -308,6 +896,314 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuildersPerpDexRouteImport
       parentRoute: typeof BuildersPerpRoute
     }
+    '/dev/variants/win-markers': {
+      id: '/dev/variants/win-markers'
+      path: '/dev/variants/win-markers'
+      fullPath: '/dev/variants/win-markers'
+      preLoaderRoute: typeof DevVariantsWinMarkersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/tournament-top3-6': {
+      id: '/dev/variants/tournament-top3-6'
+      path: '/dev/variants/tournament-top3-6'
+      fullPath: '/dev/variants/tournament-top3-6'
+      preLoaderRoute: typeof DevVariantsTournamentTop36RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/tournament-top3-5': {
+      id: '/dev/variants/tournament-top3-5'
+      path: '/dev/variants/tournament-top3-5'
+      fullPath: '/dev/variants/tournament-top3-5'
+      preLoaderRoute: typeof DevVariantsTournamentTop35RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/tournament-top3-4': {
+      id: '/dev/variants/tournament-top3-4'
+      path: '/dev/variants/tournament-top3-4'
+      fullPath: '/dev/variants/tournament-top3-4'
+      preLoaderRoute: typeof DevVariantsTournamentTop34RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/tournament-top3-3': {
+      id: '/dev/variants/tournament-top3-3'
+      path: '/dev/variants/tournament-top3-3'
+      fullPath: '/dev/variants/tournament-top3-3'
+      preLoaderRoute: typeof DevVariantsTournamentTop33RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/tournament-top3-2': {
+      id: '/dev/variants/tournament-top3-2'
+      path: '/dev/variants/tournament-top3-2'
+      fullPath: '/dev/variants/tournament-top3-2'
+      preLoaderRoute: typeof DevVariantsTournamentTop32RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/tournament-top3': {
+      id: '/dev/variants/tournament-top3'
+      path: '/dev/variants/tournament-top3'
+      fullPath: '/dev/variants/tournament-top3'
+      preLoaderRoute: typeof DevVariantsTournamentTop3RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/tournament-rank-3': {
+      id: '/dev/variants/tournament-rank-3'
+      path: '/dev/variants/tournament-rank-3'
+      fullPath: '/dev/variants/tournament-rank-3'
+      preLoaderRoute: typeof DevVariantsTournamentRank3RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/tournament-rank-2': {
+      id: '/dev/variants/tournament-rank-2'
+      path: '/dev/variants/tournament-rank-2'
+      fullPath: '/dev/variants/tournament-rank-2'
+      preLoaderRoute: typeof DevVariantsTournamentRank2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/tournament-rank': {
+      id: '/dev/variants/tournament-rank'
+      path: '/dev/variants/tournament-rank'
+      fullPath: '/dev/variants/tournament-rank'
+      preLoaderRoute: typeof DevVariantsTournamentRankRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/tournament-race': {
+      id: '/dev/variants/tournament-race'
+      path: '/dev/variants/tournament-race'
+      fullPath: '/dev/variants/tournament-race'
+      preLoaderRoute: typeof DevVariantsTournamentRaceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/tournament-banner-4': {
+      id: '/dev/variants/tournament-banner-4'
+      path: '/dev/variants/tournament-banner-4'
+      fullPath: '/dev/variants/tournament-banner-4'
+      preLoaderRoute: typeof DevVariantsTournamentBanner4RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/tournament-banner-3': {
+      id: '/dev/variants/tournament-banner-3'
+      path: '/dev/variants/tournament-banner-3'
+      fullPath: '/dev/variants/tournament-banner-3'
+      preLoaderRoute: typeof DevVariantsTournamentBanner3RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/tournament-banner-2': {
+      id: '/dev/variants/tournament-banner-2'
+      path: '/dev/variants/tournament-banner-2'
+      fullPath: '/dev/variants/tournament-banner-2'
+      preLoaderRoute: typeof DevVariantsTournamentBanner2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/tournament-banner': {
+      id: '/dev/variants/tournament-banner'
+      path: '/dev/variants/tournament-banner'
+      fullPath: '/dev/variants/tournament-banner'
+      preLoaderRoute: typeof DevVariantsTournamentBannerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/tournament-3': {
+      id: '/dev/variants/tournament-3'
+      path: '/dev/variants/tournament-3'
+      fullPath: '/dev/variants/tournament-3'
+      preLoaderRoute: typeof DevVariantsTournament3RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/tournament-2': {
+      id: '/dev/variants/tournament-2'
+      path: '/dev/variants/tournament-2'
+      fullPath: '/dev/variants/tournament-2'
+      preLoaderRoute: typeof DevVariantsTournament2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/tournament': {
+      id: '/dev/variants/tournament'
+      path: '/dev/variants/tournament'
+      fullPath: '/dev/variants/tournament'
+      preLoaderRoute: typeof DevVariantsTournamentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/sub-accounts-3': {
+      id: '/dev/variants/sub-accounts-3'
+      path: '/dev/variants/sub-accounts-3'
+      fullPath: '/dev/variants/sub-accounts-3'
+      preLoaderRoute: typeof DevVariantsSubAccounts3RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/sub-accounts-2': {
+      id: '/dev/variants/sub-accounts-2'
+      path: '/dev/variants/sub-accounts-2'
+      fullPath: '/dev/variants/sub-accounts-2'
+      preLoaderRoute: typeof DevVariantsSubAccounts2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/sub-accounts': {
+      id: '/dev/variants/sub-accounts'
+      path: '/dev/variants/sub-accounts'
+      fullPath: '/dev/variants/sub-accounts'
+      preLoaderRoute: typeof DevVariantsSubAccountsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/portfolio-header-2': {
+      id: '/dev/variants/portfolio-header-2'
+      path: '/dev/variants/portfolio-header-2'
+      fullPath: '/dev/variants/portfolio-header-2'
+      preLoaderRoute: typeof DevVariantsPortfolioHeader2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/portfolio-header': {
+      id: '/dev/variants/portfolio-header'
+      path: '/dev/variants/portfolio-header'
+      fullPath: '/dev/variants/portfolio-header'
+      preLoaderRoute: typeof DevVariantsPortfolioHeaderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/portfolio-2': {
+      id: '/dev/variants/portfolio-2'
+      path: '/dev/variants/portfolio-2'
+      fullPath: '/dev/variants/portfolio-2'
+      preLoaderRoute: typeof DevVariantsPortfolio2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/portfolio': {
+      id: '/dev/variants/portfolio'
+      path: '/dev/variants/portfolio'
+      fullPath: '/dev/variants/portfolio'
+      preLoaderRoute: typeof DevVariantsPortfolioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/mood-traders-3': {
+      id: '/dev/variants/mood-traders-3'
+      path: '/dev/variants/mood-traders-3'
+      fullPath: '/dev/variants/mood-traders-3'
+      preLoaderRoute: typeof DevVariantsMoodTraders3RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/mood-traders-2': {
+      id: '/dev/variants/mood-traders-2'
+      path: '/dev/variants/mood-traders-2'
+      fullPath: '/dev/variants/mood-traders-2'
+      preLoaderRoute: typeof DevVariantsMoodTraders2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/mood-traders': {
+      id: '/dev/variants/mood-traders'
+      path: '/dev/variants/mood-traders'
+      fullPath: '/dev/variants/mood-traders'
+      preLoaderRoute: typeof DevVariantsMoodTradersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/mood-ring': {
+      id: '/dev/variants/mood-ring'
+      path: '/dev/variants/mood-ring'
+      fullPath: '/dev/variants/mood-ring'
+      preLoaderRoute: typeof DevVariantsMoodRingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/market-colors': {
+      id: '/dev/variants/market-colors'
+      path: '/dev/variants/market-colors'
+      fullPath: '/dev/variants/market-colors'
+      preLoaderRoute: typeof DevVariantsMarketColorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/logo-x1mark': {
+      id: '/dev/variants/logo-x1mark'
+      path: '/dev/variants/logo-x1mark'
+      fullPath: '/dev/variants/logo-x1mark'
+      preLoaderRoute: typeof DevVariantsLogoX1markRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/logo-standout': {
+      id: '/dev/variants/logo-standout'
+      path: '/dev/variants/logo-standout'
+      fullPath: '/dev/variants/logo-standout'
+      preLoaderRoute: typeof DevVariantsLogoStandoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/logo-prompt': {
+      id: '/dev/variants/logo-prompt'
+      path: '/dev/variants/logo-prompt'
+      fullPath: '/dev/variants/logo-prompt'
+      preLoaderRoute: typeof DevVariantsLogoPromptRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/logo-drawn': {
+      id: '/dev/variants/logo-drawn'
+      path: '/dev/variants/logo-drawn'
+      fullPath: '/dev/variants/logo-drawn'
+      preLoaderRoute: typeof DevVariantsLogoDrawnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/copy-trader-3': {
+      id: '/dev/variants/copy-trader-3'
+      path: '/dev/variants/copy-trader-3'
+      fullPath: '/dev/variants/copy-trader-3'
+      preLoaderRoute: typeof DevVariantsCopyTrader3RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/copy-trader-2': {
+      id: '/dev/variants/copy-trader-2'
+      path: '/dev/variants/copy-trader-2'
+      fullPath: '/dev/variants/copy-trader-2'
+      preLoaderRoute: typeof DevVariantsCopyTrader2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/copy-trader': {
+      id: '/dev/variants/copy-trader'
+      path: '/dev/variants/copy-trader'
+      fullPath: '/dev/variants/copy-trader'
+      preLoaderRoute: typeof DevVariantsCopyTraderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/auto-toggle': {
+      id: '/dev/variants/auto-toggle'
+      path: '/dev/variants/auto-toggle'
+      fullPath: '/dev/variants/auto-toggle'
+      preLoaderRoute: typeof DevVariantsAutoToggleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/auto-tab': {
+      id: '/dev/variants/auto-tab'
+      path: '/dev/variants/auto-tab'
+      fullPath: '/dev/variants/auto-tab'
+      preLoaderRoute: typeof DevVariantsAutoTabRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/auto-status': {
+      id: '/dev/variants/auto-status'
+      path: '/dev/variants/auto-status'
+      fullPath: '/dev/variants/auto-status'
+      preLoaderRoute: typeof DevVariantsAutoStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/auto-markets': {
+      id: '/dev/variants/auto-markets'
+      path: '/dev/variants/auto-markets'
+      fullPath: '/dev/variants/auto-markets'
+      preLoaderRoute: typeof DevVariantsAutoMarketsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/auto-header': {
+      id: '/dev/variants/auto-header'
+      path: '/dev/variants/auto-header'
+      fullPath: '/dev/variants/auto-header'
+      preLoaderRoute: typeof DevVariantsAutoHeaderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/auto-guard-2': {
+      id: '/dev/variants/auto-guard-2'
+      path: '/dev/variants/auto-guard-2'
+      fullPath: '/dev/variants/auto-guard-2'
+      preLoaderRoute: typeof DevVariantsAutoGuard2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/variants/auto-guard': {
+      id: '/dev/variants/auto-guard'
+      path: '/dev/variants/auto-guard'
+      fullPath: '/dev/variants/auto-guard'
+      preLoaderRoute: typeof DevVariantsAutoGuardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -338,6 +1234,50 @@ const rootRouteChildren: RootRouteChildren = {
   PortfolioRoute: PortfolioRoute,
   SpotRoute: SpotRoute,
   TournamentRoute: TournamentRoute,
+  DevVariantsAutoGuardRoute: DevVariantsAutoGuardRoute,
+  DevVariantsAutoGuard2Route: DevVariantsAutoGuard2Route,
+  DevVariantsAutoHeaderRoute: DevVariantsAutoHeaderRoute,
+  DevVariantsAutoMarketsRoute: DevVariantsAutoMarketsRoute,
+  DevVariantsAutoStatusRoute: DevVariantsAutoStatusRoute,
+  DevVariantsAutoTabRoute: DevVariantsAutoTabRoute,
+  DevVariantsAutoToggleRoute: DevVariantsAutoToggleRoute,
+  DevVariantsCopyTraderRoute: DevVariantsCopyTraderRoute,
+  DevVariantsCopyTrader2Route: DevVariantsCopyTrader2Route,
+  DevVariantsCopyTrader3Route: DevVariantsCopyTrader3Route,
+  DevVariantsLogoDrawnRoute: DevVariantsLogoDrawnRoute,
+  DevVariantsLogoPromptRoute: DevVariantsLogoPromptRoute,
+  DevVariantsLogoStandoutRoute: DevVariantsLogoStandoutRoute,
+  DevVariantsLogoX1markRoute: DevVariantsLogoX1markRoute,
+  DevVariantsMarketColorsRoute: DevVariantsMarketColorsRoute,
+  DevVariantsMoodRingRoute: DevVariantsMoodRingRoute,
+  DevVariantsMoodTradersRoute: DevVariantsMoodTradersRoute,
+  DevVariantsMoodTraders2Route: DevVariantsMoodTraders2Route,
+  DevVariantsMoodTraders3Route: DevVariantsMoodTraders3Route,
+  DevVariantsPortfolioRoute: DevVariantsPortfolioRoute,
+  DevVariantsPortfolio2Route: DevVariantsPortfolio2Route,
+  DevVariantsPortfolioHeaderRoute: DevVariantsPortfolioHeaderRoute,
+  DevVariantsPortfolioHeader2Route: DevVariantsPortfolioHeader2Route,
+  DevVariantsSubAccountsRoute: DevVariantsSubAccountsRoute,
+  DevVariantsSubAccounts2Route: DevVariantsSubAccounts2Route,
+  DevVariantsSubAccounts3Route: DevVariantsSubAccounts3Route,
+  DevVariantsTournamentRoute: DevVariantsTournamentRoute,
+  DevVariantsTournament2Route: DevVariantsTournament2Route,
+  DevVariantsTournament3Route: DevVariantsTournament3Route,
+  DevVariantsTournamentBannerRoute: DevVariantsTournamentBannerRoute,
+  DevVariantsTournamentBanner2Route: DevVariantsTournamentBanner2Route,
+  DevVariantsTournamentBanner3Route: DevVariantsTournamentBanner3Route,
+  DevVariantsTournamentBanner4Route: DevVariantsTournamentBanner4Route,
+  DevVariantsTournamentRaceRoute: DevVariantsTournamentRaceRoute,
+  DevVariantsTournamentRankRoute: DevVariantsTournamentRankRoute,
+  DevVariantsTournamentRank2Route: DevVariantsTournamentRank2Route,
+  DevVariantsTournamentRank3Route: DevVariantsTournamentRank3Route,
+  DevVariantsTournamentTop3Route: DevVariantsTournamentTop3Route,
+  DevVariantsTournamentTop32Route: DevVariantsTournamentTop32Route,
+  DevVariantsTournamentTop33Route: DevVariantsTournamentTop33Route,
+  DevVariantsTournamentTop34Route: DevVariantsTournamentTop34Route,
+  DevVariantsTournamentTop35Route: DevVariantsTournamentTop35Route,
+  DevVariantsTournamentTop36Route: DevVariantsTournamentTop36Route,
+  DevVariantsWinMarkersRoute: DevVariantsWinMarkersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

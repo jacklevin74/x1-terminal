@@ -1,0 +1,71 @@
+{
+	"source": "wxnt-sale-sim.vercel.app/api/daytraders, fetched once. Positions of a real pool trader, used as the example user account.",
+	"now": 1794998888343,
+	"account": {
+		"usr": "0x0ca4109c94438dde8d7386da27180f414de80fa8",
+		"name": "Mint Otter",
+		"equity": 33482.12
+	},
+	"positions": [
+		{
+			"coin": "HYPE",
+			"szi": 2008.82,
+			"ntl": 137795.0079,
+			"entry": 78.9283,
+			"mark": 68.595,
+			"upnl": -20757.859032,
+			"lev": "10x cross",
+			"liq": 33.0581157784
+		},
+		{
+			"coin": "NEAR",
+			"szi": 26400,
+			"ntl": 88088.88,
+			"entry": 4.21,
+			"mark": 3.3367,
+			"upnl": -23055.365969,
+			"lev": "10x cross",
+			"liq": 0.6326392514
+		},
+		{
+			"coin": "WLD",
+			"szi": 315000,
+			"ntl": 83059.2,
+			"entry": 0.3785,
+			"mark": 0.26367999999999997,
+			"upnl": -36168.3,
+			"lev": "10x cross",
+			"liq": 0.0370539563
+		},
+		{
+			"coin": "xyz:DRAM",
+			"szi": 1480,
+			"ntl": 59670.64,
+			"entry": 43.3,
+			"mark": 40.318,
+			"upnl": -4413.36,
+			"lev": "20x cross",
+			"liq": null
+		}
+	],
+	"botMarkets": [
+		"BTC",
+		"ETH",
+		"SOL",
+		"HYPE",
+		"ZEC",
+		"NEAR",
+		"XRP",
+		"xyz:GOOGL",
+		"xyz:SOXL",
+		"xyz:NVDA",
+		"xyz:BRENTOIL",
+		"xyz:GOLD",
+		"xyz:MU",
+		"xyz:INTC",
+		"xyz:XYZ100",
+		"xyz:SKHX",
+		"xyz:SNDK",
+		"xyz:AAPL"
+	]
+}
