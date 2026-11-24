@@ -135,17 +135,19 @@ function ConnectPrompt({ mobile }: { mobile?: boolean }) {
 interface Props {
 	data: PortfolioData;
 	connected: boolean;
+	header?: ReactNode;
+	readOnly?: boolean;
 }
 
-export function PortfolioBoard({ data, connected }: Props) {
+export function PortfolioBoard({ data, connected, header, readOnly }: Props) {
 	const c = useChartState();
 	const list = stats(data, c.range);
 	const cols = [list.slice(0, 4), list.slice(4, 8), list.slice(8)];
 	return (
 		<div className="mx-auto flex w-full max-w-[1440px] flex-col gap-2 px-8 pt-8 pb-10">
 			<div className="flex flex-col">
-				<h1 className="text-lg font-semibold">Portfolio</h1>
-				{connected ? <PortfolioTop c={c} data={data} /> : <ConnectPrompt />}
+				{header ?? <h1 className="text-lg font-semibold">Portfolio</h1>}
+				{connected ? <PortfolioTop c={c} data={data} readOnly={readOnly} /> : <ConnectPrompt />}
 			</div>
 			{connected && (
 				<>
@@ -158,21 +160,21 @@ export function PortfolioBoard({ data, connected }: Props) {
 							</div>
 						))}
 					</div>
-					<TabPanel data={data} />
+					<TabPanel data={data} readOnly={readOnly} />
 				</>
 			)}
 		</div>
 	);
 }
 
-export function PortfolioBoardMobile({ data, connected }: Props) {
+export function PortfolioBoardMobile({ data, connected, header, readOnly }: Props) {
 	const c = useChartState();
 	const list = stats(data, c.range);
 	return (
 		<div className="flex flex-col pb-6">
 			<div className="flex flex-col">
-				<h1 className="px-4 pt-6 text-lg font-semibold">Portfolio</h1>
-				{connected ? <PortfolioTop c={c} data={data} mobile /> : <ConnectPrompt mobile />}
+				{header ?? <h1 className="px-4 pt-6 text-lg font-semibold">Portfolio</h1>}
+				{connected ? <PortfolioTop c={c} data={data} mobile readOnly={readOnly} /> : <ConnectPrompt mobile />}
 			</div>
 			{connected && (
 				<>
@@ -181,7 +183,7 @@ export function PortfolioBoardMobile({ data, connected }: Props) {
 							<StatRow key={st.label} stat={st} />
 						))}
 					</div>
-					<TabPanel data={data} mobile />
+					<TabPanel data={data} mobile readOnly={readOnly} />
 				</>
 			)}
 		</div>

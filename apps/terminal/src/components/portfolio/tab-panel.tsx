@@ -13,9 +13,10 @@ function countsOf(data: PortfolioData) {
 interface Props {
 	data: PortfolioData;
 	mobile?: boolean;
+	readOnly?: boolean;
 }
 
-export function TabPanel({ data, mobile }: Props) {
+export function TabPanel({ data, mobile, readOnly }: Props) {
 	const [active, setActive] = useState<TabId>("positions");
 	const counts = countsOf(data);
 
@@ -40,6 +41,7 @@ export function TabPanel({ data, mobile }: Props) {
 				loading={data.loading[active]}
 				failed={data.failed[active]}
 				maxHeight={640}
+				readOnly={readOnly}
 			/>
 		</section>
 	);

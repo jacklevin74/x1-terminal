@@ -1,4 +1,5 @@
 import { SegmentedControlItem, SegmentedControls } from "@hypeterminal/ui";
+import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { cn } from "@/lib/cn";
 import {
@@ -120,7 +121,11 @@ interface RowProps {
 
 function MobileRow({ r, you }: RowProps) {
 	return (
-		<div className="flex h-12 items-center gap-3 px-2 text-xs tabular-nums">
+		<Link
+			to={you ? "/portfolio" : "/tournament/$address"}
+			params={{ address: r.address }}
+			className="flex h-12 items-center gap-3 rounded-6 px-2 text-xs tabular-nums transition-colors active:bg-band"
+		>
 			<span className="w-8 text-fg-muted">{r.rank}</span>
 			<Identicon id={r.address} className="size-6 rounded-4" />
 			<span className="flex min-w-0 flex-1 flex-col">
@@ -132,6 +137,6 @@ function MobileRow({ r, you }: RowProps) {
 			</span>
 			<Spark values={path(r)} width={48} height={18} />
 			<span className={cn("w-[84px] text-right font-medium", pnlClass(r.pnl))}>{signedUsd(r.pnl, true)}</span>
-		</div>
+		</Link>
 	);
 }

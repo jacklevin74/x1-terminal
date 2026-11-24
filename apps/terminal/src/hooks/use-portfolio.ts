@@ -10,9 +10,10 @@ import type { PortfolioData } from "@/lib/portfolio/model";
 const REFRESH_MS = 30_000;
 const FUNDING_WINDOW_MS = 24 * 60 * 60 * 1000;
 
-export function usePortfolio(): { address: `0x${string}` | undefined; data: PortfolioData } {
+export function usePortfolio(viewAddress?: `0x${string}`): { address: `0x${string}` | undefined; data: PortfolioData } {
 	const { address, isConnected } = useTradingAccount();
-	const user = isConnected && address ? address : undefined;
+	const own = isConnected && address ? address : undefined;
+	const user = viewAddress ?? own;
 	const enabled = !!user;
 	const u = user ?? zeroAddress;
 	const live = { enabled, refetchInterval: REFRESH_MS };

@@ -106,9 +106,10 @@ interface Props {
 	loading: boolean;
 	failed: boolean;
 	maxHeight?: number;
+	readOnly?: boolean;
 }
 
-export function TabTable({ tab, rows, loading, failed, maxHeight = 640 }: Props) {
+export function TabTable({ tab, rows, loading, failed, maxHeight = 640, readOnly }: Props) {
 	const [transfer, setTransfer] = useState<"toSpot" | "toPerp" | null>(null);
 	const [expanded, setExpanded] = useState<TabId | null>(null);
 	const count = rows[tab].length;
@@ -132,7 +133,7 @@ export function TabTable({ tab, rows, loading, failed, maxHeight = 640 }: Props)
 					<TableCell className={num}>{b.value}</TableCell>
 					<TableCell className={cn(num, b.pnl === "-" ? "text-fg-muted" : pnlClass(b.pnlNum))}>{b.pnl}</TableCell>
 					<TableCell className={cell}>
-						{b.asset === "USDC" ? (
+						{b.asset === "USDC" && !readOnly ? (
 							<button
 								type="button"
 								onClick={() => setTransfer(b.perp ? "toSpot" : "toPerp")}
