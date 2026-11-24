@@ -11,6 +11,7 @@ import { type PoolTrader, type Stance, stanceOn } from "@/lib/mood/pool";
 import { countAllMoodTraders, toggleMoodTrader } from "@/lib/mood/selection";
 import { shortAddress, signedScore } from "@/lib/mood/signal";
 import { RANGES, type RangeId, SERIES, type SeriesId, seriesFor } from "@/lib/portfolio/model";
+import { MoodPositionCard } from "./mood-position-card";
 
 const STANCES: { id: Stance; label: string; text: string; fill: string }[] = [
 	{ id: "bullish", label: "Bullish", text: "text-market-up", fill: "bg-market-up" },
@@ -220,7 +221,6 @@ interface TraderProps {
 
 export function MoodTraderPage({ t, coin, name, on }: TraderProps) {
 	const pos = t.positions.get(coin);
-	const stance = STANCES.find((s) => s.id === stanceOn(t, coin));
 	const { data } = usePortfolio(t.usr as `0x${string}`);
 	const [series, setSeries] = useState<SeriesId>("pnl");
 	const [range, setRange] = useState<RangeId>("month");
@@ -251,23 +251,14 @@ export function MoodTraderPage({ t, coin, name, on }: TraderProps) {
 				<Switch on={on} />
 			</button>
 
-			<section className="flex flex-col gap-3 rounded-12 bg-surface p-4">
-				<span className="text-xs text-fg-muted">{name} position</span>
-				{pos ? (
-					<>
-						<span className={cn("text-base font-semibold tabular-nums", stance?.text)}>
-							{pos.szi > 0 ? "Long" : "Short"} {usdCompact(pos.ntl)}
-						</span>
-						<div className="grid grid-cols-3 gap-2">
-							<Stat label="Entry" value={usd(pos.entry)} />
-							<Stat label="Unrealized PNL" value={signedUsd(pos.upnl, true)} className={pnlClass(pos.upnl)} />
-							<Stat label="Leverage" value={pos.lev} />
-						</div>
-					</>
-				) : (
+			{pos ? (
+				<MoodPositionCard pos={pos} name={name} />
+			) : (
+				<section className="flex flex-col gap-3 rounded-12 bg-surface p-4">
+					<span className="text-xs text-fg-muted">{name} position</span>
 					<span className="text-sm text-fg-secondary">No {name} position now</span>
-				)}
-			</section>
+				</section>
+			)}
 
 			<section className="flex flex-col gap-4 rounded-12 bg-surface p-4">
 				<div className="flex items-center justify-between">

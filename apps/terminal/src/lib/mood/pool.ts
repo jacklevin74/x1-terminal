@@ -6,8 +6,10 @@ export interface PoolPosition {
 	szi: number;
 	ntl: number;
 	entry: number;
+	mark: number;
 	upnl: number;
 	lev: string;
+	liq: number | null;
 }
 
 export interface PoolTrader {
@@ -35,7 +37,16 @@ export function parsePool(raw: RawPool): PoolTrader[] {
 	for (const p of raw.positions ?? []) {
 		const usr = p.usr.toLowerCase();
 		const list = positions.get(usr) ?? new Map<string, PoolPosition>();
-		list.set(p.coin, { coin: p.coin, szi: p.szi, ntl: p.ntl, entry: p.entry, upnl: p.upnl, lev: p.lev });
+		list.set(p.coin, {
+			coin: p.coin,
+			szi: p.szi,
+			ntl: p.ntl,
+			entry: p.entry,
+			mark: p.mark,
+			upnl: p.upnl,
+			lev: p.lev,
+			liq: p.liq ?? null,
+		});
 		positions.set(usr, list);
 	}
 	return (raw.profiles ?? []).map((p) => {
