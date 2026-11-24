@@ -68,8 +68,8 @@ function build(id: TierId, label: string, short: string, description: string): T
 }
 
 export const tiers: Record<TierId, Tier> = {
-	high: build("high", "High table", "Over $1M volume", "High table is for traders with over $1M in volume."),
-	low: build("low", "Low table", "Under $1M volume", "Low table is for traders with under $1M in volume."),
+	high: build("high", "High table", "over $1M volume", "High table is for traders with over $1M in volume."),
+	low: build("low", "Low table", "under $1M volume", "Low table is for traders with under $1M in volume."),
 };
 
 export const tierIds: TierId[] = ["high", "low"];
@@ -143,4 +143,14 @@ export const traderName = (t: Trader) => t.name ?? `${t.address.slice(0, 6)}…$
 
 export function prizeFor(tier: Tier, rank: number) {
 	return rank <= 3 ? tier.payouts[rank - 1] : 0;
+}
+
+export function findTrader(address: string) {
+	for (const id of tierIds) {
+		const list = tiers[id].traders;
+		const index = list.findIndex((r) => r.address === address);
+		if (index >= 0) return { trader: list[index], tier: tiers[id], index };
+		if (tiers[id].you?.address === address) return { trader: tiers[id].you, tier: tiers[id], index: -1 };
+	}
+	return null;
 }

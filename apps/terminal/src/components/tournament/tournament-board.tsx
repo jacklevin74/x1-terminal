@@ -1,5 +1,5 @@
 import { Tabs, TabsList, TabsTrigger } from "@hypeterminal/ui";
-import { Link } from "@tanstack/react-router";
+import { Link, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { cn } from "@/lib/cn";
 import {
@@ -20,7 +20,7 @@ import {
 	usdCompact,
 	useTimeLeft,
 } from "./data";
-import { Identicon, RankMove, Spark } from "./parts";
+import { Identicon, RankMove, RoundSpark } from "./parts";
 import { RoundStatus } from "./round-status";
 import { RulesPopover } from "./rules-popover";
 import { TopThree } from "./top-three";
@@ -34,7 +34,7 @@ export function TournamentBoard() {
 	const dates = roundDates(t.ms);
 
 	return (
-		<div className="mx-auto flex w-full max-w-[1440px] flex-col px-8 pt-8">
+		<div className="flex w-full flex-col px-8 pt-8">
 			<header className="flex items-end justify-between gap-8">
 				<div className="flex flex-col gap-2">
 					<h1 className="text-lg font-semibold">Tournament</h1>
@@ -61,14 +61,15 @@ export function TournamentBoard() {
 				key={tierId}
 				className="mt-6 flex flex-col gap-4 duration-200 motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-97"
 			>
-				<p className="text-sm text-fg-muted">{tier.description}</p>
 				<TopThree tier={tier} />
 			</div>
 
 			<section className="mt-10 flex flex-col">
 				<div className="flex items-baseline gap-3 px-3">
 					<h2 className="text-sm font-medium">Standings</h2>
-					<span className="text-xs text-fg-muted tabular-nums">{tier.count.toLocaleString()} traders</span>
+					<span className="text-xs text-fg-muted tabular-nums">
+						{tier.count.toLocaleString()} traders {tier.short}
+					</span>
 				</div>
 				<div className={cn("mt-3 grid h-8 items-center gap-2 px-3 text-xs text-fg-muted", COLS)}>
 					<span>Rank</span>
@@ -107,12 +108,15 @@ interface RowProps {
 }
 
 function Row({ r, you }: RowProps) {
+	const { trader } = useSearch({ from: "/tournament" });
 	return (
 		<Link
-			to={you ? "/portfolio" : "/tournament/$address"}
-			params={{ address: r.address }}
+			to="/tournament"
+			search={{ trader: r.address }}
+			resetScroll={false}
 			className={cn(
 				"grid h-10 items-center gap-2 rounded-6 px-3 text-xs tabular-nums transition-colors hover:bg-band",
+				trader === r.address && !you && "bg-band",
 				COLS,
 			)}
 		>
@@ -128,7 +132,7 @@ function Row({ r, you }: RowProps) {
 			<span className="text-right text-fg-secondary">{pct(r.roi)}</span>
 			<span className="text-right text-fg-secondary">{usdCompact(r.vlm)}</span>
 			<span className="pl-4">
-				<Spark values={path(r)} width={72} height={18} />
+				<RoundSpark values={path(r)} width={72} height={18} />
 			</span>
 			<span className={cn("text-right", pnlClass(r.dayPnl))}>{signedUsd(r.dayPnl, true)}</span>
 		</Link>

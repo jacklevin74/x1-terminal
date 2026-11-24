@@ -9,6 +9,7 @@ import { MobileHeader } from "../trade/mobile/mobile-header";
 import { TestnetBanner } from "../trade/testnet-banner";
 import { TournamentBoard } from "./tournament-board";
 import { TournamentBoardMobile } from "./tournament-board-mobile";
+import { TraderDrawer } from "./trader-drawer";
 
 const GlobalModals = createLazyComponent(() => import("../trade/components/global-modals"), "GlobalModals");
 
@@ -35,6 +36,7 @@ export function TournamentPage() {
 					<TournamentBoard />
 				</div>
 			)}
+			<TraderDrawer />
 			<Suspense fallback={null}>
 				<GlobalModals />
 			</Suspense>

@@ -17,11 +17,11 @@ import {
 	tierIds,
 	tiers,
 	traderName,
-	usdc,
+	usd,
 	useTimeLeft,
 } from "./data";
 import { Halftone } from "./halftone";
-import { Identicon, RankMove, Spark } from "./parts";
+import { Identicon, RankMove, RoundSpark } from "./parts";
 import { RoundStatus } from "./round-status";
 import { RulesPopover } from "./rules-popover";
 import { TraderRow } from "./trader-row";
@@ -54,7 +54,6 @@ export function TournamentBoardMobile() {
 				key={tierId}
 				className="flex flex-col gap-2 px-4 pt-4 duration-200 motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-97"
 			>
-				<p className="pb-1 text-xs text-fg-muted">{tier.description}</p>
 				<div className="flex flex-col overflow-hidden rounded-16 bg-surface">
 					<div
 						className="relative isolate flex flex-col gap-3 overflow-hidden px-5 py-5 text-fg"
@@ -64,8 +63,7 @@ export function TournamentBoardMobile() {
 						<div className="flex flex-col gap-1">
 							<span className="text-xs text-fg-muted">Round 1 prize pool</span>
 							<span className="flex items-baseline gap-1.5 text-2xl leading-none font-semibold tracking-tight tabular-nums">
-								{usdc(tier.pot)}
-								<span className="text-sm font-medium tracking-normal text-fg-muted">USDC</span>
+								{usd(tier.pot)}
 							</span>
 						</div>
 						<span className="text-sm text-fg-secondary tabular-nums">
@@ -77,8 +75,7 @@ export function TournamentBoardMobile() {
 							<div className="flex items-baseline justify-between">
 								<span className="text-xs text-fg-muted">{PLACE[r.rank - 1]}</span>
 								<span className="flex items-baseline gap-1 text-lg leading-none font-semibold tracking-tight tabular-nums">
-									{usdc(prizeFor(tier, r.rank))}
-									<span className="text-xs font-medium tracking-normal text-fg-muted">USDC</span>
+									{usd(prizeFor(tier, r.rank))}
 								</span>
 							</div>
 							<TraderRow r={r} />
@@ -90,7 +87,9 @@ export function TournamentBoardMobile() {
 			<div className="flex flex-col px-2 pt-8 pb-2">
 				<div className="flex items-baseline gap-3 px-2">
 					<h2 className="text-sm font-medium">Standings</h2>
-					<span className="text-xs text-fg-muted tabular-nums">{tier.count.toLocaleString()} traders</span>
+					<span className="text-xs text-fg-muted tabular-nums">
+						{tier.count.toLocaleString()} traders {tier.short}
+					</span>
 				</div>
 				<div className="mt-2">
 					{tier.traders.slice(0, 30).map((r) => (
@@ -122,8 +121,9 @@ interface RowProps {
 function MobileRow({ r, you }: RowProps) {
 	return (
 		<Link
-			to={you ? "/portfolio" : "/tournament/$address"}
-			params={{ address: r.address }}
+			to="/tournament"
+			search={{ trader: r.address }}
+			resetScroll={false}
 			className="flex h-12 items-center gap-3 rounded-6 px-2 text-xs tabular-nums transition-colors active:bg-band"
 		>
 			<span className="w-8 text-fg-muted">{r.rank}</span>
@@ -135,7 +135,7 @@ function MobileRow({ r, you }: RowProps) {
 				</span>
 				<RankMove value={move(r)} className="text-2xs" />
 			</span>
-			<Spark values={path(r)} width={48} height={18} />
+			<RoundSpark values={path(r)} width={48} height={18} />
 			<span className={cn("w-[84px] text-right font-medium", pnlClass(r.pnl))}>{signedUsd(r.pnl, true)}</span>
 		</Link>
 	);

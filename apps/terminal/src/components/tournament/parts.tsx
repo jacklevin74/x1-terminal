@@ -1,5 +1,9 @@
 // Promoted from dev-variants/tournament-2/parts.tsx (Identicon, RankMove, Spark).
 import { CaretDownIcon, CaretUpIcon } from "@phosphor-icons/react";
+import { Spark } from "@/components/ui/spark";
+
+export { Spark };
+
 import { cn } from "@/lib/cn";
 
 function hashOf(id: string) {
@@ -63,41 +67,8 @@ export function RankMove({ value, className }: MoveProps) {
 	);
 }
 
-function smooth(pts: [number, number][]) {
-	let d = `M${pts[0][0]},${pts[0][1]}`;
-	for (let i = 1; i < pts.length; i++) {
-		const [x0, y0] = pts[i - 1];
-		const [x1, y1] = pts[i];
-		const cx = (x0 + x1) / 2;
-		d += ` C${cx},${y0} ${cx},${y1} ${x1},${y1}`;
-	}
-	return d;
-}
-
 const X_AT = [0, 23 / 30, 29 / 30, 1];
 
-interface SparkProps {
-	values: number[];
-	width: number;
-	height: number;
-}
-
-export function Spark({ values, width, height }: SparkProps) {
-	const min = Math.min(...values);
-	const max = Math.max(...values);
-	const span = max - min || 1;
-	const pts = values.map((v, i) => [X_AT[i] * width, 2 + (1 - (v - min) / span) * (height - 4)] as [number, number]);
-	const color = values[3] >= values[1] ? "var(--color-market-up)" : "var(--color-market-down)";
-	return (
-		<svg
-			width={width}
-			height={height}
-			viewBox={`0 0 ${width} ${height}`}
-			className="overflow-visible"
-			aria-hidden="true"
-		>
-			<path d={smooth(pts)} fill="none" stroke="var(--color-fg-disabled)" strokeWidth={1.25} />
-			<path d={smooth(pts.slice(1))} fill="none" stroke={color} strokeWidth={1.5} strokeLinecap="round" />
-		</svg>
-	);
+export function RoundSpark({ values, width, height }: { values: number[]; width: number; height: number }) {
+	return <Spark values={values} width={width} height={height} xs={X_AT} />;
 }
