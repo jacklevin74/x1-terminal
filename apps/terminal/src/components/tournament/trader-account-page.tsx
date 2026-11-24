@@ -12,18 +12,10 @@ import { PortfolioBoard, PortfolioBoardMobile } from "../portfolio/portfolio-boa
 import { TopNav } from "../trade/header/top-nav";
 import { MobileHeader } from "../trade/mobile/mobile-header";
 import { TestnetBanner } from "../trade/testnet-banner";
-import { tierIds, tiers, traderName } from "./data";
+import { findTrader, traderName } from "./data";
 import { Identicon } from "./parts";
 
 const GlobalModals = createLazyComponent(() => import("../trade/components/global-modals"), "GlobalModals");
-
-function findTrader(address: string) {
-	for (const id of tierIds) {
-		const t = tiers[id].traders.find((r) => r.address === address);
-		if (t) return { trader: t, tier: tiers[id] };
-	}
-	return null;
-}
 
 interface HeaderProps {
 	address: string;

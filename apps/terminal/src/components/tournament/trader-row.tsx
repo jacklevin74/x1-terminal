@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { path, pnlClass, signedUsd, type Trader, traderName, usdCompact } from "@/components/tournament/data";
-import { Identicon, Spark } from "@/components/tournament/parts";
+import { Identicon, RoundSpark } from "@/components/tournament/parts";
 import { cn } from "@/lib/cn";
 
 interface Props {
@@ -12,8 +12,9 @@ interface Props {
 export function TraderRow({ r, className, inverse }: Props) {
 	return (
 		<Link
-			to="/tournament/$address"
-			params={{ address: r.address }}
+			to="/tournament"
+			search={{ trader: r.address }}
+			resetScroll={false}
 			className={cn(
 				"flex items-center gap-3 rounded-8 p-3 transition-colors",
 				inverse ? "bg-fill-inverse-weak" : "bg-control hover:bg-control-hover",
@@ -37,7 +38,7 @@ export function TraderRow({ r, className, inverse }: Props) {
 			</div>
 			<div className="flex flex-col items-end">
 				<span className={cn("text-base font-semibold tabular-nums", pnlClass(r.pnl))}>{signedUsd(r.pnl)}</span>
-				<Spark values={path(r)} width={56} height={14} />
+				<RoundSpark values={path(r)} width={56} height={14} />
 			</div>
 		</Link>
 	);

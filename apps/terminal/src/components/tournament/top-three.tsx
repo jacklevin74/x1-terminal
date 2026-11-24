@@ -1,56 +1,70 @@
-import { pad, prizeFor, type Tier, usdc, useTimeLeft } from "@/components/tournament/data";
+import { Link, useSearch } from "@tanstack/react-router";
+import type { Tier } from "@/components/tournament/data";
+import { traderName } from "@/components/tournament/data";
 import { cn } from "@/lib/cn";
-import { Halftone } from "./halftone";
-import { TraderRow } from "./trader-row";
+import { AssetStack, Avatar, Countdown, Laurel, PnlArea, Prize, signedUsd, usd, usdCompact } from "./winner-parts";
 
 interface Props {
 	tier: Tier;
 	className?: string;
 }
 
-const PLACE = ["1st place", "2nd place", "3rd place"];
-
 export function TopThree({ tier, className }: Props) {
-	const t = useTimeLeft();
+	const { trader } = useSearch({ from: "/tournament" });
 	return (
-		<section className={cn("flex flex-col overflow-hidden rounded-16 bg-surface", className)}>
-			<div
-				className="relative isolate flex items-center justify-between overflow-hidden px-8 py-7 text-fg"
-				style={{ backgroundColor: "color-mix(in oklch, var(--color-x1-blue) 32%, var(--color-background))" }}
-			>
-				<Halftone ink="color-mix(in oklch, var(--color-x1-cyan) 40%, var(--color-x1-blue))" />
-				<div className="flex flex-col gap-2">
-					<span className="text-sm text-fg-muted">Round 1 prize pool</span>
-					<span className="flex items-baseline gap-2 text-3xl leading-none font-semibold tracking-tight tabular-nums">
-						{usdc(tier.pot)}
-						<span className="text-base font-medium tracking-normal text-fg-muted">USDC</span>
+		<section
+			className={cn(
+				"grid grid-cols-[220px_repeat(3,minmax(0,1fr))] gap-2 rounded-16 bg-surface p-2 text-fg",
+				className,
+			)}
+		>
+			<div className="flex flex-col justify-between p-3">
+				<div className="flex flex-col gap-1">
+					<span className="text-xs text-fg-muted">Round 1 prize pool</span>
+					<span className="flex items-baseline gap-1.5 text-2xl leading-none font-semibold tracking-tight tabular-nums">
+						{usd(tier.pot)}
 					</span>
 				</div>
-				<span className="flex items-baseline gap-1 self-end text-xl leading-none font-semibold tracking-tight tabular-nums">
-					{t.d}
-					<span className="text-sm font-medium text-fg-muted">d</span>
-					<span className="ml-1.5">{pad(t.h)}</span>
-					<span className="text-sm font-medium text-fg-muted">h</span>
-					<span className="ml-1.5">{pad(t.m)}</span>
-					<span className="text-sm font-medium text-fg-muted">m</span>
-					<span className="ml-1.5">{pad(t.s)}</span>
-					<span className="text-sm font-medium text-fg-muted">s</span>
-				</span>
+				<Countdown dark={false} className="text-base" />
 			</div>
-			<div className="grid grid-cols-3 gap-px bg-background">
-				{tier.traders.slice(0, 3).map((r) => (
-					<div key={r.address} className="flex flex-col gap-5 bg-surface p-6">
-						<div className="flex flex-col gap-1">
-							<span className="text-sm text-fg-muted">{PLACE[r.rank - 1]}</span>
-							<span className="flex items-baseline gap-1.5 text-2xl leading-none font-semibold tracking-tight tabular-nums">
-								{usdc(prizeFor(tier, r.rank))}
-								<span className="text-sm font-medium tracking-normal text-fg-muted">USDC</span>
+			{tier.traders.slice(0, 3).map((t) => (
+				<article
+					key={t.address}
+					className={cn(
+						"relative flex flex-col gap-3 rounded-12 bg-grey-solid-800 p-3 transition-[filter] duration-150 hover:brightness-110",
+						trader === t.address && "brightness-110",
+					)}
+				>
+					<Link
+						to="/tournament"
+						search={{ trader: t.address }}
+						resetScroll={false}
+						aria-label={traderName(t)}
+						className="absolute inset-0 rounded-12"
+					/>
+					<header className="flex items-center gap-2.5">
+						<Avatar t={t} className="size-9 rounded-8 bg-grey-solid-850" />
+						<div className="flex min-w-0 flex-1 flex-col gap-1">
+							<span className="truncate text-sm font-medium">{traderName(t)}</span>
+							<span className="relative z-10 flex w-fit">
+								<AssetStack t={t} size="size-4" ring="ring-grey-solid-800" />
 							</span>
 						</div>
-						<TraderRow r={r} />
+						<Laurel rank={t.rank} size={40} />
+					</header>
+					<div className="flex items-end gap-3">
+						<div className="flex flex-col gap-0.5">
+							<span className="text-base font-semibold text-market-up tabular-nums">{signedUsd(t.pnl)}</span>
+							<span className="text-xs whitespace-nowrap text-fg-muted tabular-nums">{usdCompact(t.vlm)} volume</span>
+						</div>
+						<PnlArea t={t} height={40} grid={false} className="min-w-0 flex-1" />
 					</div>
-				))}
-			</div>
+					<div className="flex items-center justify-between text-xs text-fg-muted">
+						<span>Prize</span>
+						<Prize tier={tier} rank={t.rank} className="text-sm text-fg" />
+					</div>
+				</article>
+			))}
 		</section>
 	);
 }

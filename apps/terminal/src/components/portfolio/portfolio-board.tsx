@@ -9,14 +9,14 @@ import { BiasBar, Meter, WinDots } from "./parts";
 import { PortfolioTop } from "./portfolio-top";
 import { TabPanel } from "./tab-panel";
 
-interface Stat {
+export interface Stat {
 	label: string;
 	value: ReactNode;
 	tone?: string;
 	extra?: ReactNode;
 }
 
-function stats(data: PortfolioData, range: Parameters<typeof rangeStats>[1]): Stat[] {
+export function stats(data: PortfolioData, range: Parameters<typeof rangeStats>[1]): Stat[] {
 	const s = rangeStats(data.history, range);
 	const a = data.account;
 	const chart = data.loading.chart;
@@ -102,7 +102,7 @@ function stats(data: PortfolioData, range: Parameters<typeof rangeStats>[1]): St
 	];
 }
 
-function StatRow({ stat }: { stat: Stat }) {
+export function StatRow({ stat }: { stat: Stat }) {
 	return (
 		<div className="flex h-8 items-center justify-between gap-3 px-3 text-xs tabular-nums transition-colors hover:bg-band">
 			<span className="shrink-0 text-fg-muted">{stat.label}</span>
