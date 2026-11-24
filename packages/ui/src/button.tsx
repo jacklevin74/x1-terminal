@@ -48,8 +48,8 @@ const buttonVariants = cva(
 			{ variant: "filled", intent: "neutral", className: "bg-fill text-fg-inverse" },
 			{ variant: "filled", intent: "error", className: "bg-error text-fg-inverse" },
 			{ variant: "filled", intent: "inverse", className: "bg-fill-inverse text-fg" },
-			{ variant: "filled", intent: "up", className: "bg-market-up text-background" },
-			{ variant: "filled", intent: "down", className: "bg-market-down text-background" },
+			{ variant: "filled", intent: "up", className: "bg-market-up-fill text-market-up-on" },
+			{ variant: "filled", intent: "down", className: "bg-market-down-fill text-market-down-on" },
 
 			{
 				variant: ["secondary", "outline"],

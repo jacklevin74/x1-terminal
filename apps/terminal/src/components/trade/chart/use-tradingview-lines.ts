@@ -11,11 +11,22 @@ import {
 	positionLineStyle,
 } from "@/lib/chart/position-line-style";
 import { colorToHex, getChartColors } from "@/lib/chart/theme-colors";
-import { buildTradingLines, getTradingLineColor } from "@/lib/chart/trading-lines";
+import { buildTradingLines, getTradingLineColor, type TradingLineTone } from "@/lib/chart/trading-lines";
 import { useSubscription, useUserPositions } from "@/lib/hyperliquid";
 import { getOrderLineLabel } from "@/lib/trade/open-orders";
 import { useChartMarksStore } from "@/stores/use-chart-marks-store";
 import type { IChartingLibraryWidget } from "@/types/charting_library";
+
+const CLEAR = "rgba(0, 0, 0, 0)";
+
+export interface LineTag {
+	key: string;
+	price: number;
+	body: string;
+	qty: string;
+	tone: TradingLineTone;
+	interactive: boolean;
+}
 
 export function useTradingViewLines(widget: IChartingLibraryWidget | null, symbol: string, dex?: string) {
 	const hidden = useChartMarksStore((state) => state.hidden);
@@ -67,6 +78,7 @@ export function useTradingViewLines(widget: IChartingLibraryWidget | null, symbo
 				minGap,
 			);
 			for (const [index, line] of lines.entries()) {
+				if (line.kind !== "order") continue;
 				const style = styles[index];
 				try {
 					const adapter = chart
@@ -81,12 +93,12 @@ export function useTradingViewLines(widget: IChartingLibraryWidget | null, symbo
 						.setExtendLeft(lefts[index] === LEFT_INSET)
 						.setBodyFont(LABEL_FONT)
 						.setQuantityFont(LABEL_FONT)
-						.setBodyBackgroundColor(style.fill)
-						.setBodyBorderColor(style.color)
-						.setBodyTextColor(style.text)
-						.setQuantityBackgroundColor(style.surface)
-						.setQuantityBorderColor(style.color)
-						.setQuantityTextColor(style.fg);
+						.setBodyBackgroundColor(CLEAR)
+						.setBodyBorderColor(CLEAR)
+						.setBodyTextColor(CLEAR)
+						.setQuantityBackgroundColor(CLEAR)
+						.setQuantityBorderColor(CLEAR)
+						.setQuantityTextColor(CLEAR);
 					removers.push(() => adapter.remove());
 				} catch {
 					/* Chart may not be ready for trading primitives. */
@@ -106,4 +118,13 @@ export function useTradingViewLines(widget: IChartingLibraryWidget | null, symbo
 			}
 		};
 	}, [widget, lines, hidden]);
+	const tags = useMemo<LineTag[]>(
+		() =>
+			lines.map((line) => {
+				const { body, qty } = positionLineStyle(line, { color: "", page: "", fg: "" });
+				return { key: line.id, price: line.price, body, qty, tone: line.tone, interactive: line.kind === "order" };
+			}),
+		[lines],
+	);
+	return widget && !hidden ? tags : [];
 }

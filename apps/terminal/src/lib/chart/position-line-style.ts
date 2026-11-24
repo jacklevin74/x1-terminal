@@ -87,15 +87,14 @@ export function leftOffsets(prices: readonly number[], widths: readonly number[]
 }
 
 export function positionLineStyle(line: TradingLine, colors: LineColors): PositionLineStyle {
-	const fill = mixHex(colors.color, colors.page, 0.12);
 	return {
 		body: body(line),
 		qty: line.kind === "liquidation" ? "" : signedQty(line),
 		color: colors.color,
-		fill,
-		text: readableText(fill, colors.page, colors.fg),
-		surface: colors.page,
-		fg: colors.fg,
+		fill: colors.fg,
+		text: colors.page,
+		surface: colors.fg,
+		fg: mixHex(colors.page, colors.fg, 0.45),
 	};
 }
 

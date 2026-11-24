@@ -230,14 +230,6 @@ export function TradeFormFields({
 					invalid={sizeHasError}
 					disabled={isFormDisabled}
 				/>
-				{sizeValue > 0 ? (
-					<span className="self-end text-xs text-fg-muted tabular-nums">
-						≈{" "}
-						{sizeMode === "base"
-							? `${formatToken(orderValue, 2)} USD`
-							: `${formatDecimalFloor(sizeValue, szDecimals)} ${baseToken}`}
-					</span>
-				) : null}
 			</div>
 
 			<div className="flex min-w-0 items-center gap-3">

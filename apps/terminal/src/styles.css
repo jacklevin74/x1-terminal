@@ -263,10 +263,16 @@
     --icon-inverse-disabled: #ffffff1f;
 
     /* HyperTerminal Trading Extensions */
+    --chart-up: var(--text-success);
+    --chart-down: var(--text-error);
     --market-up: var(--text-success);
     --market-down: var(--text-error);
     --market-up-flash: color-mix(in oklab, var(--market-up) 55%, var(--text-strong));
     --market-down-flash: color-mix(in oklab, var(--market-down) 55%, var(--text-strong));
+    --market-up-fill: var(--market-up);
+    --market-down-fill: var(--market-down);
+    --market-up-on: var(--bg-base);
+    --market-down-on: var(--bg-base);
     --market-neutral: #8A919A;
     --scope-perp: #2563EB;
     /* X1 brand, from the logo "1" gradient */
@@ -372,10 +378,16 @@
     --icon-inverse-disabled: #0011661a;
 
     /* HyperTerminal Trading Extensions (Dark) */
-    --market-up: var(--text-success);
-    --market-down: var(--text-error);
+    --chart-up: var(--text-success);
+    --chart-down: var(--text-error);
+    --market-up: oklch(0.82 0.16 163);
+    --market-down: oklch(0.73 0.18 14);
     --market-up-flash: color-mix(in oklab, var(--market-up) 55%, var(--text-strong));
     --market-down-flash: color-mix(in oklab, var(--market-down) 55%, var(--text-strong));
+    --market-up-fill: var(--market-up);
+    --market-down-fill: var(--market-down);
+    --market-up-on: var(--bg-base);
+    --market-down-on: var(--bg-base);
     --market-neutral: #6B7280;
     --scope-perp: #4F7DFF;
     /* X1 brand, from the logo "1" gradient */
@@ -481,6 +493,10 @@
 
   /* HyperTerminal Trading Extensions */
   --color-market-up: var(--market-up);
+  --color-market-up-fill: var(--market-up-fill);
+  --color-market-down-fill: var(--market-down-fill);
+  --color-market-up-on: var(--market-up-on);
+  --color-market-down-on: var(--market-down-on);
   --color-market-down: var(--market-down);
   --color-market-up-flash: var(--market-up-flash);
   --color-market-down-flash: var(--market-down-flash);

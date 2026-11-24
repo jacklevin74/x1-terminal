@@ -8,7 +8,21 @@ import type { IChartingLibraryWidget } from "@/types/charting_library";
 const state = vi.hoisted(() => ({
 	connected: true,
 	position: { szi: "1", entryPx: "100", liquidationPx: "80", unrealizedPnl: "5" },
-	orders: [],
+	orders: [
+		{
+			oid: 1,
+			coin: "BTC",
+			side: "A",
+			isTrigger: true,
+			triggerPx: "90",
+			limitPx: "90",
+			sz: "1",
+			orderType: "Stop Market",
+			reduceOnly: true,
+			isPositionTpsl: true,
+			triggerCondition: "Price below 90",
+		},
+	],
 }));
 vi.mock("@/hooks/use-trading-account", () => ({
 	useTradingAccount: () => ({ address: `0x${"ab".repeat(20)}`, isConnected: state.connected }),
@@ -38,19 +52,24 @@ function fakeChart() {
 	return { chart, removed, texts, widget: { activeChart: () => chart } as unknown as IChartingLibraryWidget };
 }
 
-it("draws position and liquidation lines and removes only its own lines on disconnect", async () => {
-	const { chart, removed, texts, widget } = fakeChart();
+it("draws only orders as chart lines and keeps position and liquidation as overlay tags", async () => {
+	const { chart, removed, widget } = fakeChart();
+	let tags: ReturnType<typeof useTradingViewLines> = [];
 	function Harness() {
-		useTradingViewLines(widget, "BTC");
+		tags = useTradingViewLines(widget, "BTC");
 		return null;
 	}
 	const root = createRoot(document.createElement("div"));
 	await act(async () => root.render(createElement(Harness)));
-	expect(chart.createPositionLine).toHaveBeenCalledTimes(2);
-	expect(texts).toEqual(["PNL $5.00", "Liq. 80"]);
+	expect(chart.createPositionLine).toHaveBeenCalledTimes(1);
+	expect(tags.map((tag) => [tag.body, tag.interactive])).toEqual([
+		["PNL $5.00", false],
+		["Liq. 80", false],
+		[expect.any(String), true],
+	]);
 	state.connected = false;
 	await act(async () => root.render(createElement(Harness)));
-	expect(removed).toHaveBeenCalledTimes(2);
+	expect(removed).toHaveBeenCalledTimes(1);
 	expect(chart.removeEntity).not.toHaveBeenCalled();
 	await act(async () => root.unmount());
 	state.connected = true;
@@ -66,10 +85,10 @@ it("hides all trading lines and restores them", async () => {
 	}
 	const root = createRoot(document.createElement("div"));
 	await act(async () => root.render(createElement(Harness)));
-	expect(chart.createPositionLine).toHaveBeenCalledTimes(2);
+	expect(chart.createPositionLine).toHaveBeenCalledTimes(1);
 	await act(async () => useChartMarksStore.setState({ hidden: true }));
-	expect(removed).toHaveBeenCalledTimes(2);
+	expect(removed).toHaveBeenCalledTimes(1);
 	await act(async () => useChartMarksStore.setState({ hidden: false }));
-	expect(chart.createPositionLine).toHaveBeenCalledTimes(4);
+	expect(chart.createPositionLine).toHaveBeenCalledTimes(2);
 	await act(async () => root.unmount());
 });
