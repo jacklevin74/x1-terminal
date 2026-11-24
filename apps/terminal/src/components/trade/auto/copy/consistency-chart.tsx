@@ -1,8 +1,8 @@
 import { type ReactNode, useState } from "react";
+import { SparkMarks, sparkSize } from "@/components/ui/spark";
 import { cn } from "@/lib/cn";
 import {
 	dateLabel,
-	linePath,
 	type MonthRow,
 	monthLabel,
 	monthsOf,
@@ -16,8 +16,8 @@ import { type DirTrader, usd } from "./data";
 
 const UP = "var(--color-market-up)";
 const DOWN = "var(--color-market-down)";
-const HEIGHT = 112;
-const PAD_TOP = 10;
+const HEIGHT = 120;
+const SIZE = sparkSize(HEIGHT);
 
 interface ChartCtx {
 	series: [number, number][];
@@ -28,7 +28,6 @@ interface ChartCtx {
 	y: (v: number) => number;
 	zero: number;
 	last: number;
-	tone: string;
 }
 
 export function ConsistencyChart({ t }: { t: DirTrader }) {
@@ -40,11 +39,12 @@ export function ConsistencyChart({ t }: { t: DirTrader }) {
 			[1, 0],
 		],
 		height: HEIGHT,
-		padTop: PAD_TOP,
+		padTop: SIZE.top,
+		padBottom: SIZE.bottom,
 	});
 	if (!series) return <WindowsFallback t={t} />;
 	const last = series[series.length - 1][1];
-	const c: ChartCtx = { series, months, ...scale, last, tone: last >= 0 ? UP : DOWN };
+	const c: ChartCtx = { series, months, ...scale, last };
 	return (
 		<div className="flex flex-col gap-2">
 			<ConsistencyHead t={t} />
@@ -68,30 +68,27 @@ export function ConsistencyChart({ t }: { t: DirTrader }) {
 }
 
 function Line({ c }: { c: ChartCtx }) {
-	const end = c.pts[c.pts.length - 1];
 	return (
 		<>
-			<line x1={0} x2={c.w} y1={c.zero} y2={c.zero} stroke="var(--color-control-hover)" />
-			<path d={linePath(c.pts)} fill="none" stroke={c.tone} strokeWidth={1.25} strokeLinejoin="round" />
-			{c.pts.map((p, i) => (
-				<circle key={c.series[i][0]} cx={p[0]} cy={p[1]} r={1.6} fill={c.tone} />
+			{[0.2, 0.5, 0.8].map((f) => (
+				<line
+					key={f}
+					x1={0}
+					x2={c.w}
+					y1={HEIGHT * f}
+					y2={HEIGHT * f}
+					stroke="var(--color-stroke-weak)"
+					strokeDasharray="1 5"
+				/>
 			))}
-			<rect x={Math.min(end[0] + 6, c.w - 64)} y={end[1] - 9} width={60} height={18} rx={4} fill="var(--color-fill)" />
-			<text
-				x={Math.min(end[0] + 36, c.w - 34)}
-				y={end[1] + 4}
-				textAnchor="middle"
-				className="fill-fg-inverse text-2xs font-medium tabular-nums"
-			>
-				{usd(c.last, true)}
-			</text>
+			<SparkMarks pts={c.pts} zero={c.zero} width={c.w} height={HEIGHT} up={c.last >= 0} />
 		</>
 	);
 }
 
 function ConsistencyHead({ t }: { t: DirTrader }) {
 	return (
-		<span className="flex items-baseline justify-between gap-3 text-xs">
+		<span className="flex items-baseline gap-1.5 text-xs">
 			<span className="text-fg-muted">Consistency</span>
 			<span className="tabular-nums">{t.consistency}</span>
 		</span>
@@ -103,9 +100,9 @@ function WindowsFallback({ t }: { t: DirTrader }) {
 	return (
 		<div className="flex flex-col gap-2">
 			<ConsistencyHead t={t} />
-			<div className="grid grid-cols-3 gap-2">
+			<div className="grid grid-cols-3 gap-4">
 				{periods.map((p) => (
-					<span key={p.label} className="flex flex-col gap-0.5 rounded-8 bg-control-hover px-3 py-2">
+					<span key={p.label} className="flex flex-col gap-0.5">
 						<span className="text-2xs text-fg-muted">{p.label}</span>
 						<span
 							className={cn("text-xs font-medium tabular-nums", p.pnl >= 0 ? "text-market-up" : "text-market-down")}
@@ -152,7 +149,7 @@ function Hover({ series, pts, w, height, children }: HoverProps) {
 				<>
 					<span className="pointer-events-none absolute top-0 bottom-0 w-px bg-fg-disabled" style={{ left: hit.x }} />
 					<span
-						className="pointer-events-none absolute size-2 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-surface"
+						className="pointer-events-none absolute size-2 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-control"
 						style={{ left: hit.x, top: hit.y, backgroundColor: hit.v >= 0 ? UP : DOWN }}
 					/>
 					<span
@@ -177,7 +174,7 @@ function Stats({ c }: { c: ChartCtx }) {
 	const green = c.months.filter((m) => m.pnl > 0).length;
 	const dd = seriesDrawdown(c.series);
 	return (
-		<div className="grid grid-cols-3 gap-2 text-2xs">
+		<div className="grid grid-cols-3 gap-4 text-2xs">
 			<span className="flex flex-col gap-0.5">
 				<span className="text-fg-muted">Profitable months</span>
 				<span className="text-xs font-medium tabular-nums">
