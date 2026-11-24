@@ -21,14 +21,14 @@ const SegmentedControlsContext = React.createContext<{
 
 const indicatorToneClasses: Record<SegmentedControlTone, string> = {
 	neutral: "bg-control-hover",
-	up: "bg-market-up",
-	down: "bg-market-down",
+	up: "bg-market-up-fill",
+	down: "bg-market-down-fill",
 };
 
 const activeItemToneClasses: Record<SegmentedControlTone, string> = {
 	neutral: "data-active:text-fg data-active:font-medium",
-	up: "data-active:text-background data-active:font-semibold",
-	down: "data-active:text-background data-active:font-semibold",
+	up: "data-active:text-market-up-on data-active:font-semibold",
+	down: "data-active:text-market-down-on data-active:font-semibold",
 };
 
 const segmentedControlsVariants = cva(["inline-flex items-center", "bg-control rounded-8 p-0.5"], {

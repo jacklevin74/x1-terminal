@@ -49,15 +49,15 @@ export interface FillBucket {
 
 export function toneColor(tone: Tone): string {
 	const c = getChartColors();
-	if (tone === "up") return colorToHex(c.green);
-	if (tone === "down") return colorToHex(c.red);
+	if (tone === "up") return colorToHex(c.lineUp);
+	if (tone === "down") return colorToHex(c.lineDown);
 	return colorToHex(c.warning);
 }
 
 export function toneAlpha(tone: Tone, alpha: number): string {
 	const c = getChartColors();
-	if (tone === "up") return colorToRgba(c.green, alpha);
-	if (tone === "down") return colorToRgba(c.red, alpha);
+	if (tone === "up") return colorToRgba(c.lineUp, alpha);
+	if (tone === "down") return colorToRgba(c.lineDown, alpha);
 	return colorToRgba(c.warning, alpha);
 }
 

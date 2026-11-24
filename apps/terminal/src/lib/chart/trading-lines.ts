@@ -80,7 +80,7 @@ export function buildTradingLines(
 }
 export function getTradingLineColor(tone: TradingLineTone): string {
 	const colors = getChartColors();
-	if (tone === "up") return colorToHex(colors.green);
-	if (tone === "down") return colorToHex(colors.red);
+	if (tone === "up") return colorToHex(colors.lineUp);
+	if (tone === "down") return colorToHex(colors.lineDown);
 	return colorToHex(colors.warning);
 }

@@ -14,9 +14,15 @@ it("labels lines like the default chart view", () => {
 	expect(positionLineStyle(order, colors)).toMatchObject({ body: "Limit Buy", qty: "0.002" });
 });
 
-it("fills the label with the line color", () => {
+it("fills the label as one neutral chip with dark text and a muted size", () => {
 	const line: TradingLine = { ...base, kind: "position", title: "Long", qty: "1", pnl: 2, price: 1 };
-	expect(positionLineStyle(line, colors).fill).toBe("#e00000");
+	expect(positionLineStyle(line, colors)).toMatchObject({
+		color: "#ff0000",
+		fill: "#ffffff",
+		text: "#000000",
+		surface: "#ffffff",
+		fg: "#737373",
+	});
 });
 
 it("places close labels side by side from the left edge", () => {

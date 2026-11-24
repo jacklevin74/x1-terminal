@@ -109,7 +109,7 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
 							index={thumbIndex}
 							className={cn(
 								"relative z-20 size-(--slider-thumb) rounded-full",
-								disabled ? "bg-fg-disabled" : "bg-inverse-surface",
+								disabled ? "bg-surface shadow-[inset_0_0_0_999px_var(--color-fg-disabled)]" : "bg-inverse-surface",
 								"focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus",
 								"before:absolute before:-inset-3 before:content-[''] max-md:before:-inset-3",
 							)}

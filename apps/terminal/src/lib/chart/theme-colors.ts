@@ -16,6 +16,8 @@ type ChartColors = {
 	borderFaint: string;
 	green: string;
 	red: string;
+	lineUp: string;
+	lineDown: string;
 	warning: string;
 	accent: string;
 	surface: string;
@@ -78,8 +80,10 @@ export function getChartColors(): ChartColors {
 		textDisabled: getCssVar("--text-disabled"),
 		border: getCssVar("--stroke-weak"),
 		borderFaint: getCssVar("--stroke-faint"),
-		green: getCssVar("--market-up"),
-		red: getCssVar("--market-down"),
+		green: getCssVar("--chart-up"),
+		red: getCssVar("--chart-down"),
+		lineUp: getCssVar("--market-up"),
+		lineDown: getCssVar("--market-down"),
 		warning: getCssVar("--text-warning"),
 		accent: getCssVar("--fill-brand-strong"),
 		surface: getCssVar("--bg-raised"),

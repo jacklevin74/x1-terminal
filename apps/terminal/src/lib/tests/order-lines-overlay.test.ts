@@ -19,6 +19,8 @@ vi.mock("@/lib/chart/theme-colors", () => ({
 		textSecondary: "#888888",
 		green: "#00ff00",
 		red: "#ff0000",
+		lineUp: "#00ff00",
+		lineDown: "#ff0000",
 		warning: "#ffaa00",
 		fontFamily: "Inter",
 	}),

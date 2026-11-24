@@ -12,6 +12,7 @@ import { browserChartTimezone } from "@/lib/chart/timezone";
 import { setChartResolution, useChartIntervalStore } from "@/stores/use-chart-interval-store";
 import { chartMarksLabel, toggleChartMarks, useChartMarksStore } from "@/stores/use-chart-marks-store";
 import type { ActionId, IChartingLibraryWidget, ResolutionString } from "@/types/charting_library";
+import { ChartLineTags } from "./chart-line-tags";
 import {
 	CHART_CUSTOM_FONT_FAMILY,
 	CHART_DISABLED_FEATURES,
@@ -45,7 +46,8 @@ export function TradingViewChart({
 }: Props) {
 	const chartKey = `${symbol}:${interval}:${theme}`;
 	const [readyWidget, setReadyWidget] = useState<{ widget: IChartingLibraryWidget; key: string } | null>(null);
-	useTradingViewLines(readyWidget?.key === chartKey ? readyWidget.widget : null, symbol, positionDex);
+	const activeWidget = readyWidget?.key === chartKey ? readyWidget.widget : null;
+	const lineTags = useTradingViewLines(activeWidget, symbol, positionDex);
 	const hidden = useChartMarksStore((state) => state.hidden);
 	const fills = useExecutionFills();
 	const fillsRef = useRef(fills);
@@ -218,6 +220,7 @@ export function TradingViewChart({
 	return (
 		<div className="relative w-full h-full" style={{ minHeight: CHART_MIN_HEIGHT_PX }}>
 			<div ref={containerRef} className="w-full h-full" />
+			<ChartLineTags widget={activeWidget} tags={lineTags} />
 		</div>
 	);
 }
