@@ -15,7 +15,6 @@ import { createLazyComponent } from "@/lib/lazy";
 import { useExchangeScope } from "@/providers/exchange-scope";
 import { useMarketActions } from "@/stores/use-market-store";
 import { TokenSelector } from "../chart/token-selector";
-import { FavoritesStrip } from "../header/favorites-strip";
 import { MarketOverview } from "../market-overview";
 
 const AnalysisSection = createLazyComponent(() => import("./analysis-section"), "AnalysisSection");
@@ -42,7 +41,6 @@ export function MainWorkspace() {
 	return (
 		<div className={cn("flex-1 flex flex-col bg-background", APP_PANEL_GAP_CLASS, APP_PANEL_INSET_CLASS)}>
 			<div className={cn(APP_PANEL_CLASS, APP_PANEL_PADDING_X_CLASS, "shrink-0")}>
-				<FavoritesStrip />
 				<div className="flex h-12 min-w-0 items-center gap-6">
 					<TokenSelector selectedMarket={selectedMarket} onValueChange={handleMarketChange} />
 					<div className="min-w-0 flex-1 overflow-x-auto scrollbar-none">

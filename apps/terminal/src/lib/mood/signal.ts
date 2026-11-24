@@ -70,8 +70,12 @@ export function parseMoodSignal(raw: { now?: number; coins?: unknown[] }): MoodS
 		.map((c) => c as MoodCoin & { score: number | null })
 		.filter((c) => typeof c.score === "number")
 		.map((c) => ({ ...c, dominant: c.dominant ?? null, history: toSlots(c.history ?? []).slice(-96) }));
+	return withOverall(raw.now ?? Date.now(), coins);
+}
+
+export function withOverall(now: number, coins: MoodCoin[]): MoodSignal {
 	return {
-		now: raw.now ?? Date.now(),
+		now,
 		coins,
 		overall: {
 			score: volumeWeighted(coins, (c) => c.score),
