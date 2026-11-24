@@ -2,6 +2,7 @@ import { cn } from "@/lib/cn";
 import { pnlClass, signedUsd, usd } from "@/lib/portfolio/format";
 import { type PortfolioData, RANGES, rangeStats, SERIES, seriesFor } from "@/lib/portfolio/model";
 import { type ChartState, Dropdown, TextToggle } from "./controls";
+import { CountUp } from "./count-up";
 import { Actions } from "./parts";
 import { PortfolioChart } from "./portfolio-chart";
 
@@ -9,9 +10,10 @@ interface SummaryProps {
 	c: ChartState;
 	data: PortfolioData;
 	mobile?: boolean;
+	readOnly?: boolean;
 }
 
-function Summary({ c, data, mobile }: SummaryProps) {
+function Summary({ c, data, mobile, readOnly }: SummaryProps) {
 	const stats = rangeStats(data.history, c.range);
 	const { account, loading } = data;
 	return (
@@ -21,7 +23,11 @@ function Summary({ c, data, mobile }: SummaryProps) {
 				{loading.summary ? (
 					<span className="h-9 w-48 animate-pulse rounded-4 bg-control motion-reduce:animate-none" />
 				) : (
-					<span className="text-2xl leading-none font-semibold tracking-tight tabular-nums">{usd(account.value)}</span>
+					<CountUp
+						value={account.value}
+						format={usd}
+						className="text-2xl leading-none font-semibold tracking-tight tabular-nums"
+					/>
 				)}
 				<span className={cn("text-xs tabular-nums", pnlClass(stats.pnl))}>
 					{loading.chart ? "-" : signedUsd(stats.pnl)}{" "}
@@ -42,7 +48,7 @@ function Summary({ c, data, mobile }: SummaryProps) {
 					<dd>{loading.summary ? "-" : usd(account.withdrawable)}</dd>
 				</div>
 			</dl>
-			<Actions size={mobile ? "md" : "sm"} className="mt-6" />
+			{!readOnly && <Actions size={mobile ? "md" : "sm"} className="mt-6" />}
 		</section>
 	);
 }
@@ -78,19 +84,20 @@ interface Props {
 	c: ChartState;
 	data: PortfolioData;
 	mobile?: boolean;
+	readOnly?: boolean;
 }
 
-export function PortfolioTop({ c, data, mobile }: Props) {
+export function PortfolioTop({ c, data, mobile, readOnly }: Props) {
 	if (mobile)
 		return (
 			<div className="mt-4 flex flex-col gap-2 px-2">
-				<Summary c={c} data={data} mobile />
+				<Summary c={c} data={data} mobile readOnly={readOnly} />
 				<ChartCard c={c} data={data} height={180} mobile />
 			</div>
 		);
 	return (
 		<div className="mt-5 grid grid-cols-[340px_minmax(0,1fr)] gap-2">
-			<Summary c={c} data={data} />
+			<Summary c={c} data={data} readOnly={readOnly} />
 			<ChartCard c={c} data={data} height={176} />
 		</div>
 	);

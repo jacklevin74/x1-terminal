@@ -22,6 +22,7 @@ import { Route as APIRouteImport } from './routes/API'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BuildersPerpIndexRouteImport } from './routes/builders-perp.index'
+import { Route as TournamentAddressRouteImport } from './routes/tournament_.$address'
 import { Route as BuildersPerpDexRouteImport } from './routes/builders-perp.$dex'
 
 const TournamentRoute = TournamentRouteImport.update({
@@ -89,6 +90,11 @@ const BuildersPerpIndexRoute = BuildersPerpIndexRouteImport.update({
   path: '/',
   getParentRoute: () => BuildersPerpRoute,
 } as any)
+const TournamentAddressRoute = TournamentAddressRouteImport.update({
+  id: '/tournament_/$address',
+  path: '/tournament/$address',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BuildersPerpDexRoute = BuildersPerpDexRouteImport.update({
   id: '/$dex',
   path: '/$dex',
@@ -109,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/spot': typeof SpotRoute
   '/tournament': typeof TournamentRoute
   '/builders-perp/$dex': typeof BuildersPerpDexRoute
+  '/tournament/$address': typeof TournamentAddressRoute
   '/builders-perp/': typeof BuildersPerpIndexRoute
 }
 export interface FileRoutesByTo {
@@ -124,6 +131,7 @@ export interface FileRoutesByTo {
   '/spot': typeof SpotRoute
   '/tournament': typeof TournamentRoute
   '/builders-perp/$dex': typeof BuildersPerpDexRoute
+  '/tournament/$address': typeof TournamentAddressRoute
   '/builders-perp': typeof BuildersPerpIndexRoute
 }
 export interface FileRoutesById {
@@ -141,6 +149,7 @@ export interface FileRoutesById {
   '/spot': typeof SpotRoute
   '/tournament': typeof TournamentRoute
   '/builders-perp/$dex': typeof BuildersPerpDexRoute
+  '/tournament_/$address': typeof TournamentAddressRoute
   '/builders-perp/': typeof BuildersPerpIndexRoute
 }
 export interface FileRouteTypes {
@@ -159,6 +168,7 @@ export interface FileRouteTypes {
     | '/spot'
     | '/tournament'
     | '/builders-perp/$dex'
+    | '/tournament/$address'
     | '/builders-perp/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/spot'
     | '/tournament'
     | '/builders-perp/$dex'
+    | '/tournament/$address'
     | '/builders-perp'
   id:
     | '__root__'
@@ -190,6 +201,7 @@ export interface FileRouteTypes {
     | '/spot'
     | '/tournament'
     | '/builders-perp/$dex'
+    | '/tournament_/$address'
     | '/builders-perp/'
   fileRoutesById: FileRoutesById
 }
@@ -206,6 +218,7 @@ export interface RootRouteChildren {
   PortfolioRoute: typeof PortfolioRoute
   SpotRoute: typeof SpotRoute
   TournamentRoute: typeof TournamentRoute
+  TournamentAddressRoute: typeof TournamentAddressRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -301,6 +314,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuildersPerpIndexRouteImport
       parentRoute: typeof BuildersPerpRoute
     }
+    '/tournament_/$address': {
+      id: '/tournament_/$address'
+      path: '/tournament/$address'
+      fullPath: '/tournament/$address'
+      preLoaderRoute: typeof TournamentAddressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/builders-perp/$dex': {
       id: '/builders-perp/$dex'
       path: '/$dex'
@@ -338,6 +358,7 @@ const rootRouteChildren: RootRouteChildren = {
   PortfolioRoute: PortfolioRoute,
   SpotRoute: SpotRoute,
   TournamentRoute: TournamentRoute,
+  TournamentAddressRoute: TournamentAddressRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,4 +1,5 @@
 import { Tabs, TabsList, TabsTrigger } from "@hypeterminal/ui";
+import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { cn } from "@/lib/cn";
 import {
@@ -107,7 +108,9 @@ interface RowProps {
 
 function Row({ r, you }: RowProps) {
 	return (
-		<div
+		<Link
+			to={you ? "/portfolio" : "/tournament/$address"}
+			params={{ address: r.address }}
 			className={cn(
 				"grid h-10 items-center gap-2 rounded-6 px-3 text-xs tabular-nums transition-colors hover:bg-band",
 				COLS,
@@ -128,6 +131,6 @@ function Row({ r, you }: RowProps) {
 				<Spark values={path(r)} width={72} height={18} />
 			</span>
 			<span className={cn("text-right", pnlClass(r.dayPnl))}>{signedUsd(r.dayPnl, true)}</span>
-		</div>
+		</Link>
 	);
 }
