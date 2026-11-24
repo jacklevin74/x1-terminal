@@ -1,5 +1,4 @@
-import { ArrowUpRightIcon, CaretRightIcon, SlidersHorizontalIcon } from "@phosphor-icons/react";
-import { Link } from "@tanstack/react-router";
+import { CaretRightIcon, SlidersHorizontalIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import { TextToggle } from "@/components/portfolio/controls";
 import { StatRow, stats } from "@/components/portfolio/portfolio-board";
@@ -298,15 +297,6 @@ export function MoodTraderPage({ t, coin, name, on }: TraderProps) {
 					))}
 				</div>
 			</section>
-
-			<Link
-				to="/tournament/$address"
-				params={{ address: t.usr }}
-				className="flex h-10 items-center justify-center gap-1.5 rounded-8 bg-control text-sm font-medium transition-colors hover:bg-control-hover"
-			>
-				Open full account
-				<ArrowUpRightIcon weight="bold" className="size-3.5" />
-			</Link>
 		</div>
 	);
 }
