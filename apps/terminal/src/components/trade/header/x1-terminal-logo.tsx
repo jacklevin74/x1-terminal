@@ -1,6 +1,5 @@
 import { type CSSProperties, useId } from "react";
 import { Icon as TerminalPromptIcon } from "./terminal-prompt-icon";
-import { X1MarkWhite } from "./x1-mark-white";
 
 export function X1Mark({ className, style }: { className?: string; style?: CSSProperties }) {
 	const gradientId = `x1-one-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
@@ -46,13 +45,12 @@ export function X1Tile({ style, size = 26 }: { style?: CSSProperties; size?: num
 
 export default function X1TerminalLogo() {
 	return (
-		<span role="img" aria-label="X1 Terminal" className="inline-flex shrink-0 items-center gap-[9px] select-none">
-			<TerminalPromptIcon size={26} />
+		<span role="img" aria-label="X1 Terminal" className="inline-flex shrink-0 items-baseline gap-1.5 select-none">
+			<TerminalPromptIcon size={11} bare />
 			<span aria-hidden="true" data-part="word" className="inline-flex items-baseline gap-[5px] whitespace-nowrap">
-				<X1MarkWhite height={11.25} />
 				<span
-					className="font-wordmark text-wordmark leading-none font-normal tracking-[-0.01em] text-fg"
-					style={{ fontStyle: "normal" }}
+					className="font-wordmark text-wordmark leading-none font-medium tracking-[0.04em] text-fg uppercase"
+					style={{ fontSizeAdjust: "cap-height 0.7" }}
 				>
 					Terminal
 				</span>

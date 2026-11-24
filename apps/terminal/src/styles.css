@@ -44,7 +44,7 @@
   /* ---- Font Families ---- */
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: ui-monospace, "SF Mono", monospace;
-  --font-wordmark: "Aeonik Pro", var(--font-sans);
+  --font-wordmark: "Helvetica Neue", var(--font-sans);
   --text-wordmark: 16px;
 
   /* ---- Typography Scale (docs/design-system.md §2) ----
