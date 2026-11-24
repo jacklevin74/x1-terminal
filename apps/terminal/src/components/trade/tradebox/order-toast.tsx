@@ -1,14 +1,11 @@
-import { Badge, ButtonIcon } from "@hypeterminal/ui";
 import { t } from "@lingui/core/macro";
-import { CheckIcon, LightningIcon, SpinnerGapIcon, XIcon } from "@phosphor-icons/react";
+import { CheckIcon, SpinnerGapIcon, XIcon } from "@phosphor-icons/react";
 import { useEffect } from "react";
 import { ORDER_TOAST_SUCCESS_DURATION_MS } from "@/config/time";
 import { cn } from "@/lib/cn";
-import type { OrderOutcome } from "@/lib/trade/extract-order-status";
 import { type OrderQueueItem, useOrderQueue, useOrderQueueActions } from "@/stores/use-order-queue-store";
 
-const ORDER_TOAST_WIDTH = "w-80";
-const ORDER_TOAST_LIST_MAX_HEIGHT = "max-h-72";
+const RING = 2 * Math.PI * 13;
 
 function useAutoRemove(order: OrderQueueItem, onRemove: () => void) {
 	useEffect(() => {
@@ -27,12 +24,12 @@ function useAutoRemove(order: OrderQueueItem, onRemove: () => void) {
 	}, [order.status, order.completedAt, onRemove]);
 }
 
-function getOrderTypeLabel(orderType: OrderQueueItem["orderType"]): string | null {
-	switch (orderType) {
+function typeLabel(o: OrderQueueItem): string | null {
+	switch (o.orderType) {
 		case "trigger":
-			return "Trigger";
+			return t`Trigger`;
 		case "scale":
-			return "Scale";
+			return t`Scale`;
 		case "twap":
 			return "TWAP";
 		default:
@@ -40,8 +37,10 @@ function getOrderTypeLabel(orderType: OrderQueueItem["orderType"]): string | nul
 	}
 }
 
-function getOutcomeLabel(outcome: OrderOutcome): string {
-	switch (outcome) {
+function outcomeWord(o: OrderQueueItem): string {
+	if (o.status === "pending") return t`Sending`;
+	if (o.status === "failed") return t`Failed`;
+	switch (o.outcome) {
 		case "filled":
 			return t`Filled`;
 		case "resting":
@@ -50,91 +49,97 @@ function getOutcomeLabel(outcome: OrderOutcome): string {
 			return t`Set`;
 		case "twapStarted":
 			return t`Running`;
+		default:
+			return t`Done`;
 	}
 }
 
-function OrderItem({ order, onRemove }: { order: OrderQueueItem; onRemove: () => void }) {
-	useAutoRemove(order, onRemove);
+function verb(o: OrderQueueItem) {
+	const buy = o.side === "buy";
+	if (o.status === "pending") return buy ? t`Buying` : t`Selling`;
+	if (o.status === "failed") return buy ? t`Buy` : t`Sell`;
+	if (o.outcome === "filled") return buy ? t`Bought` : t`Sold`;
+	return buy ? t`Buy` : t`Sell`;
+}
 
-	const sideColor = order.side === "buy" ? "text-market-up" : "text-market-down";
-	const orderTypeLabel = getOrderTypeLabel(order.orderType);
-	const hasTpSl = order.tpPrice || order.slPrice;
-
+function StatusRing({ o }: { o: OrderQueueItem }) {
+	const done = o.status === "success";
 	return (
-		<div className={cn("flex gap-3 px-3 py-2", order.status === "pending" && "animate-pulse")}>
-			<div className="flex size-7 shrink-0 items-center justify-center rounded-8 bg-control">
-				{order.status === "pending" && <SpinnerGapIcon className="size-4 animate-spin text-fg-muted" />}
-				{order.status === "success" && <CheckIcon className="size-4 text-market-up" weight="bold" />}
-				{order.status === "failed" && <XIcon className="size-4 text-market-down" weight="bold" />}
-			</div>
-
-			<div className="min-w-0 flex-1">
-				<div className="flex min-h-6 items-center gap-2">
-					{orderTypeLabel && (
-						<Badge tone="neutral" size="sm" className="text-2xs uppercase tracking-micro">
-							{orderTypeLabel}
-						</Badge>
-					)}
-					<span className={cn("text-2xs font-medium uppercase tracking-micro", sideColor)}>{order.side}</span>
-					<span className="text-xs font-medium text-fg">{order.market}</span>
-					{order.status === "success" && order.outcome && (
-						<span className={cn("text-xs", order.outcome === "filled" ? "text-market-up" : "text-fg-muted")}>
-							{getOutcomeLabel(order.outcome)}
-						</span>
-					)}
-				</div>
-				<div className="flex flex-wrap items-center gap-2 text-xs text-fg-muted tabular-nums">
-					<span>
-						{t`Size`}: <span className="text-fg">{order.size}</span>
-					</span>
-					{order.price && (
-						<span>
-							@ <span className="text-fg">{order.price}</span>
-						</span>
-					)}
-				</div>
-				{hasTpSl && (
-					<div className="flex items-center gap-2 text-xs text-fg-muted tabular-nums">
-						{order.tpPrice && (
-							<span>
-								TP: <span className="text-market-up">{order.tpPrice}</span>
-							</span>
-						)}
-						{order.slPrice && (
-							<span>
-								SL: <span className="text-market-down">{order.slPrice}</span>
-							</span>
-						)}
-					</div>
+		<span className="relative flex size-8 shrink-0 items-center justify-center">
+			<svg viewBox="0 0 32 32" className="absolute inset-0 -rotate-90" aria-hidden="true">
+				<circle cx="16" cy="16" r="13" fill="none" strokeWidth="2" className="stroke-control" />
+				{done && (
+					<circle
+						cx="16"
+						cy="16"
+						r="13"
+						fill="none"
+						strokeWidth="2"
+						strokeLinecap="round"
+						strokeDasharray={RING}
+						className="stroke-market-up animate-ring-drain"
+						style={{ animationDuration: `${ORDER_TOAST_SUCCESS_DURATION_MS}ms`, ["--ring" as string]: RING }}
+					/>
 				)}
-				{order.error && <div className="text-xs text-market-down">{order.error}</div>}
-			</div>
-
-			{order.status === "failed" && (
-				<ButtonIcon
-					variant="ghost"
-					intent="neutral"
-					size="xs"
-					onClick={onRemove}
-					className="shrink-0 self-start"
-					aria-label={t`Dismiss`}
-				>
-					<XIcon className="size-3.5" />
-				</ButtonIcon>
-			)}
-		</div>
+			</svg>
+			{o.status === "pending" && <SpinnerGapIcon className="size-4 animate-spin text-fg-muted" />}
+			{o.status === "success" && <CheckIcon className="size-4 text-market-up" weight="bold" />}
+			{o.status === "failed" && <XIcon className="size-4 text-market-down" weight="bold" />}
+		</span>
 	);
 }
 
-function CountdownBar({ order }: { order: OrderQueueItem }) {
-	if (order.status !== "success") return null;
-
+function Pill({ o, onRemove }: { o: OrderQueueItem; onRemove: () => void }) {
+	useAutoRemove(o, onRemove);
+	const type = typeLabel(o);
+	const failed = o.status === "failed";
 	return (
-		<div className="absolute right-0 bottom-0 left-0 h-0.5 overflow-hidden bg-control">
-			<div
-				className="h-full bg-market-up animate-countdown"
-				style={{ animationDuration: `${ORDER_TOAST_SUCCESS_DURATION_MS}ms` }}
-			/>
+		<div
+			className={cn(
+				"flex w-fit max-w-[min(360px,calc(100vw-48px))] items-center gap-3 rounded-full bg-black py-2 pr-5 pl-2 shadow-menu",
+				failed && "rounded-[22px]",
+			)}
+		>
+			<StatusRing o={o} />
+			<div className="flex min-w-0 flex-col">
+				<span className="truncate text-sm text-fg tabular-nums">
+					{type && <span className="text-fg-muted">{type} </span>}
+					{verb(o)} {o.size} {o.market}
+					{o.price && (
+						<span className="text-fg-muted">
+							{" "}
+							{t`at`} {o.price}
+						</span>
+					)}
+				</span>
+				{(o.tpPrice || o.slPrice) && (
+					<span className="text-xs text-fg-muted tabular-nums">
+						{o.tpPrice && <>TP {o.tpPrice} </>}
+						{o.slPrice && <>SL {o.slPrice}</>}
+					</span>
+				)}
+				{o.error && <span className="text-xs text-market-down">{o.error}</span>}
+			</div>
+			<span
+				className={cn(
+					"ml-2 shrink-0 text-xs",
+					o.outcome === "filled" && "text-market-up",
+					failed && "text-market-down",
+					!failed && o.outcome !== "filled" && "text-fg-muted",
+				)}
+			>
+				{outcomeWord(o)}
+			</span>
+			{failed && (
+				<button
+					type="button"
+					onClick={onRemove}
+					aria-label={t`Dismiss`}
+					className="-mr-2 flex size-6 shrink-0 items-center justify-center rounded-full text-fg-muted transition-colors hover:bg-control hover:text-fg"
+				>
+					<XIcon className="size-3.5" />
+				</button>
+			)}
 		</div>
 	);
 }
@@ -144,44 +149,11 @@ export function OrderToast() {
 	const { removeOrder } = useOrderQueueActions();
 	if (orders.length === 0) return null;
 
-	const pendingCount = orders.filter((o) => o.status === "pending").length;
-	const failedCount = orders.filter((o) => o.status === "failed").length;
-
 	return (
-		<div
-			className={cn(
-				ORDER_TOAST_WIDTH,
-				"fixed right-6 bottom-6 z-50 overflow-hidden rounded-12 bg-overlay font-sans shadow-menu",
-				failedCount > 0 && pendingCount === 0 && "ring-1 ring-inset ring-market-down",
-			)}
-		>
-			<div className="flex h-9 items-center justify-between border-b border-stroke-weak px-3">
-				<div className="flex items-center gap-2">
-					<LightningIcon className="size-3.5 text-fg-muted" />
-					<span className="text-2xs font-medium uppercase tracking-micro text-fg">{t`Order Queue`}</span>
-				</div>
-				<div className="flex items-center gap-1">
-					{pendingCount > 0 && (
-						<Badge tone="neutral" size="sm">
-							{pendingCount} {t`pending`}
-						</Badge>
-					)}
-					{failedCount > 0 && (
-						<Badge tone="error" size="sm">
-							{failedCount} {t`failed`}
-						</Badge>
-					)}
-				</div>
-			</div>
-
-			<div className={cn("divide-y divide-stroke-faint overflow-y-auto", ORDER_TOAST_LIST_MAX_HEIGHT)}>
-				{orders.map((order) => (
-					<div key={order.id} className="relative">
-						<OrderItem order={order} onRemove={() => removeOrder(order.id)} />
-						<CountdownBar order={order} />
-					</div>
-				))}
-			</div>
+		<div className="fixed right-6 bottom-6 z-50 flex flex-col items-end gap-2 font-sans" aria-live="polite">
+			{orders.map((o) => (
+				<Pill key={o.id} o={o} onRemove={() => removeOrder(o.id)} />
+			))}
 		</div>
 	);
 }
