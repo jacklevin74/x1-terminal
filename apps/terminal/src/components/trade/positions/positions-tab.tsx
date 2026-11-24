@@ -141,7 +141,7 @@ export function PositionsTab() {
 			slippageBps,
 		});
 
-		const title = intent === "close" ? t`Position closed — ${coin}` : t`Position reversed — ${coin}`;
+		const title = intent === "close" ? t`${coin} position closed` : t`${coin} position reversed`;
 		const failureMessage = intent === "close" ? t`Failed to close position` : t`Failed to reverse position`;
 
 		const result = await submitPlan(plan);

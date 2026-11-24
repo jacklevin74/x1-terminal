@@ -87,7 +87,7 @@ export function MobilePositionsTab() {
 
 		const result = await submitPlan(plan);
 		if (result.ok) {
-			toast.success(t`Position closed — ${coin}`, {
+			toast.success(t`${coin} position closed`, {
 				description: buildClosePositionDescription({ size, szDecimals, coin, unrealizedPnl, roe }),
 			});
 		} else {
