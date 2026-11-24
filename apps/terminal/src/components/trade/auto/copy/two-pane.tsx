@@ -25,7 +25,7 @@ export function TwoPane({ list, detail, pushed, onBack, listClassName, detailCla
 			</div>
 			<div
 				className={cn(
-					"min-h-0 overflow-y-auto px-4 pb-4 @max-3xl:w-full @max-3xl:flex-1",
+					"flex min-h-0 flex-col px-4 pb-4 @max-3xl:w-full @max-3xl:flex-1",
 					detailClassName,
 					!pushed && "@max-3xl:hidden",
 				)}
@@ -34,7 +34,7 @@ export function TwoPane({ list, detail, pushed, onBack, listClassName, detailCla
 					<button
 						type="button"
 						onClick={onBack}
-						className="mb-3 hidden items-center gap-1.5 text-xs text-fg-muted hover:text-fg @max-3xl:flex"
+						className="mb-3 hidden shrink-0 items-center self-start gap-1.5 text-xs text-fg-muted hover:text-fg @max-3xl:flex"
 					>
 						<ArrowLeftIcon className="size-3.5" />
 						All traders
