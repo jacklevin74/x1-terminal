@@ -1,8 +1,9 @@
 import { Button, Drawer, DrawerClose, DrawerContent, DrawerTrigger } from "@hypeterminal/ui";
-import { CaretDownIcon, CaretRightIcon, RobotIcon, XIcon } from "@phosphor-icons/react";
+import { CaretDownIcon, CaretLeftIcon, CaretRightIcon, RobotIcon, XIcon } from "@phosphor-icons/react";
 import { useId, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { useMarketsInfo } from "@/lib/hyperliquid";
+import type { PoolTrader } from "@/lib/mood/pool";
 import {
 	coinName,
 	compactUsd,
@@ -22,21 +23,26 @@ import { useMarketActions } from "@/stores/use-market-store";
 import { MoodBackPill, MoodMarketStepper } from "./mood-back-nav";
 import { MoodHeroGauge } from "./mood-hero-gauge";
 import { ScoreArc } from "./mood-parts";
+import { MoodTraderPage, MoodTradersCard, MoodTradersPage } from "./mood-traders";
 
 interface Props {
 	signal: MoodSignal;
 	coin: MoodCoin | undefined;
 	marketName: string;
 	score: number | null;
+	pool: PoolTrader[] | undefined;
+	selected: ReadonlySet<string>;
 }
 
 type Tab = "market" | "all";
+type Page = { kind: "edit" } | { kind: "trader"; usr: string } | null;
 
-export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
+export function MoodMarketRing({ signal, coin, marketName, score, pool, selected }: Props) {
 	const [chosenTab, setTab] = useState<Tab | null>(null);
 	const tab: Tab = chosenTab ?? (coin ? "market" : "all");
 	const [focus, setFocus] = useState<string | null>(null);
 	const [dir, setDir] = useState<0 | 1 | -1>(0);
+	const [page, setPage] = useState<Page>(null);
 	const scroller = useRef<HTMLDivElement>(null);
 	const s = score ?? 0;
 	const shown = focus ? signal.coins.find((c) => c.coin === focus) : coin;
@@ -47,6 +53,7 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 	const index = order.findIndex((c) => c.coin === focus);
 	function go(next: { tab: Tab; focus: string | null }, direction: 1 | -1) {
 		setDir(direction);
+		setPage(null);
 		setTab(next.tab);
 		setFocus(next.focus);
 		scroller.current?.scrollTo({ top: 0 });
@@ -58,6 +65,14 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 		const next = order[index + d];
 		if (next) go({ tab: "market", focus: next.coin }, d);
 	}
+	function openPage(next: Page, direction: 1 | -1) {
+		setDir(direction);
+		setPage(next);
+		scroller.current?.scrollTo({ top: 0 });
+	}
+	const pageTrader = page?.kind === "trader" ? pool?.find((t) => t.usr === page.usr) : undefined;
+	const pageTitle = pageTrader ? pageTrader.name : "Edit traders";
+	const pageKey = page?.kind === "trader" ? page.usr : (page?.kind ?? "");
 	const focused = focus !== null && tab === "market";
 	return (
 		<Drawer
@@ -67,6 +82,7 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 				setFocus(null);
 				setTab(null);
 				setDir(0);
+				setPage(null);
 			}}
 		>
 			<DrawerTrigger className="flex shrink-0 items-center gap-2.5 rounded-8 px-2 py-1 transition-colors hover:bg-fill-hover">
@@ -78,21 +94,29 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 					</span>
 				</span>
 			</DrawerTrigger>
-			<DrawerContent className="w-[420px]">
+			<DrawerContent className="inset-y-2 right-2 w-[420px] max-w-[calc(100vw-16px)] overflow-hidden rounded-16">
 				<div className="flex h-14 flex-none items-center gap-3 px-4">
-					<div className="min-w-0 flex-1">
-						{focused ? (
-							<div key="back" className="mood-fade-in">
-								<MoodBackPill onBack={backToAll} />
-							</div>
-						) : (
-							<div key="title" className="mood-fade-in">
-								<div className="text-sm font-medium">Mood Ring</div>
-								<div className="text-2xs text-fg-muted">Updated {updated}</div>
-							</div>
-						)}
-					</div>
-					{focused ? (
+					{page ? (
+						<PageHeader
+							key={page.kind === "trader" ? page.usr : "edit"}
+							title={pageTitle}
+							onBack={() => openPage(page.kind === "trader" ? { kind: "edit" } : null, -1)}
+						/>
+					) : (
+						<div className="min-w-0 flex-1">
+							{focused ? (
+								<div key="back" className="mood-fade-in">
+									<MoodBackPill onBack={backToAll} />
+								</div>
+							) : (
+								<div key="title" className="mood-fade-in">
+									<div className="text-sm font-medium">Mood Ring</div>
+									<div className="text-2xs text-fg-muted">Updated {updated}</div>
+								</div>
+							)}
+						</div>
+					)}
+					{page ? null : focused ? (
 						<div key="stepper" className="mood-fade-in">
 							<MoodMarketStepper index={index} total={order.length} onStep={step} />
 						</div>
@@ -113,9 +137,25 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 					</DrawerClose>
 				</div>
 				<div ref={scroller} className="flex-1 overflow-x-hidden overflow-y-auto px-4 pb-4">
-					<div key={`${tab}:${focus ?? ""}`} className={viewClass(dir)}>
-						{tab === "market" ? (
-							<MarketTab coin={shown} name={shownName} score={shownScore} />
+					<div key={`${tab}:${focus ?? ""}:${pageKey}`} className={viewClass(dir)}>
+						{page && shown && pool ? (
+							<PageBody
+								page={page}
+								pool={pool}
+								coin={shown}
+								name={shownName}
+								selected={selected}
+								onOpen={(usr) => openPage({ kind: "trader", usr }, 1)}
+							/>
+						) : tab === "market" ? (
+							<MarketTab
+								coin={shown}
+								name={shownName}
+								score={shownScore}
+								pool={pool}
+								selected={selected}
+								onEdit={() => openPage({ kind: "edit" }, 1)}
+							/>
 						) : (
 							<AllTab
 								signal={signal}
@@ -125,7 +165,7 @@ export function MoodMarketRing({ signal, coin, marketName, score }: Props) {
 						)}
 					</div>
 				</div>
-				{focused && shown && <TradeMarketBar coin={shown.coin} />}
+				{focused && !page && shown && <TradeMarketBar coin={shown.coin} />}
 			</DrawerContent>
 		</Drawer>
 	);
@@ -186,7 +226,16 @@ function TabSwitch({ market, tab, onChange }: { market: string; tab: Tab; onChan
 	);
 }
 
-function MarketTab({ coin, name, score }: { coin: MoodCoin | undefined; name: string; score: number }) {
+interface MarketTabProps {
+	coin: MoodCoin | undefined;
+	name: string;
+	score: number;
+	pool: PoolTrader[] | undefined;
+	selected: ReadonlySet<string>;
+	onEdit: () => void;
+}
+
+function MarketTab({ coin, name, score, pool, selected, onEdit }: MarketTabProps) {
 	if (!coin) {
 		return (
 			<div className="mt-2 rounded-12 bg-surface p-5 text-center">
@@ -200,41 +249,63 @@ function MarketTab({ coin, name, score }: { coin: MoodCoin | undefined; name: st
 	const first = coin.history[0]?.[1] ?? coin.score;
 	const delta = coin.score - first;
 	const holders = coin.tradersLong + coin.tradersShort;
+	const counted = pool?.filter((t) => selected.has(t.usr)).length ?? 0;
+	const custom = !!pool?.length && counted < pool.length;
 	return (
 		<div className="space-y-3">
 			<section className="relative overflow-hidden rounded-12 bg-surface px-5 pt-5 pb-4">
 				<MoodHeroGauge score={score} name={name} />
 				<div className="relative mt-3 flex items-center justify-center gap-2 text-xs">
-					<span className="tabular-nums" style={{ color: moodColor(delta * 3) }}>
-						{signedScore(delta)} in 24h
-					</span>
+					{custom ? (
+						<span className="text-fg-muted tabular-nums">
+							From your {counted} of {pool?.length} traders
+						</span>
+					) : (
+						<span className="tabular-nums" style={{ color: moodColor(delta * 3) }}>
+							{signedScore(delta)} in 24h
+						</span>
+					)}
 				</div>
-				<History history={coin.history} />
+				<History history={coin.history} start={custom ? `24h ago, all ${pool?.length} traders` : "24h ago"} />
 			</section>
 
-			<section className="rounded-12 bg-surface p-4">
-				<SectionTitle
-					aside={
-						<span className="tabular-nums">
-							<span className="text-market-up">{coin.tradersLong} long</span>
-							<span className="ml-2 text-market-down">{coin.tradersShort} short</span>
-							<span className="ml-2 text-fg-muted">{MOOD_POOL_SIZE - holders} flat</span>
-						</span>
-					}
-				>
-					The {MOOD_POOL_SIZE} traders
-				</SectionTitle>
-				<TraderPips long={coin.tradersLong} short={coin.tradersShort} />
-				{coin.dominant && coin.dominant.share >= 0.4 && (
-					<div className="mt-3 flex items-center justify-between text-2xs text-fg-muted">
-						<span>Largest trader</span>
-						<span className="tabular-nums">
-							<span className="text-fg-secondary">{shortAddress(coin.dominant.usr)}</span>,{" "}
-							{Math.round(coin.dominant.share * 100)}% of exposure
-						</span>
-					</div>
-				)}
-			</section>
+			{pool?.length ? (
+				<MoodTradersCard pool={pool} coin={coin.coin} selected={selected} onEdit={onEdit}>
+					{coin.dominant && coin.dominant.share >= 0.4 && (
+						<div className="mt-3 flex items-center justify-between text-2xs text-fg-muted">
+							<span>Largest trader</span>
+							<span className="tabular-nums">
+								<span className="text-fg-secondary">{shortAddress(coin.dominant.usr)}</span>,{" "}
+								{Math.round(coin.dominant.share * 100)}% of exposure
+							</span>
+						</div>
+					)}
+				</MoodTradersCard>
+			) : (
+				<section className="rounded-12 bg-surface p-4">
+					<SectionTitle
+						aside={
+							<span className="tabular-nums">
+								<span className="text-market-up">{coin.tradersLong} long</span>
+								<span className="ml-2 text-market-down">{coin.tradersShort} short</span>
+								<span className="ml-2 text-fg-muted">{MOOD_POOL_SIZE - holders} flat</span>
+							</span>
+						}
+					>
+						The {MOOD_POOL_SIZE} traders
+					</SectionTitle>
+					<TraderPips long={coin.tradersLong} short={coin.tradersShort} />
+					{coin.dominant && coin.dominant.share >= 0.4 && (
+						<div className="mt-3 flex items-center justify-between text-2xs text-fg-muted">
+							<span>Largest trader</span>
+							<span className="tabular-nums">
+								<span className="text-fg-secondary">{shortAddress(coin.dominant.usr)}</span>,{" "}
+								{Math.round(coin.dominant.share * 100)}% of exposure
+							</span>
+						</div>
+					)}
+				</section>
+			)}
 
 			<AutoTraderCard score={coin.score} name={name} />
 
@@ -270,6 +341,49 @@ function MarketTab({ coin, name, score }: { coin: MoodCoin | undefined; name: st
 			</ScoreBreakdown>
 		</div>
 	);
+}
+
+function PageHeader({ title, onBack }: { title: string; onBack: () => void }) {
+	return (
+		<div className="mood-fade-in flex min-w-0 flex-1 items-center gap-2">
+			<button
+				type="button"
+				onClick={onBack}
+				aria-label="Back"
+				className="grid size-8 flex-none place-items-center rounded-full bg-control transition-colors hover:bg-control-hover"
+			>
+				<CaretLeftIcon weight="bold" className="size-3.5" />
+			</button>
+			<span className="min-w-0 flex-1 truncate text-sm font-medium">{title}</span>
+		</div>
+	);
+}
+
+interface PageBodyProps {
+	page: NonNullable<Page>;
+	pool: PoolTrader[];
+	coin: MoodCoin;
+	name: string;
+	selected: ReadonlySet<string>;
+	onOpen: (usr: string) => void;
+}
+
+function PageBody({ page, pool, coin, name, selected, onOpen }: PageBodyProps) {
+	if (page.kind === "edit") {
+		return (
+			<MoodTradersPage
+				pool={pool}
+				coin={coin.coin}
+				name={name}
+				selected={selected}
+				score={coin.score}
+				onOpen={onOpen}
+			/>
+		);
+	}
+	const t = pool.find((x) => x.usr === page.usr);
+	if (!t) return null;
+	return <MoodTraderPage t={t} coin={coin.coin} name={name} on={selected.has(t.usr)} />;
 }
 
 function ScoreBreakdown({ children }: { children: React.ReactNode }) {
@@ -389,7 +503,7 @@ function TraderPips({ long, short }: { long: number; short: number }) {
 	);
 }
 
-function History({ history }: { history: [number, number][] }) {
+function History({ history, start }: { history: [number, number][]; start: string }) {
 	const id = useId();
 	if (history.length < 2) return null;
 	const W = 340;
@@ -420,7 +534,7 @@ function History({ history }: { history: [number, number][] }) {
 				/>
 			</svg>
 			<div className="mt-1 flex justify-between text-2xs text-fg-muted">
-				<span>24h ago</span>
+				<span>{start}</span>
 				<span>Now</span>
 			</div>
 		</div>
