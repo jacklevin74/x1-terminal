@@ -291,11 +291,11 @@
     color-scheme: dark;
 
     /* Background */
-    --bg-base: #07070a;
-    --bg-raised: #121217;
-    --bg-overlay: #1b1b22;
+    --bg-base: oklch(0.165 0.004 260);
+    --bg-raised: oklch(0.21 0.005 260);
+    --bg-overlay: oklch(0.245 0.005 260);
     --bg-sunken: #000000;
-    --bg-alternate: #121217;
+    --bg-alternate: oklch(0.21 0.005 260);
     --bg-band: #ffffff0a;
     --bg-brand: #ececf1;
     --bg-inverse: #ffffff;
@@ -318,8 +318,8 @@
     --fill-strong: #ffffff;
     --fill-weak: #ffffff0f;
     --fill-weaker: #ffffff08;
-    --fill-control: #22222a;
-    --fill-control-hover: #2c2c36;
+    --fill-control: oklch(0.27 0.006 260);
+    --fill-control-hover: oklch(0.31 0.006 260);
     --fill-hover: #ffffff0f;
     --fill-press: #ffffff1f;
     --fill-selected: #ececf1;
@@ -377,17 +377,17 @@
     --icon-inverse-strong: #000626e5;
     --icon-inverse-disabled: #0011661a;
 
-    /* HyperTerminal Trading Extensions (Dark) */
-    --chart-up: var(--text-success);
-    --chart-down: var(--text-error);
-    --market-up: oklch(0.82 0.16 163);
-    --market-down: oklch(0.73 0.18 14);
+    /* HyperTerminal Trading Extensions (Dark), TradingView pair */
+    --chart-up: #26a69a;
+    --chart-down: #f05351;
+    --market-up: #26a69a;
+    --market-down: #ed7088;
     --market-up-flash: color-mix(in oklab, var(--market-up) 55%, var(--text-strong));
     --market-down-flash: color-mix(in oklab, var(--market-down) 55%, var(--text-strong));
     --market-up-fill: var(--market-up);
     --market-down-fill: var(--market-down);
-    --market-up-on: var(--bg-base);
-    --market-down-on: var(--bg-base);
+    --market-up-on: #ffffff;
+    --market-down-on: #ffffff;
     --market-neutral: #6B7280;
     --scope-perp: #4F7DFF;
     /* X1 brand, from the logo "1" gradient */
@@ -492,6 +492,8 @@
   --color-icon-inverse-disabled: var(--icon-inverse-disabled);
 
   /* HyperTerminal Trading Extensions */
+  --color-chart-up: var(--chart-up);
+  --color-chart-down: var(--chart-down);
   --color-market-up: var(--market-up);
   --color-market-up-fill: var(--market-up-fill);
   --color-market-down-fill: var(--market-down-fill);

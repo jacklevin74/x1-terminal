@@ -14,9 +14,9 @@ import { RANGES, type RangeId, SERIES, type SeriesId, seriesFor } from "@/lib/po
 import { MoodPositionCard } from "./mood-position-card";
 
 const STANCES: { id: Stance; label: string; text: string; fill: string }[] = [
-	{ id: "bullish", label: "Bullish", text: "text-market-up", fill: "bg-market-up" },
+	{ id: "bullish", label: "Bullish", text: "text-chart-up", fill: "bg-chart-up" },
 	{ id: "neutral", label: "Neutral", text: "text-fg-secondary", fill: "bg-fg-muted" },
-	{ id: "bearish", label: "Bearish", text: "text-market-down", fill: "bg-market-down" },
+	{ id: "bearish", label: "Bearish", text: "text-chart-down", fill: "bg-chart-down" },
 ];
 const STAT_LABELS = ["Win rate", "Max drawdown", "Direction bias"];
 const SERIES_SHORT = SERIES.map((s) => ({ id: s.id, label: s.id === "value" ? "Value" : s.label }));

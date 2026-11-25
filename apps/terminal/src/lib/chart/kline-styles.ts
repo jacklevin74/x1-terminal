@@ -91,8 +91,8 @@ export function buildKlineStyles(candleType: CandleType, options?: KlineStyleOpt
 
 	return {
 		grid: {
-			horizontal: { show: true, color: gridColor, size: 1, style: LineType.Dashed },
-			vertical: { show: true, color: gridColor, size: 1, style: LineType.Dashed },
+			horizontal: { show: false, color: gridColor, size: 1, style: LineType.Dashed },
+			vertical: { show: false, color: gridColor, size: 1, style: LineType.Dashed },
 		},
 		candle: {
 			type: candleType,
