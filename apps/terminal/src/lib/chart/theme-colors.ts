@@ -104,15 +104,14 @@ export function buildChartOverrides(): Record<string, string | number | boolean>
 	const green = colorToHex(colors.green);
 	const red = colorToHex(colors.red);
 
-	const gridColor = colorToCss(colors.borderFaint);
 	const crosshairColor = textMuted;
 
 	return {
 		"paneProperties.background": bg,
 		"paneProperties.backgroundType": "solid",
-		"paneProperties.vertGridProperties.color": gridColor,
+		"paneProperties.vertGridProperties.color": "rgba(0, 0, 0, 0)",
 		"paneProperties.vertGridProperties.style": 1,
-		"paneProperties.horzGridProperties.color": gridColor,
+		"paneProperties.horzGridProperties.color": "rgba(0, 0, 0, 0)",
 		"paneProperties.horzGridProperties.style": 1,
 		"paneProperties.crossHairProperties.color": crosshairColor,
 		"paneProperties.crossHairProperties.style": 2,
