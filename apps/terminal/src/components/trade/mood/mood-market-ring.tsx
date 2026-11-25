@@ -1,6 +1,6 @@
 import { Button, Drawer, DrawerClose, DrawerContent, DrawerTrigger } from "@hypeterminal/ui";
 import { CaretDownIcon, CaretLeftIcon, CaretRightIcon, RobotIcon, XIcon } from "@phosphor-icons/react";
-import { useId, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { useMarketsInfo } from "@/lib/hyperliquid";
 import type { PoolTrader } from "@/lib/mood/pool";
@@ -13,7 +13,6 @@ import {
 	type MoodSignal,
 	moodColor,
 	moodLabel,
-	moodTile,
 	shortAddress,
 	signedScore,
 	targetWeight,
@@ -266,7 +265,6 @@ function MarketTab({ coin, name, score, pool, selected, onEdit }: MarketTabProps
 						</span>
 					)}
 				</div>
-				<History history={coin.history} start={custom ? `24h ago, all ${pool?.length} traders` : "24h ago"} />
 			</section>
 
 			{pool?.length ? (
@@ -499,44 +497,6 @@ function TraderPips({ long, short }: { long: number; short: number }) {
 				// biome-ignore lint/suspicious/noArrayIndexKey: fixed-length decorative grid
 				return <span key={i} className={cn("aspect-square rounded-full", cls)} />;
 			})}
-		</div>
-	);
-}
-
-function History({ history, start }: { history: [number, number][]; start: string }) {
-	const id = useId();
-	if (history.length < 2) return null;
-	const W = 340;
-	const H = 64;
-	const y = (s: number) => (1 - (s + 100) / 200) * H;
-	const pts = history.map(([, s], i) => `${((i / (history.length - 1)) * W).toFixed(1)},${y(s).toFixed(1)}`);
-	const area = `M0,${H / 2} L${pts.join(" L")} L${W},${H / 2} Z`;
-	return (
-		<div className="relative mt-4">
-			<svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="block h-16 w-full" aria-hidden="true">
-				<defs>
-					<clipPath id={`${id}-up`}>
-						<rect x="0" y="0" width={W} height={H / 2} />
-					</clipPath>
-					<clipPath id={`${id}-down`}>
-						<rect x="0" y={H / 2} width={W} height={H / 2} />
-					</clipPath>
-				</defs>
-				<path d={area} fill={moodTile(80)} clipPath={`url(#${id}-up)`} />
-				<path d={area} fill={moodTile(-80)} clipPath={`url(#${id}-down)`} />
-				<line x1="0" x2={W} y1={H / 2} y2={H / 2} stroke="var(--color-stroke-weak)" strokeDasharray="2 3" />
-				<polyline
-					points={pts.join(" ")}
-					fill="none"
-					stroke="var(--color-fg-secondary)"
-					strokeWidth="1.25"
-					vectorEffect="non-scaling-stroke"
-				/>
-			</svg>
-			<div className="mt-1 flex justify-between text-2xs text-fg-muted">
-				<span>{start}</span>
-				<span>Now</span>
-			</div>
 		</div>
 	);
 }
