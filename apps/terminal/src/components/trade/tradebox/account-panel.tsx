@@ -45,10 +45,11 @@ export function AccountPanel() {
 
 	return (
 		<div className="flex shrink-0 flex-col gap-3 overflow-hidden p-3">
-			<h2 className="text-2xs font-medium uppercase tracking-micro text-fg-muted">{t`Account`}</h2>
-
 			{!isConnected ? (
-				<p className="py-2 text-center text-xs text-fg-muted">{t`Connect wallet to view account`}</p>
+				<>
+					<h2 className="text-2xs font-medium uppercase tracking-micro text-fg-muted">{t`Account`}</h2>
+					<p className="py-2 text-center text-xs text-fg-muted">{t`Connect wallet to view account`}</p>
+				</>
 			) : (
 				<div className="flex flex-col gap-3 overflow-y-auto">
 					<section aria-label={t`Account summary`} className="flex flex-col">

@@ -6,7 +6,7 @@ import { cn } from "./utils";
 const sliderVariants = cva([
 	"flex w-full touch-none select-none flex-col gap-2",
 	"data-disabled:cursor-not-allowed",
-	"[--slider-thumb:14px] max-md:[--slider-thumb:20px]",
+	"[--slider-thumb:12px] max-md:[--slider-thumb:20px]",
 ]);
 
 type SliderThumbSize = "sm" | "md" | "lg";
@@ -72,12 +72,11 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
 						/>
 						{marks?.map((mark) => {
 							const percent = getMarkPercent(mark, min, max);
-							const reached = mark <= current;
-							const underThumb = Math.abs(mark - current) <= (max - min) * 0.02;
+							const isEnd = mark <= min || mark >= max;
+							const underThumb = Math.abs(mark - current) <= (max - min) * 0.03;
 							const dotClass = cn(
-								"absolute top-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full",
-								reached && !disabled ? rangeToneClasses[tone] : "bg-fg-disabled",
-								underThumb && "invisible",
+								"absolute inset-y-0 w-0.5 -translate-x-1/2 bg-surface",
+								(isEnd || underThumb) && "opacity-0",
 							);
 							const style = {
 								left: `calc(var(--slider-thumb) / 2 + (100% - var(--slider-thumb)) * ${percent / 100})`,
@@ -108,8 +107,10 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
 							key={`thumb-${thumbIndex}`}
 							index={thumbIndex}
 							className={cn(
-								"relative z-20 size-(--slider-thumb) rounded-full",
-								disabled ? "bg-surface shadow-[inset_0_0_0_999px_var(--color-fg-disabled)]" : "bg-inverse-surface",
+								"relative z-20 size-(--slider-thumb) rounded-full shadow-[0_0_0_3px_var(--color-surface),0_1px_3px_rgb(0_0_0/0.5)]",
+								disabled
+									? "bg-surface after:absolute after:inset-0 after:rounded-full after:bg-fg-disabled after:content-['']"
+									: "bg-inverse-surface transition-transform duration-150 hover:scale-115 active:scale-115",
 								"focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus",
 								"before:absolute before:-inset-3 before:content-[''] max-md:before:-inset-3",
 							)}

@@ -152,23 +152,26 @@ export function TradeFormFields({
 									: t`Balance available to trade`
 							}
 							side="top"
-							underline
 						>
 							<span>{isReducing ? t`Reducible` : t`Available`}</span>
 						</Tooltip>
 					}
 					value={
 						<span className="inline-flex items-center gap-2">
-							{isConnected ? (
-								<span className={getValueColorClass(availableBalance)}>{formatAvailableBalance()}</span>
-							) : null}
+							{isConnected ? <span className="text-fg">{formatAvailableBalance()}</span> : null}
 							{isConnected && swapTargetToken ? (
 								<Button variant="link" intent="brand" size="xxs" onClick={onSwapClick}>
 									{t`Swap`}
 								</Button>
 							) : null}
 							{isConnected && !isReducing && availableBalance <= 0 ? (
-								<Button variant="link" intent="brand" size="xxs" onClick={onDepositClick}>
+								<Button
+									variant="link"
+									intent="neutral"
+									size="xxs"
+									onClick={onDepositClick}
+									className="text-fg-muted no-underline hover:text-fg"
+								>
 									{t`Deposit`}
 								</Button>
 							) : null}
@@ -178,7 +181,7 @@ export function TradeFormFields({
 				{!isSpotMarket && positionSize !== 0 ? (
 					<InfoRow
 						label={
-							<Tooltip content={t`Your current open position on this market`} side="top" underline>
+							<Tooltip content={t`Your current open position on this market`} side="top">
 								<span>{t`Position`}</span>
 							</Tooltip>
 						}

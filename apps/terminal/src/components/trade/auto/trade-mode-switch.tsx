@@ -16,7 +16,7 @@ export function TradeModeSwitch({ mode }: Props) {
 	if (auto.available && auto.phase !== "setup") phase = isTrading(auto.phase) ? "active" : "paused";
 	const locked = phase === "active";
 	return (
-		<div className="flex bg-background">
+		<div className="flex h-9 shrink-0 items-center gap-4 border-b border-stroke-weak px-3">
 			{(["manual", "auto"] as const).map((m) => {
 				const on = mode === m;
 				const blocked = locked && m === "manual";
@@ -29,8 +29,8 @@ export function TradeModeSwitch({ mode }: Props) {
 								if (!blocked) setTradeMode(m);
 							}}
 							className={cn(
-								"flex h-9 flex-1 items-center justify-center gap-1.5 rounded-t-8 text-xs transition-colors",
-								on ? "bg-surface font-medium text-fg" : "text-fg-muted",
+								"flex h-9 items-center gap-1.5 text-xs transition-colors",
+								on ? "font-medium text-fg" : "text-fg-muted",
 								!on && !blocked && "hover:text-fg",
 								blocked && "cursor-not-allowed opacity-50",
 							)}

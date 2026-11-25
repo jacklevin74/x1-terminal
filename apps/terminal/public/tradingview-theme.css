@@ -65,6 +65,11 @@ body,
 	border-radius: 4px !important;
 }
 
+/* Text buttons (Indicators): balance the gap the icon leaves on the left */
+.layout__area--top button[class*="withText-"] {
+	padding-right: 7px !important;
+}
+
 /* Smaller icons throughout toolbar */
 .layout__area--top svg {
 	width: 14px !important;

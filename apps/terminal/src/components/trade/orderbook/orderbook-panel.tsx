@@ -22,6 +22,8 @@ import { TradesPanel } from "./trades-panel";
 
 const BOOK_SLOTS = Array.from({ length: 20 }, (_, slot) => `empty-${slot}`);
 
+const TEXT_TAB = "px-0 data-active:bg-transparent";
+
 const HEADER_ROW_CLASS =
 	"grid h-6 shrink-0 grid-cols-3 items-center gap-2 px-3 text-2xs uppercase tracking-micro text-fg-muted";
 const HEADER_TOGGLE_CLASS =
@@ -95,9 +97,13 @@ export function OrderbookPanel() {
 
 	return (
 		<Tabs value={tab} onValueChange={setTab} className="flex h-full min-h-0 flex-col overflow-hidden">
-			<TabsList className="shrink-0 px-3">
-				<TabsTrigger value="book">{t`Order Book`}</TabsTrigger>
-				<TabsTrigger value="trades">{t`Trades`}</TabsTrigger>
+			<TabsList className="shrink-0 gap-4 px-3">
+				<TabsTrigger value="book" className={TEXT_TAB}>
+					{t`Order Book`}
+				</TabsTrigger>
+				<TabsTrigger value="trades" className={TEXT_TAB}>
+					{t`Trades`}
+				</TabsTrigger>
 			</TabsList>
 
 			<TabsContent value="book" className="flex min-h-0 flex-1 flex-col pt-0">
