@@ -128,7 +128,7 @@ function moodStrength(abs: number) {
 
 export function moodColor(score: number) {
 	const s = Math.max(-100, Math.min(100, score));
-	const side = s >= 0 ? "var(--color-success)" : "var(--color-error)";
+	const side = s >= 0 ? "var(--color-market-up)" : "var(--color-market-down)";
 	return `color-mix(in oklab, ${side} ${Math.round(moodStrength(Math.abs(s)))}%, ${MOOD_NEUTRAL})`;
 }
 
