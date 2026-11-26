@@ -37,7 +37,11 @@ export function TokenSelectorTriggerContent({ selectedMarket }: Props) {
 							key={badge}
 							tone="neutral"
 							size="xxs"
-							className={cn("text-fg-muted", !LEVERAGE_BADGE.test(badge) && "uppercase tracking-micro")}
+							className={cn(
+								LEVERAGE_BADGE.test(badge)
+									? "bg-market-up-deep text-market-up"
+									: "uppercase tracking-micro text-fg-muted",
+							)}
 						>
 							{badge}
 						</Badge>

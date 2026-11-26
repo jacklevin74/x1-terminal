@@ -18,7 +18,7 @@ function sentiment(coin: Signal["coins"][number]) {
 						: "Neutral");
 	return {
 		label,
-		color: coin.score >= 20 ? "text-success" : coin.score <= -20 ? "text-error" : "text-fg-muted",
+		color: coin.score >= 20 ? "text-market-up" : coin.score <= -20 ? "text-market-down" : "text-fg-muted",
 		arrow: coin.score >= 20 ? "▲" : coin.score <= -20 ? "▼" : "•",
 	};
 }

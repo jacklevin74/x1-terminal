@@ -27,7 +27,8 @@ it("offers Rabby, Phantom and X1, with an explicit derived-account acknowledgmen
 		root.render(createElement(WalletModal, { open: true, onOpenChange: vi.fn() }));
 	});
 	const buttons = [...el.querySelectorAll("button")];
-	expect(buttons).toHaveLength(3);
+	expect(buttons).toHaveLength(4);
+	expect(buttons[3].textContent).toBe("Connect it through Rabby");
 	expect(buttons[0].textContent).toContain("Phantom");
 	expect(buttons[1].textContent).toContain("X1 Wallet");
 	expect(buttons[2].textContent).toContain("Rabby Wallet");
@@ -55,7 +56,7 @@ it("connects Rabby without requiring the X1 derived-account acknowledgment", asy
 		b.textContent?.includes("Rabby Wallet"),
 	) as HTMLButtonElement;
 	expect(rabby.disabled).toBe(false);
-	expect(el.textContent).toContain("approve signing requests on the device");
+	expect(el.textContent).toContain("Using a Ledger?");
 	await act(async () => rabby.click());
 	expect(state.connect).toHaveBeenCalledWith({ connector: expect.objectContaining({ id: "rabby" }) });
 	expect(close).toHaveBeenCalledWith(false);
