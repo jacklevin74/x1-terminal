@@ -272,6 +272,7 @@
     --market-up-fill: var(--market-up);
     --market-down-fill: var(--market-down);
     --market-up-on: var(--bg-base);
+    --market-up-deep: color-mix(in oklab, var(--market-up) 28%, var(--bg-raised));
     --market-down-on: var(--bg-base);
     --market-neutral: #8A919A;
     --scope-perp: #2563EB;
@@ -387,6 +388,7 @@
     --market-up-fill: var(--market-up);
     --market-down-fill: var(--market-down);
     --market-up-on: #ffffff;
+    --market-up-deep: color-mix(in oklab, var(--market-up) 28%, var(--bg-raised));
     --market-down-on: #ffffff;
     --market-neutral: #6B7280;
     --scope-perp: #4F7DFF;
@@ -498,6 +500,7 @@
   --color-market-up-fill: var(--market-up-fill);
   --color-market-down-fill: var(--market-down-fill);
   --color-market-up-on: var(--market-up-on);
+  --color-market-up-deep: var(--market-up-deep);
   --color-market-down-on: var(--market-down-on);
   --color-market-down: var(--market-down);
   --color-market-up-flash: var(--market-up-flash);
